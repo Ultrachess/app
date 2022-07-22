@@ -1,0 +1,14 @@
+td {
+    background-color: #FFF;
+}
+
+td.highlight {
+    background-color: rgba(236, 231, 231, 0.199);
+}
+
+.movesHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

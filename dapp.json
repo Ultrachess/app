@@ -1,0 +1,6 @@
+{
+  "fs": {
+    "files": ["server", "entrypoint.sh"],
+    "size": 128000
+  }
+}

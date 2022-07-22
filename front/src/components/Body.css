@@ -1,0 +1,23 @@
+.body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+}
+
+.buttons {
+    margin-top: 50px;
+    display: flex;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.content {
+    margin-top: 100px;
+}

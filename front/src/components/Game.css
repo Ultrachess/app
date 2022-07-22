@@ -1,0 +1,28 @@
+.game {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 200px;
+}
+
+.buttons {
+    margin-top: 50px;
+    display: flex;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.content {
+    margin-top: 100px;
+}
+
+.gameMovesView {
+    margin-left: 100px;
+}
