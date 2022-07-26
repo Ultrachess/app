@@ -13,7 +13,7 @@ DRAW_POINTS = 0.5
 DEFAULT_ERC20 = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
 
 class Game:
-    def __init__(self, id, isBot=False, wagerAmount=0, token=DEFAULT_ERC20):
+    def __init__(self, id, isBot=False, wagerAmount=0, token=DEFAULT_ERC20, timestamp):
         self.id = id
         self.players = []
         self.rootGame = chess.pgn.Game()
@@ -22,6 +22,7 @@ class Game:
         self.matchCount = 1
         self.wagerAmount = wagerAmount
         self.token = token
+        self.timestamp = timestamp
 
     def __isInGame(self, address):
         return address in self.players
@@ -153,4 +154,5 @@ class Game:
             "matchCount": self.matchCount,
             "wagerAmount": self.wagerAmount,
             "token": self.token,
+            "timestamp": self.timestamp,
         }

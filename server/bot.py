@@ -12,6 +12,7 @@ class Bot:
     def __init__(self, id, owner, binary):
         self.id = id
         self.owner = owner
+        self.timestamp = timestamp
         #create executable
         file = open(id, "wb")
         file.write(binary)
@@ -31,6 +32,7 @@ class Bot:
         return {
             "id": self.id,
             "owner": self.owner,
+            "timestamp": self.timestamp,
         }
 
 class BotFactory:

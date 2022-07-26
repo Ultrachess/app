@@ -1,5 +1,6 @@
 import { Button, Card, Input, Row, Text } from '@nextui-org/react';
 import React, { useState } from 'react';
+import { FaRobot } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
 import { sendBinary, depositErc20 } from '../store/game/gameSlice';
 
@@ -17,31 +18,12 @@ export default () => {
         dispatch(sendBinary(binary))
 	};
 
-	const handleDeposit = async () => {
-		dispatch(depositErc20())
-	};
-
 	return(
-        <div>
-			<Card>
-                <Card.Header>
-                    <Row justify="center">
-                        <Text>Upload your bot code.</Text>
-                    </Row>
-                </Card.Header>
-
-				<Card.Body>
-					<input type="file" name="file" onChange={changeHandler} />
-					<div>
-						<Button color="gradient" onClick={handleSubmission} shadow>
-							Submit
-						</Button>
-						<Button color="gradient" onClick={handleDeposit} shadow>
-							Deposit 100
-						</Button>
-					</div>
-				</Card.Body>
-			</Card>   
-		</div>
+        <Row justify='center'>
+			<input type="file" name="file" onChange={changeHandler} />
+			<Button color="gradient" onClick={handleSubmission}  iconRight={<FaRobot/>} shadow>
+				Submit
+			</Button>
+		</Row>
 	)
 }

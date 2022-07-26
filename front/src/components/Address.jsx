@@ -2,8 +2,8 @@ import React, { useRef } from 'react'
 import { Text, Grid, User } from "@nextui-org/react";
 import { truncateAddress } from "../ether/utils";
 import { createIcon } from '@download/blockies';
-import { Avatar } from '@nextui-org/react';
 import "./Address.css"
+
 export default (props) => {
   const { value } = props
   var dataUrlSrc = createIcon({ // All options are optional

@@ -73,11 +73,11 @@ export const getBottomAddress = (game, address, currentSide) => {
 }
 
 export const isGameActive = (games, id) => {
-    return games.find(game => game.id == id) != null
+    return games[id] != null
 }
 
 export const getGameById = (games, id) => {
-    return games.find(game => game.id == id)
+    return games[id]
 }
 
 export const playerIsInGame = (games, address, gameId) => {
@@ -91,16 +91,19 @@ export const canJoinGame = (games, gameId) => {
 }
 
 export const getGameByPlayer = (games, address) => {
-    return games.find(game => {
-        const tempGameState = new Chess()
-        tempGameState.load_pgn(game.pgn?? "")
+    for (var key in games) {
+        if (games.hasOwnProperty(key)) {
+            var game = games[key]
+            const tempGameState = new Chess()
+            tempGameState.load_pgn(game.pgn?? "")
 
-        const isGameOver = tempGameState.game_over()
-        const isInGame = game.players.includes(address)
-
-        return !isGameOver && isInGame
-
-    })
+            const isGameOver = tempGameState.game_over()
+            const isInGame = game.players.includes(address)
+            
+            if(!isGameOver && isInGame)
+                return game   
+        }
+    }
 }
 
 export const submitMove = (game, move) => {

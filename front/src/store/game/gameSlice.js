@@ -23,8 +23,8 @@ export const gameSlice = createSlice({
             status: undefined,
             type: undefined,
         },
-        games: [],
-        bots: [],
+        games: {},
+        bots: {},
         elo: {},
         accounts: {}
     },
@@ -39,6 +39,15 @@ export const gameSlice = createSlice({
         },
         setGames: (state, action) => {
             state.games = action.payload
+        },
+        setElo: (state, action) => {
+            state.elo = action.payload
+        },
+        setAccounts: (state, action) => {
+            state.accounts = action.payload
+        },
+        setBots: (state, action) => {
+            state.bots = action.payload
         },
         updateGame: (state, action) => {
             var {id, game} = action.payload
@@ -147,7 +156,7 @@ export const gameSlice = createSlice({
     }
 })
 
-export const { setGames, updateGame, addGame, removeGame, setLatestInput, processInput, setInputStatus } = gameSlice.actions
+export const { setGames, setElo, setAccounts, setBots, updateGame, addGame, removeGame, setLatestInput, processInput, setInputStatus } = gameSlice.actions
 
 const QUERY = `
     { 
@@ -185,24 +194,24 @@ function updateGameState(dispatch, inputs){
         if(input){
             var { input_index } = input
             var { notices } = input.result ?? []
-            console.log(notices)
+            
             if(notices instanceof Array){
                 var inputsParsed = notices.map((notice) => {
                     var { payload } = notice
-                    var {sender,operation,value,success,index, timestamp} = JSON.parse(hexToUtf8(payload))
+                    var {elo, game, bots, accounts} = JSON.parse(hexToUtf8(payload))
                     return {
-                        sender,
-                        operation,
-                        value,
-                        success,
-                        index,
-                        timestamp
+                        elo,
+                        game,
+                        bots,
+                        accounts,
                     }
-                }).sort(function compareFn(a, b){return a.index - b.index})
-
-                inputsParsed.forEach((inputParsed)=>{
-                    dispatch(processInput(inputParsed))
                 })
+                var {elo, game, bots, accounts} = inputsParsed[inputsParsed.length - 1]
+
+                dispatch(setGames(game))
+                dispatch(setElo(elo))
+                dispatch(setBots(bots))
+                dispatch(setAccounts(accounts))
             }
         }
     }
@@ -282,7 +291,7 @@ export const sendBinary = (binary) => async dispatch => {
     }
 }
 
-export const depositErc20 = () => async dispatch => {
+export const depositErc20 = (tokenAddress, tokenAmount) => async dispatch => {
     try{
         let overrides = {
             gasLimit: 30000000,     
@@ -290,7 +299,7 @@ export const depositErc20 = () => async dispatch => {
             nonce: 123,
         };
 
-        const erc20Amount = ethers.BigNumber.from(10000000)
+        const erc20Amount = ethers.BigNumber.from(tokenAmount)
         const signerAddress = await erc20PortalContract.signer.getAddress();
         console.log(`using account "${signerAddress}"`);
         const allowance = await erc20Contract.allowance(
@@ -312,7 +321,7 @@ export const depositErc20 = () => async dispatch => {
 
         //send transaction
         console.log(erc20PortalContract)
-        const tx = await erc20PortalContract.erc20Deposit(CartesiToken.address, erc20Amount, "0x");
+        const tx = await erc20PortalContract.erc20Deposit(tokenAddress, erc20Amount, "0x");
         console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
         console.log("1 confirmation")
@@ -358,7 +367,7 @@ export const sendMove = (move) => async dispatch => {
     }
 }
 
-export const createBotGame = (botId1, botId2, matchCount) => async dispatch => {
+export const createBotGame = (botId1, botId2, matchCount, wagerAmount) => async dispatch => {
     try{
         let overrides = {
             gasLimit: 30000000,     
@@ -375,6 +384,7 @@ export const createBotGame = (botId1, botId2, matchCount) => async dispatch => {
                     "isBot": true,
                     "botId1": "${botId1}",
                     "botId2": "${botId2}",
+                    "wagerAmount": ${wagerAmount},
                     "matchCount": ${matchCount}
                 }
             }
@@ -392,7 +402,7 @@ export const createBotGame = (botId1, botId2, matchCount) => async dispatch => {
     }
 }
 
-export const createGame = () => async dispatch => {
+export const createGame = (wagerAmount) => async dispatch => {
     dispatch(setInputStatus({
         type: InputType.CREATE,
         status: InputStatus.ACTIVE
@@ -406,7 +416,15 @@ export const createGame = () => async dispatch => {
         };
 
         //send transaction
-        const message = `{"op": "create", "value": "sds"}`
+        const message = `
+            {
+                "op": "create", 
+                "value": {
+                    "isBot" : false,
+                    "wagerAmount": ${wagerAmount}
+                }
+            }
+        `;
         const input = ethers.utils.toUtf8Bytes(message)
         const tx = await cartesiDappContract.addInput(input, overrides)
         console.log(tx);

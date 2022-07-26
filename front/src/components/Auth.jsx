@@ -1,12 +1,13 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, useModal, Modal, Text } from "@nextui-org/react";
+import { Button, useModal, Modal, Text, Row } from "@nextui-org/react";
 import { FaUser } from 'react-icons/fa';
 import { toHex, truncateAddress } from "../ether/utils";
 import { setChainId, setAccounts, setError, setIsActivating, setIsActive, setProvider } from "../store/auth/authSlice";
 import { useEffect } from 'react'
 import { hooks, metaMask } from '../ether/connectors/metaMask'
 import { initContracts } from "../store/game/gameSlice";
+import AssetDisplay from "./AssetDisplay";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -51,9 +52,12 @@ export default () => {
     <div>
       <div>
       {isActive ? (
-        <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => metaMask.deactivate()}>
-          {truncateAddress( accounts[0])}
-        </Button>
+        <Row justify="space-evenly">
+          <AssetDisplay/>
+          <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => metaMask.deactivate()}>
+            {truncateAddress( accounts[0])}
+          </Button>
+        </Row>
       ) : (
         <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => setVisible(true)}>
           Connect to a wallet

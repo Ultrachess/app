@@ -6,7 +6,7 @@ import { Text, Grid, Button, Spacer, Card, Row, Pagination, Divider, Table} from
 import { Chessboard } from "react-chessboard";
 import { Link, NavLink } from "react-router-dom";
 import GameListItem from "./GameListItem";
-import { truncateAddress } from "../ether/utils";
+import { truncateAddress, formatDate } from "../ether/utils";
 
 
 export default () => {
@@ -39,15 +39,12 @@ export default () => {
             label: "",
         }
     ];
-    const rows = games.map((game, index) => {
+
+    const rows = Object.values(games).map((game, index) => {
         var p1 = game.players[0] ?? "not joined"
         var p2 = game.players[1] ?? "not joined"
         var players = truncateAddress(p1) + " vs " + truncateAddress(p2)
         var date  = new Date(game.timestamp * 1000)
-        var hours = date.getHours() %12;
-        var minutes = "0" + date.getMinutes();
-        var seconds = "0" + date.getSeconds();
-        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
         return {
             key: index,
             id: game.id,
@@ -55,7 +52,7 @@ export default () => {
             players,
             time: "unlimited",
             mode: "casual",
-            created: formattedTime
+            created: formatDate(date)
         }
     })
 

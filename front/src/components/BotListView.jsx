@@ -1,7 +1,13 @@
 import * as React from "react";
-import { Text, Grid, Table, Row } from "@nextui-org/react";
-import { truncateAddress } from "../ether/utils";
+import { Text, Grid, Table, Row, Button, Card,  } from "@nextui-org/react";
+import { truncateAddress, formatDate } from "../ether/utils";
+import Address from "./Address";
+import ModalChallengeBot from "./ModalChallengeBot";
+
 export default ({bots}) => {
+    const [createMatchModalVisible, setCreateMatchModalVisible] = React.useState(false)
+    const [selectedBot, setSelectedBot] = React.useState()
+    
     const columns = [
         {
           key: "botId",
@@ -12,51 +18,64 @@ export default ({bots}) => {
           label: "OWNER ID",
         },
         {
-            key: "created",
-            label: "CREATED",
+            key: "createdAt",
+            label: "CREATED AT"
+        },
+        {
+            key: "challenge",
+            label: "",
         }
     ];
 
-    const rows = bots.map((bot, index) => {
+    const rows = Object.values(bots).map((bot, index) => {
         var ownerId = truncateAddress(bot.ownerId ?? "not defined")
-        var botId = bot.botId ?? "not defined"
+        var botId = bot.id ?? "not defined"
         var date  = new Date(bot.timestamp * 1000)
-        var hours = date.getHours() %12;
-        var minutes = "0" + date.getMinutes();
-        var seconds = "0" + date.getSeconds();
-        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        
         return {
             key: index,
             ownerId: ownerId,
             botId: botId,
-            created: formattedTime
+            createdAt: formatDate(date)
         }
     })
 
+    const handleChallenge = (botId) => {
+        setSelectedBot(botId)
+        setCreateMatchModalVisible(true)
+    }   
+    const handleCloseCreateModal = () => {setCreateMatchModalVisible(false)}
+
     return (
         <div>
-            <Text h3>Bot list</Text>
+            <ModalChallengeBot
+                visible={createMatchModalVisible}
+                botId = {selectedBot}
+                closeHandler = {handleCloseCreateModal}
+            />    
             <Table
-            aria-label="Example table with dynamic content"
-            css={{
-                height: "auto",
-                minWidth: "100%",
-                overflow: "hidden"
-            }}
-            shadow={false}
-            >
-                <Table.Header columns={columns}>
-                    {(column) => (
-                        <Table.Column key={column.key}>{column.label}</Table.Column>
-                    )}
-                </Table.Header>
-                <Table.Body items={rows}>
-                    {(item) => (
-                        <Table.Row key={item.key}>
-                            {(columnKey) => <Table.Cell>{item[columnKey]}</Table.Cell>}
-                        </Table.Row>
-                    )}
-                </Table.Body>
+                aria-label="Example table with dynamic content"
+                css={{
+                    height: "auto",
+                    minWidth: "100%",
+                    overflow: "hidden"
+                }}
+                shadow={false}
+                >
+                    <Table.Header columns={columns}>
+                        {(column) => (
+                            <Table.Column key={column.key}>{column.label}</Table.Column>
+                        )}
+                    </Table.Header>
+                    <Table.Body items={rows}>
+                        {(item) => (
+                            <Table.Row key={item.key}>
+                                {(columnKey) => <Table.Cell>{ 
+                                    columnKey == "ownerId" ? <Address value={item[columnKey]}/> :
+                                    columnKey == "challenge" ? <Button onClick={()=>handleChallenge(item.botId)} color="primary">challenge</Button> : item[columnKey] }</Table.Cell>}
+                            </Table.Row>
+                        )}
+                    </Table.Body>
             </Table>
         </div>
         
