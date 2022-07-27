@@ -24,6 +24,7 @@ class AccountBalanceManager:
     def deposit(self, account, value, token):
         prev = self.getBalance(account, token)
         new = prev + value
+        logger.info("prev:" + str(prev) + " new:"+str(new)+ " value:"+str(value) + " token:"+str(token))
         self.setBalance(account, new, token)
 
     def withdraw(self, account, value, token):

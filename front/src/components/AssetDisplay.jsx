@@ -17,7 +17,7 @@ export default () => {
         for (const tokenAddress in balances) {
             const balance = balances[tokenAddress];
             content.push(
-                <Button.Group key={index} color="primary" bordered>
+                <Button.Group css={{height:"100%", marginTop:"0"}} key={index} color="primary" bordered>
                     <Button>{balance}</Button>
                     <Button icon={<FaCoins/>}>{getTokenNameFromAddress(tokenAddress)}</Button>
                 </Button.Group>
@@ -29,7 +29,7 @@ export default () => {
     };
 
     return (
-        <Row justify="space-evenly">
+        <Row css={{height:"40px"}} justify="space-evenly">
             {getAssets()}
         </Row> 
     );

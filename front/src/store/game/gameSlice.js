@@ -9,8 +9,11 @@ import CartesiToken from "../../../../deployments/localhost/CartesiToken.json"
 import { createClient, defaultExchanges } from '@urql/core';
 import { pipe, subscribe } from "wonka";
 import { Chess } from "chess.js";
+import {default as axios} from "axios"
+axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 
 const DAPP_ADDRESS = "0xa37aE2b259D35aF4aBdde122eC90B204323ED304"
+const SERVER_URL = 'http://localhost:5002'
 const GetNoticeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetNotice"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NoticeKeys"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"GetNotice"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"session_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch_index"}},{"kind":"Field","name":{"kind":"Name","value":"input_index"}},{"kind":"Field","name":{"kind":"Name","value":"notice_index"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}}]}}]}}]}
 export const gameSlice = createSlice({
     name: "game",
@@ -48,6 +51,23 @@ export const gameSlice = createSlice({
         },
         setBots: (state, action) => {
             state.bots = action.payload
+        },
+        setAppState: (state, action) => {
+            var {elo, game, bots, accounts} = action.payload
+            if(
+                !deepEqual(state.elo, elo) ||
+                !deepEqual(state.games, game) ||
+                !deepEqual(state.bots, bots) ||
+                !deepEqual(state.accounts, accounts)
+            ){ 
+                state.cache.isUpToDate = !state.cache.isUpToDate
+                console.log("is not up to date, updating")
+            }
+
+            state.elo = elo
+            state.games = game
+            state.bots = bots
+            state.accounts = accounts
         },
         updateGame: (state, action) => {
             var {id, game} = action.payload
@@ -156,7 +176,7 @@ export const gameSlice = createSlice({
     }
 })
 
-export const { setGames, setElo, setAccounts, setBots, updateGame, addGame, removeGame, setLatestInput, processInput, setInputStatus } = gameSlice.actions
+export const { setAppState, setGames, setElo, setAccounts, setBots, updateGame, addGame, removeGame, setLatestInput, processInput, setInputStatus } = gameSlice.actions
 
 const QUERY = `
     { 
@@ -179,6 +199,7 @@ var erc20PortalContract;
 var erc20Contract;
 var client;
 var fn2;
+var instance = axios.create({baseURL: SERVER_URL })
 
 var hexToUtf8 = function( s ){
     return decodeURIComponent( s.replace( /../g, '%$&' ) );
@@ -188,41 +209,40 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function updateGameState(dispatch, inputs){
-    if(inputs instanceof Array){
-        var input = inputs[inputs.length - 1]
-        if(input){
-            var { input_index } = input
-            var { notices } = input.result ?? []
-            
-            if(notices instanceof Array){
-                var inputsParsed = notices.map((notice) => {
-                    var { payload } = notice
-                    var {elo, game, bots, accounts} = JSON.parse(hexToUtf8(payload))
-                    return {
-                        elo,
-                        game,
-                        bots,
-                        accounts,
-                    }
-                })
-                var {elo, game, bots, accounts} = inputsParsed[inputsParsed.length - 1]
-
-                dispatch(setGames(game))
-                dispatch(setElo(elo))
-                dispatch(setBots(bots))
-                dispatch(setAccounts(accounts))
-            }
-        }
+function deepEqual(object1, object2) {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+    if (keys1.length !== keys2.length) {
+      return false;
     }
+    for (const key of keys1) {
+      const val1 = object1[key];
+      const val2 = object2[key];
+      const areObjects = isObject(val1) && isObject(val2);
+      if (
+        areObjects && !deepEqual(val1, val2) ||
+        !areObjects && val1 !== val2
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
+  function isObject(object) {
+    return object != null && typeof object === 'object';
+  }
+
+function updateGameState(dispatch, payload){
+    var state = JSON.parse(ethers.utils.toUtf8String(payload))
+    console.log(state)
+    dispatch(setAppState(state))
 }
-   
+  
 async function poll(dispatch) {
-    await delay(5000);
-    var result = await client
-        .query(QUERY, { })
-        .toPromise()
-    updateGameState(dispatch, result?.data?.GetEpochStatus?.processed_inputs)
+    await delay(500);
+    var response = await instance.get("/inspect/0xa37ae2b259d35af4abdde122ec90b204323ed304") 
+    var payload = response.data.reports[0].payload
+    updateGameState(dispatch, payload)
     await poll(dispatch);
 }
 

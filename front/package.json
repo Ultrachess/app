@@ -23,6 +23,7 @@
     "@web3-react/url": "^8.0.22-beta.0",
     "@web3-react/walletconnect": "^8.0.31-beta.0",
     "async": "^3.2.3",
+    "axios": "^0.27.2",
     "blockies": "^0.0.2",
     "chess.js": "^0.13.0",
     "emotion-theming": "11.0.0",

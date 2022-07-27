@@ -30,7 +30,7 @@ export default () => {
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
 
   useEffect(() => {
-    if(true){
+
       var isAlreadyInGame = playerIsInGame(games, address, gameId),
       canJoin = canJoinGame(games, gameId),
       gameIsActive = isGameActive(games, gameId),
@@ -41,18 +41,15 @@ export default () => {
       setGameSide(getSide(game, address))
       setTopAddress(getTopAddress(getGameById(games, gameId), address, gameSide))
       setBottomAddress(getBottomAddress(getGameById(games, gameId), address, gameSide)) 
-    } 
-  },[games])
+  },[isUpToDate])
 
   useEffect(() => {
-    if(true){
       var game = getGameById(games, gameId)
       if(game)
         safeGameMutate((gameValue) => {
           gameValue.load_pgn(game.pgn)
         })
-    }
-  }, [games])
+  }, [isUpToDate])
 
   useEffect(() => {
     setGameHighlights()

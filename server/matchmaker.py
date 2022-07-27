@@ -34,7 +34,7 @@ class Matchmaker:
 
             #Spawn new game
             id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-            self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=timestamp)
+            self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=self.timestamp)
 
             #Add bot 1
             botId1 = options["botId1"]
@@ -60,7 +60,7 @@ class Matchmaker:
             canCreate = not self.isInGame(sender)
             if(canCreate):
                 id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-                self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp)
+                self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=self.timestamp)
                 successfullAdd = self.games[str(id)].addPlayer(sender)
                 return {
                     "value": str(id),

@@ -66,6 +66,17 @@ def send_notice(index, sender, operation, value, success, timeStamp):
     logger.info("New PayLoad Added: "+ hex_string)
     logger.info("Adding notice")
 
+def get_state_hex():
+    data_set = {
+        "game": matchMaker.getState(),
+        "bots": botFactory.getState(), 
+        "accounts": accountManager.getState(),
+        "elo": eloManager.getState()
+    }
+    json_object = json.dumps(data_set)
+    hex_string = convert_to_hex(json_object)
+    return hex_string
+
 def send_notice_state():
     data_set = {
         "game": matchMaker.getState(),
@@ -202,17 +213,18 @@ def handle_advance(data):
 
     #logger.info(f"Received advance request data {data}")
     logger.info("Adding notice")
-    send_notice_state()
+    #send_notice_state()
     ##response = requests.post(rollup_server + "/notice", json=notice)
     ##logger.info(f"Received notice status {response.status_code} body {response.content}")
     return "accept"
 
 def handle_inspect(data):
-    logger.info(f"Received inspect request data {data}")
-    logger.info("Adding report")
-    report = {"payload": data["payload"]}
+    #logger.info(f"Received inspect request data {data}")
+    #logger.info("Adding report")
+    payload = get_state_hex()
+    report = {"payload": get_state_hex()}
     response = requests.post(rollup_server + "/report", json=report)
-    logger.info(f"Received report status {response.status_code}")
+    #logger.info(f"Received report status {response.status_code}")
     return "accept"
 
 handlers = {
@@ -224,17 +236,21 @@ finish = {"status": "accept"}
 rollup_address = "0xa37ae2b259d35af4abdde122ec90b204323ed304"
 
 while True:
-    logger.info("Sending finish")
+    #logger.info("Sending finish")
     response = requests.post(rollup_server + "/finish", json=finish)
-    logger.info(f"Received finish status {response.status_code}")
+    #logger.info(f"Received finish status {response.status_code}")
     if response.status_code == 202:
         logger.info("No pending rollup request, trying again")
     else:
         rollup_request = response.json()
-        metadata = rollup_request["data"]["metadata"]
-        if metadata["epoch_index"] == 0 and metadata["input_index"] == 0:
+        #logger.info("rollup request: ")
+        #logger.info(rollup_request)
+        if "data" in rollup_request and "metadata" in rollup_request["data"]:
+            metadata = rollup_request["data"]["metadata"]
+        else: metadata = None
+        if metadata != None and metadata["epoch_index"] == 0 and metadata["input_index"] == 0:
             rollup_address = metadata["msg_sender"]
-            logger.info(f"Captured rollup address: {rollup_address}")
+            #logger.info(f"Captured rollup address: {rollup_address}")
         else:
             handler = handlers[rollup_request["request_type"]]
             finish["status"] = handler(rollup_request["data"])

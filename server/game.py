@@ -13,7 +13,7 @@ DRAW_POINTS = 0.5
 DEFAULT_ERC20 = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
 
 class Game:
-    def __init__(self, id, isBot=False, wagerAmount=0, token=DEFAULT_ERC20, timestamp):
+    def __init__(self, id, isBot=False, wagerAmount=0, token=DEFAULT_ERC20, timestamp=0):
         self.id = id
         self.players = []
         self.rootGame = chess.pgn.Game()
@@ -21,7 +21,7 @@ class Game:
         self.isBot = isBot
         self.matchCount = 1
         self.wagerAmount = wagerAmount
-        self.token = token
+        self.token = token.lower()
         self.timestamp = timestamp
 
     def __isInGame(self, address):
@@ -60,14 +60,16 @@ class Game:
         p1, p2 = self.players[0], self.players[1]
         score1, score2 = self.fetchPlayerPoint(p1), self.fetchPlayerPoint(p2)
         deps.eloManager.applyGame(p1, p2, score1, score2)
+        logger.info("score1:" + str(score1) + " score2:"+str(score2))
         #calculate funds for player 1
-        funds1 = score1 * self.wagerAmount
+        funds1 = score1 * (self.wagerAmount * 2)
         address1 = p1 if not self.isBot else deps.botFactory.getOwner(p1)
         deps.accountManager.deposit(address1, funds1, self.token)
         #calculate funds for player 2
-        funds2 = score2 * self.wagerAmount
+        funds2 = score2 * (self.wagerAmount * 2)
         address2 = p2 if not self.isBot else deps.botFactory.getOwner(p2)
-        deps.accountManager.deposit(address1, funds1, self.token)
+        deps.accountManager.deposit(address2, funds2, self.token)
+        logger.info("funds1:" + str(funds1) + " funds2:"+str(funds2))
 
     def addPlayer(self, player):
         try:

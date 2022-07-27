@@ -15,7 +15,7 @@ export default ({bots}) => {
         },
         {
           key: "ownerId",
-          label: "OWNER ID",
+          label: "OWNER ADDRESS",
         },
         {
             key: "createdAt",
