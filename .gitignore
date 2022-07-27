@@ -1,4 +1,6 @@
 node_modules
 env
-deployments/*
+deployments
 localhost/*
+ngrok
+__pycache__/*

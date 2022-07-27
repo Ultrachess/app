@@ -28,7 +28,7 @@ export default ({bots}) => {
     ];
 
     const rows = Object.values(bots).map((bot, index) => {
-        var ownerId = truncateAddress(bot.ownerId ?? "not defined")
+        var ownerId = truncateAddress(bot.owner ?? "not defined")
         var botId = bot.id ?? "not defined"
         var date  = new Date(bot.timestamp * 1000)
         

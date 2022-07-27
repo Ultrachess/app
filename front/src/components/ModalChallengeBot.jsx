@@ -11,7 +11,7 @@ export default ({visible, closeHandler, botId}) => {
 
     const onWagerValueChange = (event) => setWagerValue(event.target.value)
     const onChallengerBotValueChange = ( event ) => setChallengerBot(event.target.value)
-    const handleCreateBotGame = () => dispatch( createBotGame(botId1, challengerBot, 1, wagerValue) )
+    const handleCreateBotGame = () => dispatch( createBotGame(botId, challengerBot, 1, wagerValue) )
 
     return (
         <Modal

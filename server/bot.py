@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class Bot: 
-    def __init__(self, id, owner, binary):
+    def __init__(self, id, owner, binary, timestamp):
         self.id = id
         self.owner = owner
         self.timestamp = timestamp
@@ -39,9 +39,9 @@ class BotFactory:
     def __init__(self):
         self.bots = {}
 
-    def create(self, owner, binary):
+    def create(self, owner, binary, timestamp):
         id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
-        bot = Bot(id, owner, binary)
+        bot = Bot(id, owner, binary, timestamp)
         self.bots[id] = bot
         return True
     

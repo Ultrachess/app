@@ -192,7 +192,7 @@ def handle_advance(data):
         send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "createBot":
         binary = bytes.fromhex(payload)
-        success = botFactory.create(sender, binary)
+        success = botFactory.create(sender, binary, timeStamp)
         send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "releaseFunds":
         accountManager.release(sender, value)
