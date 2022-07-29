@@ -1,4 +1,4 @@
-# chessApp DApp
+# Ultrachess DApp
 
 chessApp is a customized DApp written in Python, which originally resembles the one provided by the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python).
 
@@ -83,6 +83,9 @@ With that in place, you can submit a deploy transaction to the Cartesi DApp Fact
 
 ```shell
 DAPP_NAME=chessApp docker compose -f ./deploy-testnet.yml up
+
+
+sudo RPC_URL=https://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn DAPP_NAME=chessApp MNEMONIC="test test test test test test test test test test test junk" WSS_URL=wss://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn CHAIN_ID=137 NETWORK=polygon docker compose -f ./deploy-testnet.yml up
 ```
 
 This will create a file at `./deployments/<network>/chessApp.address` with the deployed contract's address.
@@ -90,6 +93,9 @@ Once the command finishes, it is advisable to stop the docker compose and remove
 
 ```shell
 DAPP_NAME=chessApp docker compose -f ./deploy-testnet.yml down -v
+
+sudo RPC_URL=https://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn DAPP_NAME=chessApp MNEMONIC="test test test test test test test test test test test junk" WSS_URL=wss://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn CHAIN_ID=137 NETWORK=polygon docker compose -f ./deploy-testnet.yml down -v
+
 ```
 
 After that, a corresponding Cartesi Validator Node must also be instantiated in order to interact with the deployed smart contract on the target network and handle the back-end logic of the DApp.
@@ -106,7 +112,17 @@ Then, the node itself can be started by running a docker compose as follows:
 
 ```shell
 DAPP_NAME=mydapp docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up
+
+
+sudo RPC_URL=https://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn DAPP_NAME=chessApp MNEMONIC="test test test test test test test test test test test junk" WSS_URL=wss://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn CHAIN_ID=137 NETWORK=polygon docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up
 ```
+
+Or deploy to host testnet
+
+```shell
+sudo RPC_URL=https://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn DAPP_NAME=chessApp MNEMONIC="test test test test test test test test test test test junk" WSS_URL=wss://polygon-mumbai.g.alchemy.com/v2/IagdbefgkcKKWI5SzhwyzzMCvlfRjJNn CHAIN_ID=137 NETWORK=polygon docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml -f ./docker-compose-host-testnet.yml up
+```
+
 
 ## Interacting with the deployed application
 

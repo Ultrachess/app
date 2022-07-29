@@ -128,7 +128,7 @@ def handle_advance(data):
     logger.info(rollup_address)
 
     try:
-        if sender == rollup_address:
+        if sender.lower() == rollup_address.lower():
             logger.info("is from rollup address")
             #Is from rollup contract
             binary = bytes.fromhex(payload)
@@ -233,7 +233,7 @@ handlers = {
 }
 
 finish = {"status": "accept"}
-rollup_address = "0xa37ae2b259d35af4abdde122ec90b204323ed304"
+rollup_address = "0x888C85931cAB752292B75b445Dada3bEF487491e"
 
 while True:
     #logger.info("Sending finish")

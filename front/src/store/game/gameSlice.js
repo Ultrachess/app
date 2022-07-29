@@ -12,8 +12,8 @@ import { Chess } from "chess.js";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 
-const DAPP_ADDRESS = "0xa37aE2b259D35aF4aBdde122eC90B204323ED304"
-const SERVER_URL = 'http://localhost:5002'
+const DAPP_ADDRESS = "0x888C85931cAB752292B75b445Dada3bEF487491e"
+const SERVER_URL = 'https://66ec-2601-2c5-c181-41c0-5f1d-2afb-2496-2c1d.ngrok.io'
 const GetNoticeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetNotice"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NoticeKeys"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"GetNotice"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"session_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch_index"}},{"kind":"Field","name":{"kind":"Name","value":"input_index"}},{"kind":"Field","name":{"kind":"Name","value":"notice_index"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}}]}}]}}]}
 export const gameSlice = createSlice({
     name: "game",
@@ -196,7 +196,6 @@ const QUERY = `
 
 var cartesiDappContract;
 var erc20PortalContract;
-var erc20Contract;
 var client;
 var fn2;
 var instance = axios.create({baseURL: SERVER_URL })
@@ -264,11 +263,7 @@ export const initContracts = (signer) => async dispatch => {
         signer
     )
 
-    erc20Contract = new ethers.Contract(
-        CartesiToken.address,
-        CartesiToken.abi,
-        signer
-    )
+    
 
     //instantiate client
     client = createClient({
@@ -311,13 +306,19 @@ export const sendBinary = (binary) => async dispatch => {
     }
 }
 
-export const depositErc20 = (tokenAddress, tokenAmount) => async dispatch => {
+export const depositErc20 = (signer, tokenAddress, tokenAmount) => async dispatch => {
     try{
         let overrides = {
             gasLimit: 30000000,     
             gasPrice: ethers.utils.parseUnits('9.0', 'gwei'),   
             nonce: 123,
         };
+
+        var erc20Contract = new ethers.Contract(
+            tokenAddress,
+            CartesiToken.abi,
+            signer
+        )
 
         const erc20Amount = ethers.BigNumber.from(tokenAmount)
         const signerAddress = await erc20PortalContract.signer.getAddress();
@@ -368,7 +369,7 @@ export const sendMove = (move) => async dispatch => {
         const message = `{"op": "move", "value": "${move}"}`
         console.log(message)
         const input = ethers.utils.toUtf8Bytes(message)
-        const tx = await cartesiDappContract.addInput(input, overrides)
+        const tx = await cartesiDappContract.addInput(input)
         console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
         console.log("1 confirmation")
@@ -410,7 +411,7 @@ export const createBotGame = (botId1, botId2, matchCount, wagerAmount) => async 
             }
         `;
         const input = ethers.utils.toUtf8Bytes(message)
-        const tx = await cartesiDappContract.addInput(input, overrides)
+        const tx = await cartesiDappContract.addInput(input)
         console.log(tx);
         console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
@@ -446,7 +447,7 @@ export const createGame = (wagerAmount) => async dispatch => {
             }
         `;
         const input = ethers.utils.toUtf8Bytes(message)
-        const tx = await cartesiDappContract.addInput(input, overrides)
+        const tx = await cartesiDappContract.addInput(input)
         console.log(tx);
         console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
