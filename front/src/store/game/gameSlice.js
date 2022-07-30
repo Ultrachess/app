@@ -13,7 +13,7 @@ import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 
 const DAPP_ADDRESS = "0x888C85931cAB752292B75b445Dada3bEF487491e"
-const SERVER_URL = 'https://66ec-2601-2c5-c181-41c0-5f1d-2afb-2496-2c1d.ngrok.io'
+const SERVER_URL = 'https://3c08-2601-2c5-c181-41c0-4efc-c7-7e04-89d3.ngrok.io/'
 const GetNoticeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetNotice"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NoticeKeys"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"GetNotice"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"session_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch_index"}},{"kind":"Field","name":{"kind":"Name","value":"input_index"}},{"kind":"Field","name":{"kind":"Name","value":"notice_index"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}}]}}]}}]}
 export const gameSlice = createSlice({
     name: "game",
