@@ -36,6 +36,11 @@ class Matchmaker:
             id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
             self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=self.timestamp)
 
+            if "playerId" in options:
+                player1 = options["playerId"]
+                self.games[str(id)].addPlayer(playerId)
+                self.games[str(id)].setPlayerInHumanVBot(playerId)
+
             #Add bot 1
             botId1 = options["botId1"]
             self.games[str(id)].addPlayer(botId1)

@@ -103,15 +103,21 @@ export function GameStateUpdater() {
                 if(shouldCheckAction(action)){
                     const transaction = pendingTransactions[action.transactionHash]
                     const expectedNotice = payloads.find(p => p.actionId == actionId)
-                    if(transaction.confirmedTime) action.status = 
-                        action.type == ActionType.TRANSACTION
-                        ? ActionStates.PROCESSED : ActionStates.CONFIRMED_WAITING_FOR_L2
-                    else action.status = ActionStates.PENDING
-                    if(expectedNotice) {
-                        action.status = expectedNotice.success? ActionStates.PROCESSED : ActionStates.ERROR
-                        action.result = expectedNotice
-                        action.processedTime = new Date().getTime()
+                    if(!transaction){
+                        action.status = ActionStates.INITIALIZED
                     }
+                    else{
+                        if(transaction.confirmedTime) action.status = 
+                            action.type == ActionType.TRANSACTION
+                            ? ActionStates.PROCESSED : ActionStates.CONFIRMED_WAITING_FOR_L2
+                        else action.status = ActionStates.PENDING
+                        if(expectedNotice) {
+                            action.status = expectedNotice.success? ActionStates.PROCESSED : ActionStates.ERROR
+                            action.result = expectedNotice
+                            action.processedTime = new Date().getTime()
+                        }
+                    }
+                    
                     if(!shouldCheckAction(action)) 
                         ActionResolverObject[actionId]
                             ?.resolve(expectedNotice 

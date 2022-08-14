@@ -23,6 +23,7 @@ class Game:
         self.wagerAmount = wagerAmount
         self.token = token.lower()
         self.timestamp = timestamp
+        self.player1 = None
 
     def __isInGame(self, address):
         return address in self.players
@@ -39,6 +40,14 @@ class Game:
 
     def __isMinPlayers(self):
         return len(self.players) >= 2
+
+    def __senderIsPlayer(self, sender):
+        if self.player1 == None:
+            return False
+        return sender.lower() == self.player1.lower()
+
+    def setPlayerInHumanVBot(self, playerId):
+        self.player1 = playerId
 
     def isGameEnd(self):
         outcome = self.state.board().outcome()
@@ -74,9 +83,10 @@ class Game:
     def addPlayer(self, player):
         try:
             canAdd = (not self.__isMaxPlayers()) and (not self.__isInGame(player))
-            if(canAdd):
+            address = player if not self.isBot else deps.botFactory.getOwner(player)
+            hasFunds = deps.accountManager.getBalance(address, self.token) >= self.wagerAmount
+            if canAdd and hasFunds:
                 self.players.append(player)
-                address = player if not self.isBot else deps.botFactory.getOwner(player)
                 deps.accountManager.withdraw(address, self.wagerAmount, self.token)
                 return True
             return False
@@ -112,6 +122,11 @@ class Game:
                 isGameEnd = self.isGameEnd()
                 if isGameEnd:
                    self.handleEnd()
+                else if self.__senderIsPlayer(sender):
+                    bot = deps.botFactory.bots[botId]
+                    board = self.state.board()
+                    uci = bot.run(board)
+                    self.move(botId, uci)
                 return True
             else:
                 return False
@@ -128,6 +143,8 @@ class Game:
     
     def setMatchCount(self, matchCount):
         self.matchCount = matchCount
+
+    def 
 
     def run(self):
         while  not self.isGameEnd():
