@@ -3,4 +3,5 @@ env
 deployments
 localhost/*
 ngrok
-__pycache__/*
+__pycache__/
+

@@ -12,8 +12,8 @@ import { Chess } from "chess.js";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 
-const DAPP_ADDRESS = "0x888C85931cAB752292B75b445Dada3bEF487491e"
-const SERVER_URL = 'https://3c08-2601-2c5-c181-41c0-4efc-c7-7e04-89d3.ngrok.io/'
+export const DAPP_ADDRESS = "0x4105B3d934E4c8bB2CF0dEa3eBF3D04c587bf387"
+const SERVER_URL = "http://localhost:3002"
 const GetNoticeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetNotice"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NoticeKeys"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"GetNotice"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"session_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch_index"}},{"kind":"Field","name":{"kind":"Name","value":"input_index"}},{"kind":"Field","name":{"kind":"Name","value":"notice_index"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}}]}}]}}]}
 export const gameSlice = createSlice({
     name: "game",
@@ -29,9 +29,13 @@ export const gameSlice = createSlice({
         games: {},
         bots: {},
         elo: {},
-        accounts: {}
+        accounts: {},
+        blockNumber: 0
     },
     reducers: {
+        setBlockNumber: (state, action) => {
+            state.blockNumber = action.payload
+        },
         setInputStatus: (state, action) => {
             var { status, type } = action.payload
             state.currentInputState.status = status
@@ -176,29 +180,14 @@ export const gameSlice = createSlice({
     }
 })
 
-export const { setAppState, setGames, setElo, setAccounts, setBots, updateGame, addGame, removeGame, setLatestInput, processInput, setInputStatus } = gameSlice.actions
+export const { setBlockNumber, setAppState, setGames, setElo, setAccounts, setBots, updateGame, addGame, removeGame, setLatestInput, processInput, setInputStatus } = gameSlice.actions
 
-const QUERY = `
-    { 
-        GetEpochStatus(query:{session_id: "default_rollups_id", epoch_index:"0"})
-            { 
-                processed_inputs{ 
-                    input_index 
-                    result{
-                        notices{
-                            payload
-                        } 
-                    } 
-                } 
-            } 
-        }
-    `;
+
 
 var cartesiDappContract;
 var erc20PortalContract;
 var client;
 var fn2;
-var instance = axios.create({baseURL: SERVER_URL })
 
 var hexToUtf8 = function( s ){
     return decodeURIComponent( s.replace( /../g, '%$&' ) );
@@ -233,12 +222,14 @@ function deepEqual(object1, object2) {
 
 function updateGameState(dispatch, payload){
     var state = JSON.parse(ethers.utils.toUtf8String(payload))
-    console.log(state)
+    //console.log(state)
     dispatch(setAppState(state))
 }
   
 async function poll(dispatch) {
     await delay(500);
+    var instance = axios.create({baseURL: SERVER_URL })
+
     var response = await instance.get("/inspect/0xa37ae2b259d35af4abdde122ec90b204323ed304") 
     var payload = response.data.reports[0].payload
     updateGameState(dispatch, payload)
@@ -320,13 +311,14 @@ export const depositErc20 = (signer, tokenAddress, tokenAmount) => async dispatc
             signer
         )
 
-        const erc20Amount = ethers.BigNumber.from(tokenAmount)
+        const erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(tokenAmount))
         const signerAddress = await erc20PortalContract.signer.getAddress();
         console.log(`using account "${signerAddress}"`);
         const allowance = await erc20Contract.allowance(
             signerAddress,
             erc20PortalContract.address
         );
+        console.log(`current allowance ${allowance}`)
         if (allowance.lt(erc20Amount)) {
             const allowanceApproveAmount =
                 ethers.BigNumber.from(erc20Amount).sub(allowance);
@@ -335,7 +327,7 @@ export const depositErc20 = (signer, tokenAddress, tokenAmount) => async dispatc
             );
             const tx = await erc20Contract.approve(
                 erc20PortalContract.address,
-                allowanceApproveAmount
+                erc20Amount
             );
             await tx.wait();
         }
@@ -397,6 +389,9 @@ export const createBotGame = (botId1, botId2, matchCount, wagerAmount) => async 
             //blockTag: 33,     
         };
 
+        const erc20WagerAmount = ethers.BigNumber.from(ethers.utils.parseUnits(wagerAmount))
+
+
         //send transaction
         const message = `
             {
@@ -405,7 +400,7 @@ export const createBotGame = (botId1, botId2, matchCount, wagerAmount) => async 
                     "isBot": true,
                     "botId1": "${botId1}",
                     "botId2": "${botId2}",
-                    "wagerAmount": ${wagerAmount},
+                    "wagerAmount": ${erc20WagerAmount},
                     "matchCount": ${matchCount}
                 }
             }
@@ -423,7 +418,7 @@ export const createBotGame = (botId1, botId2, matchCount, wagerAmount) => async 
     }
 }
 
-export const createGame = (wagerAmount) => async dispatch => {
+export const createGame = (token, wagerAmount) => async dispatch => {
     dispatch(setInputStatus({
         type: InputType.CREATE,
         status: InputStatus.ACTIVE
@@ -436,13 +431,17 @@ export const createGame = (wagerAmount) => async dispatch => {
             //blockTag: 33,     
         };
 
+        console.log(`wager amount ${wagerAmount}`)
+        const erc20WagerAmount = ethers.utils.parseUnits(wagerAmount)
+
         //send transaction
         const message = `
             {
                 "op": "create", 
                 "value": {
                     "isBot" : false,
-                    "wagerAmount": ${wagerAmount}
+                    "token" : "${token}",
+                    "wagerAmount": ${erc20WagerAmount}
                 }
             }
         `;
@@ -483,7 +482,7 @@ export const joinGame = (roomId) => async dispatch => {
         //send transaction
         const message = `{"op": "join", "value": "${roomId}"}`
         const input = ethers.utils.toUtf8Bytes(message)
-        const tx = await cartesiDappContract.addInput(input, overrides)
+        const tx = await cartesiDappContract.addInput(input)
         console.log(tx);
         console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);

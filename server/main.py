@@ -41,6 +41,22 @@ def format_to_input(index, sender, operation, value, success, timeStamp):
 def convert_to_hex(s_input):
     return "0x"+str(s_input.encode("utf-8").hex())
 
+def send_notice_info(actionId, timestamp, success, value):
+    data_set = {
+        "actionId": actionId,
+        "timestamp": timestamp, 
+        "success": success,
+        "value": value
+    }
+    json_object = json.dumps(data_set)
+    logger.info("Sending notice : "+ json_object)
+    hex_string = convert_to_hex(json_object)
+    response = requests.post(rollup_server + "/notice", json={"payload": hex_string})
+    logger.info(f"Received notice status {response.status_code} body {response.content}")
+    logger.info("New PayLoad Added: "+ hex_string)
+    logger.info("Adding notice")
+
+
 def send_notice_deposit(index, address, amount, token):
     data_set = {
         "index": index,
@@ -100,7 +116,9 @@ def reject_input(msg, payload):
 
 def handle_advance(data):
     metadata = data["metadata"]
-    payload = data["payload"][2:]
+    actionId = int.from_bytes(bytes.fromhex(data["payload"][2:10]), "big")
+    payload = data["payload"][10:]
+    depositPayload = data["payload"][2:]
     sender = metadata["msg_sender"]
     epochIndex = metadata["epoch_index"]
     inputIndex = metadata["input_index"]
@@ -131,7 +149,7 @@ def handle_advance(data):
         if sender.lower() == rollup_address.lower():
             logger.info("is from rollup address")
             #Is from rollup contract
-            binary = bytes.fromhex(payload)
+            binary = bytes.fromhex(depositPayload)
             try:
                 decoded = decode_abi(['bytes32', 'address', 'address', 'uint256', 'bytes'], binary)
             except Exception as e:
@@ -151,6 +169,7 @@ def handle_advance(data):
         else:
             #Is user input
             content = (bytes.fromhex(payload).decode("utf-8"))
+            logger.info(content)
             s_json = json.loads(content)
             operator = s_json["op"]
             value = s_json["value"]
@@ -169,35 +188,29 @@ def handle_advance(data):
     if depositAmount != None:
         #Deposit money to player
         accountManager.deposit(depositAddress, depositAmount, depositTokenAddress)
-        send_notice_deposit(inputIndex, depositAddress, depositAmount, depositTokenAddress)
     elif operator == "create":
         temp = matchMaker.create(sender, value)
         logger.info(temp)
         success = temp["success"]
         value = temp["value"]
-        send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "join":
         success = matchMaker.join(value, sender)
-        send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "leave":
         success = matchMaker.leave(sender)
-        send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "move":
         game = matchMaker.getByPlayer(sender)
         success = game.move(sender, value)
-        send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "undo":
         game = matchMaker.getByPlayer(sender)
         success = game.undo()
-        send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "createBot":
         binary = bytes.fromhex(payload)
         success = botFactory.create(sender, binary, timeStamp)
-        send_notice(inputIndex, sender, operator, value, success, timeStamp)
     elif operator == "releaseFunds":
         accountManager.release(sender, value)
     
     #Send notice on state change
+    send_notice_info(actionId, timeStamp, success, value)
 
     #Set new state
     result = matchMaker.getStringState()
@@ -233,7 +246,7 @@ handlers = {
 }
 
 finish = {"status": "accept"}
-rollup_address = "0x888C85931cAB752292B75b445Dada3bEF487491e"
+rollup_address = "0x4105B3d934E4c8bB2CF0dEa3eBF3D04c587bf387"
 
 while True:
     #logger.info("Sending finish")

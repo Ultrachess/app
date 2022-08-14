@@ -120,3 +120,17 @@ export const createDummyGames = () => {
     return [
     ]
 }
+
+export function createPromise(handler){
+    var resolve, reject;
+  
+    var promise = new Promise(function(_resolve, _reject){
+      resolve = _resolve; 
+      reject = _reject;
+      if(handler) handler(resolve, reject);
+    })
+    
+    promise.resolve = resolve;
+    promise.reject = reject;
+    return promise;
+  }

@@ -2,18 +2,34 @@ import * as React from "react";
 import { Text, Table, User, Button, Modal, Input, Row } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { FaRobot } from "react-icons/fa";
-import { createBotGame } from "../store/game/gameSlice";
+import { TransactionType } from "../common/types";
+import { useNavigate } from "react-router-dom";
+import { useActionCreator } from "../state/game/hooks";
+
 export default () => {
   const dispatch = useDispatch()
+  const addAction = useActionCreator()
+  const navigate = useNavigate()
   const [visible, setVisible] = React.useState(false);
   const [botId1, setBotId1] = React.useState(0)
   const [botId2, setBotId2] = React.useState(0)
 
   const handler = () => setVisible(true);
 
-  const handleCreateBotGame = () => {
+  const handleCreateBotGame = async () => {
     console.log("closed");
-    dispatch( createBotGame(botId1, botId2, 1) )
+    const [action, wait] = await addAction({
+      type: TransactionType.CREATE_GAME_INPUT,
+      name: "default",
+      isBot: true,
+      botId1,
+      botId2,
+      wagerTokenAddress: "0",
+      wagerAmount: 0
+    })
+    const roomId = await wait
+    navigate(`/game/${roomId}`)
+    //dispatch( createBotGame(botId1, botId2, 1) )
     setVisible(false);
   };
 

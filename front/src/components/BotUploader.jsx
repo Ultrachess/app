@@ -1,12 +1,16 @@
 import { Button, Card, Input, Row, Text } from '@nextui-org/react';
+import { TransactionTypes } from 'ethers/lib/utils';
 import React, { useState } from 'react';
 import { FaRobot } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
-import { sendBinary, depositErc20 } from '../store/game/gameSlice';
+import { TransactionType } from '../common/types';
+import { sendBinary, depositErc20 } from '../state/game/gameSlice';
+import { useActionCreator } from '../state/game/hooks';
 
 export default () => {
     const [selectedFile, setSelectedFile] = useState();
     const dispatch = useDispatch()
+	const addAction = useActionCreator()
 
 	const changeHandler = (event) => {
 		setSelectedFile(event.target.files[0]);
@@ -15,7 +19,10 @@ export default () => {
 	const handleSubmission = async () => {
         let file = selectedFile;
         var binary = new Uint8Array(await file.arrayBuffer())
-        dispatch(sendBinary(binary))
+		var n = await addAction({
+			type: TransactionType.DEPLOY_BOT_INPUT,
+			binary
+		})
 	};
 
 	return(

@@ -3,7 +3,7 @@ import { Text, Grid, Button, Spacer, Card, Pagination, Divider, Table} from "@ne
 import "./Body.css"
 import { FaArrowDown, FaCoins, FaPlay } from 'react-icons/fa';
 import GameList from "./GameList";
-import { createGame } from "../store/game/gameSlice";
+import { createGame } from "../state/game/gameSlice";
 import { useDispatch } from "react-redux";
 import FileUploader from "./BotUploader";
 import ModalCreateGame from "./ModalCreateGame";

@@ -52,7 +52,7 @@ class Matchmaker:
                 self.games[str(id)].run()
             
             return {
-                "value": "bot game finished",
+                "value": str(id),
                 "success": True
             }
 

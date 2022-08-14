@@ -1,21 +1,35 @@
 import * as React from "react";
 import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
-import { depositErc20 } from "../store/game/gameSlice";
 import { hooks, metaMask } from '../ether/connectors/metaMask'
 const { useProvider } = hooks
 import { FaCoins } from "react-icons/fa";
 import CartesiToken from "../../../deployments/localhost/CartesiToken.json"
+import { TransactionType } from "../common/types";
+import { useActionCreator } from "../state/game/hooks";
 
 export default ({visible, closeHandler}) => {
     const dispatch = useDispatch()
     const provider = useProvider()
+    const addAction = useActionCreator()
     const [depositValue, setDepositValue] = React.useState(0)
     const [tokenAddress, setTokenAddress] = React.useState(0)
 
     const onDepositValueChange = (event) => setDepositValue(event.target.value)
     const onTokenAddressChange = ( event ) => setTokenAddress(event.target.value)
-    const handleCreateGame = () => dispatch(depositErc20(provider.getSigner(), tokenAddress, depositValue))
+    const handleCreateGame = async () =>{
+        const [approvalActionId, forApproval] = await addAction({
+            type: TransactionType.APPROVE_ERC20,
+            tokenAddress: tokenAddress,
+            amount: depositValue
+        })
+        await forApproval
+        const [depositActionId, wait] = await addAction({
+            type: TransactionType.DEPOSIT_ERC20,
+            tokenAddress: tokenAddress,
+            amount: depositValue
+        })
+    }
 
     return (
         <Modal

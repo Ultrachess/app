@@ -41,7 +41,9 @@ export function getTokenNameFromAddress(address) {
     case CartesiToken.address.toLowerCase():
       name = "CTSI"
       break;
-  
+    case "0x326C977E6efc84E512bB9C30f76E30c160eD06FB".toLowerCase():
+      name = "LINK"
+      break;
     default:
       name = truncateAddress(lowerCaseAddress)
       break;

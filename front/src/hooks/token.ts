@@ -1,0 +1,74 @@
+import { useWeb3React } from "@web3-react/core"
+import { useEffect, useMemo, useState } from "react"
+import { COINGECKO_LIST, fetchTokenList } from "../utils/lists"
+import { useContractCallResult, useErc20Contract } from "./contract"
+
+export interface Token {
+    address: string,
+    chainId: number,
+    name: string,
+    symbol: string,
+    decimals: number,
+    logoUri?: string,
+}
+
+export function useTokenList() : Token[] {
+    const [tokenList, setTokenList] = useState<Token[]>([])
+
+    useEffect(() => {
+        const callFetch = async () => {
+            const result = await fetchTokenList(
+                COINGECKO_LIST,
+                (ensName: string) => {
+                    return {} as Promise<string>
+                }
+            )
+
+            setTokenList(result)
+        }
+
+        callFetch()
+            .catch(console.error)
+    }, [])
+
+    return tokenList
+}
+
+export function useTokenFromList(list: Token[], address: string): Token {
+    const tokenList = useTokenList()
+
+    return useMemo(() => {
+        return tokenList.find((val) => val.address == address)
+    }, [tokenList, address, list])
+}
+
+export function useTokenFromNetwork(address: string | null | undefined) : Token | null | undefined {
+    const { chainId } = useWeb3React()
+
+    const contract = useErc20Contract(address)
+    const name = useContractCallResult(contract, "name")
+    const symbol = useContractCallResult(contract, "symbol")
+    const decimals = useContractCallResult(contract, "decimals")
+
+    return useMemo(()=>{
+        return {
+            address,
+            chainId,
+            name,
+            symbol,
+            decimals
+        } as Token
+    }, [
+        chainId,
+        contract
+    ])
+}
+
+export function useToken(address?: string | null): Token | null | undefined {
+    const tokens = useTokenList()
+    
+    const tokenFromList = useTokenFromList(tokens, address)
+    const tokenFromNetwork = useTokenFromNetwork(address)
+
+    return tokenFromList ?? tokenFromNetwork
+}

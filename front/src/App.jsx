@@ -10,8 +10,11 @@ import {
 } from "react-router-dom"; 
 import Game from './components/Game';
 import { useDispatch } from 'react-redux';
-import { fetchGames } from './store/game/gameSlice';
+import { fetchGames } from './state/game/gameSlice';
 import BotManager from './components/BotManager';
+import { TransactionUpdater } from './state/transactions/updater';
+import { GameStateUpdater } from './state/game/updater';
+import Notifications from './components/Notifications';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -22,6 +25,9 @@ function App() {
 
   return (
     <div className="App">
+      <TransactionUpdater/>
+      <GameStateUpdater/>
+      <Notifications/>
       <Navbar/>
           <Routes>
             <Route path="/" element={<Body />} />

@@ -5,16 +5,19 @@ import { Chess } from "chess.js";
 
 import "./Game.css"
 import { useParams } from "react-router-dom";
-import { isGameActive, getGameById, playerIsInGame, canJoinGame, getSide, getBottomAddress, getTopAddress, side, InputStatus, InputType } from "../store/game/gameHelper";
+import { isGameActive, getGameById, playerIsInGame, canJoinGame, getSide, getBottomAddress, getTopAddress, side, InputStatus, InputType } from "../state/game/gameHelper";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { joinGame, sendMove } from "../store/game/gameSlice";
+import { joinGame, sendMove } from "../state/game/gameSlice";
+import { TransactionType } from "../common/types";
 import GameMovesView from "./GameMovesView";
 import GameTimer from "./GameTimer";
+import { useActionCreator } from "../state/game/hooks";
 
 export default () => {
   let { gameId } = useParams()
-  const dispatch = useDispatch()
+  //const dispatch = useDispatch()
+  const addAction = useActionCreator()
   const games = useSelector(state => state.game.games);
   const accounts = useSelector(state => state.auth.accounts);
   const inputState = useSelector(state => state.game.currentInputState)
@@ -36,7 +39,11 @@ export default () => {
       gameIsActive = isGameActive(games, gameId),
       game = getGameById(games, gameId)
       if(gameIsActive && !isAlreadyInGame && canJoin){
-        dispatch(joinGame(gameId))
+        //dispatch(joinGame(gameId))
+        addAction({
+          type: TransactionType.JOIN_GAME_INPUT,
+          roomId: gameId
+        })
       }
       setGameSide(getSide(game, address))
       setTopAddress(getTopAddress(getGameById(games, gameId), address, gameSide))
@@ -109,7 +116,11 @@ export default () => {
     if (move === null) return false; // illegal move
     var moveUci = sourceSquare + targetSquare
     if(move.promotion) moveUci += move.promotion
-    dispatch(sendMove(moveUci))
+    //dispatch(sendMove(moveUci))
+    addAction({
+      type: TransactionType.SEND_MOVE_INPUT,
+      value: moveUci
+    })
     return true;
   }
 

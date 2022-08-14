@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, useModal, Modal, Text, Row } from "@nextui-org/react";
 import { FaUser } from 'react-icons/fa';
 import { toHex, truncateAddress } from "../ether/utils";
-import { setChainId, setAccounts, setError, setIsActivating, setIsActive, setProvider } from "../store/auth/authSlice";
+import { setChainId, setAccounts, setError, setIsActivating, setIsActive, setProvider } from "../state/auth/authSlice";
 import { useEffect } from 'react'
 import { hooks, metaMask } from '../ether/connectors/metaMask'
-import { initContracts } from "../store/game/gameSlice";
+import { initContracts } from "../state/game/gameSlice";
 import AssetDisplay from "./AssetDisplay";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks

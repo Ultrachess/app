@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
-import { createBotGame } from "../store/game/gameSlice";
+import { createBotGame } from "../state/game/gameSlice";
 import { FaCoins } from "react-icons/fa";
 
 export default ({visible, closeHandler, botId}) => {
