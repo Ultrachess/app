@@ -6,7 +6,7 @@ import { Chess } from "chess.js";
 import "./Game.css"
 import { useParams } from "react-router-dom";
 import { isGameActive, getGameById, playerIsInGame, canJoinGame, getSide, getBottomAddress, getTopAddress, side, InputStatus, InputType } from "../state/game/gameHelper";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useCallback } from "react-redux";
 import { useEffect, useState } from "react";
 import { joinGame, sendMove } from "../state/game/gameSlice";
 import { TransactionType } from "../common/types";
@@ -29,6 +29,8 @@ export default () => {
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
+  const [currentFen, setCurrentFen] = useState()
 
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
 
@@ -60,7 +62,15 @@ export default () => {
 
   useEffect(() => {
     setGameHighlights()
+    var isAtLatestMove = currentMoveIndex >= Math.max(gameState.history().length - 2, 0)
+    if(isAtLatestMove) setCurrentMoveIndex(Math.max(gameState.history().length - 1, 0))
   }, [gameState])
+
+  useEffect(()=>{
+    const comments = gameState.get_comments()
+    const fen = comments[currentMoveIndex].fen
+    setCurrentFen(fen)
+  }, [currentMoveIndex])
 
   function safeGameMutate(modify) {
     setGameState((g) => {
@@ -169,28 +179,43 @@ export default () => {
         borderRadius: '50%'
       };
       return move;
-      });
-      newSquares[square] = {
-        background: 'rgba(255, 255, 0, 0.4)'
-      };
-      setOptionSquares(newSquares);
-    }
+    });
+    newSquares[square] = {
+      background: 'rgba(255, 255, 0, 0.4)'
+    };
+    setOptionSquares(newSquares);
+  }
 
-    function onSquareClick() {
-      setRightClickedSquares({});
-    }
+  function onSquareClick() {
+    setRightClickedSquares({});
+  }
 
-    function onSquareRightClick(square) {
-      const colour = 'rgba(0, 0, 255, 0.4)';
-      setRightClickedSquares({
-        ...rightClickedSquares,
-        [square]:
-          rightClickedSquares[square] && rightClickedSquares[square].backgroundColor === colour
-            ? undefined
-            : { backgroundColor: colour }
-      });
-    }
+  function onSquareRightClick(square) {
+    const colour = 'rgba(0, 0, 255, 0.4)';
+    setRightClickedSquares({
+      ...rightClickedSquares,
+      [square]:
+        rightClickedSquares[square] && rightClickedSquares[square].backgroundColor === colour
+          ? undefined
+          : { backgroundColor: colour }
+    });
+  }
 
+  const lastMove = useCallback(() => {
+    setCurrentMoveIndex(Math.max(gameState.history().length - 1, 0))
+  }, [])
+
+  const firstMove = useCallback(() => {
+    setCurrentMoveIndex(0)
+  }, [])
+  
+  const prevMove = useCallback(() => {
+    setCurrentMoveIndex(Math.max(currentMoveIndex - 1, 0))
+  }, [])
+
+  const nextMove = useCallback(() => {
+    setCurrentMoveIndex(Math.min(currentMoveIndex + 1))
+  }, [])
 
   return (
     <div className="game">
@@ -219,7 +244,14 @@ export default () => {
             <Address value={bottomAddress} />
         </div>
         <div className="gameMovesView"> 
-          <GameMovesView pgn={gameState.pgn()}/>
+          <GameMovesView 
+            pgn={gameState.pgn()}
+            firstMove = {firstMove}
+            lastMove = {lastMove}
+            nextMove = {nextMove}
+            prevMove = {prevMove}
+            highlightIndex = {currentMoveIndex}
+          />
         </div>
     </div>
   );

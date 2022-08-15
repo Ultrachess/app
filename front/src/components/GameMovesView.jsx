@@ -7,7 +7,7 @@ import { Chess } from "chess.js";
 import "./GameMovesView.css"
 
 export default (props) => {
-    const { pgn } = props
+    const { pgn, firstMove, lastMove, nextMove, prevMove, highlightIndex } = props
     var chess = new Chess()
     chess.load_pgn(pgn)
     var moves = chess.history()
@@ -39,10 +39,10 @@ export default (props) => {
                 <Card.Header>
                     <div className="movesHeader">
                         <ImLoop/>
-                        <FaFastBackward/>
-                        <FaBackward/>
-                        <FaForward/>
-                        <FaFastForward/>
+                        <FaFastBackward onClick={firstMove}/>
+                        <FaBackward onClick={prevMove}/>
+                        <FaForward onClick={nextMove}/>
+                        <FaFastForward onClick={lastMove}/>
                     </div>
                 </Card.Header>
                 <Divider/>
