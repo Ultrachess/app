@@ -78,7 +78,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
         try{
             switch (info.type) {
                 case TransactionType.CREATE_GAME_INPUT:
-                    const { name, isBot, wagerAmount, wagerTokenAddress, botId1, botId2} = info
+                    const { name, isBot, wagerAmount, wagerTokenAddress, botId1, botId2, playerId} = info
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "create", 
                         "value": {
@@ -86,6 +86,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                             "isBot" : ${isBot},
                             "botId1" : "${botId1 ?? "blank"}",
                             "botId2" : "${botId2 ?? "blank"}",
+                            "playerId" : "${playerId ?? "blank"}",
                             "token" : "${wagerTokenAddress}",
                             "wagerAmount": ${wagerAmount}
                         }
@@ -141,7 +142,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                 transactionHash: result.hash,
             }))
             ActionResolverObject[id] = createPromise()
-            await result.wait(1)
+            await result.wait()
         }
         catch(e){
             console.log(e)
@@ -151,7 +152,6 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                 || info.type == TransactionType.DEPOSIT_ERC20
                     ? ActionType.TRANSACTION : ActionType.INPUT,
                 status: ActionStates.ERROR,
-                transactionHash: result.hash,
                 initTime: new Date().getTime(),
             }))
             ActionResolverObject[id] = createPromise()

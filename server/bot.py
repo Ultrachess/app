@@ -20,7 +20,7 @@ class Bot:
         subprocess.run("chmod u+x " + id, shell=True)
         #set process
         self.engine = chess.engine.SimpleEngine.popen_uci("./" + id)
-        self.engine.configure({"Threads": 2})
+        #self.engine.configure({"Threads": 2})
 
     def run(self, board):
         logger.info("bot: processing chess board: " + board.fen())
@@ -40,7 +40,7 @@ class BotFactory:
         self.bots = {}
 
     def create(self, owner, binary, timestamp):
-        id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
+        id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))).lower()
         bot = Bot(id, owner, binary, timestamp)
         self.bots[id] = bot
         return True

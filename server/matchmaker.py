@@ -15,6 +15,7 @@ class Matchmaker:
         for key in self.games:
             game = self.games[str(key)]
             isGameOver = game.isGameEnd()
+            logger.info("game:" + str(game.players) + " isOver:"+str(isGameOver))
             if(not isGameOver):
                 if(address in game.players):
                     return game
@@ -37,9 +38,10 @@ class Matchmaker:
             self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=self.timestamp)
 
             if "playerId" in options:
-                player1 = options["playerId"]
-                self.games[str(id)].addPlayer(playerId)
-                self.games[str(id)].setPlayerInHumanVBot(playerId)
+                if options["playerId"] != "blank":
+                    playerId = options["playerId"]
+                    self.games[str(id)].addPlayer(playerId)
+                    self.games[str(id)].setPlayerInHumanVBot(playerId)
 
             #Add bot 1
             botId1 = options["botId1"]
@@ -53,8 +55,9 @@ class Matchmaker:
             #Add bot 2 if exists then run game
             if "botId2" in options:
                 botId2 = options["botId2"]
-                self.games[str(id)].addPlayer(botId2)
-                self.games[str(id)].run()
+                if botId2 != "blank":
+                    self.games[str(id)].addPlayer(botId2)
+                    self.games[str(id)].run()
             
             return {
                 "value": str(id),

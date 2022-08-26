@@ -1,7 +1,9 @@
+*
+!/**/
+!*.*
 node_modules
 env
 deployments
 localhost/*
 ngrok
 __pycache__/
-

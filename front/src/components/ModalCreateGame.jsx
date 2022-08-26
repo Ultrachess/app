@@ -8,6 +8,8 @@ import { TransactionTypes } from "ethers/lib/utils";
 import { TransactionType } from "../common/types";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
+import TokenList from "../utils/lists/ultrachess.tokenlists.json"
+import Select from "react-select"
 
 export default ({visible, closeHandler}) => {
     const dispatch = useDispatch()
@@ -16,8 +18,15 @@ export default ({visible, closeHandler}) => {
     const [wagerValue, setWagerValue] = React.useState(0)
     const [tokenAddress, setTokenAddress] = React.useState(0)
 
+    const tokens = TokenList.map((token) => {
+        return {
+            value: token.address,
+            label: token.name
+        }
+    })
+
     const onWagerValueChange = (event) => setWagerValue(event.target.value)
-    const onTokenAddressChange = (event) => setTokenAddress(event.target.value)
+    const onTokenAddressChange = (newValue) => setTokenAddress(newValue.value)
     const handleCreateGame = async () => {
         //dispatch(createGame(tokenAddress, wagerValue))
         const [action, wait] = await addAction({
@@ -50,26 +59,22 @@ export default ({visible, closeHandler}) => {
             </Text>
             </Modal.Header>
             <Modal.Body>
-            <Input
-                clearable
-                bordered
-                fullWidth
-                color="primary"
-                size="lg"
-                placeholder="ERC-20 Token Address"
-                contentLeft={<FaCoins/>}
-                onChange = {onTokenAddressChange}
-            />
-            <Input
-                clearable
-                bordered
-                fullWidth
-                color="primary"
-                size="lg"
-                placeholder="Wager amount"
-                contentLeft={<FaCoins/>}
-                onChange = {onWagerValueChange}
-            />
+            <Row>
+                <Input
+                    clearable
+                    bordered
+                    fullWidth
+                    color="primary"
+                    size="lg"
+                    placeholder="Wager amount"
+                    contentLeft={<FaCoins/>}
+                    onChange = {onWagerValueChange}
+                />
+                 <Select 
+                    options={tokens}
+                    onChange= {onTokenAddressChange}
+                />
+            </Row>
             <Row justify="space-between">
                 <Text size={14}>Need Help?</Text>
             </Row>
@@ -77,9 +82,6 @@ export default ({visible, closeHandler}) => {
             <Modal.Footer>
             <Button auto onClick={handleCreateGame}>
                 Create
-            </Button>
-            <Button auto onClick={jumpToGame}>
-                jump
             </Button>
             </Modal.Footer>
         </Modal>

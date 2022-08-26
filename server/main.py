@@ -246,7 +246,7 @@ handlers = {
 }
 
 finish = {"status": "accept"}
-rollup_address = "0x4105B3d934E4c8bB2CF0dEa3eBF3D04c587bf387"
+rollup_address = "0xD8b2ab0d99827bB51697b976AcE3508B2Ad9Be9d"
 
 while True:
     #logger.info("Sending finish")

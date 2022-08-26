@@ -44,6 +44,7 @@ class Game:
     def __senderIsPlayer(self, sender):
         if self.player1 == None:
             return False
+        logger.info("player1:" + str(self.player1.lower()))
         return sender.lower() == self.player1.lower()
 
     def setPlayerInHumanVBot(self, playerId):
@@ -83,10 +84,11 @@ class Game:
     def addPlayer(self, player):
         try:
             canAdd = (not self.__isMaxPlayers()) and (not self.__isInGame(player))
-            address = player if not self.isBot else deps.botFactory.getOwner(player)
+            address = player if "0x" in player else deps.botFactory.getOwner(player)
             hasFunds = deps.accountManager.getBalance(address, self.token) >= self.wagerAmount
+            logger.info("cannAdd:" + str(canAdd) + " hasFunds:"+str(hasFunds) + " player: " + str(player))
             if canAdd and hasFunds:
-                self.players.append(player)
+                self.players.append(player.lower())
                 deps.accountManager.withdraw(address, self.wagerAmount, self.token)
                 return True
             return False
@@ -122,7 +124,11 @@ class Game:
                 isGameEnd = self.isGameEnd()
                 if isGameEnd:
                    self.handleEnd()
-                else if self.__senderIsPlayer(sender):
+                elif self.__senderIsPlayer(sender):
+                    botId = ""
+                    for val in self.players:
+                        if not "0x" in val:
+                            botId = val
                     bot = deps.botFactory.bots[botId]
                     board = self.state.board()
                     uci = bot.run(board)
@@ -143,8 +149,6 @@ class Game:
     
     def setMatchCount(self, matchCount):
         self.matchCount = matchCount
-
-    def 
 
     def run(self):
         while  not self.isGameEnd():

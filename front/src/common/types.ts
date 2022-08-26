@@ -22,6 +22,7 @@ export interface CreateGameTransactionInfo extends BaseTransactionInfo {
     isBot: boolean,
     botId1?: string,
     botId2?: string,
+    playerId?: string,
     wagerTokenAddress: string,
     wagerAmount: string,
 }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
+import { Text, Grid, Modal, Input, Row, Button, Dropdown } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { hooks, metaMask } from '../ether/connectors/metaMask'
 const { useProvider } = hooks
@@ -7,17 +7,24 @@ import { FaCoins } from "react-icons/fa";
 import CartesiToken from "../../../deployments/localhost/CartesiToken.json"
 import { TransactionType } from "../common/types";
 import { useActionCreator } from "../state/game/hooks";
+import TokenList from "../utils/lists/ultrachess.tokenlists.json"
+import { truncateAddress } from "../ether/utils";
+import { useEffect, useMemo, useState } from 'react'
+import Select from "react-select"
 
 export default ({visible, closeHandler}) => {
     const dispatch = useDispatch()
     const provider = useProvider()
     const addAction = useActionCreator()
     const [depositValue, setDepositValue] = React.useState(0)
-    const [tokenAddress, setTokenAddress] = React.useState(0)
-
+    const [tokenAddress, setTokenAddress] = React.useState()
     const onDepositValueChange = (event) => setDepositValue(event.target.value)
-    const onTokenAddressChange = ( event ) => setTokenAddress(event.target.value)
+    const onTokenAddressChange = ( newValue ) => {
+        console.log(newValue)
+        setTokenAddress(newValue.value)
+    }
     const handleCreateGame = async () =>{
+        console.log(tokenAddress)
         const [approvalActionId, forApproval] = await addAction({
             type: TransactionType.APPROVE_ERC20,
             tokenAddress: tokenAddress,
@@ -30,6 +37,18 @@ export default ({visible, closeHandler}) => {
             amount: depositValue
         })
     }
+
+    const tokens = TokenList.map((token) => {
+        return {
+            value: token.address,
+            label: token.name
+        }
+    })
+    console.log(tokens)
+
+    const truncatedAddress = useMemo(()=>{
+        return truncateAddress(tokenAddress?? "")
+    },[tokenAddress])
 
     return (
         <Modal
@@ -44,31 +63,22 @@ export default ({visible, closeHandler}) => {
             </Text>
             </Modal.Header>
             <Modal.Body>
-            <Input
-                clearable
-                bordered
-                fullWidth
-                color="primary"
-                size="lg"
-                placeholder="Token address"
-                contentLeft={<FaCoins/>}
-                onChange = {onTokenAddressChange}
-            />
-            <Row justify="space-between">
-                <Text size={14}>CTSI token address is {CartesiToken.address.toLowerCase()}</Text>
-            </Row>
-            <Input
-                clearable
-                bordered
-                fullWidth
-                color="primary"
-                size="lg"
-                placeholder="Deposit amount"
-                contentLeft={<FaCoins/>}
-                onChange = {onDepositValueChange}
-            />
-            <Row justify="space-between">
-                <Text size={14}>Need Help?</Text>
+            
+            <Row>
+                <Input
+                    clearable
+                    bordered
+                    fullWidth
+                    color="primary"
+                    size="lg"
+                    placeholder="Deposit amount"
+                    contentLeft={<FaCoins/>}
+                    onChange = {onDepositValueChange}
+                />
+                 <Select 
+                    options={tokens}
+                    onChange= {onTokenAddressChange}
+                />
             </Row>
             </Modal.Body>
             <Modal.Footer>

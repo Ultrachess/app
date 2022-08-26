@@ -85,7 +85,7 @@ With that in place, you can submit a deploy transaction to the Cartesi DApp Fact
 DAPP_NAME=chessApp docker compose -f ./deploy-testnet.yml up
 
 
-sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA CHAIN_ID=5 NETWORK=goerli docker compose -f ./deploy-testnet.yml up
+sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 CHAIN_ID=5 NETWORK=goerli docker compose -f ./deploy-testnet.yml up
 ```
 
 This will create a file at `./deployments/<network>/chessApp.address` with the deployed contract's address.
@@ -94,7 +94,7 @@ Once the command finishes, it is advisable to stop the docker compose and remove
 ```shell
 DAPP_NAME=chessApp docker compose -f ./deploy-testnet.yml down -v
 
-sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA CHAIN_ID=5 NETWORK=goerli docker compose -f ./deploy-testnet.yml down -v
+sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 CHAIN_ID=5 NETWORK=goerli docker compose -f ./deploy-testnet.yml down -v
 
 ```
 
@@ -114,13 +114,13 @@ Then, the node itself can be started by running a docker compose as follows:
 DAPP_NAME=mydapp docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up
 
 
-sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA CHAIN_ID=5 NETWORK=goerli docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up
+sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 CHAIN_ID=5 NETWORK=goerli docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up
 ```
 
 Or deploy to host testnet
 
 ```shell
-sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/K5HS9NYmsia8S1Niq7pmGUMs8aKYY6BA CHAIN_ID=5 NETWORK=goerli docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml -f ./docker-compose-host-testnet.yml up
+sudo RPC_URL=https://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 DAPP_NAME=chessApp MNEMONIC="inject liberty clean poem recycle yard balance deliver quiz analyst broken fever" WSS_URL=wss://eth-goerli.g.alchemy.com/v2/d4hmQGX7T4S9gFgSswZWLPg3zGwhy5K1 CHAIN_ID=5 NETWORK=goerli docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml -f ./docker-compose-host-testnet.yml up
 ```
 
 

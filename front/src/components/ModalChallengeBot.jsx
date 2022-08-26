@@ -1,17 +1,66 @@
 import * as React from "react";
 import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createBotGame } from "../state/game/gameSlice";
 import { FaCoins } from "react-icons/fa";
+import TokenList from "../utils/lists/ultrachess.tokenlists.json"
+import { useAppSelector } from "../state/hooks";
+import { useWeb3React } from "@web3-react/core";
+import { isAddress } from "../utils";
+import { useActionCreator } from "../state/game/hooks";
+import { useCallback, useEffect, useMemo } from "react";
+import Select from "react-select"
+import { TransactionType } from "../common/types";
+import { ethers } from "ethers";
 
 export default ({visible, closeHandler, botId}) => {
     const dispatch = useDispatch()
     const [wagerValue, setWagerValue] = React.useState(0)
     const [challengerBot, setChallengerBot] = React.useState()
+    const [tokenAddress, setTokenAddress] = React.useState()
+    const bots = useSelector(state => state.game.bots)
+    const { account } = useWeb3React()
+    const addAction = useActionCreator()
 
     const onWagerValueChange = (event) => setWagerValue(event.target.value)
-    const onChallengerBotValueChange = ( event ) => setChallengerBot(event.target.value)
-    const handleCreateBotGame = () => dispatch( createBotGame(botId, challengerBot, 1, wagerValue) )
+    const onTokenAddressChange = ( newValue ) => setTokenAddress(newValue.value)
+    const onChallengerBotValueChange = ( newValue ) => setChallengerBot(newValue.value)
+    const handleCreateBotGame = async () => {
+        const [action, wait] = await addAction({
+            type: TransactionType.CREATE_GAME_INPUT,
+            name: "default",
+            isBot: true,
+            botId1: botId,
+            botId2: isAddress(challengerBot) ? "blank" : challengerBot,
+            playerId: isAddress(challengerBot) ? challengerBot : "blank",
+            wagerTokenAddress: tokenAddress,
+            wagerAmount: ethers.utils.parseUnits(wagerValue)
+        })
+        const roomId = await wait
+        console.log("jumping to" + roomId)
+        navigate(`game/${roomId}`, { replace: true })
+    }
+
+    const tokens = TokenList.map((token) => {
+        return {
+            value: token.address,
+            label: token.name
+        }
+    })
+
+    const botList = useMemo(()=>{
+        return [account]
+            .concat(Object.keys(bots))
+            .filter(val => val != botId)
+            .map(val => {
+                console.log(val)
+                if(isAddress(val)) 
+                    return { value: val, label:"You" }
+                return { value: val, label: val }
+            })
+    },[bots, botId])
+
+    console.log(botList)
 
     return (
         <Modal
@@ -26,26 +75,26 @@ export default ({visible, closeHandler, botId}) => {
             </Text>
             </Modal.Header>
             <Modal.Body>
-            <Input
-                clearable
-                bordered
-                fullWidth
-                color="primary"
-                size="lg"
-                placeholder="Wager amount"
-                contentLeft={<FaCoins/>}
-                onChange = {onWagerValueChange}
+            <Select 
+                options={botList}
+                onChange= {onChallengerBotValueChange}
             />
-            <Input
-                clearable
-                bordered
-                fullWidth
-                color="primary"
-                size="lg"
-                placeholder="Challenger bot by Id"
-                contentLeft={<FaCoins/>}
-                onChange = {onChallengerBotValueChange}
-            />
+            <Row>
+                <Input
+                    clearable
+                    bordered
+                    fullWidth
+                    color="primary"
+                    size="lg"
+                    placeholder="Deposit amount"
+                    contentLeft={<FaCoins/>}
+                    onChange = {onWagerValueChange}
+                />
+                <Select 
+                    options={tokens}
+                    onChange= {onTokenAddressChange}
+                />
+            </Row>
             <Row justify="space-between">
                 <Text size={14}>Need Help?</Text>
             </Row>

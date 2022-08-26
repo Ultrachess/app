@@ -6,8 +6,8 @@ import { Chess } from "chess.js";
 import "./Game.css"
 import { useParams } from "react-router-dom";
 import { isGameActive, getGameById, playerIsInGame, canJoinGame, getSide, getBottomAddress, getTopAddress, side, InputStatus, InputType } from "../state/game/gameHelper";
-import { useDispatch, useSelector, useCallback } from "react-redux";
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState, useCallback } from "react";
 import { joinGame, sendMove } from "../state/game/gameSlice";
 import { TransactionType } from "../common/types";
 import GameMovesView from "./GameMovesView";
@@ -29,7 +29,7 @@ export default () => {
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
-  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(-1)
   const [currentFen, setCurrentFen] = useState()
 
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
@@ -61,15 +61,19 @@ export default () => {
   }, [isUpToDate])
 
   useEffect(() => {
-    setGameHighlights()
-    var isAtLatestMove = currentMoveIndex >= Math.max(gameState.history().length - 2, 0)
-    if(isAtLatestMove) setCurrentMoveIndex(Math.max(gameState.history().length - 1, 0))
+    var isAtLatestMove = currentMoveIndex >= gameState.history().length - 2 || currentMoveIndex < 0
+    console.log(`isLatestMove: ${isAtLatestMove}  currentMoveIndex: ${currentMoveIndex} length: ${gameState.history().length}`)
+    if(isAtLatestMove) setCurrentMoveIndex(gameState.history().length - 1)
   }, [gameState])
 
   useEffect(()=>{
-    const comments = gameState.get_comments()
-    const fen = comments[currentMoveIndex].fen
-    setCurrentFen(fen)
+    const tempGame = new Chess()
+    gameState.history().forEach((move, index) => {
+        if(index <= currentMoveIndex)
+            tempGame.move(move)
+    })
+    setCurrentFen(tempGame.fen())
+    setGameHighlights()
   }, [currentMoveIndex])
 
   function safeGameMutate(modify) {
@@ -101,7 +105,7 @@ export default () => {
 
   function setGameHighlights(){
     const history = gameState.history({ verbose: true })
-    const lastMove = history.pop()
+    const lastMove = history[currentMoveIndex]
     if(lastMove){
       const { from, to } = lastMove
       const isPending = isMovePending(lastMove)
@@ -202,27 +206,27 @@ export default () => {
   }
 
   const lastMove = useCallback(() => {
-    setCurrentMoveIndex(Math.max(gameState.history().length - 1, 0))
-  }, [])
+    setCurrentMoveIndex(gameState.history().length - 1)
+  }, [gameState])
 
   const firstMove = useCallback(() => {
     setCurrentMoveIndex(0)
   }, [])
   
   const prevMove = useCallback(() => {
-    setCurrentMoveIndex(Math.max(currentMoveIndex - 1, 0))
-  }, [])
+    setCurrentMoveIndex(currentMoveIndex - 1)
+  }, [currentMoveIndex])
 
   const nextMove = useCallback(() => {
-    setCurrentMoveIndex(Math.min(currentMoveIndex + 1))
-  }, [])
+    setCurrentMoveIndex(currentMoveIndex + 1)
+  }, [currentMoveIndex])
 
   return (
     <div className="game">
         <div className="gameView">
             <Address value={topAddress} />
             <Chessboard 
-              position={gameState.fen()}
+              position={currentFen}
               onPieceDrop={onDrop}
               arePremovesAllowed={true}
               boardOrientation={gameSide}
