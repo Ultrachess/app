@@ -73,11 +73,11 @@ class Game:
         logger.info("score1:" + str(score1) + " score2:"+str(score2))
         #calculate funds for player 1
         funds1 = score1 * (self.wagerAmount * 2)
-        address1 = p1 if not self.isBot else deps.botFactory.getOwner(p1)
+        address1 = p1 if "0x" in p1 else deps.botFactory.getOwner(p1)
         deps.accountManager.deposit(address1, funds1, self.token)
         #calculate funds for player 2
         funds2 = score2 * (self.wagerAmount * 2)
-        address2 = p2 if not self.isBot else deps.botFactory.getOwner(p2)
+        address2 = p2 if "0x" in p2 else deps.botFactory.getOwner(p2)
         deps.accountManager.deposit(address2, funds2, self.token)
         logger.info("funds1:" + str(funds1) + " funds2:"+str(funds2))
 
