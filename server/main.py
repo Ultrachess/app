@@ -24,6 +24,9 @@ logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
+rollup_address = environ["ROLLUP_ADDRESS"]
+#rollup_address = "0xD8b2ab0d99827bB51697b976AcE3508B2Ad9Be9d"
+
 logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 def format_to_input(index, sender, operation, value, success, timeStamp):
@@ -116,7 +119,7 @@ def reject_input(msg, payload):
 
 def handle_advance(data):
     metadata = data["metadata"]
-    actionId = int.from_bytes(bytes.fromhex(data["payload"][2:10]), "big")
+    actionId = int(str(data["payload"][:10]), 16)
     payload = data["payload"][10:]
     depositPayload = data["payload"][2:]
     sender = metadata["msg_sender"]
@@ -125,6 +128,7 @@ def handle_advance(data):
     blockNumber = metadata["block_number"] 
     timeStamp = metadata["timestamp"]
 
+    logger.info("data:"+ str(data))
     logger.info(f"metadata: {metadata}")
     logger.info(f"payload: {payload}")
     logger.info(f"sender: {sender}")
@@ -225,7 +229,6 @@ def handle_advance(data):
 
 
     #logger.info(f"Received advance request data {data}")
-    logger.info("Adding notice")
     #send_notice_state()
     ##response = requests.post(rollup_server + "/notice", json=notice)
     ##logger.info(f"Received notice status {response.status_code} body {response.content}")
@@ -246,7 +249,6 @@ handlers = {
 }
 
 finish = {"status": "accept"}
-rollup_address = "0xD8b2ab0d99827bB51697b976AcE3508B2Ad9Be9d"
 
 while True:
     #logger.info("Sending finish")

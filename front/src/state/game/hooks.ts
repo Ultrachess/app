@@ -4,7 +4,7 @@ import { useTransactionAdder } from "../transactions/hooks";
 import { Action, ActionType, ActionStates, ActionList } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useContract, useErc20Contract } from "../../hooks/contract";
 import { DAPP_ADDRESS } from "./gameSlice";
 import { addAction, setAction, setActionTransactionHash } from "../actions/reducer";
@@ -12,8 +12,8 @@ import InputFacet from "../../../../deployments/localhost/InputFacet.json"
 import ERC20PortalFacet from "../../../../deployments/localhost/ERC20PortalFacet.json"
 import { ethers } from "ethers";
 import { useAppSelector } from "../hooks";
-import { delay } from "wonka";
-import { appendNumberToUInt8Array, getErc20Contract } from "../../utils";
+import { delay, filter } from "wonka";
+import { appendNumberToUInt8Array, decimalToHexString, getErc20Contract } from "../../utils";
 import { toast } from "react-hot-toast/headless";
 import { createPromise } from "./gameHelper";
 import { ActionResolverObject } from "./updater";
@@ -21,6 +21,14 @@ import { ActionResolverObject } from "./updater";
 export function useActions(): ActionList {
     const actions = useAppSelector(state => state.actions)
     return actions
+}
+
+export function useActionsNotProcessed(): Action[] {
+    const actions = useActions()
+    return useMemo(()=> {
+        return Object.values(actions)
+            .filter(({status}) => status != ActionStates.PROCESSED && status != ActionStates.ERROR)
+    }, [actions])
 }
 
 export function useAction(actionId: number): Action {
@@ -54,6 +62,13 @@ export function useAddAction(): (action: Action) => number {
     }, [dispatch])
 }
 
+// Convert a hex string to a byte array
+function hexToBytes(hex) {
+    for (var bytes = [], c = 0; c < hex.length; c += 2)
+        bytes.push(parseInt(hex.substr(c, 2), 16));
+    return bytes;
+}
+
 export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, Promise<String>]> {
     const { chainId, provider, account } = useWeb3React()
     const dispatch = useDispatch()
@@ -65,13 +80,16 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
     return useCallback(async (info: TransactionInfo) => {
         var input: Uint8Array
         var result: TransactionResponse
-        var id: number = Math.floor(Math.random() * 9000000000);
+        var id: number = Math.floor(Math.random() * 90000);
+        console.log(`actionId: ${id}`)
+        console.log(`actionId hex ${decimalToHexString(id)}`)
         var action: Action
         addAction({
             id: id,
             type: info.type == TransactionType.APPROVE_ERC20 
                 || info.type == TransactionType.DEPOSIT_ERC20
                 ? ActionType.TRANSACTION : ActionType.INPUT,
+            transactionInfo: info,
             status: ActionStates.INITIALIZED,
             initTime: new Date().getTime(),
         })
@@ -135,8 +153,12 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                 default:
                     break;     
             }
-
-            addTransaction(result, info)  
+   
+            while (!result.hash) {
+                console.log("waiting for result hash")
+                await result.wait()
+            }
+            addTransaction(result, info)
             dispatch(setActionTransactionHash({
                 id: id,
                 transactionHash: result.hash,
@@ -151,6 +173,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                 type: info.type == TransactionType.APPROVE_ERC20
                 || info.type == TransactionType.DEPOSIT_ERC20
                     ? ActionType.TRANSACTION : ActionType.INPUT,
+                transactionInfo: info,
                 status: ActionStates.ERROR,
                 initTime: new Date().getTime(),
             }))

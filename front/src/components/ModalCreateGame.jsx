@@ -38,7 +38,7 @@ export default ({visible, closeHandler}) => {
         })
         const roomId = await wait
         console.log("jumping to" + roomId)
-        navigate(`game/${roomId}`, { replace: true })
+        if(roomId) navigate(`game/${roomId}`, { replace: true })
     }
 
     const jumpToGame = () => {

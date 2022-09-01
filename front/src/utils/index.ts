@@ -137,17 +137,50 @@ export function uriToHttp(uri: string): string[] {
     }
   }
 
+export function decimalToHexString(number) {
+  if (number < 0){
+    number = 0xFFFFFFFF + number + 1;
+  }
 
-function intToArray(i) {
-  return Uint8Array.of(
-    (i&0xff000000)>>24,
-    (i&0x00ff0000)>>16,
-    (i&0x0000ff00)>> 8,
-    (i&0x000000ff)>> 0);
+  let str: string = number.toString(16).toUpperCase();
+  console.log(str.length)
+  let numToAdd = 8 - str.length
+  let zerosToAdd: string = new Array(numToAdd > 0 ? numToAdd + 1 : 0).join('0')
+  console.log(zerosToAdd.length)
+  return zerosToAdd.concat(str);
+}
+
+const HEX_STRINGS = "0123456789abcdef";
+const MAP_HEX = {
+  0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
+  7: 7, 8: 8, 9: 9, a: 10, b: 11, c: 12, d: 13,
+  e: 14, f: 15, A: 10, B: 11, C: 12, D: 13,
+  E: 14, F: 15
+};
+
+// Fast Uint8Array to hex
+export function toHex(bytes) {
+  return Array.from(bytes || [])
+    .map((b:any) => HEX_STRINGS[b >> 4] + HEX_STRINGS[b & 15])
+    .join("");
+}
+
+export function fromHex(hexString: string) {
+  const bytes = new Uint8Array(Math.floor((hexString || "").length / 2));
+  let i;
+  for (i = 0; i < bytes.length; i++) {
+    const a = MAP_HEX[hexString[i * 2]];
+    const b = MAP_HEX[hexString[i * 2 + 1]];
+    if (a === undefined || b === undefined) {
+      break;
+    }
+    bytes[i] = (a << 4) | b;
+  }
+  return i === bytes.length ? bytes : bytes.slice(0, i);
 }
 
 export function appendNumberToUInt8Array(number: number, arr: Uint8Array){
-  var numberArray = intToArray(number)
+  var numberArray = fromHex(decimalToHexString(number))
   var mergedArray = new Uint8Array(numberArray.length + arr.length);
   mergedArray.set(numberArray);
   mergedArray.set(arr, numberArray.length);

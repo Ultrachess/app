@@ -15,6 +15,8 @@ import BotManager from './components/BotManager';
 import { TransactionUpdater } from './state/transactions/updater';
 import { GameStateUpdater } from './state/game/updater';
 import Notifications from './components/Notifications';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import TransitionManager from './components/TransitionManager';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -25,17 +27,17 @@ function App() {
 
   return (
     <div className="App">
-      <TransactionUpdater/>
+      <TransitionManager/>
       <GameStateUpdater/>
       <Notifications/>
       <Navbar/>
-          <Routes>
-            <Route path="/" element={<Body />} />
-            <Route path="about" element={<Body />} />
-            <Route path="rankings" element={<Body />} />
-            <Route path="bots" element={<BotManager />} />
-            <Route path="/game/:gameId" element={<Game />} />
-          </Routes>
+      <Routes>
+        <Route path="/" element={<Body />} />
+        <Route path="about" element={<Body />} />
+        <Route path="rankings" element={<Body />} />
+        <Route path="bots" element={<BotManager />} />
+        <Route path="/game/:gameId" element={<Game />} />
+      </Routes>
     </div>
   )
 }

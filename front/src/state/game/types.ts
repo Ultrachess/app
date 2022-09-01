@@ -1,4 +1,4 @@
-import { TransactionInfo } from "../../common/types";
+import { TransactionInfo, TransactionType } from "../../common/types";
 import { NoticeInfo } from "./updater";
 
 export enum ActionType {
@@ -17,6 +17,7 @@ export enum ActionStates {
 export interface Action {
     id: number,
     type: ActionType,
+    transactionInfo: TransactionInfo,
     status?: ActionStates,
     transactionHash?: string,
     timeStamp?: string,

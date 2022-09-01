@@ -1,5 +1,5 @@
 import Address from "./Address";
-import * as React from "react";
+import React, { useMemo } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 
@@ -12,7 +12,8 @@ import { joinGame, sendMove } from "../state/game/gameSlice";
 import { TransactionType } from "../common/types";
 import GameMovesView from "./GameMovesView";
 import GameTimer from "./GameTimer";
-import { useActionCreator } from "../state/game/hooks";
+import { useActionCreator, useActionsNotProcessed, useActions } from "../state/game/hooks";
+import { useAllTransactions } from "../state/transactions/hooks";
 
 export default () => {
   let { gameId } = useParams()
@@ -31,17 +32,21 @@ export default () => {
   const [optionSquares, setOptionSquares] = useState({});
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1)
   const [currentFen, setCurrentFen] = useState()
+  const actionsNotProcessed = useActionsNotProcessed()
+  const pendingMoves = useMemo(()=>{
+    return actionsNotProcessed
+      .filter(({transactionInfo}) => transactionInfo.type == TransactionType.SEND_MOVE_INPUT)
+      .map(({transactionInfo}) => transactionInfo.value)
+  },[actionsNotProcessed])
 
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
 
   useEffect(() => {
-
       var isAlreadyInGame = playerIsInGame(games, address, gameId),
       canJoin = canJoinGame(games, gameId),
       gameIsActive = isGameActive(games, gameId),
       game = getGameById(games, gameId)
       if(gameIsActive && !isAlreadyInGame && canJoin){
-        //dispatch(joinGame(gameId))
         addAction({
           type: TransactionType.JOIN_GAME_INPUT,
           roomId: gameId
@@ -64,6 +69,7 @@ export default () => {
     var isAtLatestMove = currentMoveIndex >= gameState.history().length - 2 || currentMoveIndex < 0
     console.log(`isLatestMove: ${isAtLatestMove}  currentMoveIndex: ${currentMoveIndex} length: ${gameState.history().length}`)
     if(isAtLatestMove) setCurrentMoveIndex(gameState.history().length - 1)
+    setGameHighlights()
   }, [gameState])
 
   useEffect(()=>{
@@ -75,6 +81,18 @@ export default () => {
     setCurrentFen(tempGame.fen())
     setGameHighlights()
   }, [currentMoveIndex])
+  
+  useEffect(()=> {
+    console.log(pendingMoves)
+    safeGameMutate((gameValue) => {
+      let game = getGameById(games, gameId)
+      gameValue.load_pgn(game.pgn);
+      pendingMoves.forEach((mv) => {
+        let mov = gameValue.move(mv, {sloppy: true})
+        console.log(mov)
+      })
+    }); 
+  },[pendingMoves])
 
   function safeGameMutate(modify) {
     setGameState((g) => {
@@ -119,17 +137,9 @@ export default () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q", // always promote to a queen for example simplicity
-      });
-    });
-    if (move === null) return false; // illegal move
+    
     var moveUci = sourceSquare + targetSquare
-    if(move.promotion) moveUci += move.promotion
+    //if(move.promotion) moveUci += move.promotion
     //dispatch(sendMove(moveUci))
     addAction({
       type: TransactionType.SEND_MOVE_INPUT,

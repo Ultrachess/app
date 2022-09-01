@@ -111,11 +111,11 @@ export function GameStateUpdater() {
                             action.type == ActionType.TRANSACTION
                             ? ActionStates.PROCESSED : ActionStates.CONFIRMED_WAITING_FOR_L2
                         else action.status = ActionStates.PENDING
-                        if(expectedNotice) {
-                            action.status = expectedNotice.success? ActionStates.PROCESSED : ActionStates.ERROR
-                            action.result = expectedNotice
-                            action.processedTime = new Date().getTime()
-                        }
+                    }
+                    if(expectedNotice) {
+                        action.status = expectedNotice.success? ActionStates.PROCESSED : ActionStates.ERROR
+                        action.result = expectedNotice
+                        action.processedTime = new Date().getTime()
                     }
                     
                     if(!shouldCheckAction(action)) 
@@ -123,7 +123,9 @@ export function GameStateUpdater() {
                             ?.resolve(expectedNotice 
                                 ? expectedNotice.value 
                                 ?? "blank": "blank")
-                    dispatch(setAction(action))
+                                
+                    if(action.status != actions[actionId].status)
+                        dispatch(setAction(action))
                 }
             }
         }
