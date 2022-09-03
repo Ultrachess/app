@@ -8,13 +8,12 @@ import { useCallback, useMemo } from "react";
 import { useContract, useErc20Contract } from "../../hooks/contract";
 import { DAPP_ADDRESS } from "./gameSlice";
 import { addAction, setAction, setActionTransactionHash } from "../actions/reducer";
-import InputFacet from "../../../../deployments/localhost/InputFacet.json"
+import InputFacet from  "../../../../deployments/localhost/InputFacet.json"
 import ERC20PortalFacet from "../../../../deployments/localhost/ERC20PortalFacet.json"
 import { ethers } from "ethers";
 import { useAppSelector } from "../hooks";
 import { delay, filter } from "wonka";
 import { appendNumberToUInt8Array, decimalToHexString, getErc20Contract } from "../../utils";
-import { toast } from "react-hot-toast/headless";
 import { createPromise } from "./gameHelper";
 import { ActionResolverObject } from "./updater";
 
@@ -57,7 +56,6 @@ export function useAddAction(): (action: Action) => number {
     return useCallback((action: Action) => {
         dispatch(addAction(action))
         console.log(action.id.toString())
-        toast(action.id.toString())
         return action.id
     }, [dispatch])
 }

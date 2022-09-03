@@ -1,5 +1,5 @@
 import { Token } from "../../hooks/token"
-import { contenthashToUri, parseENSAddress, uriToHttp } from ".."
+import { parseENSAddress, uriToHttp } from ".."
 export const UNI_LIST = 'https://tokens.uniswap.org'
 export const UNI_EXTENDED_LIST = 'https://gateway.pinata.cloud/ipfs/QmaQvV3pWKKaWJcHvSBuvQMrpckV3KKtGJ6p3HZjakwFtX'
 const AAVE_LIST = 'tokenlist.aave.eth'
@@ -72,7 +72,7 @@ export async function fetchTokenList(
     }
     let translatedUri
     try {
-      translatedUri = contenthashToUri(contentHashUri)
+      //translatedUri = contenthashToUri(contentHashUri)
     } catch (error) {
       const message = `failed to translate contenthash to URI: ${contentHashUri}`
       console.debug(message, error)

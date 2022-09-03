@@ -123,7 +123,7 @@ export const CHAINS = {
   },
 }
 
-export const URLS = Object.keys(CHAINS).reduce<{ [chainId] }>(
+export const URLS = Object.keys(CHAINS).reduce<{ [chainId]:"" }>(
   (accumulator, chainId) => {
     const validURLs = CHAINS[Number(chainId)].urls
 

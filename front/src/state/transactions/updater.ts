@@ -1,6 +1,6 @@
 import { useWeb3React } from "@web3-react/core";
 import { Transaction, TransactionReceipt } from "./types";
-import ms from "ms.macro"
+import ms from "ms"
 import { useBlockNumber } from "./hooks";
 import { useCallback, useEffect, useMemo } from "react";
 import { retry, RetryableError,  } from "../../utils/retry";
@@ -19,7 +19,7 @@ export function shouldCheckTransaction(lastBlockNumber: number, tx: Transaction)
     // do not check if there is only a 1 block difference bettween latest block and last block
     if(blocksPassedSinceLastCheck < 1) return false
 
-    const minutesPassed = (new Date().getTime() - tx.addedTime) / ms`1m`
+    const minutesPassed = (new Date().getTime() - tx.addedTime) / ms(`1 m`)
     if (minutesPassed > 60) {
         // every 10 blocks if pending longer than an hour
         return blocksPassedSinceLastCheck > 9

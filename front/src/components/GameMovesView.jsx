@@ -2,7 +2,6 @@ import * as React from "react";
 import { Text, Grid, Card, Divider } from "@nextui-org/react";
 import { FaFastForward, FaFastBackward, FaForward, FaBackward } from "react-icons/fa";
 import { ImLoop } from "react-icons/im"
-import pgnParser from "pgn-parser";
 import { Chess } from "chess.js";
 import "./GameMovesView.css"
 

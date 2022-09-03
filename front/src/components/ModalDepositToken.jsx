@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { hooks, metaMask } from '../ether/connectors/metaMask'
 const { useProvider } = hooks
 import { FaCoins } from "react-icons/fa";
-import CartesiToken from "../../../deployments/localhost/CartesiToken.json"
 import { TransactionType } from "../common/types";
 import { useActionCreator } from "../state/game/hooks";
 import TokenList from "../utils/lists/ultrachess.tokenlists.json"

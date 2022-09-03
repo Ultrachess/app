@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { InputStatus, InputType, getGameByPlayer, createDummyGames, getGameById, createGameHelper } from "./gameHelper";
 import { ethers } from "ethers";
-//import CartesiDapp from "../../../../deployments/localhost/CartesiDApp.json"
-import InputFacet from "../../../../deployments/localhost/InputFacet.json"
+//import CartesiDapp from "../../../../../deployments/localhost/CartesiDApp.json"
+import InputFacet from  "../../../../deployments/localhost/InputFacet.json"
 import ERC20PortalFacet from "../../../../deployments/localhost/ERC20PortalFacet.json"
 import CartesiToken from "../../../../deployments/localhost/CartesiToken.json"
 

@@ -23,7 +23,7 @@ export interface ActionResolver {
     [actionId: string]: Promise<string>
 }
 
-export const ActionResolverObject: ActionResolver = { }
+export const ActionResolverObject: ActionResolver | any = { }
 
 type PartialNotice = Pick<
     Notice,

@@ -4,12 +4,22 @@ import authSlice from "./auth/authSlice";
 import gameSlice from "./game/gameSlice";
 import transactions from "./transactions/reducer"
 import actions from "./actions/reducer"
+import { ActionList } from "./game/types";
 
 const PERSISTED_STATE: string[] = ['auth', 'game', 'transactions', 'actions']
 
-const onStart: Middleware = store => next => action => {
-    return next(action);
-}
+// const onLoad = () => {
+//     let state: any = load({states: PERSISTED_STATE}) ?? {}
+//     let actions: ActionList = state.actions ?? {}
+
+//     for (let index = 0; index < array.length; index++) {
+//         const element = array[index];
+        
+//     }
+
+// }
+
+
 
 export const store = configureStore({
     reducer: {
@@ -20,8 +30,7 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddleware) => 
         getDefaultMiddleware({ serializableCheck: false })
-            .concat(save({ states: PERSISTED_STATE, debounce: 100}))
-            .concat(onStart),
+            .concat(save({ states: PERSISTED_STATE, debounce: 100})),
     preloadedState: load({
         states: PERSISTED_STATE,
         //disableWarnings: process.env.NODE_ENV === 'test',

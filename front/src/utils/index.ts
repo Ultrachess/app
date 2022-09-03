@@ -2,9 +2,6 @@ import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
-import CID from 'cids'
-import { getNameFromData, rmPrefix } from 'multicodec'
-import { decode, toB58String } from 'multihashes'
 import ERC20_ABI from '../abis/erc20.json'
 
 export const DEFAULT_GRAPHQL_URL = "http://localhost:4000/graphql";
@@ -81,29 +78,29 @@ const UTF_8_DECODER = new TextDecoder('utf-8')
  * Returns the URI representation of the content hash for supported codecs
  * @param contenthash to decode
  */
-export function contenthashToUri(contenthash: string): string {
-    const data = hexToUint8Array(contenthash)
-    const codec = getNameFromData(data)
-    switch (codec) {
-        case 'ipfs-ns': {
-            const unprefixedData = rmPrefix(data)
-            const cid = new CID(unprefixedData)
-            return `ipfs://${toB58String(cid.multihash)}`
-        }
-        case 'ipns-ns': {
-            const unprefixedData = rmPrefix(data)
-            const cid = new CID(unprefixedData)
-            const multihash = decode(cid.multihash)
-            if (multihash.name === 'identity') {
-                return `ipns://${UTF_8_DECODER.decode(multihash.digest).trim()}`
-            } else {
-                return `ipns://${toB58String(cid.multihash)}`
-            }
-        }
-        default:
-            throw new Error(`Unrecognized codec: ${codec}`)
-    }
-}
+// export function contenthashToUri(contenthash: string): string {
+//     const data = hexToUint8Array(contenthash)
+//     const codec = getNameFromData(data)
+//     switch (codec) {
+//         case 'ipfs-ns': {
+//             const unprefixedData = rmPrefix(data)
+//             const cid = new CID(unprefixedData)
+//             //return `ipfs://${toB58String(cid.multihash)}`
+//         }
+//         case 'ipns-ns': {
+//             const unprefixedData = rmPrefix(data)
+//             const cid = new CID(unprefixedData)
+//             const multihash = decode(cid.multihash)
+//             if (multihash.name === 'identity') {
+//                 return `ipns://${UTF_8_DECODER.decode(multihash.digest).trim()}`
+//             } else {
+//                 return `ipns://${toB58String(cid.multihash)}`
+//             }
+//         }
+//         default:
+//             throw new Error(`Unrecognized codec: ${codec}`)
+//     }
+// }
 
 const ENS_NAME_REGEX = /^(([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+)eth(\/.*)?$/
 export function parseENSAddress(
