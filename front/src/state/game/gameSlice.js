@@ -15,7 +15,7 @@ axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded'
 export const DAPP_ADDRESS = import.meta.env.VITE_DAPP_ADDRESS 
 console.log(`dapp address ${DAPP_ADDRESS}`)
 
-const SERVER_URL = "http://localhost:3002"
+const SERVER_URL = `http://${import.meta.env.VITE_SERVER_URL}:3002`;
 const GetNoticeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetNotice"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NoticeKeys"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"GetNotice"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"session_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch_index"}},{"kind":"Field","name":{"kind":"Name","value":"input_index"}},{"kind":"Field","name":{"kind":"Name","value":"notice_index"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}}]}}]}}]}
 export const gameSlice = createSlice({
     name: "game",
@@ -258,12 +258,7 @@ export const initContracts = (signer) => async dispatch => {
 
     
 
-    //instantiate client
-    client = createClient({
-        url: 'http://localhost:4000/graphql',
-        exchanges: defaultExchanges,
-        requestPolicy: "network-only"
-    })
+
 
     //start polling
     poll(dispatch)
