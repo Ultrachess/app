@@ -4,7 +4,7 @@ import { Contract } from '@ethersproject/contracts'
 import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
 import ERC20_ABI from '../abis/erc20.json'
 
-export const DEFAULT_GRAPHQL_URL = `http://${import.meta.env.VITE_SERVER_URL}:4000/graphql`;
+export const DEFAULT_GRAPHQL_URL = `${import.meta.env.VITE_SERVER_URL}:4000/graphql`;
 
 export const DEFAULT_GRAPHQL_POLL_TIME = 100
 
