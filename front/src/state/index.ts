@@ -6,7 +6,7 @@ import transactions from "./transactions/reducer"
 import actions from "./actions/reducer"
 import { ActionList } from "./game/types";
 
-const PERSISTED_STATE: string[] = ['auth', 'game', 'transactions', 'actions']
+const PERSISTED_STATE: string[] = ['auth', 'game', 'transactions']
 
 // const onLoad = () => {
 //     let state: any = load({states: PERSISTED_STATE}) ?? {}

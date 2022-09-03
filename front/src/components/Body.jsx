@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, Grid, Button, Spacer, Card, Pagination, Divider, Table} from "@nextui-org/react";
+import { Row, Text, Grid, Button, Spacer, Card, Pagination, Divider, Table} from "@nextui-org/react";
 import "./Body.css"
 import { FaArrowDown, FaCoins, FaPlay } from 'react-icons/fa';
 import GameList from "./GameList";
@@ -31,7 +31,16 @@ export default () => {
                 closeHandler={handleCloseDepositModal}
             />
             <div className="header">
-                <Text h2 size={90}>Ultrachess.org</Text> 
+                <Row>
+                    <Text h2 size={90}>Ultrachess.org</Text>
+                    <Text 
+                        css={{
+                            textGradient: "45deg, $blue600 -20%, $pink600 50%",
+                        }}
+                        weight="bold" 
+                        h5
+                    >pre-alpha</Text> 
+                </Row>
                 <Text>Immutable chess backed by blockchain technology. Play with more than just your elo at stake</Text>
             </div>
             <div className="buttons">
