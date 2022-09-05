@@ -18,8 +18,8 @@ console.log(`dapp address ${DAPP_ADDRESS}`)
 
 const SERVER_URL = import.meta.env.PROD ? 
     "https://ultrachess.org/api" : 
-    `localhost:3002`;
-    
+    `http://localhost:3002`;
+
 const GetNoticeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetNotice"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NoticeKeys"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"GetNotice"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"session_id"}},{"kind":"Field","name":{"kind":"Name","value":"epoch_index"}},{"kind":"Field","name":{"kind":"Name","value":"input_index"}},{"kind":"Field","name":{"kind":"Name","value":"notice_index"}},{"kind":"Field","name":{"kind":"Name","value":"payload"}}]}}]}}]}
 export const gameSlice = createSlice({
     name: "game",

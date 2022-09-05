@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import Select from "react-select"
 import { TransactionType } from "../common/types";
 import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom";
 
 export default ({visible, closeHandler, botId}) => {
     const dispatch = useDispatch()
@@ -21,6 +22,7 @@ export default ({visible, closeHandler, botId}) => {
     const bots = useSelector(state => state.game.bots)
     const { account } = useWeb3React()
     const addAction = useActionCreator()
+    const navigate = useNavigate()
 
     const onWagerValueChange = (event) => setWagerValue(event.target.value)
     const onTokenAddressChange = ( newValue ) => setTokenAddress(newValue.value)
@@ -38,7 +40,7 @@ export default ({visible, closeHandler, botId}) => {
         })
         const roomId = await wait
         console.log("jumping to" + roomId)
-        navigate(`game/${roomId}`, { replace: true })
+        navigate(`/game/${roomId}`, { replace: true })
     }
 
     const tokens = TokenList.map((token) => {
