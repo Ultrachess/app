@@ -14,6 +14,8 @@ import GameMovesView from "./GameMovesView";
 import GameTimer from "./GameTimer";
 import { useActionCreator, useActionsNotProcessed, useActions } from "../state/game/hooks";
 import { useAllTransactions } from "../state/transactions/hooks";
+import { Row } from "@nextui-org/react";
+import { useToken } from "../hooks/token";
 
 export default () => {
   let { gameId } = useParams()
@@ -38,8 +40,19 @@ export default () => {
       .filter(({transactionInfo}) => transactionInfo.type == TransactionType.SEND_MOVE_INPUT)
       .map(({transactionInfo}) => transactionInfo.value)
   },[actionsNotProcessed])
-
+  const game = useMemo(()=> games[gameId], [game])
+  const tokenAddress = useMemo(()=>game.tokenAddress, [game])
+  const tokenName = useToken(tokenAddress).name
+  const wagerAmount = useMemo(()=> game.wagerAmount, [game])
+  const resigner = useMemo(() => game.resigner, [game])
+  const topAddressScore = useMemo(() => game.scores[topAddress])
+  const bottomAddressScore = useMemo(() => game.scores[bottomAddress])
+  const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
+  const bottomAddressWinAmount = useMemo(() => wagerAmount*bottomAddressScore)
+  const isTurn = gameState.turn() == gameSide[0]
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
+
+  
 
   useEffect(() => {
       var isAlreadyInGame = playerIsInGame(games, address, gameId),
@@ -143,6 +156,7 @@ export default () => {
     //dispatch(sendMove(moveUci))
     addAction({
       type: TransactionType.SEND_MOVE_INPUT,
+      roomId: gameId,
       value: moveUci
     })
     return true;
@@ -234,28 +248,61 @@ export default () => {
   return (
     <div className="game">
         <div className="gameView">
+          <Row>
             <Address value={topAddress} />
-            <Chessboard 
-              position={currentFen}
-              onPieceDrop={onDrop}
-              arePremovesAllowed={true}
-              boardOrientation={gameSide}
-              onMouseOverSquare={onMouseOverSquare}
-              onMouseOutSquare={onMouseOutSquare}
-              onSquareClick={onSquareClick}
-              onSquareRightClick={onSquareRightClick}
-              isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
-              customBoardStyle={{
-                borderRadius: '4px',
-                boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
-              }}
-              customSquareStyles={{
-                ...moveSquares,
-                ...optionSquares,
-                ...rightClickedSquares
-              }}
-            />
+            <Text color="primary"> {wagerAmount} {tokenName}</Text>
+            {topAddressWinAmount == 0 ? 
+              <div></div> : 
+              <Text 
+                color={
+                  topAddressScore == 0 ? 
+                    "error": 
+                    topAddressScore == 0.5 ? 
+                      "": 
+                      "success"
+                }
+              >
+                {topAddressWinAmount}
+              </Text>
+            }
+          </Row>
+          <Chessboard 
+            position={currentFen}
+            onPieceDrop={onDrop}
+            arePremovesAllowed={true}
+            boardOrientation={gameSide}
+            onMouseOverSquare={onMouseOverSquare}
+            onMouseOutSquare={onMouseOutSquare}
+            onSquareClick={onSquareClick}
+            onSquareRightClick={onSquareRightClick}
+            isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
+            customBoardStyle={{
+              borderRadius: '4px',
+              boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
+            }}
+            customSquareStyles={{
+              ...moveSquares,
+              ...optionSquares,
+              ...rightClickedSquares
+            }}
+          />
+          <Row>
             <Address value={bottomAddress} />
+            <Text>{wagerAmount} {tokenName}</Text>
+            {bottomAddressWinAmount == 0 ? 
+              <div></div> : 
+              <Text 
+                color={
+                  bottomAddressScore == 0 ? 
+                    "error": 
+                    bottomAddressScore == 0.5 ? 
+                      "": "success"
+                }
+              >
+                {bottomAddressWinAmount}
+              </Text>
+            }
+          </Row>
         </div>
         <div className="gameMovesView"> 
           <GameMovesView 

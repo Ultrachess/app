@@ -2,6 +2,7 @@ export enum TransactionType {
     SEND_MOVE_INPUT,
     CREATE_GAME_INPUT,
     JOIN_GAME_INPUT,
+    RESIGN_GAME_INPUT,
     DEPLOY_BOT_INPUT,
     DEPOSIT_ERC20,
     APPROVE_ERC20,
@@ -12,7 +13,8 @@ export interface BaseTransactionInfo {
 }
 
 export interface SendMoveTransactionInfo extends BaseTransactionInfo {
-    type: TransactionType.SEND_MOVE_INPUT
+    type: TransactionType.SEND_MOVE_INPUT,
+    roomId: string,
     value: string,
 }
 
@@ -25,6 +27,11 @@ export interface CreateGameTransactionInfo extends BaseTransactionInfo {
     playerId?: string,
     wagerTokenAddress: string,
     wagerAmount: string,
+}
+
+export interface ResignGameTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.RESIGN_GAME_INPUT,
+    roomId: string,
 }
 
 export interface JoinGameTransactionInfo extends BaseTransactionInfo {
@@ -58,4 +65,5 @@ export type TransactionInfo =
     | DeployBotTransactionInfo
     | DepositErc20TransactionInfo
     | ApproveErc20Transaction
+    | ResignGameTransactionInfo
 

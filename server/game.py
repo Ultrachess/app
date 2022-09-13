@@ -24,6 +24,8 @@ class Game:
         self.token = token.lower()
         self.timestamp = timestamp
         self.player1 = None
+        self.resigner = None
+        self.scores = {}
 
     def __isInGame(self, address):
         return address in self.players
@@ -52,13 +54,15 @@ class Game:
 
     def isGameEnd(self):
         outcome = self.state.board().outcome()
-        return outcome != None
+        return outcome != None and self.resigner == None
 
     def fetchPlayerPoint(self, address):
         index = self.players.index(address)
         outcome = self.state.board().outcome()
         winner = outcome.winner
-        if winner != None:
+        if self.resigner != None:
+            return int(address != self.resigner)
+        elif winner != None:
             if index == 0:
                 return int(winner == chess.WHITE)
             elif index == 1:
@@ -69,6 +73,8 @@ class Game:
         #calculate elo and scores
         p1, p2 = self.players[0], self.players[1]
         score1, score2 = self.fetchPlayerPoint(p1), self.fetchPlayerPoint(p2)
+        self.score[p1] = score1
+        self.score[p2] = score2
         deps.eloManager.applyGame(p1, p2, score1, score2)
         logger.info("score1:" + str(score1) + " score2:"+str(score2))
         #calculate funds for player 1
@@ -90,6 +96,7 @@ class Game:
             if canAdd and hasFunds:
                 self.players.append(player.lower())
                 deps.accountManager.withdraw(address, self.wagerAmount, self.token)
+                self.score[player.lower()] = 0
                 return True
             return False
         except:
@@ -101,6 +108,11 @@ class Game:
             return True
         except:
             return False
+
+    def resign(self, address):
+        self.resigner = address
+        self.handleEnd()
+        return True
 
     def move(self, sender, moveString):
         logger.info("isMoving now" + moveString)
@@ -178,4 +190,6 @@ class Game:
             "wagerAmount": self.wagerAmount,
             "token": self.token,
             "timestamp": self.timestamp,
+            "resigner": self.resigner,
+            "scores": self.scores
         }

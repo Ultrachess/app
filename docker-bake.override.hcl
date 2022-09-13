@@ -5,14 +5,22 @@ target "dapp" {
   }
 }
 
+variable "TAG" {
+  default = "devel"
+}
+
+variable "DOCKER_ORGANIZATION" {
+  default = "cartesi"
+}
+
 target "server" {
-  tags = ["cartesi/dapp:chessApp-devel-server"]
+  tags = ["${DOCKER_ORGANIZATION}/dapp:chessAppNew-${TAG}-server"]
 }
 
 target "console" {
-  tags = ["cartesi/dapp:chessApp-devel-console"]
+  tags = ["${DOCKER_ORGANIZATION}/dapp:chessAppNew-${TAG}-console"]
 }
 
 target "machine" {
-  tags = ["cartesi/dapp:chessApp-devel-machine"]
+  tags = ["${DOCKER_ORGANIZATION}/dapp:chessAppNew-${TAG}-machine"]
 }

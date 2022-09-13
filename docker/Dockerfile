@@ -2,7 +2,7 @@
 # layers for caching and versioning
 FROM cartesi/toolchain:0.10.0 as toolchain
 FROM cartesi/rootfs:0.12.0 as rootfs
-FROM cartesi/server-manager:0.3.0 as server-manager
+FROM cartesi/server-manager:0.3.1 as server-manager
 
 FROM rootfs as toolchain-python
 
@@ -134,15 +134,3 @@ WORKDIR /opt/cartesi/share/dapp-bin
 COPY --from=machine-server /opt/cartesi/share/dapp-bin .
 
 CMD ["xxd", "-c", "256", "-p", "hash"]
-
-
-FROM toolchain-python
-
-WORKDIR /opt/cartesi/dapp
-COPY . .
-
-RUN <<EOF
-python3 -m crossenv $(which python3) env
-. ./env/bin/activate
-pip install -r requirements.txt
-EOF

@@ -111,18 +111,30 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     result = await contract.addInput(input)
                     break;
                 case TransactionType.SEND_MOVE_INPUT:
-                    const { value } = info
+                    let { value, roomId } = info
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "move", 
-                        "value": "${value}"
+                        "value": {
+                            "roomId" : "${roomId}",
+                            "move" : "${value}"
+                        }
                     }`)
                     input = appendNumberToUInt8Array(id, input)
                     result = await contract.addInput(input)
                     break;
                 case TransactionType.JOIN_GAME_INPUT:
-                    const { roomId } = info
+                    roomId  = info.roomId
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "join", 
+                        "value": "${roomId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.RESIGN_GAME_INPUT:
+                    roomId = info.roomId
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "resign", 
                         "value": "${roomId}"
                     }`)
                     input = appendNumberToUInt8Array(id, input)

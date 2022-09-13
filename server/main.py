@@ -94,6 +94,7 @@ def get_state_hex():
     }
     json_object = json.dumps(data_set)
     hex_string = convert_to_hex(json_object)
+    logger.info("Inspect element return: "+ hex_string)
     return hex_string
 
 def send_notice_state():
@@ -198,12 +199,11 @@ def handle_advance(data):
         success = temp["success"]
         value = temp["value"]
     elif operator == "join":
-        success = matchMaker.join(value, sender)
-    elif operator == "leave":
-        success = matchMaker.leave(sender)
+        success = matchMaker.join(sender, value)
+    elif operator == "resign":
+        success = matchMaker.resign(sender, value)
     elif operator == "move":
-        game = matchMaker.getByPlayer(sender)
-        success = game.move(sender, value)
+        success = matchMaker.sendMove(sender, value)
     elif operator == "undo":
         game = matchMaker.getByPlayer(sender)
         success = game.undo()

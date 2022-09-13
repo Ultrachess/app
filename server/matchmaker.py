@@ -20,6 +20,20 @@ class Matchmaker:
                 if(address in game.players):
                     return game
         return False
+
+    def sendMove(self, options):
+        if "roomId" in options:
+            roomId = options["roomId"]
+        else: 
+            return False
+
+        if "move" in options:
+            move = options["move"]
+        else:
+            return False
+            
+        game = self.get(roomId)
+        return game.move(move)
     
     def isInGame(self, sender):
         return self.getByPlayer(sender) != False
@@ -83,7 +97,7 @@ class Matchmaker:
         self.games.pop(id)
         return True
 
-    def join(self, id, sender):
+    def join(self, sender, id):
         game = self.games[id]
         if game.isBot:
             success = game.addPlayer(sender)
@@ -95,6 +109,10 @@ class Matchmaker:
     def leave(self, sender):
         game = self.getByPlayer(sender)
         return game.removePlayer(sender)
+
+    def resign(self, sender, roomId):
+        game = self.get(roomId)
+        return game.resign(sender)
 
     def getStringState(self):
         newGames = {}
