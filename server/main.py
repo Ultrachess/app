@@ -252,7 +252,7 @@ def handle_inspect(data):
     #logger.info(f"Received report status {response.status_code}")
     return "accept"
 
-handlers = { 
+handlers = {  
     "advance_state": handle_advance,
     "inspect_state": handle_inspect,
 }
