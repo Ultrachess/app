@@ -29,6 +29,8 @@ rollup_address = environ["ROLLUP_ADDRESS"]
 
 logger.info(f"HTTP rollup_server url is {rollup_server}")
 
+processed_actions = {}
+
 def format_to_input(index, sender, operation, value, success, timeStamp):
     data_set = {
         "index": index,
@@ -235,10 +237,17 @@ def handle_advance(data):
     return "accept"
 
 def handle_inspect(data):
-    #logger.info(f"Received inspect request data {data}")
+    logger.info(f"Received inspect request data {data}")
     #logger.info("Adding report")
-    payload = get_state_hex()
-    report = {"payload": get_state_hex()}
+    content = (bytes.fromhex(data).decode("utf-8"))
+    s_json = json.loads(content)
+    fetchType = s_json["type"]
+    fetchValue = s_json["value"]
+    if fetchType == "state":
+        payload = get_state_hex()
+    elif fetchType == "action":
+        payload = processed_actions[fetchValue] if fetchValue in processed_actions else False
+    report = {"payload": payload}
     response = requests.post(rollup_server + "/report", json=report)
     #logger.info(f"Received report status {response.status_code}")
     return "accept"
