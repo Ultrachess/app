@@ -257,7 +257,7 @@ handlers = {
     "inspect_state": handle_inspect,
 }
 
-finish = {"status": "accept"}
+finish = {"status": "accept"} 
 
 while True:
     #logger.info("Sending finish")
