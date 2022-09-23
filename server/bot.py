@@ -24,7 +24,7 @@ class Bot:
 
     def run(self, board):
         logger.info("bot: processing chess board: " + board.fen())
-        result = self.engine.play(board, chess.engine.Limit(time=0.100))
+        result = self.engine.play(board, chess.engine.Limit(time=0.000100))
         move = result.move
         return move.uci()
 
@@ -58,3 +58,54 @@ class BotFactory:
             botPartial = bot.getState()
             newBots[key] = botPartial
         return newBots
+
+class BotManager:
+    def __init__(self):
+        self.pending_actions = {}
+        self.last_challenged = {}
+    
+    def __fetchOpponent(self, botIdList, botId):
+        botIdIndex = botIdList.index(botId)
+        newIdList = botIdList
+        newIdList.remove(botId)
+        logger.info("botIdIndex: "+ str(botIdIndex))
+        logger.info("newIdList: "+ str(newIdList))
+        logger.info("botIdList: " + str(botIdList))
+
+        if newIdList != None and len(newIdList) == 0:
+            return False
+        if botId not in self.last_challenged:
+            self.last_challenged[botId] = botIdIndex % len(newIdList)
+        
+        self.last_challenged[botId] += 1
+        self.last_challenged[botId] = self.last_challenged[botId] % len(newIdList)
+
+        return newIdList[self.last_challenged[botId]]
+
+    
+    def __matchMake(self, sender, rand, factory, matchmaker):
+        bots = factory.bots
+        logger.info("factor: " + str(factory.bots))
+        botIds = list(bots.keys())
+        logger.info("bots.keys(): " + str(bots.keys()))
+        logger.info("list(bots.keys()): " + str(list(bots.keys())))
+
+        for botId in botIds:
+            logger.info("bitIds: " + str(botIds))
+            botId2 = self.__fetchOpponent(botIds, botId)
+            matchmaker.create(sender, {
+                "name": "auto triggered match",
+                "isBot": True,
+                "botId1": botId,
+                "botId2": botId2,
+                "token": "0x",
+                "wagerAmount": 0,
+            })   
+
+    
+    def step(self, sender, rand, factory, matchmaker):
+        #handle all autonomous matchmaking between bots
+        self.__matchMake(sender, rand, factory, matchmaker)
+        
+
+

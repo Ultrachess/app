@@ -36,7 +36,7 @@ export default ({bots}) => {
             key: index,
             ownerId: ownerId,
             botId: botId,
-            createdAt: formatDate(date)
+            createdAt: formatDate(date) 
         }
     })
 

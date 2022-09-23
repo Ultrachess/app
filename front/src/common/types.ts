@@ -6,6 +6,7 @@ export enum TransactionType {
     DEPLOY_BOT_INPUT,
     DEPOSIT_ERC20,
     APPROVE_ERC20,
+    BOT_STEP,
 }
 
 export interface BaseTransactionInfo {
@@ -16,6 +17,11 @@ export interface SendMoveTransactionInfo extends BaseTransactionInfo {
     type: TransactionType.SEND_MOVE_INPUT,
     roomId: string,
     value: string,
+}
+
+export interface BotStepTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.BOT_STEP,
+    hash: string,
 }
 
 export interface CreateGameTransactionInfo extends BaseTransactionInfo {
@@ -66,4 +72,5 @@ export type TransactionInfo =
     | DepositErc20TransactionInfo
     | ApproveErc20Transaction
     | ResignGameTransactionInfo
+    | BotStepTransactionInfo
 

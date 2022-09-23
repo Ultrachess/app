@@ -21,7 +21,7 @@ class Matchmaker:
                     return game
         return False
 
-    def sendMove(self, options):
+    def sendMove(self, sender, options):
         if "roomId" in options:
             roomId = options["roomId"]
         else: 
@@ -33,7 +33,7 @@ class Matchmaker:
             return False
             
         game = self.get(roomId)
-        return game.move(move)
+        return game.move(sender, move)
     
     def isInGame(self, sender):
         return self.getByPlayer(sender) != False

@@ -2,6 +2,7 @@ from bot import *
 from matchmaker import *
 from account import *
 from elo import *
+from actions import *
 import chess.engine
 import chess.pgn
 import random
@@ -11,10 +12,13 @@ import random
 matchMaker = Matchmaker()
 # Initialize global bot factory object
 botFactory = BotFactory()
+botManager = BotManager()
 # Initialize global account balance manager object
 accountManager = AccountBalanceManager()
 # Initialize global elo manager
 eloManager = EloManager()
+# Initialize global action manager
+actionManager = ActionManager()
 # Default header for ERC-20 transfers coming from the Portal, which corresponds
 # to the Keccak256-encoded string "ERC20_Transfer", as defined at
 # https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/facets/ERC20PortalFacet.sol.

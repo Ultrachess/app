@@ -16,7 +16,7 @@ export const DAPP_ADDRESS = import.meta.env.VITE_DAPP_ADDRESS
 console.log(`dapp address ${DAPP_ADDRESS}`)
 
 
-const SERVER_URL = import.meta.env.PROD ? 
+export const SERVER_URL = import.meta.env.PROD ? 
     "https://ultrachess.org/api" : 
     `http://localhost:3002`;
 
@@ -36,9 +36,14 @@ export const gameSlice = createSlice({
         bots: {},
         elo: {},
         accounts: {},
-        blockNumber: 0
+        blockNumber: 0,
+        lastProcessedBlock: 0,
+        actionList: [],
     },
     reducers: {
+        setLastProcessedBlock: (state, action) => {
+            state.lastProcessedBlock = action.payload
+        },
         setBlockNumber: (state, action) => {
             state.blockNumber = action.payload
         },
@@ -63,7 +68,7 @@ export const gameSlice = createSlice({
             state.bots = action.payload
         },
         setAppState: (state, action) => {
-            var {elo, game, bots, accounts} = action.payload
+            var {elo, game, bots, accounts, lastProcessedBlock, actionList} = action.payload
             if(
                 !deepEqual(state.elo, elo) ||
                 !deepEqual(state.games, game) ||
@@ -78,6 +83,8 @@ export const gameSlice = createSlice({
             state.games = game
             state.bots = bots
             state.accounts = accounts
+            state.lastProcessedBlock = lastProcessedBlock
+            state.actionList = actionList
         },
         updateGame: (state, action) => {
             var {id, game} = action.payload
@@ -236,8 +243,11 @@ function updateGameState(dispatch, payload){
 async function poll(dispatch) {
     await delay(500);
     var instance = axios.create({baseURL: SERVER_URL })
-
-    var response = await instance.get("/inspect/0xa37ae2b259d35af4abdde122ec90b204323ed304") 
+    var input = `{
+        "type": "state", 
+        "value": ""
+    }`
+    var response = await instance.get("/inspect/" + input) 
     var payload = response.data.reports[0].payload
     updateGameState(dispatch, payload)
     await poll(dispatch);

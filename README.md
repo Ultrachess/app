@@ -165,3 +165,7 @@ INFO:__main__:Sending finish
 ```
 
 After that, you can interact with the application normally [as explained above](#interacting-with-the-application).
+
+
+docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./docker-compose-host.yml up
+

@@ -14,7 +14,7 @@ import GameMovesView from "./GameMovesView";
 import GameTimer from "./GameTimer";
 import { useActionCreator, useActionsNotProcessed, useActions } from "../state/game/hooks";
 import { useAllTransactions } from "../state/transactions/hooks";
-import { Row } from "@nextui-org/react";
+import { Row, Text } from "@nextui-org/react";
 import { useToken } from "../hooks/token";
 
 export default () => {
@@ -40,7 +40,7 @@ export default () => {
       .filter(({transactionInfo}) => transactionInfo.type == TransactionType.SEND_MOVE_INPUT)
       .map(({transactionInfo}) => transactionInfo.value)
   },[actionsNotProcessed])
-  const game = useMemo(()=> games[gameId], [game])
+  const game = useMemo(()=> games[gameId], [games])
   const tokenAddress = useMemo(()=>game.tokenAddress, [game])
   const tokenName = useToken(tokenAddress).name
   const wagerAmount = useMemo(()=> game.wagerAmount, [game])
@@ -269,7 +269,7 @@ export default () => {
           <Chessboard 
             position={currentFen}
             onPieceDrop={onDrop}
-            arePremovesAllowed={true}
+            arePremovesAllowed={false}
             boardOrientation={gameSide}
             onMouseOverSquare={onMouseOverSquare}
             onMouseOutSquare={onMouseOutSquare}

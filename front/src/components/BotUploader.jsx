@@ -25,12 +25,23 @@ export default () => {
 		})
 	};
 
+	const handleStep = async () => {
+		var n = await addAction({
+			type: TransactionType.BOT_STEP,
+			hash: "hello"
+		})
+	};
+
 	return(
         <Row justify='center'>
 			<input type="file" name="file" onChange={changeHandler} />
 			<Button color="gradient" onClick={handleSubmission}  iconRight={<FaRobot/>} shadow>
 				Submit
 			</Button>
+			<Button color="gradient" onClick={handleStep}  iconRight={<FaRobot/>} shadow>
+				Run step
+			</Button>
 		</Row>
+		
 	)
 }

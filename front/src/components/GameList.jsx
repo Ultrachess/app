@@ -48,7 +48,7 @@ export default () => {
         var p1 = game.players[0] ?? "not joined"
         var p2 = game.players[1] ?? "not joined"
         var players = truncateAddress(p1) + " vs " + truncateAddress(p2)
-        var date  = new Date(game.timestamp )
+        var date  = new Date(game.timestamp * 1000)
         var wagerAmount = game.wagerAmount.toString()
         return {
             key: index,

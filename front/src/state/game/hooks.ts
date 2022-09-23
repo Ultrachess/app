@@ -93,6 +93,15 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
         })
         try{
             switch (info.type) {
+                case TransactionType.BOT_STEP:
+                    let { hash } = info
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "botStep", 
+                        "value": "${hash}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
                 case TransactionType.CREATE_GAME_INPUT:
                     const { name, isBot, wagerAmount, wagerTokenAddress, botId1, botId2, playerId} = info
                     input = ethers.utils.toUtf8Bytes(`{

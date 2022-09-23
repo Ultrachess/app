@@ -38,7 +38,18 @@ export function useTokenFromList(list: Token[], address: string): Token {
     const tokenList = useTokenList()
 
     return useMemo(() => {
-        return tokenList.find((val) => val.address == address)
+        try{
+            return tokenList.find((val) => val.address == address)
+        }
+        catch(e){
+            return {
+                name: "blank",
+                address: "blank",
+                symbol: "blank",
+                chainId: 0,
+                decimals: 0
+            }
+        }
     }, [tokenList, address, list])
 }
 

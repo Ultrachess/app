@@ -24,12 +24,13 @@ logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
-rollup_address = environ["ROLLUP_ADDRESS"]
+rollup_address = "0xF119CC4Ed90379e5E0CC2e5Dd1c8F8750BAfC812"
+#rollup_address = environ["ROLLUP_ADDRESS"]
 #rollup_address = "0xD8b2ab0d99827bB51697b976AcE3508B2Ad9Be9d"
 
 logger.info(f"HTTP rollup_server url is {rollup_server}")
 
-processed_actions = {}
+lastProcessedBlock = 0
 
 def format_to_input(index, sender, operation, value, success, timeStamp):
     data_set = {
@@ -58,6 +59,9 @@ def send_notice_info(actionId, timestamp, success, value):
     hex_string = convert_to_hex(json_object)
     response = requests.post(rollup_server + "/notice", json={"payload": hex_string})
     logger.info(f"Received notice status {response.status_code} body {response.content}")
+    #add action to ActionManager
+    logger.info("processing action id "+ str(actionId))
+    actionManager.process(actionId, data_set)
     logger.info("New PayLoad Added: "+ hex_string)
     logger.info("Adding notice")
 
@@ -92,11 +96,13 @@ def get_state_hex():
         "game": matchMaker.getState(),
         "bots": botFactory.getState(), 
         "accounts": accountManager.getState(),
-        "elo": eloManager.getState()
+        "elo": eloManager.getState(),
+        "lastProcessedBlock": str(lastProcessedBlock),
+        "actionList": actionManager.actionList()
     }
     json_object = json.dumps(data_set)
     hex_string = convert_to_hex(json_object)
-    logger.info("Inspect element return: "+ hex_string)
+    #logger.info("Inspect element return: "+ hex_string)
     return hex_string
 
 def send_notice_state():
@@ -214,6 +220,8 @@ def handle_advance(data):
         success = botFactory.create(sender, binary, timeStamp)
     elif operator == "releaseFunds":
         accountManager.release(sender, value)
+    elif operator == "botStep":
+        botManager.step(sender, value, botFactory, matchMaker)
     
     #Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)
@@ -228,7 +236,7 @@ def handle_advance(data):
     logger.info("Here is the elo state: " )
     logger.info(eloManager.getStringState())
 
-
+    lastProcessedBlock = blockNumber
 
     #logger.info(f"Received advance request data {data}")
     #send_notice_state()
@@ -237,16 +245,18 @@ def handle_advance(data):
     return "accept"
 
 def handle_inspect(data):
-    logger.info(f"Received inspect request data {data}")
+    logger.info(f"Received inspect request data")
     #logger.info("Adding report")
-    content = (bytes.fromhex(data).decode("utf-8"))
+    content = (bytes.fromhex(data["payload"][2:]).decode("utf-8"))
+    
     s_json = json.loads(content)
     fetchType = s_json["type"]
     fetchValue = s_json["value"]
     if fetchType == "state":
         payload = get_state_hex()
     elif fetchType == "action":
-        payload = processed_actions[fetchValue] if fetchValue in processed_actions else False
+        logger.info("Recieved action request: "+ fetchValue)
+        payload = actionManager.result(fetchValue)
     report = {"payload": payload}
     response = requests.post(rollup_server + "/report", json=report)
     #logger.info(f"Received report status {response.status_code}")
