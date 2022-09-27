@@ -139,7 +139,7 @@ def handle_advance(data):
 
     logger.info("data:"+ str(data))
     logger.info(f"metadata: {metadata}")
-    logger.info(f"payload: {payload}")
+    #logger.info(f"payload: {payload}")
     logger.info(f"sender: {sender}")
     logger.info(f"epochIndex: {epochIndex}")
     logger.info(f"inputIndex: {inputIndex}")
@@ -222,6 +222,8 @@ def handle_advance(data):
         accountManager.release(sender, value)
     elif operator == "botStep":
         botManager.step(sender, value, botFactory, matchMaker)
+    elif operator == "manageBot":
+        botManager.manage(sender, value, botFactory)
     
     #Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)
@@ -245,7 +247,7 @@ def handle_advance(data):
     return "accept"
 
 def handle_inspect(data):
-    logger.info(f"Received inspect request data")
+    #logger.info(f"Received inspect request data")
     #logger.info("Adding report")
     content = (bytes.fromhex(data["payload"][2:]).decode("utf-8"))
     

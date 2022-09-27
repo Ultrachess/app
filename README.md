@@ -154,7 +154,7 @@ It can optionally be configured in an IDE to allow interactive debugging using f
 You can also use a tool like [entr](https://eradman.com/entrproject/) to restart the back-end automatically when the code changes. For example:
 
 ```shell
-ls *.py | ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" entr -r python3 chessAppNew.py
+ls *.py | ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" entr -r python3 main.py
 ```
 
 After the back-end successfully starts, it should print an output like the following:

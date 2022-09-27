@@ -21,9 +21,13 @@ class Bot:
         #set process
         self.engine = chess.engine.SimpleEngine.popen_uci("./" + id)
         #self.engine.configure({"Threads": 2})
+        self.autoMaxWagerAmount = 0
+        self.autoWagerTokenAddress = 0
+        self.autoBattleEnabled = False
+        
 
     def run(self, board):
-        logger.info("bot: processing chess board: " + board.fen())
+        #logger.info("bot: processing chess board: " + board.fen())
         result = self.engine.play(board, chess.engine.Limit(time=0.000100))
         move = result.move
         return move.uci()
@@ -64,13 +68,27 @@ class BotManager:
         self.pending_actions = {}
         self.last_challenged = {}
     
-    def __fetchOpponent(self, botIdList, botId):
+    def __fetchOpponent(self, botIdList, botId, factory):
         botIdIndex = botIdList.index(botId)
-        newIdList = botIdList
+        newIdList = botIdList.copy()
         newIdList.remove(botId)
         logger.info("botIdIndex: "+ str(botIdIndex))
         logger.info("newIdList: "+ str(newIdList))
         logger.info("botIdList: " + str(botIdList))
+        
+        #remove bots that do not meet criteria
+        mainBot = factory.bots[botId]
+        for tempBotId in newIdList:
+            tempBot = factory.bots[tempBotId]
+            if tempBot.owner.lower() == mainBot.owner.lower():
+                newIdList.remove(tempBotId)
+            elif tempBot.autoWagerTokenAddress.lower() != mainBot.autoWagerTokenAddress.lower():
+                newIdList.remove(tempBotId)
+            elif tempBot.autoMaxWagerAmount > mainBot.autoMaxWagerAmount:
+                newIdList.remove(tempBotId)
+            elif not tempBot.autoBattleEnabled:
+                newIdList.remove(tempBotId)
+            
 
         if newIdList != None and len(newIdList) == 0:
             return False
@@ -92,7 +110,7 @@ class BotManager:
 
         for botId in botIds:
             logger.info("bitIds: " + str(botIds))
-            botId2 = self.__fetchOpponent(botIds, botId)
+            botId2 = self.__fetchOpponent(botIds, botId, factory)
             matchmaker.create(sender, {
                 "name": "auto triggered match",
                 "isBot": True,
@@ -106,6 +124,22 @@ class BotManager:
     def step(self, sender, rand, factory, matchmaker):
         #handle all autonomous matchmaking between bots
         self.__matchMake(sender, rand, factory, matchmaker)
+
+    def manage(self, sender, options, factory):
+        botId = options["botId"] if ("botId" in options) else False
+        autoMaxWagerAmount = options["autoMaxWagerAmount"] if ("autoMaxWagerAmount" in options) else 0
+        autoWagerTokenAddress = options["autoWagerTokenAddress"] if ("autoWagerTokenAddress" in options) else ""
+        autoBattleEnabled = options["autoBattleEnabled"] if ("autoBattleEnabled" in options) else False
+        
+        bot = factory.bots[botId]
+        if sender.lower() == bot.owner.lower():
+            bot.autoMaxWagerAmount = autoMaxWagerAmount
+            bot.autoWagerTokenAddress = autoWagerTokenAddress
+            bot.autoBattleEnabled = autoBattleEnabled
+
+
+
+
         
 
 

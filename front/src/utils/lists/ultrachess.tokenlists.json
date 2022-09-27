@@ -1,26 +1,11 @@
 [
   {
-    "name": "Wrapped Ether",
-    "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-    "symbol": "WETH",
+    "name": "Cartesi",
+    "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+    "symbol": "CTSI",
     "decimals": 18,
     "chainId": 5,
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6/logo.png"
-  },
-  {
-    "name": "Uniswap",
-    "address": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
-    "symbol": "UNI",
-    "decimals": 18,
-    "chainId": 5,
-    "logoURI": "ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"
-  },
-  {
-    "name": "Chainlink",
-    "chainId": 5,
-    "symbol": "LINK",
-    "decimals": 18,
-    "address": "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
-    "logoURI": "https://gemini.com/images/currencies/icons/default/link.svg"
   }
+
 ]

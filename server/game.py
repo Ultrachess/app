@@ -73,8 +73,8 @@ class Game:
         #calculate elo and scores
         p1, p2 = self.players[0], self.players[1]
         score1, score2 = self.fetchPlayerPoint(p1), self.fetchPlayerPoint(p2)
-        self.score[p1] = score1
-        self.score[p2] = score2
+        self.scores[p1] = score1
+        self.scores[p2] = score2
         deps.eloManager.applyGame(p1, p2, score1, score2)
         logger.info("score1:" + str(score1) + " score2:"+str(score2))
         #calculate funds for player 1
@@ -115,7 +115,7 @@ class Game:
         return True
 
     def move(self, sender, moveString):
-        logger.info("isMoving now" + moveString)
+        #logger.info("isMoving now" + moveString)
         try:
             #Determine if player can move
             newMove = chess.Move.from_uci(moveString)
@@ -126,7 +126,7 @@ class Game:
             isGameEnd = self.isGameEnd()
             
             #Log move state
-            logger.info("isGameEnd: " + str(isGameEnd) + " isMinPlayers: " + str(isMinPlayers) + "isTurn: "+str(isTurn)+" isInGame: "+str(isInGame)+" isLegal: "+str(isLegal))
+            #logger.info("isGameEnd: " + str(isGameEnd) + " isMinPlayers: " + str(isMinPlayers) + "isTurn: "+str(isTurn)+" isInGame: "+str(isInGame)+" isLegal: "+str(isLegal))
 
             canMove = isLegal and isInGame and isTurn and isMinPlayers and (not isGameEnd)
             if(canMove):

@@ -7,6 +7,7 @@ export enum TransactionType {
     DEPOSIT_ERC20,
     APPROVE_ERC20,
     BOT_STEP,
+    MANAGER_BOT_INPUT,
 }
 
 export interface BaseTransactionInfo {
@@ -51,6 +52,14 @@ export interface DeployBotTransactionInfo extends BaseTransactionInfo {
     binary: Uint8Array,
 }
 
+export interface ManagerBotTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.MANAGER_BOT_INPUT,
+    autoMaxWagerAmount: string,
+    autoWagerTokenAddress: string,
+    autoBattleEnabled: boolean,
+    botId: string,
+}
+
 export interface DepositErc20TransactionInfo extends BaseTransactionInfo {
     type: TransactionType.DEPOSIT_ERC20,
     tokenAddress: string,
@@ -73,4 +82,5 @@ export type TransactionInfo =
     | ApproveErc20Transaction
     | ResignGameTransactionInfo
     | BotStepTransactionInfo
+    | ManagerBotTransactionInfo
 
