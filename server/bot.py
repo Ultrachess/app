@@ -22,8 +22,8 @@ class Bot:
         self.engine = chess.engine.SimpleEngine.popen_uci("./" + id)
         #self.engine.configure({"Threads": 2})
         self.autoMaxWagerAmount = 0
-        self.autoWagerTokenAddress = 0
-        self.autoBattleEnabled = False
+        self.autoWagerTokenAddress = ""
+        self.autoBattleEnabled = True
         
 
     def run(self, board):
@@ -80,6 +80,7 @@ class BotManager:
         mainBot = factory.bots[botId]
         for tempBotId in newIdList:
             tempBot = factory.bots[tempBotId]
+            logger.info(str(tempBot))
             if tempBot.owner.lower() == mainBot.owner.lower():
                 newIdList.remove(tempBotId)
             elif tempBot.autoWagerTokenAddress.lower() != mainBot.autoWagerTokenAddress.lower():
