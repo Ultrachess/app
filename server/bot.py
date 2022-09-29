@@ -112,13 +112,14 @@ class BotManager:
         for botId in botIds:
             logger.info("bitIds: " + str(botIds))
             botId2 = self.__fetchOpponent(botIds, botId, factory)
+            bot1 = bots[botId]
             matchmaker.create(sender, {
                 "name": "auto triggered match",
                 "isBot": True,
                 "botId1": botId,
                 "botId2": botId2,
-                "token": "0x",
-                "wagerAmount": 0,
+                "token": bot1.autoWagerTokenAddress,
+                "wagerAmount": bot1.autoMaxWagerAmount,
             })   
 
     
