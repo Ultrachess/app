@@ -165,6 +165,8 @@ class Game:
     def run(self):
         while  not self.isGameEnd():
             #Set current bot
+            if len(self.players) < 2 :
+                return False
             botId1 = self.players[0]
             botId2 = self.players[1] 
             botId = botId1 if self.__isTurn(botId1) else botId2

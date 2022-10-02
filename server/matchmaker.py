@@ -43,6 +43,7 @@ class Matchmaker:
         wagerAmount = options["wagerAmount"] if ("wagerAmount" in options) else 0
         token = options["token"] if ("token" in options) else DEFAULT_ERC20
         if(isBot):
+            success = False
             #Confirm basic options
             if not "botId1" in options:
                 return {"value": "botId not defined", "success":False}
@@ -59,7 +60,7 @@ class Matchmaker:
 
             #Add bot 1
             botId1 = options["botId1"]
-            self.games[str(id)].addPlayer(botId1)
+            success = self.games[str(id)].addPlayer(botId1)
 
             #Set matchcount defined
             if "matchCount" in options:
@@ -71,11 +72,11 @@ class Matchmaker:
                 botId2 = options["botId2"]
                 if botId2 != "blank":
                     self.games[str(id)].addPlayer(botId2)
-                    self.games[str(id)].run()
+                    success = self.games[str(id)].run()
             
             return {
                 "value": str(id),
-                "success": True
+                "success": success
             }
 
         else:
