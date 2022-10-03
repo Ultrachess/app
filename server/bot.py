@@ -3,6 +3,7 @@ import chess.engine
 import random
 import string
 import logging
+import deps
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ class Bot:
         #self.engine.configure({"Threads": 2})
         self.autoMaxWagerAmount = 0
         self.autoWagerTokenAddress = ""
-        self.autoBattleEnabled = True
+        self.autoBattleEnabled = False
         
 
     def run(self, board):
@@ -67,12 +68,13 @@ class BotManager:
     def __init__(self):
         self.pending_actions = {}
         self.last_challenged = {}
+        self.pending_game_moves = []
     
     def __fetchOpponent(self, botIdList, botId, factory):
         botIdIndex = botIdList.index(botId)
         newIdList = botIdList.copy()
         newIdList.remove(botId)
-        logger.info("botIdIndex: "+ str(botIdIndex))
+        logger.info("botIdIndex: "+ str(botIdIndex))        return newGames
         logger.info("newIdList: "+ str(newIdList))
         logger.info("botIdList: " + str(botIdList))
         
@@ -109,18 +111,35 @@ class BotManager:
         logger.info("bots.keys(): " + str(bots.keys()))
         logger.info("list(bots.keys()): " + str(list(bots.keys())))
 
+        #run scheduled matches
         for botId in botIds:
             logger.info("bitIds: " + str(botIds))
             botId2 = self.__fetchOpponent(botIds, botId, factory)
             bot1 = bots[botId]
-            matchmaker.create(sender, {
-                "name": "auto triggered match",
-                "isBot": True,
-                "botId1": botId,
-                "botId2": botId2,
-                "token": bot1.autoWagerTokenAddress,
-                "wagerAmount": bot1.autoMaxWagerAmount,
-            })   
+            if botId2:
+                matchmaker.create(sender, {
+                    "name": "auto triggered match",
+                    "isBot": True,
+                    "botId1": botId,
+                    "botId2": botId2,
+                    "token": bot1.autoWagerTokenAddress,
+                    "wagerAmount": bot1.autoMaxWagerAmount,
+                })  
+
+        #run pending bot game moves
+        while len(self.pending_game_moves) > 0:
+            pending_move = self.pending_game_moves.pop()
+            #get game and bot
+            gameId = pending_move.gameId
+            botId = pending_move.botId
+            game = matchmaker.games[gameId]
+            bot = bots[botId]
+            #process move
+            board = game.state.board()
+            uci = bot.run(board)
+            game.move(botId, uci)
+
+
 
     
     def step(self, sender, rand, factory, matchmaker):

@@ -141,10 +141,11 @@ class Game:
                     for val in self.players:
                         if not "0x" in val:
                             botId = val
-                    bot = deps.botFactory.bots[botId]
-                    board = self.state.board()
-                    uci = bot.run(board)
-                    self.move(botId, uci)
+                    deps.botManager.pending_game_moves.append({
+                        "gameId": self.id,
+                        "botId": botId
+                    })
+                    
                 return True
             else:
                 return False
