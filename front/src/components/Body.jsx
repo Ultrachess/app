@@ -8,9 +8,11 @@ import { useDispatch } from "react-redux";
 import FileUploader from "./BotUploader";
 import ModalCreateGame from "./ModalCreateGame";
 import ModalDepositToken from "./ModalDepositToken";
+import { useAppSelector } from "../state/hooks";
 
 export default () => {
     var dispatch = useDispatch()
+    const games = useAppSelector(state => state.game.games);
     const [mainItems, setMainItems] = React.useState([]);
     const [createModalVisible, setCreateModalVisible] = React.useState(false)
     const [depositModalVisible, setDepositModalVisible] = React.useState(false)
@@ -53,7 +55,14 @@ export default () => {
                 </Button>
             </div>
             <div className="content">
-                <GameList/>
+            <Card shadow={true} css={{ height:"700px", width: "1000px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
+                <Card.Header>
+                    <Row justify="center">
+                        <Text>Open games</Text>
+                    </Row>
+                </Card.Header>
+                <GameList games={games}/>
+                </Card>
             </div>
         </div>    
     );

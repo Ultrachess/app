@@ -11,8 +11,7 @@ import { playerIsInGame, getGameById } from "../state/game/gameHelper";
 import { ethers } from "ethers";
 
 
-export default () => {
-    const games = useSelector(state => state.game.games);
+export default ({games}) => {
     const accounts = useSelector(state => state.auth.accounts);
     var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
     const dispatch = useDispatch()
@@ -73,42 +72,36 @@ export default () => {
 
     return (
         <div className="gameListItem">
-            <Card shadow={true} css={{ height:"700px", width: "1000px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
-                <Card.Header>
-                    <Row justify="center">
-                        <Text>Open games</Text>
-                    </Row>
-                </Card.Header>
-                <Table
-                        aria-label="Example table with dynamic content"
-                        css={{
-                            height: "auto",
-                            minWidth: "100%",
-                            overflow: "hidden"
-                        }}
-                        shadow={false}
-                >
-                    <Table.Header columns={columns}>
-                        {(column) => (
-                            <Table.Column key={column.key}>{column.label}</Table.Column>
-                        )}
-                    </Table.Header>
-                    <Table.Body items={rows}>
-                        {(item) => (
-                            <Table.Row key={item.key}>
-                                {(columnKey) => 
-                                    <Table.Cell>{
-                                        columnKey == "join" ? 
-                                              joinButton(item.id): 
-                                            item[columnKey]}
-                                    </Table.Cell>
-                                }
-                            </Table.Row>
-                        )}
-                    </Table.Body>
-                </Table>
-            </Card>
             
+            <Table
+                    aria-label="Example table with dynamic content"
+                    css={{
+                        height: "auto",
+                        minWidth: "100%",
+                        overflow: "hidden"
+                    }}
+                    shadow={false}
+            >
+                <Table.Header columns={columns}>
+                    {(column) => (
+                        <Table.Column key={column.key}>{column.label}</Table.Column>
+                    )}
+                </Table.Header>
+                <Table.Body items={rows}>
+                    {(item) => (
+                        <Table.Row key={item.key}>
+                            {(columnKey) => 
+                                <Table.Cell>{
+                                    columnKey == "join" ? 
+                                            joinButton(item.id): 
+                                        item[columnKey]}
+                                </Table.Cell>
+                            }
+                        </Table.Row>
+                    )}
+                </Table.Body>
+            </Table>
+        
         </div> 
     );
 }

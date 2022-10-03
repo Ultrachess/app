@@ -3,6 +3,7 @@ import logo from './logo.svg'
 import './App.css'
 import Navbar from './components/Navbar';
 import Body from './components/Body';
+import Profile from './components/Profile'
 import {
   BrowserRouter as Router,
   Routes,
@@ -37,6 +38,7 @@ function App() {
         <Route path="rankings" element={<Body />} />
         <Route path="bots" element={<BotManager />} />
         <Route path="/game/:gameId" element={<Game />} />
+        <Route path="/profile/:userId" element={<Profile/>} />
       </Routes>
     </div>
   )
