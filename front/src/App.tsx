@@ -38,7 +38,7 @@ function App() {
         <Route path="rankings" element={<Body />} />
         <Route path="bots" element={<BotManager />} />
         <Route path="/game/:gameId" element={<Game />} />
-        <Route path="/profile/:userId" element={<Profile/>} />
+        <Route path="/users/:userId" element={<Profile/>} />
       </Routes>
     </div>
   )
