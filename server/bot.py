@@ -38,6 +38,9 @@ class Bot:
             "id": self.id,
             "owner": self.owner,
             "timestamp": self.timestamp,
+            "autoMaxWagerAmount": self.autoMaxWagerAmount,
+            "autoWagerTokenAddress": self.autoWagerTokenAddress,
+            "autoBattleEnabled": self.autoBattleEnabled,
         }
 
 class BotFactory:

@@ -18,6 +18,8 @@ import { GameStateUpdater } from './state/game/updater';
 import Notifications from './components/Notifications';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TransitionManager from './components/TransitionManager';
+import BotProfile from './components/BotProfile';
+import Rankings from './components/Rankings';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -35,10 +37,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Body />} />
         <Route path="about" element={<Body />} />
-        <Route path="rankings" element={<Body />} />
+        <Route path="rankings" element={<Rankings />} />
         <Route path="bots" element={<BotManager />} />
         <Route path="/game/:gameId" element={<Game />} />
         <Route path="/users/:userId" element={<Profile/>} />
+        <Route path="/bot/:botId" element={<BotProfile/>} />
       </Routes>
     </div>
   )

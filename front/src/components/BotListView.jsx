@@ -94,6 +94,7 @@ export default ({bots}) => {
                         {(item) => (
                             <Table.Row key={item.key}>
                                 {(columnKey) => <Table.Cell>{ 
+                                    columnKey == "botId" ? <Address value={item[columnKey]}/> :
                                     columnKey == "ownerId" ? <Address value={item[columnKey]}/> :
                                     columnKey == "challenge" ? <Button onClick={()=>handleChallenge(item.botId)} color="primary">challenge</Button> :
                                     columnKey == "manage" ? account?.toLowerCase() == item.ownerId.toLowerCase() ? <Button onClick={()=>handleManage(item.botId)}>manage</Button> : <Text>not your bot</Text>

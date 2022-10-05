@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Text, Divider, Card, Col, Row } from "@nextui-org/react";
-import { useParams } from "react-router-dom";
+import { useMatch, useParams } from "react-router-dom";
 import BotListView from "./BotListView";
 import { useSelector } from "react-redux";
 import { useAppSelector } from "../state/hooks";
@@ -9,6 +9,8 @@ export default () => {
     let { userId } = useParams()
     const allBots = useAppSelector(state => state.game.bots)
     const allGames = useAppSelector(state => state.game.games)
+    const allElos = useAppSelector(state => state.game.elo)
+    const elo = React.useMemo(()=> allElos[userId], [allElos])
     const userBots = React.useMemo(()=> 
         Object.values(allBots)
             .filter(val => val.owner == userId),
@@ -16,7 +18,7 @@ export default () => {
     const userGames = React.useMemo(()=> 
         Object.values(allGames)
             .filter(val => val.players.includes(userId.toLowerCase())),
-            [allBots])
+            [allGames])
 
     return (
         <div className="body">
@@ -34,11 +36,20 @@ export default () => {
                 </Card>
                 <Card css={{ margin:"20px",  width: "500px"}}>
                     <Card.Header>
-                        Games played
+                        Stats
                     </Card.Header>
                     <Divider/>
                     <Card.Body>
-                        <GameList games={userGames}/>
+                        <Col>
+                            <div>
+                                <Text>Elo <Text css={{textGradient: "45deg, $blue600 -20%, $pink600 50%",}}weight="bold" >{elo ?? "Unranked"}</Text></Text>
+                            </div>
+                            <div>
+                                <Text>Games played</Text>
+                                <GameList games={userGames}/>
+                            </div>
+                        </Col>
+                        
                     </Card.Body>
                 </Card>
             </Row>

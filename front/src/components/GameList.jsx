@@ -9,6 +9,7 @@ import GameListItem from "./GameListItem";
 import { truncateAddress, formatDate, getTokenNameFromAddress } from "../ether/utils";
 import { playerIsInGame, getGameById } from "../state/game/gameHelper";
 import { ethers } from "ethers";
+import Address from "./Address";
 
 
 export default ({games}) => {
@@ -46,7 +47,12 @@ export default ({games}) => {
     const rows = Object.values(games).map((game, index) => {
         var p1 = game.players[0] ?? "not joined"
         var p2 = game.players[1] ?? "not joined"
-        var players = truncateAddress(p1) + " vs " + truncateAddress(p2)
+        var players = 
+        <Row>
+            <Address value={p1}/>
+            <Text color="red">vs</Text>
+            <Address value={p2}/>
+        </Row>
         var date  = new Date(game.timestamp * 1000)
         var wagerAmount = game.wagerAmount.toString()
         return {
@@ -62,7 +68,7 @@ export default ({games}) => {
 
     const joinButton = (gameId) => {
         const isAlreadyInGame = playerIsInGame(games, address, gameId)
-        const isGameOver = getGameById(games, gameId).isEnd
+        const isGameOver = getGameById(games, gameId)?.isEnd
         
         var buttonText = "join"
         if(isAlreadyInGame) buttonText = "back in game"
