@@ -224,6 +224,8 @@ def handle_advance(data):
         botManager.step(sender, value, botFactory, matchMaker)
     elif operator == "manageBot":
         botManager.manage(sender, value, botFactory)
+    elif operator == "bet":
+        betManager.bet(sender, timeStamp, value)
     
     #Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)

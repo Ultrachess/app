@@ -3,11 +3,12 @@ from matchmaker import *
 from account import *
 from elo import *
 from actions import *
+from bets import *
 import chess.engine
 import chess.pgn
 import random
 
-
+betManager = BetManager()
 #Initialize global matchmaking object
 matchMaker = Matchmaker()
 # Initialize global bot factory object
