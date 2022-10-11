@@ -38,7 +38,7 @@ class Matchmaker:
     def isInGame(self, sender):
         return self.getByPlayer(sender) != False
 
-    def create(self, sender, options):
+    def create(self, sender, timestamp, options):
         isBot = options["isBot"] if ("isBot" in options) else False
         wagerAmount = options["wagerAmount"] if ("wagerAmount" in options) else 0
         token = options["token"] if ("token" in options) else DEFAULT_ERC20
@@ -50,7 +50,7 @@ class Matchmaker:
 
             #Spawn new game
             id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-            self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=self.timestamp)
+            self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=timestamp)
 
             if "playerId" in options:
                 if options["playerId"] != "blank":
@@ -72,7 +72,7 @@ class Matchmaker:
                 botId2 = options["botId2"]
                 if botId2 != "blank":
                     self.games[str(id)].addPlayer(botId2)
-                    success = self.games[str(id)].run()
+                    success = self.games[str(id)].run(timestamp)
             
             return {
                 "value": str(id),
@@ -83,7 +83,7 @@ class Matchmaker:
             canCreate = not self.isInGame(sender)
             if(canCreate):
                 id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-                self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=self.timestamp)
+                self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp)
                 successfullAdd = self.games[str(id)].addPlayer(sender)
                 return {
                     "value": str(id),
@@ -98,11 +98,11 @@ class Matchmaker:
         self.games.pop(id)
         return True
 
-    def join(self, sender, id):
+    def join(self, sender, timestamp, id):
         game = self.games[id]
         if game.isBot:
             success = game.addPlayer(sender)
-            game.run()
+            game.run(timestamp)
             return success
 
         return game.addPlayer(sender)

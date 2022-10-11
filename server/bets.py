@@ -5,6 +5,8 @@ def CreateBetPhase(gameId, openTime, duration):
         "gameId": gameId,
         "openTime": openTime,
         "duration": duration,
+        "pots": {},
+        "totalPot": 0
         "bets": {},
     }
 
@@ -22,7 +24,7 @@ class BetManager:
     def __init__(self):
         self.games = {}
     
-    def __isBettingPhaseOpen(self, gameId, currentTime):
+    def isBettingPhaseOpen(self, gameId, currentTime):
         return currentTime < (game["openTime"] + game["duration"])
 
     def open(self, id, timeStamp, duration):
@@ -38,9 +40,28 @@ class BetManager:
         if timeStamp > (game["openTime"] + game["duration"]):
             return False
 
-        if not accountManager.withdraw(sender, amount, tokenAddress):
+        if not deps.accountManager.withdraw(sender, amount, tokenAddress):
             return False
-        
-        self.games[gameId]["bets"][sender] = CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId)
+        if not self.games[gameId]["bets"][winningId]:
+            self.games[gameId]["bets"][winningId] = {}
+        self.games[gameId]["bets"][winningId][sender] = CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId)
+        if not self.games[gameId]["pots"][winningId]:
+            self.games[gameId]["pots"][winningId] = 0
+        self.games[gameId]["pots"][winningId] += amount
+        self.games[gameId]["totalPot"] += amount
+        return True
 
-
+    def end(self, id, winningId):
+        game = self.games[id]
+        bets = game["bets"][winningId]
+        totalPot = game["totalPot"]
+        winningPot = game["pots"][winningId]
+        numWinners = len(list(bets.values()))
+        for senderId in bets:
+            bet = bets[senderId]
+            amount = bet["amount"]
+            tokenAddress = bet["tokenAddress"]
+            percentageOfPot = amount / winningPot
+            amountRecieved = totalPot * percentageOfPot
+            address = senderId if "0x" in senderId else deps.botFactory.getOwner(senderId)
+            deps.accountManager.deposit(address, amountRecieved, tokenAddress)

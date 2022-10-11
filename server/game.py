@@ -11,9 +11,9 @@ WIN_POINTS = 1
 LOSE_POINTS = 0
 DRAW_POINTS = 0.5
 DEFAULT_ERC20 = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
-
+DEFAULT_DURATION = 15*60 #15 minutes
 class Game:
-    def __init__(self, id, isBot=False, wagerAmount=0, token=DEFAULT_ERC20, timestamp=0):
+    def __init__(self, id, isBot=False, wagerAmount=0, token=DEFAULT_ERC20, timestamp=0, duration=DEFAULT_DURATION):
         self.id = id
         self.players = []
         self.rootGame = chess.pgn.Game()
@@ -26,6 +26,8 @@ class Game:
         self.player1 = None
         self.resigner = None
         self.scores = {}
+        #open betting phase
+        betManager.open(id, timestamp, duration)
 
     def __isInGame(self, address):
         return address in self.players
@@ -87,6 +89,10 @@ class Game:
         deps.accountManager.deposit(address2, funds2, self.token)
         logger.info("funds1:" + str(funds1) + " funds2:"+str(funds2))
 
+        #distribute pot
+        winningId = p1 if score1 > score2 else p2 if score2 > score1 else "DRAW"
+        deps.betManager.end(self.id, winningId)
+
     def addPlayer(self, player):
         try:
             canAdd = (not self.__isMaxPlayers()) and (not self.__isInGame(player))
@@ -114,7 +120,7 @@ class Game:
         self.handleEnd()
         return True
 
-    def move(self, sender, moveString):
+    def move(self, sender, timestamp, moveString):
         #logger.info("isMoving now" + moveString)
         try:
             #Determine if player can move
@@ -124,11 +130,12 @@ class Game:
             isTurn = self.__isTurn(sender)
             isMinPlayers = self.__isMinPlayers()
             isGameEnd = self.isGameEnd()
+            isBettingPhaseOpen = betManager.isBettingPhaseOpen(self.id, timestamp)
             
             #Log move state
             #logger.info("isGameEnd: " + str(isGameEnd) + " isMinPlayers: " + str(isMinPlayers) + "isTurn: "+str(isTurn)+" isInGame: "+str(isInGame)+" isLegal: "+str(isLegal))
 
-            canMove = isLegal and isInGame and isTurn and isMinPlayers and (not isGameEnd)
+            canMove = isLegal and isInGame and isTurn and isMinPlayers and (not isGameEnd) and (not isBettingPhaseOpen)
             if(canMove):
                 #Handle move
                 self.state = self.state.add_variation(newMove)
@@ -163,7 +170,7 @@ class Game:
     def setMatchCount(self, matchCount):
         self.matchCount = matchCount
 
-    def run(self):
+    def run(self, timestamp):
         while  not self.isGameEnd():
             #Set current bot
             if len(self.players) < 2 :
@@ -176,7 +183,7 @@ class Game:
             #Fetch game move and run
             board = self.state.board()
             uci = bot.run(board)
-            self.move(botId, uci)
+            self.move(botId, timestamp, uci)
 
     
     ##def runMatches(self, matchCount):

@@ -202,12 +202,12 @@ def handle_advance(data):
         #Deposit money to player
         accountManager.deposit(depositAddress, depositAmount, depositTokenAddress)
     elif operator == "create":
-        temp = matchMaker.create(sender, value)
+        temp = matchMaker.create(sender, timeStamp value)
         logger.info(temp)
         success = temp["success"]
         value = temp["value"]
     elif operator == "join":
-        success = matchMaker.join(sender, value)
+        success = matchMaker.join(sender, timestamp, value)
     elif operator == "resign":
         success = matchMaker.resign(sender, value)
     elif operator == "move":
@@ -221,7 +221,7 @@ def handle_advance(data):
     elif operator == "releaseFunds":
         accountManager.release(sender, value)
     elif operator == "botStep":
-        botManager.step(sender, value, botFactory, matchMaker)
+        botManager.step(sender, timestamp, value, botFactory, matchMaker)
     elif operator == "manageBot":
         botManager.manage(sender, value, botFactory)
     elif operator == "bet":

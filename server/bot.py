@@ -107,7 +107,7 @@ class BotManager:
         return newIdList[self.last_challenged[botId]]
 
     
-    def __matchMake(self, sender, rand, factory, matchmaker):
+    def __matchMake(self, sender, timestamp, rand, factory, matchmaker):
         bots = factory.bots
         logger.info("factor: " + str(factory.bots))
         botIds = list(bots.keys())
@@ -120,7 +120,7 @@ class BotManager:
             botId2 = self.__fetchOpponent(botIds, botId, factory)
             bot1 = bots[botId]
             if botId2:
-                matchmaker.create(sender, {
+                matchmaker.create(sender, timestamp, {
                     "name": "auto triggered match",
                     "isBot": True,
                     "botId1": botId,
@@ -140,14 +140,14 @@ class BotManager:
             #process move
             board = game.state.board()
             uci = bot.run(board)
-            game.move(botId, uci)
+            game.move(botId, timestamp, uci)
 
 
 
     
-    def step(self, sender, rand, factory, matchmaker):
+    def step(self, sender, timestamp, rand, factory, matchmaker):
         #handle all autonomous matchmaking between bots
-        self.__matchMake(sender, rand, factory, matchmaker)
+        self.__matchMake(sender, rand, timestamp, factory, matchmaker)
 
     def manage(self, sender, options, factory):
         botId = options["botId"] if ("botId" in options) else False
