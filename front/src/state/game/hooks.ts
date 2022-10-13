@@ -117,7 +117,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     result = await contract.addInput(input)
                     break;                
                 case TransactionType.CREATE_GAME_INPUT:
-                    const { name, isBot, wagerAmount, wagerTokenAddress, botId1, botId2, playerId} = info
+                    const { name, isBot, wagerAmount, wagerTokenAddress, botId1, botId2, playerId, bettingDuration} = info
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "create", 
                         "value": {
@@ -127,7 +127,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                             "botId2" : "${botId2 ?? "blank"}",
                             "playerId" : "${playerId ?? "blank"}",
                             "token" : "${wagerTokenAddress}",
-                            "wagerAmount": ${wagerAmount}
+                            "wagerAmount" : ${wagerAmount},
+                            "bettingDuration" : ${bettingDuration}
                         }
                     }`)
                     input = appendNumberToUInt8Array(id, input)

@@ -8,6 +8,8 @@ export enum TransactionType {
     APPROVE_ERC20,
     BOT_STEP,
     MANAGER_BOT_INPUT,
+    RELEASE_FUNDS,
+    BET_INPUT,
 }
 
 export interface BaseTransactionInfo {
@@ -34,6 +36,7 @@ export interface CreateGameTransactionInfo extends BaseTransactionInfo {
     playerId?: string,
     wagerTokenAddress: string,
     wagerAmount: string,
+    bettingDuration: string,
 }
 
 export interface ResignGameTransactionInfo extends BaseTransactionInfo {
@@ -68,6 +71,20 @@ export interface DepositErc20TransactionInfo extends BaseTransactionInfo {
 
 export interface ApproveErc20Transaction extends BaseTransactionInfo {
     type: TransactionType.APPROVE_ERC20,
+    tokenAddress: string,
+    spender: string,
+    amount: string,
+}
+
+export interface BetTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.BET_INPUT,
+    tokenAddress: string,
+    amount: string,
+    winningId: string,
+}
+
+export interface ReleaseFundsTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.RELEASE_FUNDS,
     tokenAddress: string,
     spender: string,
     amount: string,

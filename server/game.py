@@ -26,6 +26,7 @@ class Game:
         self.player1 = None
         self.resigner = None
         self.scores = {}
+        self.bettingDuration = duration
         #open betting phase
         betManager.open(id, timestamp, duration)
 
@@ -201,5 +202,7 @@ class Game:
             "token": self.token,
             "timestamp": self.timestamp,
             "resigner": self.resigner,
-            "scores": self.scores
+            "scores": self.scores,
+            "bettingDuration": self.bettingDuration,
+            "bets": deps.betManager.games[self.id]
         }

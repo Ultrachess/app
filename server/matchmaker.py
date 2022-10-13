@@ -42,6 +42,7 @@ class Matchmaker:
         isBot = options["isBot"] if ("isBot" in options) else False
         wagerAmount = options["wagerAmount"] if ("wagerAmount" in options) else 0
         token = options["token"] if ("token" in options) else DEFAULT_ERC20
+        duration = options["bettingDuration"] if ("bettingDuration" in options) else 0
         if(isBot):
             success = False
             #Confirm basic options
@@ -50,7 +51,7 @@ class Matchmaker:
 
             #Spawn new game
             id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-            self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=timestamp)
+            self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=timestamp, duration=duration)
 
             if "playerId" in options:
                 if options["playerId"] != "blank":
@@ -83,7 +84,7 @@ class Matchmaker:
             canCreate = not self.isInGame(sender)
             if(canCreate):
                 id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-                self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp)
+                self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp, duration=duration)
                 successfullAdd = self.games[str(id)].addPlayer(sender)
                 return {
                     "value": str(id),
