@@ -71,8 +71,7 @@ export function useIsTransactionConfirmed(hash: string): Boolean {
 export function useBlockNumber(): number | undefined {
     const { provider } = useWeb3React()
     const blockNumber = useAppSelector(state => state.game.blockNumber)
-    
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     useEffect(() => {
         const getBlock = async () => {
             try{

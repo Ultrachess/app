@@ -9,3 +9,5 @@ ngrok
 __pycache__/
 /deployments/localhost
 
+deploy-commands.txt
+

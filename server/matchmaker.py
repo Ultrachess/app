@@ -56,12 +56,12 @@ class Matchmaker:
             if "playerId" in options:
                 if options["playerId"] != "blank":
                     playerId = options["playerId"]
-                    self.games[str(id)].addPlayer(playerId)
+                    self.games[str(id)].addPlayer(timestamp, playerId)
                     self.games[str(id)].setPlayerInHumanVBot(playerId)
 
             #Add bot 1
             botId1 = options["botId1"]
-            success = self.games[str(id)].addPlayer(botId1)
+            success = self.games[str(id)].addPlayer(timestamp, botId1)
 
             #Set matchcount defined
             if "matchCount" in options:
@@ -72,7 +72,7 @@ class Matchmaker:
             if "botId2" in options:
                 botId2 = options["botId2"]
                 if botId2 != "blank":
-                    self.games[str(id)].addPlayer(botId2)
+                    self.games[str(id)].addPlayer(timestamp, botId2)
                     success = self.games[str(id)].run(timestamp)
             
             return {
@@ -85,7 +85,7 @@ class Matchmaker:
             if(canCreate):
                 id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
                 self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp, duration=duration)
-                successfullAdd = self.games[str(id)].addPlayer(sender)
+                successfullAdd = self.games[str(id)].addPlayer(timestamp, sender)
                 return {
                     "value": str(id),
                     "success": successfullAdd
@@ -102,11 +102,11 @@ class Matchmaker:
     def join(self, sender, timestamp, id):
         game = self.games[id]
         if game.isBot:
-            success = game.addPlayer(sender)
+            success = game.addPlayer(timestamp, sender)
             game.run(timestamp)
             return success
 
-        return game.addPlayer(sender)
+        return game.addPlayer(timestamp, sender)
 
     def leave(self, sender):
         game = self.getByPlayer(sender)

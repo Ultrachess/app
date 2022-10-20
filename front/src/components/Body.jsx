@@ -55,10 +55,10 @@ export default () => {
                 </Button>
             </div>
             <div className="content">
-            <Card shadow={true} css={{ height:"700px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
+            <Card shadow={true} css={{ width:"1300px", height:"700px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
                 <Card.Header>
                     <Row justify="center">
-                        <Text>Open games</Text>
+                        <Text>Recent games</Text>
                     </Row>
                 </Card.Header>
                 <GameList games={games}/>

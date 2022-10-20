@@ -6,7 +6,7 @@ def CreateBetPhase(gameId, openTime, duration):
         "openTime": openTime,
         "duration": duration,
         "pots": {},
-        "totalPot": 0
+        "totalPot": 0,
         "bets": {},
     }
 
@@ -37,9 +37,11 @@ class BetManager:
         winningId = value["winningId"]
 
         game = self.games[gameId]
+
+        if sender in deps.matchMaker.games[gameId].players:
+            return False
         if timeStamp > (game["openTime"] + game["duration"]):
             return False
-
         if not deps.accountManager.withdraw(sender, amount, tokenAddress):
             return False
         if not self.games[gameId]["bets"][winningId]:

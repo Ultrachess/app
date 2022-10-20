@@ -27,8 +27,7 @@ class Game:
         self.resigner = None
         self.scores = {}
         self.bettingDuration = duration
-        #open betting phase
-        betManager.open(id, timestamp, duration)
+        
 
     def __isInGame(self, address):
         return address in self.players
@@ -94,7 +93,7 @@ class Game:
         winningId = p1 if score1 > score2 else p2 if score2 > score1 else "DRAW"
         deps.betManager.end(self.id, winningId)
 
-    def addPlayer(self, player):
+    def addPlayer(self, timestamp, player):
         try:
             canAdd = (not self.__isMaxPlayers()) and (not self.__isInGame(player))
             address = player if "0x" in player else deps.botFactory.getOwner(player)
@@ -104,6 +103,9 @@ class Game:
                 self.players.append(player.lower())
                 deps.accountManager.withdraw(address, self.wagerAmount, self.token)
                 self.score[player.lower()] = 0
+                #open betting phase
+                if self.__isMinPlayers():
+                    betManager.open(id, timestamp, self.bettingDuration)
                 return True
             return False
         except:
@@ -204,5 +206,5 @@ class Game:
             "resigner": self.resigner,
             "scores": self.scores,
             "bettingDuration": self.bettingDuration,
-            "bets": deps.betManager.games[self.id]
+            "wagering": deps.betManager.games[self.id] if self.id in deps.betManager.games else {}
         }

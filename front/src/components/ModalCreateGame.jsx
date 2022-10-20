@@ -34,7 +34,8 @@ export default ({visible, closeHandler}) => {
             name: "default",
             isBot: false,
             wagerTokenAddress: tokenAddress,
-            wagerAmount: ethers.utils.parseUnits(wagerValue)
+            wagerAmount: ethers.utils.parseUnits(wagerValue),
+            bettingDuration: 10,
         })
         const roomId = await wait
         console.log("jumping to" + roomId)

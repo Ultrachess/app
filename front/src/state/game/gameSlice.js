@@ -234,7 +234,7 @@ function deepEqual(object1, object2) {
   }
 
 function updateGameState(dispatch, payload){
-    console.log(ethers.utils.toUtf8String(payload))
+    //console.log(ethers.utils.toUtf8String(payload))
     var state = JSON.parse(ethers.utils.toUtf8String(payload))
     //console.log(state)
     dispatch(setAppState(state))

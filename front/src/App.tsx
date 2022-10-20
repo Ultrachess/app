@@ -31,6 +31,7 @@ function App() {
   return (
     <div className="App">
       <TransitionManager/>
+      <TransactionUpdater/>
       <GameStateUpdater/>
       <Notifications/>
       <Navbar/>

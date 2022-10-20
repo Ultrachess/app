@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Toast from 'react-bootstrap/Toast';
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import { Action, ActionStates } from "../state/game/types"
+import { useTransaction } from "../state/transactions/hooks";
 
 const statusToString = {
     [ActionStates.INITIALIZED]: "Initialized",
@@ -48,6 +49,8 @@ export const useTime = (refreshCycle = 100) => {
 
 export default ({action}: {action: Action}) => {
     const now = useTime(200)
+    const transaction = useTransaction(action.transactionHash)
+    
     return (
         <Toast 
             show={
@@ -60,11 +63,13 @@ export default ({action}: {action: Action}) => {
                 <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
                 <strong className="me-auto">#{action.id}</strong>
                 <small className="text-muted">{(now - action.initTime)/1000} seconds ago</small>
+                {transaction?.confirmedTime ?? "null"}
             </Toast.Header>
             <Toast.Body>
                 {statusToString[action.status]}
                 <ProgressBar now={statusToProgress[action.status]} label={`${statusToProgress[action.status]}%`}/>
             </Toast.Body>
+            
         </Toast>
     )
 }

@@ -77,7 +77,7 @@ class BotManager:
         botIdIndex = botIdList.index(botId)
         newIdList = botIdList.copy()
         newIdList.remove(botId)
-        logger.info("botIdIndex: "+ str(botIdIndex))        return newGames
+        logger.info("botIdIndex: "+ str(botIdIndex))
         logger.info("newIdList: "+ str(newIdList))
         logger.info("botIdList: " + str(botIdList))
         

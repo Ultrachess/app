@@ -13,6 +13,7 @@ export default () => {
   return (
     <div>
       <ToastContainer containerPosition='absolute' position='top-start'>
+        {actionList}
       </ToastContainer>      
     </div>
   );

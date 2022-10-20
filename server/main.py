@@ -202,7 +202,7 @@ def handle_advance(data):
         #Deposit money to player
         accountManager.deposit(depositAddress, depositAmount, depositTokenAddress)
     elif operator == "create":
-        temp = matchMaker.create(sender, timeStamp value)
+        temp = matchMaker.create(sender, timeStamp, value)
         logger.info(temp)
         success = temp["success"]
         value = temp["value"]
@@ -288,7 +288,7 @@ while True:
         else: metadata = None
         if metadata != None and metadata["epoch_index"] == 0 and metadata["input_index"] == 0:
             rollup_address = metadata["msg_sender"]
-            #logger.info(f"Captured rollup address: {rollup_address}")
+            logger.info(f"Captured rollup address: {rollup_address}")
         else:
             handler = handlers[rollup_request["request_type"]]
             finish["status"] = handler(rollup_request["data"])

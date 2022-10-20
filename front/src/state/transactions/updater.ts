@@ -37,7 +37,6 @@ export function TransactionUpdater() {
     const { chainId, provider } = useWeb3React()
 
     const lastBlockNumber = useBlockNumber()
-    console.log(lastBlockNumber)
     const transactions = useAppSelector((state) => state.transactions)
     const pendingTransactions = useMemo(() => (chainId ? transactions[chainId] ?? {} : {}), [chainId, transactions])
 
