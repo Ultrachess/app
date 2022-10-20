@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   rollups_dispatcher:
-    image: cartesi/rollups-dispatcher:0.5.0
+    image: cartesi/rollups-dispatcher:0.6.1
     command:
       [
         "--rd-dapp-contract-address-file",
@@ -37,9 +37,9 @@ services:
     restart: always
     depends_on:
       state_server:
-        condition: service_started
+        condition: service_healthy
       server_manager:
-        condition: service_started
+        condition: service_healthy
     environment:
       RUST_LOG: info
     volumes:
@@ -48,7 +48,7 @@ services:
       - ./deployments:/deployments
 
   state_server:
-    image: cartesi/rollups-state-server:0.5.0
+    image: cartesi/rollups-state-server:0.6.1
     command:
       [
         "--sf-genesis-block",
@@ -63,27 +63,27 @@ services:
         "120",
       ]
     restart: always
-    #    healthcheck:
-    #      test: ["CMD", "curl", "-f", "http://locahost:50051"]
-    #      interval: 10s
-    #      timeout: 5s
-    #      retries: 5
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=:50051"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - blockchain-data:/opt/cartesi/share/blockchain:ro
       - ./config:/opt/cartesi/share/config/
 
   server_manager:
     restart: always
-    #    healthcheck:
-    #      test: ["CMD", "curl", "-f", "http://locahost:5001"]
-    #      interval: 10s
-    #      timeout: 5s
-    #      retries: 5
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=:5001"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - machine:/opt/cartesi/share/dapp-bin
 
   rollups_inspect_server:
-    image: cartesi/rollups-inspect-server:0.5.0
+    image: cartesi/rollups-inspect-server:0.6.1
     command:
       [
         "--inspect-server-address",
@@ -98,12 +98,12 @@ services:
       - "5005:5005"
     depends_on:
       server_manager:
-        condition: service_started
+        condition: service_healthy
     environment:
       RUST_LOG: info
 
   rollups_indexer:
-    image: cartesi/rollups-indexer:0.5.0
+    image: cartesi/rollups-indexer:0.6.1
     command:
       [
         "--dapp-contract-address-file",
@@ -124,9 +124,9 @@ services:
     restart: always
     depends_on:
       state_server:
-        condition: service_started
+        condition: service_healthy
       server_manager:
-        condition: service_started
+        condition: service_healthy
       database:
         condition: service_healthy
     environment:
@@ -138,7 +138,7 @@ services:
       - ./deployments:/deployments
 
   query_server:
-    image: cartesi/query-server:0.5.0
+    image: cartesi/query-server:0.6.1
     ports:
       - "4000:4000"
     depends_on:
