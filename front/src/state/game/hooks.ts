@@ -128,7 +128,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                             "playerId" : "${playerId ?? "blank"}",
                             "token" : "${wagerTokenAddress}",
                             "wagerAmount" : ${wagerAmount},
-                            "bettingDuration" : ${bettingDuration}
+                            "bettingDuration" : "${bettingDuration ?? "0"}"
                         }
                     }`)
                     input = appendNumberToUInt8Array(id, input)
