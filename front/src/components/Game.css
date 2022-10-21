@@ -26,3 +26,9 @@
 .gameMovesView {
     margin-left: 100px;
 }
+
+.tokenValue {
+    margin-top: 18px;
+    font-size: large;
+    text-decoration: underline;
+}

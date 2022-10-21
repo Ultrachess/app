@@ -16,6 +16,7 @@ import { useActionCreator, useActionsNotProcessed, useActions } from "../state/g
 import { useAllTransactions } from "../state/transactions/hooks";
 import { Row, Text } from "@nextui-org/react";
 import { useToken } from "../hooks/token";
+import { ethers } from "ethers";
 
 export default () => {
   let { gameId } = useParams()
@@ -41,15 +42,17 @@ export default () => {
       .map(({transactionInfo}) => transactionInfo.value)
   },[actionsNotProcessed])
   const game = useMemo(()=> games[gameId], [games])
-  const tokenAddress = useMemo(()=>game.tokenAddress, [game])
-  const tokenName = useToken(tokenAddress).name
-  const wagerAmount = useMemo(()=> game.wagerAmount, [game])
+  const tokenAddress = useMemo(()=>game.token, [game])
+  const token = useToken(tokenAddress)
+  const tokenName = token.symbol
+  const wagerAmount = useMemo(()=> ethers.utils.formatUnits(ethers.BigNumber.from(game.wagerAmount.toString())), [game])
   const resigner = useMemo(() => game.resigner, [game])
   const topAddressScore = useMemo(() => game.scores[topAddress])
   const bottomAddressScore = useMemo(() => game.scores[bottomAddress])
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
   const bottomAddressWinAmount = useMemo(() => wagerAmount*bottomAddressScore)
   const isTurn = gameState.turn() == gameSide[0]
+  const minPlayers = useMemo(()=> game.players.length > 1)
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
 
   
@@ -108,6 +111,7 @@ export default () => {
   },[pendingMoves])
 
   function safeGameMutate(modify) {
+    if(minPlayers)
     setGameState((g) => {
       const update = { ...g };
       modify(update);
@@ -154,6 +158,7 @@ export default () => {
     var moveUci = sourceSquare + targetSquare
     //if(move.promotion) moveUci += move.promotion
     //dispatch(sendMove(moveUci))
+    if(!minPlayers) return false
     addAction({
       type: TransactionType.SEND_MOVE_INPUT,
       roomId: gameId,
@@ -248,9 +253,9 @@ export default () => {
   return (
     <div className="game">
         <div className="gameView">
-          <Row>
+          <Row justify="space-evenly">
             <Address value={topAddress} />
-            <Text color="primary"> {wagerAmount} {tokenName}</Text>
+            <Text color="primary" className="tokenValue"> {wagerAmount}  {tokenName}</Text>
             {topAddressWinAmount == 0 ? 
               <div></div> : 
               <Text 
@@ -262,7 +267,7 @@ export default () => {
                       "success"
                 }
               >
-                {topAddressWinAmount}
+                {topAddressWinAmount ? topAddressWinAmount : ""}
               </Text>
             }
           </Row>
@@ -286,9 +291,9 @@ export default () => {
               ...rightClickedSquares
             }}
           />
-          <Row>
+          <Row justify="space-evenly">
             <Address value={bottomAddress} />
-            <Text>{wagerAmount} {tokenName}</Text>
+            <Text color="primary" className="tokenValue">{wagerAmount}  {tokenName}</Text>
             {bottomAddressWinAmount == 0 ? 
               <div></div> : 
               <Text 
@@ -299,7 +304,7 @@ export default () => {
                       "": "success"
                 }
               >
-                {bottomAddressWinAmount}
+                {bottomAddressWinAmount ? bottomAddressWinAmount : ""}
               </Text>
             }
           </Row>
