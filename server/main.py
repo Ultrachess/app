@@ -207,11 +207,11 @@ def handle_advance(data):
         success = temp["success"]
         value = temp["value"]
     elif operator == "join":
-        success = matchMaker.join(sender, timestamp, value)
+        success = matchMaker.join(sender, timeStamp, value)
     elif operator == "resign":
         success = matchMaker.resign(sender, value)
     elif operator == "move":
-        success = matchMaker.sendMove(sender, value)
+        success = matchMaker.sendMove(sender, timeStamp, value)
     elif operator == "undo":
         game = matchMaker.getByPlayer(sender)
         success = game.undo()
@@ -221,7 +221,7 @@ def handle_advance(data):
     elif operator == "releaseFunds":
         accountManager.release(sender, value)
     elif operator == "botStep":
-        botManager.step(sender, timestamp, value, botFactory, matchMaker)
+        botManager.step(sender, timeStamp, value, botFactory, matchMaker)
     elif operator == "manageBot":
         botManager.manage(sender, value, botFactory)
     elif operator == "bet":

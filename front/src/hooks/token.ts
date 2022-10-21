@@ -61,7 +61,6 @@ export function useTokenFromNetwork(address: string | null | undefined) : Token 
     const symbol = useContractCallResult(contract, "symbol")
     const decimals = useContractCallResult(contract, "decimals")
 
-    console.log(symbol)
     return useMemo(()=>{
         return {
             address,
@@ -85,6 +84,5 @@ export function useToken(address?: string | null): Token | null | undefined {
     //const tokenFromList = useTokenFromList(tokens, address)
     const tokenFromNetwork = useTokenFromNetwork(address)
 
-    console.log(tokenFromNetwork)
     return tokenFromNetwork
 }

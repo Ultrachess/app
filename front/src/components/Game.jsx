@@ -50,7 +50,10 @@ export default () => {
   const topAddressScore = useMemo(() => game.scores[topAddress])
   const bottomAddressScore = useMemo(() => game.scores[bottomAddress])
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
+  console.log("topWin" + topAddressWinAmount)
   const bottomAddressWinAmount = useMemo(() => wagerAmount*bottomAddressScore)
+  console.log("bottomWin" + bottomAddressWinAmount)
+
   const isTurn = gameState.turn() == gameSide[0]
   const minPlayers = useMemo(()=> game.players.length > 1)
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
@@ -67,6 +70,7 @@ export default () => {
           type: TransactionType.JOIN_GAME_INPUT,
           roomId: gameId
         })
+        console.log("attempting to join game")
       }
       setGameSide(getSide(game, address))
       setTopAddress(getTopAddress(getGameById(games, gameId), address, gameSide))
@@ -257,18 +261,8 @@ export default () => {
             <Address value={topAddress} />
             <Text color="primary" className="tokenValue"> {wagerAmount}  {tokenName}</Text>
             {topAddressWinAmount == 0 ? 
-              <div></div> : 
-              <Text 
-                color={
-                  topAddressScore == 0 ? 
-                    "error": 
-                    topAddressScore == 0.5 ? 
-                      "": 
-                      "success"
-                }
-              >
-                {topAddressWinAmount ? topAddressWinAmount : ""}
-              </Text>
+              <Text className="tokenValue" color="error">{topAddressWinAmount !=NaN ? "-"+wagerAmount : ""}  </Text> : 
+              <Text className="tokenValue" color="success">{topAddressWinAmount !=NaN ? "+"+wagerAmount : ""}</Text>
             }
           </Row>
           <Chessboard 
@@ -295,17 +289,8 @@ export default () => {
             <Address value={bottomAddress} />
             <Text color="primary" className="tokenValue">{wagerAmount}  {tokenName}</Text>
             {bottomAddressWinAmount == 0 ? 
-              <div></div> : 
-              <Text 
-                color={
-                  bottomAddressScore == 0 ? 
-                    "error": 
-                    bottomAddressScore == 0.5 ? 
-                      "": "success"
-                }
-              >
-                {bottomAddressWinAmount ? bottomAddressWinAmount : ""}
-              </Text>
+              <Text className="tokenValue" color="error">{bottomAddressWinAmount !=NaN ? -wagerAmount : ""}  </Text> : 
+              <Text className="tokenValue" color="success">{bottomAddressWinAmount !=NaN ? wagerAmount : ""}</Text>
             }
           </Row>
         </div>

@@ -133,7 +133,7 @@ class Game:
             isTurn = self.__isTurn(sender)
             isMinPlayers = self.__isMinPlayers()
             isGameEnd = self.isGameEnd()
-            isBettingPhaseOpen = betManager.isBettingPhaseOpen(self.id, timestamp)
+            isBettingPhaseOpen = deps.betManager.isBettingPhaseOpen(self.id, timestamp)
             
             #Log move state
             #logger.info("isGameEnd: " + str(isGameEnd) + " isMinPlayers: " + str(isMinPlayers) + "isTurn: "+str(isTurn)+" isInGame: "+str(isInGame)+" isLegal: "+str(isLegal))

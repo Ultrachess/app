@@ -1,4 +1,9 @@
 import deps
+import logging
+import traceback
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger(__name__)
 
 def CreateBetPhase(gameId, openTime, duration):
     return {
@@ -25,6 +30,10 @@ class BetManager:
         self.games = {}
     
     def isBettingPhaseOpen(self, gameId, currentTime):
+        logger.info("self.games:" + str(self.games))
+        if not gameId in self.games:
+            return False
+        game = self.games[gameId]
         return currentTime < (game["openTime"] + game["duration"])
 
     def open(self, id, timeStamp, duration):

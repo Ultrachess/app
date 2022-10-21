@@ -147,10 +147,10 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     result = await contract.addInput(input)
                     break;
                 case TransactionType.JOIN_GAME_INPUT:
-                    roomId  = info.roomId
+                    let roomId1  = info.roomId
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "join", 
-                        "value": "${roomId}"
+                        "value": "${roomId1}"
                     }`)
                     input = appendNumberToUInt8Array(id, input)
                     result = await contract.addInput(input)
