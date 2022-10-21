@@ -1,4 +1,4 @@
-import CartesiToken from "../../../deployments/localhost/CartesiToken.json"
+import { contracts } from "../../../export/localhost.json";
 
 export const truncateAddress = (address) => {
   if (!address) return "No Account";
@@ -38,7 +38,7 @@ export function getTokenNameFromAddress(address) {
   const lowerCaseAddress = address.toLowerCase()
   var name = lowerCaseAddress
   switch (lowerCaseAddress) {
-    case CartesiToken.address.toLowerCase():
+    case contracts.CartesiToken.address.toLowerCase():
       name = "CTSI"
       break;
     case "0x326C977E6efc84E512bB9C30f76E30c160eD06FB".toLowerCase():

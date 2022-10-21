@@ -8,8 +8,9 @@ import { useCallback, useMemo } from "react";
 import { useContract, useErc20Contract } from "../../hooks/contract";
 import { DAPP_ADDRESS } from "./gameSlice";
 import { addAction, setAction, setActionTransactionHash } from "../actions/reducer";
-import InputFacet from  "../../../../deployments/localhost/InputFacet.json"
-import ERC20PortalFacet from "../../../../deployments/localhost/ERC20PortalFacet.json"
+//import InputFacet from  "../../../../deployments/localhost/InputFacet.json"
+//import ERC20PortalFacet from "../../../../deployments/localhost/ERC20PortalFacet.json"
+import { contracts } from "../../../../export/localhost.json";
 import { ethers } from "ethers";
 import { useAppSelector } from "../hooks";
 import { delay, filter } from "wonka";
@@ -72,8 +73,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
     const dispatch = useDispatch()
     const addAction = useAddAction()
     const addTransaction = useTransactionAdder()
-    const contract = useContract(DAPP_ADDRESS, InputFacet.abi)
-    const erc20PortalContract = useContract(DAPP_ADDRESS, ERC20PortalFacet.abi)
+    const contract = useContract(DAPP_ADDRESS, contracts.InputFacet.abi)
+    const erc20PortalContract = useContract(DAPP_ADDRESS, contracts.ERC20PortalFacet.abi)
 
     return useCallback(async (info: TransactionInfo) => {
         var input: Uint8Array
