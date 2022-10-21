@@ -29,8 +29,8 @@ services:
       timeout: 30s
       retries: 5
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain
       - ./deployments:/app/deployments
+      - ./export:/opt/cartesi/share/blockchain
 
   rollups_dispatcher:
     image: cartesi/rollups-dispatcher:0.6.1
@@ -70,8 +70,8 @@ services:
     environment:
       RUST_LOG: info
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain:ro
       - ./deployments:/deployments
+      - ./export:/opt/cartesi/share/blockchain:ro
 
   state_server:
     image: cartesi/rollups-state-server:0.6.1
@@ -98,7 +98,7 @@ services:
       hardhat:
         condition: service_healthy
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain:ro
+      - ./export:/opt/cartesi/share/blockchain:ro
     environment:
       RUST_LOG: info
 
@@ -137,9 +137,9 @@ services:
         "/deployments/localhost/dapp.address",
       ]
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain
       - machine:/opt/cartesi/share/dapp-bin:ro
       - ./deployments:/deployments
+      - ./export:/opt/cartesi/share/blockchain
 
   hardhat_stop_automine:
     image: curlimages/curl:7.84.0
@@ -226,8 +226,8 @@ services:
       <<: *postgres-config
       RUST_LOG: info
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain
       - ./deployments:/deployments
+      - ./export:/opt/cartesi/share/blockchain
 
   query_server:
     image: cartesi/query-server:0.6.1
@@ -257,6 +257,5 @@ services:
       - database-data:/var/lib/postgresql/data
 
 volumes:
-  blockchain-data: {}
   machine: {}
   database-data: {}
