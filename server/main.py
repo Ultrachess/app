@@ -98,7 +98,7 @@ def get_state_hex():
         "accounts": accountManager.getState(),
         "elo": eloManager.getState(),
         "lastProcessedBlock": str(lastProcessedBlock),
-        "lastStepTimestamp": str(betManager.last_step_timestamp)
+        "lastStepTimestamp": str(betManager.last_step_timestamp),
         "actionList": actionManager.actionList()
     }
     json_object = json.dumps(data_set)
