@@ -72,6 +72,7 @@ class BotManager:
         self.pending_actions = {}
         self.last_challenged = {}
         self.pending_game_moves = []
+        self.last_step_timestamp = 0
     
     def __fetchOpponent(self, botIdList, botId, factory):
         botIdIndex = botIdList.index(botId)
@@ -133,8 +134,8 @@ class BotManager:
         while len(self.pending_game_moves) > 0:
             pending_move = self.pending_game_moves.pop()
             #get game and bot
-            gameId = pending_move.gameId
-            botId = pending_move.botId
+            gameId = pending_move["gameId"]
+            botId = pending_move["botId"]
             game = matchmaker.games[gameId]
             bot = bots[botId]
             #process move
@@ -148,6 +149,7 @@ class BotManager:
     def step(self, sender, timestamp, rand, factory, matchmaker):
         #handle all autonomous matchmaking between bots
         self.__matchMake(sender, rand, timestamp, factory, matchmaker)
+        self.last_step_timestamp = timestamp
 
     def manage(self, sender, options, factory):
         botId = options["botId"] if ("botId" in options) else False

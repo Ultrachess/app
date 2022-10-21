@@ -30,7 +30,6 @@ class BetManager:
         self.games = {}
     
     def isBettingPhaseOpen(self, gameId, currentTime):
-        logger.info("self.games:" + str(self.games))
         if not gameId in self.games:
             return False
         game = self.games[gameId]
@@ -63,6 +62,8 @@ class BetManager:
         return True
 
     def end(self, id, winningId):
+        if not gameId in self.games:
+            return False 
         game = self.games[id]
         bets = game["bets"][winningId]
         totalPot = game["totalPot"]

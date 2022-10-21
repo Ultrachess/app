@@ -49,6 +49,8 @@ export default () => {
   const resigner = useMemo(() => game.resigner, [game])
   const topAddressScore = useMemo(() => game.scores[topAddress])
   const bottomAddressScore = useMemo(() => game.scores[bottomAddress])
+  console.log("topScore " + topAddressScore)
+
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
   console.log("topWin" + topAddressWinAmount)
   const bottomAddressWinAmount = useMemo(() => wagerAmount*bottomAddressScore)
@@ -260,9 +262,9 @@ export default () => {
           <Row justify="space-evenly">
             <Address value={topAddress} />
             <Text color="primary" className="tokenValue"> {wagerAmount}  {tokenName}</Text>
-            {topAddressWinAmount == 0 ? 
-              <Text className="tokenValue" color="error">{topAddressWinAmount !=NaN ? "-"+wagerAmount : ""}  </Text> : 
-              <Text className="tokenValue" color="success">{topAddressWinAmount !=NaN ? "+"+wagerAmount : ""}</Text>
+            {topAddressScore == undefined ? "" : topAddressWinAmount == 0 ? 
+              <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
+              <Text className="tokenValue" color="success">{"+"+wagerAmount}</Text>
             }
           </Row>
           <Chessboard 
@@ -288,10 +290,9 @@ export default () => {
           <Row justify="space-evenly">
             <Address value={bottomAddress} />
             <Text color="primary" className="tokenValue">{wagerAmount}  {tokenName}</Text>
-            {bottomAddressWinAmount == 0 ? 
-              <Text className="tokenValue" color="error">{bottomAddressWinAmount !=NaN ? -wagerAmount : ""}  </Text> : 
-              <Text className="tokenValue" color="success">{bottomAddressWinAmount !=NaN ? wagerAmount : ""}</Text>
-            }
+            {bottomAddressScore == undefined ? "" : bottomAddressWinAmount == 0 ? 
+              <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
+              <Text className="tokenValue" color="success">{"+"+wagerAmount}</Text>            }
           </Row>
         </div>
         <div className="gameMovesView"> 

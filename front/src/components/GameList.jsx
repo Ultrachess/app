@@ -60,7 +60,7 @@ export default ({games}) => {
             id: game.id,
             pgn: game.pgn,
             players,
-            wagerAmount: wagerAmount + " " + getTokenNameFromAddress(game.token),
+            wagerAmount: ethers.utils.formatUnits(ethers.BigNumber.from(wagerAmount)) + " " + getTokenNameFromAddress(game.token),
             mode: game.isBot ? "Bot": "Human",
             created: formatDate(date)
         }
