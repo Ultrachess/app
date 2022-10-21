@@ -38,6 +38,7 @@ export const gameSlice = createSlice({
         accounts: {},
         blockNumber: 0,
         lastProcessedBlock: 0,
+        lastStepTimestamp: 0,
         actionList: [],
     },
     reducers: {
@@ -68,7 +69,7 @@ export const gameSlice = createSlice({
             state.bots = action.payload
         },
         setAppState: (state, action) => {
-            var {elo, game, bots, accounts, lastProcessedBlock, actionList} = action.payload
+            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp} = action.payload
             if(
                 !deepEqual(state.elo, elo) ||
                 !deepEqual(state.games, game) ||
@@ -84,6 +85,7 @@ export const gameSlice = createSlice({
             state.bots = bots
             state.accounts = accounts
             state.lastProcessedBlock = lastProcessedBlock
+            state.lastStepTimestamp = lastStepTimestamp
             state.actionList = actionList
         },
         updateGame: (state, action) => {

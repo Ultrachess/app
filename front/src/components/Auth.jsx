@@ -8,14 +8,19 @@ import { useEffect } from 'react'
 import { hooks, metaMask } from '../ether/connectors/metaMask'
 import { initContracts } from "../state/game/gameSlice";
 import AssetDisplay from "./AssetDisplay";
+import { useAppSelector } from "../state/hooks";
+import { useTime } from "./ActionView";
+import "./Auth.css"
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
-
 
 export default () => {
   const { setVisible, bindings } = useModal();
   const auth = useSelector(state => state.auth);
+  const now = useTime(2000)
+  const lastStepTimestamp = useAppSelector(state => state.game.lastStepTimestamp)
   const dispatch = useDispatch();
+  console.log(lastStepTimestamp)
   
   const chainId = useChainId()
   const accounts = useAccounts()
@@ -53,6 +58,14 @@ export default () => {
       <div>
       {isActive ? (
         <Row justify="space-evenly">
+          {lastStepTimestamp == 0 ? 
+            <Row><Text className="smallText" css={{
+              textGradient: "45deg, $blue600 -20%, $pink600 50%",
+          }}>waiting on cycle update</Text></Row> :
+            <Text className="smallText" css={{
+              textGradient: "45deg, $blue600 -20%, $pink600 50%",
+          }}>cycle: {Math.round((now/1000)-lastStepTimestamp)} secs ago</Text>
+          }
           <AssetDisplay/>
           <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => metaMask.deactivate()}>
             {truncateAddress( accounts[0])}
