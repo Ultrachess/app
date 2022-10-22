@@ -86,8 +86,6 @@ export interface BetTransactionInfo extends BaseTransactionInfo {
 export interface ReleaseFundsTransactionInfo extends BaseTransactionInfo {
     type: TransactionType.RELEASE_FUNDS,
     tokenAddress: string,
-    spender: string,
-    amount: string,
 }
 
 export type TransactionInfo = 
@@ -100,4 +98,5 @@ export type TransactionInfo =
     | ResignGameTransactionInfo
     | BotStepTransactionInfo
     | ManagerBotTransactionInfo
+    | ReleaseFundsTransactionInfo
 

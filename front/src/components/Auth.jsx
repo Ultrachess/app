@@ -20,7 +20,6 @@ export default () => {
   const now = useTime(2000)
   const lastStepTimestamp = useAppSelector(state => state.game.lastStepTimestamp)
   const dispatch = useDispatch();
-  console.log(lastStepTimestamp)
   
   const chainId = useChainId()
   const accounts = useAccounts()
@@ -64,7 +63,7 @@ export default () => {
           }}>waiting on cycle update</Text></Row> :
             <Text className="smallText" css={{
               textGradient: "45deg, $blue600 -20%, $pink600 50%",
-          }}>cycle: {Math.round((now/1000)-lastStepTimestamp)} secs ago</Text>
+          }}>cycle: {Math.max(Math.round((now/1000)-lastStepTimestamp), 0)} secs ago</Text>
           }
           <AssetDisplay/>
           <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => metaMask.deactivate()}>

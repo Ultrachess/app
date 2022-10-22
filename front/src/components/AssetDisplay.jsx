@@ -7,6 +7,8 @@ import { FaCoins } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { ethers } from "ethers";
 import { useTokenFromNetwork } from "../hooks/token";
+import { useActionCreator } from "../state/game/hooks";
+import { TransactionType } from "../common/types";
 
 export default () => {
     const accounts = useSelector(state => state.auth.accounts);
@@ -15,13 +17,25 @@ export default () => {
     const balances = accountBalances[address.toLowerCase()] ?? {[CartesiToken.address.toLowerCase()] : 0}
     const token = useTokenFromNetwork("0x326C977E6efc84E512bB9C30f76E30c160eD06FB")
     //console.log(token)
+    const addAction = useActionCreator()
+
+    const handleReleaseFunds = async (tokenAddress) => {
+        addAction({
+            type: TransactionType.RELEASE_FUNDS,
+            tokenAddress,
+        })
+    }
     const getAssets = () => {
         let content = [];
         let index = 0
         for (const tokenAddress in balances) {
             const balance = balances[tokenAddress];
             content.push(
-                <Button.Group css={{height:"100%", marginTop:"0"}} key={index} color="primary" bordered>
+                <Button.Group 
+                    css={{height:"100%", marginTop:"0"}} key={index} color="primary" 
+                    onClick={handleReleaseFunds(tokenAddress)}
+                    bordered
+                >
                     <Button>{ethers.utils.formatUnits(ethers.BigNumber.from(balance.toString()))}</Button>
                     <Button icon={<FaCoins/>}>{getTokenNameFromAddress(tokenAddress)}</Button>
                 </Button.Group>

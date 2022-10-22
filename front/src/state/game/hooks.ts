@@ -102,6 +102,15 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = appendNumberToUInt8Array(id, input)
                     result = await contract.addInput(input)
                     break;
+                case TransactionType.RELEASE_FUNDS:
+                    let { tokenAddress } = info
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "releaseFunds", 
+                        "value": "${tokenAddress}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
                 case TransactionType.MANAGER_BOT_INPUT:
                     let { autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress, botId } = info
                     input = ethers.utils.toUtf8Bytes(`{

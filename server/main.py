@@ -203,30 +203,70 @@ def handle_advance(data):
         #Deposit money to player
         accountManager.deposit(depositAddress, depositAmount, depositTokenAddress)
     elif operator == "create":
-        temp = matchMaker.create(sender, timeStamp, value)
-        logger.info(temp)
-        success = temp["success"]
-        value = temp["value"]
+        try:
+            temp = matchMaker.create(sender, timeStamp, value)
+            logger.info(temp)
+            success = temp["success"]
+            value = temp["value"]
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "join":
-        success = matchMaker.join(sender, timeStamp, value)
+        try:
+            success = matchMaker.join(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "resign":
-        success = matchMaker.resign(sender, value)
+        try:
+            success = matchMaker.resign(sender, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "move":
-        success = matchMaker.sendMove(sender, timeStamp, value)
+        try:
+            success = matchMaker.sendMove(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "undo":
-        game = matchMaker.getByPlayer(sender)
-        success = game.undo()
+        try:
+            game = matchMaker.getByPlayer(sender)
+            success = game.undo()
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "createBot":
-        binary = bytes.fromhex(payload)
-        success = botFactory.create(sender, binary, timeStamp)
+        try:
+            binary = bytes.fromhex(payload)
+            success = botFactory.create(sender, binary, timeStamp)
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "releaseFunds":
-        accountManager.release(sender, value)
+        try:
+            accountManager.release(sender, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "botStep":
-        botManager.step(sender, timeStamp, value, botFactory, matchMaker)
+        try:
+            botManager.step(sender, timeStamp, value, botFactory, matchMaker)
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "manageBot":
-        botManager.manage(sender, value, botFactory)
+        try:
+            botManager.manage(sender, value, botFactory)
+        except Exception:
+            traceback.print_exc()
+            success = False
     elif operator == "bet":
-        betManager.bet(sender, timeStamp, value)
+        try:
+            betManager.bet(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
     
     #Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)
@@ -252,20 +292,25 @@ def handle_advance(data):
 def handle_inspect(data):
     #logger.info(f"Received inspect request data")
     #logger.info("Adding report")
-    content = (bytes.fromhex(data["payload"][2:]).decode("utf-8"))
-    
-    s_json = json.loads(content)
-    fetchType = s_json["type"]
-    fetchValue = s_json["value"]
-    if fetchType == "state":
-        payload = get_state_hex()
-    elif fetchType == "action":
-        logger.info("Recieved action request: "+ fetchValue)
-        payload = actionManager.result(fetchValue)
-    report = {"payload": payload}
-    response = requests.post(rollup_server + "/report", json=report)
-    #logger.info(f"Received report status {response.status_code}")
-    return "accept"
+    try:
+        content = (bytes.fromhex(data["payload"][2:]).decode("utf-8"))
+        
+        s_json = json.loads(content)
+        fetchType = s_json["type"]
+        fetchValue = s_json["value"]
+        if fetchType == "state":
+            payload = get_state_hex()
+        elif fetchType == "action":
+            logger.info("Recieved action request: "+ fetchValue)
+            payload = actionManager.result(fetchValue)
+        report = {"payload": payload}
+        response = requests.post(rollup_server + "/report", json=report)
+        #logger.info(f"Received report status {response.status_code}")
+        return "accept"
+    except:
+        report = {"payload": "error"}
+        response = requests.post(rollup_server + "/report", json=report)
+        return "accept"
 
 handlers = {  
     "advance_state": handle_advance,
