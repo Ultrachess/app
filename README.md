@@ -145,7 +145,7 @@ In order to start the back-end, run the following commands in a dedicated termin
 python3 -m venv .env
 . .env/bin/activate
 pip install -r requirements.txt
-ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" python3 chessAppNew.py
+ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" python3 main.py
 ```
 
 The final command will effectively run the back-end and send corresponding outputs to port `5004`.
