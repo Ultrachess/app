@@ -33,11 +33,10 @@ export default () => {
             content.push(
                 <Button.Group 
                     css={{height:"100%", marginTop:"0"}} key={index} color="primary" 
-                    onClick={handleReleaseFunds(tokenAddress)}
                     bordered
                 >
-                    <Button>{ethers.utils.formatUnits(ethers.BigNumber.from(balance.toString()))}</Button>
-                    <Button icon={<FaCoins/>}>{getTokenNameFromAddress(tokenAddress)}</Button>
+                    <Button onClick={()=>handleReleaseFunds(tokenAddress)}>{ethers.utils.formatUnits(ethers.BigNumber.from(balance.toString()))}</Button>
+                    <Button onClick={()=>handleReleaseFunds(tokenAddress)} icon={<FaCoins/>}>{getTokenNameFromAddress(tokenAddress)}</Button>
                 </Button.Group>
             );
             index++

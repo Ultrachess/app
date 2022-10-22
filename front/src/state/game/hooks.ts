@@ -180,14 +180,14 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     result = contract.addInput(input)
                     break;
                 case TransactionType.DEPOSIT_ERC20:
-                    var { amount, tokenAddress } = info
-                    var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(amount))
-                    result = await erc20PortalContract.erc20Deposit(tokenAddress, erc20Amount, "0x")
+                    let { amount } = info
+                    var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(info.amount))
+                    result = await erc20PortalContract.erc20Deposit(info.tokenAddress, erc20Amount, "0x")
                     break;
                 case TransactionType.APPROVE_ERC20:
-                    var { amount, tokenAddress, spender } = info
-                    var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(amount))
-                    const erc20Contract = getErc20Contract(tokenAddress, provider, account)
+                    let { spender } = info
+                    var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(info.amount))
+                    const erc20Contract = getErc20Contract(info.tokenAddress, provider, account)
                     result = await erc20Contract.approve(
                         spender ?? erc20PortalContract.address,
                         erc20Amount

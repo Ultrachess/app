@@ -245,7 +245,7 @@ def handle_advance(data):
             success = False
     elif operator == "releaseFunds":
         try:
-            accountManager.release(sender, value)
+            success = accountManager.release(sender, value, rollup_server)
         except Exception:
             traceback.print_exc()
             success = False
