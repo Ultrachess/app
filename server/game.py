@@ -185,7 +185,7 @@ class Game:
 
             #Fetch game move and run
             board = self.state.board()
-            uci = bot.run(board)
+            uci = bot.run(board, timestamp)
             self.move(botId, timestamp, uci)
 
     

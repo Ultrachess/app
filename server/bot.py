@@ -27,9 +27,11 @@ class Bot:
         self.autoBattleEnabled = False
         
 
-    def run(self, board):
+    def run(self, board, timeStamp):
         #logger.info("bot: processing chess board: " + board.fen())
-        result = self.engine.play(board, chess.engine.Limit(time=0.000100))
+        time = (int(timeStamp) % 10)/1000.0
+        logger.info("running bot with time: " + str(time))
+        result = self.engine.play(board, chess.engine.Limit(time=time))
         move = result.move
         return move.uci()
 
@@ -140,7 +142,7 @@ class BotManager:
             bot = bots[botId]
             #process move
             board = game.state.board()
-            uci = bot.run(board)
+            uci = bot.run(board, timestamp)
             game.move(botId, timestamp, uci)
 
 
@@ -148,7 +150,7 @@ class BotManager:
     
     def step(self, sender, timestamp, rand, factory, matchmaker):
         #handle all autonomous matchmaking between bots
-        self.__matchMake(sender, rand, timestamp, factory, matchmaker)
+        self.__matchMake(sender, timestamp, rand, factory, matchmaker)
         self.last_step_timestamp = timestamp
 
     def manage(self, sender, options, factory):

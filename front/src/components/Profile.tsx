@@ -20,6 +20,9 @@ export default () => {
             .filter(val => val.players.includes(userId.toLowerCase())),
             [allGames])
 
+    console.log("user games")
+    console.log(userGames)
+
     return (
         <div className="body">
         <Col>
@@ -46,7 +49,7 @@ export default () => {
                             </div>
                             <div>
                                 <Text>Games played</Text>
-                                <GameList games={userGames}/>
+                                <GameList games={userGames.length}/>
                             </div>
                         </Col>
                         
