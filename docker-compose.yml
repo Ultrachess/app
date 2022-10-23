@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   hardhat:
-    image: cartesi/rollups-hardhat:0.5.0
+    image: cartesi/rollups-hardhat:0.6.1
     command:
       [
         "node",
@@ -29,11 +29,11 @@ services:
       timeout: 30s
       retries: 5
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain
       - ./deployments:/app/deployments
+      - ./export:/opt/cartesi/share/blockchain
 
   rollups_dispatcher:
-    image: cartesi/rollups-dispatcher:0.5.0
+    image: cartesi/rollups-dispatcher:0.6.1
     command:
       [
         "--rd-dapp-contract-address-file",
@@ -64,17 +64,17 @@ services:
       hardhat_set_interval:
         condition: service_completed_successfully
       state_server:
-        condition: service_started
+        condition: service_healthy
       server_manager:
-        condition: service_started
+        condition: service_healthy
     environment:
-      RUST_LOG: "dispatcher::main_loop=trace,dispatcher::rollups_dispatcher=trace"
+      RUST_LOG: info
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain:ro
       - ./deployments:/deployments
+      - ./export:/opt/cartesi/share/blockchain:ro
 
   state_server:
-    image: cartesi/rollups-state-server:0.5.0
+    image: cartesi/rollups-state-server:0.6.1
     command:
       [
         "--sf-genesis-block",
@@ -89,16 +89,16 @@ services:
         "120",
       ]
     restart: always
-    #    healthcheck:
-    #      test: ["CMD", "curl", "-f", "http://locahost:50051"]
-    #      interval: 10s
-    #      timeout: 5s
-    #      retries: 5
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=:50051"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       hardhat:
         condition: service_healthy
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain:ro
+      - ./export:/opt/cartesi/share/blockchain:ro
     environment:
       RUST_LOG: info
 
@@ -106,22 +106,24 @@ services:
     restart: always
     ports:
       - "5001:5001"
-    #    healthcheck:
-    #      test: ["CMD", "curl", "-f", "http://locahost:5001"]
-    #      interval: 10s
-    #      timeout: 5s
-    #      retries: 5
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=:5001"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - machine:/opt/cartesi/share/dapp-bin
+    environment:
+      RUST_LOG: warn
 
   deployer:
-    image: cartesi/rollups-cli:0.5.0
+    image: juztamau5/rollups-cli:devel
     restart: on-failure
     depends_on:
       hardhat:
         condition: service_healthy
       server_manager:
-        condition: service_started
+        condition: service_healthy
     command:
       [
         "create",
@@ -135,11 +137,13 @@ services:
         "/opt/cartesi/share/dapp-bin/hash",
         "--outputFile",
         "/deployments/localhost/dapp.address",
+        "--jsonFile",
+        "/deployments/localhost/dapp.json",
       ]
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain
       - machine:/opt/cartesi/share/dapp-bin:ro
       - ./deployments:/deployments
+      - ./export:/opt/cartesi/share/blockchain
 
   hardhat_stop_automine:
     image: curlimages/curl:7.84.0
@@ -172,7 +176,7 @@ services:
       ]
 
   rollups_inspect_server:
-    image: cartesi/rollups-inspect-server:0.5.0
+    image: cartesi/rollups-inspect-server:0.6.1
     command:
       [
         "--inspect-server-address",
@@ -187,12 +191,12 @@ services:
       - "5005:5005"
     depends_on:
       server_manager:
-        condition: service_started
+        condition: service_healthy
     environment:
-      RUST_LOG: info
+      RUST_LOG: warn
 
   rollups_indexer:
-    image: cartesi/rollups-indexer:0.5.0
+    image: cartesi/rollups-indexer:0.6.1
     command:
       [
         "--dapp-contract-address-file",
@@ -217,20 +221,20 @@ services:
       hardhat_set_interval:
         condition: service_completed_successfully
       state_server:
-        condition: service_started
+        condition: service_healthy
       server_manager:
-        condition: service_started
+        condition: service_healthy
       database:
         condition: service_healthy
     environment:
       <<: *postgres-config
-      RUST_LOG: info
+      RUST_LOG: warn
     volumes:
-      - blockchain-data:/opt/cartesi/share/blockchain
       - ./deployments:/deployments
+      - ./export:/opt/cartesi/share/blockchain
 
   query_server:
-    image: cartesi/query-server:0.5.0
+    image: cartesi/query-server:0.6.1
     ports:
       - "4000:4000"
     depends_on:
@@ -257,6 +261,5 @@ services:
       - database-data:/var/lib/postgresql/data
 
 volumes:
-  blockchain-data: {}
   machine: {}
   database-data: {}

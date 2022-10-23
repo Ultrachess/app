@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { InputStatus, InputType, getGameByPlayer, createDummyGames, getGameById, createGameHelper } from "./gameHelper";
 import { ethers } from "ethers";
-//import CartesiDapp from "../../../../../deployments/localhost/CartesiDApp.json"
-import InputFacet from  "../../../../deployments/localhost/InputFacet.json"
-import ERC20PortalFacet from "../../../../deployments/localhost/ERC20PortalFacet.json"
-import CartesiToken from "../../../../deployments/localhost/CartesiToken.json"
+import { contracts } from "../../../../export/localhost.json";
+import dapp from "../../../../deployments/localhost/dapp.json";
+
 
 import { createClient, defaultExchanges } from '@urql/core';
 import { pipe, subscribe } from "wonka";
@@ -12,7 +11,7 @@ import { Chess } from "chess.js";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 
-export const DAPP_ADDRESS = import.meta.env.VITE_DAPP_ADDRESS 
+export const DAPP_ADDRESS = dapp.address;
 console.log(`dapp address ${DAPP_ADDRESS}`)
 
 
@@ -257,8 +256,8 @@ async function poll(dispatch) {
 
 export const initContracts = (signer) => async dispatch => {
     //init contract
-    var inputFacetAbi = InputFacet.abi
-    var erc20PortalAbi = ERC20PortalFacet.abi
+    var inputFacetAbi = contracts.InputFacet.abi
+    var erc20PortalAbi = contracts.ERC20PortalFacet.abi
     var cartesiDappAddress = DAPP_ADDRESS
 
     cartesiDappContract = new ethers.Contract(
