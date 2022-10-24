@@ -70,6 +70,9 @@ Once the machine docker image is ready, we can use it to deploy a corresponding 
 export NETWORK=<network>
 export MNEMONIC=<user sequence of twelve words>
 export RPC_URL=<https://your.rpc.gateway>
+export VALIDATORS=<CSV list of addresses>
+export GAS_PRICE=<gas price in GWei>
+export GAS_LIMIT=<gas limit in GWei>
 ```
 
 For example, to deploy to the Goerli testnet using an Alchemy RPC node, you could execute:
@@ -78,6 +81,9 @@ For example, to deploy to the Goerli testnet using an Alchemy RPC node, you coul
 export NETWORK=goerli
 export MNEMONIC=<user sequence of twelve words>
 export RPC_URL=https://eth-goerli.alchemyapi.io/v2/<USER_KEY>
+export VALIDATORS=0x18930e8a66a1DbE21D00581216789AAB7460Afd0
+export GAS_PRICE=100
+export GAS_LIMIT=2800000
 ```
 
 With that in place, you can submit a deploy transaction to the Cartesi DApp Factory contract on the target network by executing the following command:
