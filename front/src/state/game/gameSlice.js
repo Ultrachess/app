@@ -2,7 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import { InputStatus, InputType, getGameByPlayer, createDummyGames, getGameById, createGameHelper } from "./gameHelper";
 import { ethers } from "ethers";
 import { contracts } from "../../../../export/localhost.json";
-import dapp from "../../../../deployments/localhost/dapp.json";
+import dappGoerli from "../../../../deployments/goerli/chessAppNew.json";
+import dappLocalhost from "../../../../deployments/localhost/dapp.json";
+import { CONTRACTS } from '../../ether/contracts';
+import { CHAINS } from '../../ether/chains';
 
 
 import { createClient, defaultExchanges } from '@urql/core';
@@ -11,8 +14,11 @@ import { Chess } from "chess.js";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 
-export const DAPP_ADDRESS = dapp.address;
-console.log(`dapp address ${DAPP_ADDRESS}`)
+export const DAPP_ADDRESSES = {
+    goerli: dappGoerli.address,
+    localhost: dappLocalhost.address,
+};
+console.log(`dapp addresses ${JSON.stringify(DAPP_ADDRESSES, null, "  ")}`)
 
 
 export const SERVER_URL = import.meta.env.PROD ? 
@@ -254,11 +260,17 @@ async function poll(dispatch) {
     await poll(dispatch);
 }
 
-export const initContracts = (signer) => async dispatch => {
+export const initContracts = (signer, chainId) => async dispatch => {
+    // Get network name
+    const CHAIN = CHAINS[chainId];
+    const networkName = CHAIN && CHAIN.networkName ? CHAIN.networkName : "localhost";
+
     //init contract
-    var inputFacetAbi = contracts.InputFacet.abi
-    var erc20PortalAbi = contracts.ERC20PortalFacet.abi
-    var cartesiDappAddress = DAPP_ADDRESS
+    // TODO: Handle DAPP_ADDRESSES[networkName] or CONTRACTS[networkName] not defined
+    var inputFacetAbi = CONTRACTS[networkName].InputFacet.abi
+    var erc20PortalAbi = CONTRACTS[networkName].ERC20PortalFacet.abi
+    var cartesiDappAddress = DAPP_ADDRESSES[networkName]
+
 
     cartesiDappContract = new ethers.Contract(
         cartesiDappAddress,

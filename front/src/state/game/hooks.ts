@@ -6,17 +6,16 @@ import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
 import { useContract, useErc20Contract } from "../../hooks/contract";
-import { DAPP_ADDRESS } from "./gameSlice";
+import { DAPP_ADDRESSES } from "./gameSlice";
 import { addAction, setAction, setActionTransactionHash } from "../actions/reducer";
-//import InputFacet from  "../../../../deployments/localhost/InputFacet.json"
-//import ERC20PortalFacet from "../../../../deployments/localhost/ERC20PortalFacet.json"
-import { contracts } from "../../../../export/localhost.json";
 import { ethers } from "ethers";
 import { useAppSelector } from "../hooks";
 import { delay, filter } from "wonka";
 import { appendNumberToUInt8Array, decimalToHexString, getErc20Contract } from "../../utils";
 import { createPromise } from "./gameHelper";
 import { ActionResolverObject } from "./updater";
+import { CONTRACTS } from '../../ether/contracts';
+import { CHAINS } from '../../ether/chains';
 
 export function useActions(): ActionList {
     const actions = useAppSelector(state => state.actions)
@@ -70,11 +69,17 @@ function hexToBytes(hex) {
 
 export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, Promise<String>]> {
     const { chainId, provider, account } = useWeb3React()
+
+    // Get network name
+    const CHAIN = CHAINS[chainId];
+    const networkName = CHAIN && CHAIN.networkName ? CHAIN.networkName : "localhost";
+
     const dispatch = useDispatch()
     const addAction = useAddAction()
     const addTransaction = useTransactionAdder()
-    const contract = useContract(DAPP_ADDRESS, contracts.InputFacet.abi)
-    const erc20PortalContract = useContract(DAPP_ADDRESS, contracts.ERC20PortalFacet.abi)
+    // TODO: Handle DAPP_ADDRESSES[networkName] or CONTRACTS[networkName] not defined
+    const contract = useContract(DAPP_ADDRESSES[networkName], CONTRACTS[networkName].InputFacet.abi)
+    const erc20PortalContract = useContract(DAPP_ADDRESSES[networkName], CONTRACTS[networkName].ERC20PortalFacet.abi)
 
     return useCallback(async (info: TransactionInfo) => {
         var input: Uint8Array

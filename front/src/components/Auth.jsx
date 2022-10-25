@@ -42,7 +42,7 @@ export default () => {
     dispatch(setIsActive(isActive))
     //dispatch(setProvider(provider))
     if(provider)
-      dispatch(initContracts(provider.getSigner(0)))
+      dispatch(initContracts(provider.getSigner(0), chainId))
   }, [
     chainId, 
     accounts, 

@@ -32,6 +32,8 @@
     "urql": "^3.0.2"
   },
   "devDependencies": {
+    "@cartesi/rollups": "^0.6.1",
+    "@cartesi/token": "^1.7.0",
     "@graphql-codegen/cli": "^2.11.6",
     "@graphql-codegen/typed-document-node": "^2.2.5",
     "@graphql-codegen/typescript": "2.4.5",
@@ -40,6 +42,7 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.1",
+    "dotenv": "^16.0.3",
     "typescript": "^4.6.4",
     "vite": "^3.0.7",
     "vite-plugin-graphql-codegen": "^1.8.3"
