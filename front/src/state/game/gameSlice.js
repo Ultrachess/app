@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { InputStatus, InputType, getGameByPlayer, createDummyGames, getGameById, createGameHelper } from "./gameHelper";
 import { ethers } from "ethers";
-import { contracts } from "../../../../export/localhost.json";
 import dappGoerli from "../../../../deployments/goerli/chessAppNew.json";
 import dappLocalhost from "../../../../deployments/localhost/dapp.json";
 import dappPolygonMumbai from "../../../../deployments/polygon-mumbai/chessAppNew.json"
