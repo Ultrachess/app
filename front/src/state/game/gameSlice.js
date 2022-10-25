@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import { contracts } from "../../../../export/localhost.json";
 import dappGoerli from "../../../../deployments/goerli/chessAppNew.json";
 import dappLocalhost from "../../../../deployments/localhost/dapp.json";
+import dappPolygonMumbai from "../../../../deployments/polygon-mumbai/chessAppNew.json"
 import { CONTRACTS } from '../../ether/contracts';
 import { CHAINS } from '../../ether/chains';
 
@@ -16,6 +17,7 @@ axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded'
 
 export const DAPP_ADDRESSES = {
     goerli: dappGoerli.address,
+    polygon_mumbai: dappPolygonMumbai.address,
     localhost: dappLocalhost.address,
 };
 console.log(`dapp addresses ${JSON.stringify(DAPP_ADDRESSES, null, "  ")}`)
