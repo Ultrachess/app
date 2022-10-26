@@ -157,15 +157,4 @@ export const CHAINS = {
   },
 }
 
-export const URLS = Object.keys(CHAINS).reduce<{ [chainId]:"" }>(
-  (accumulator, chainId) => {
-    const validURLs = CHAINS[Number(chainId)].urls
-
-    if (validURLs.length) {
-      accumulator[Number(chainId)] = validURLs
-    }
-
-    return accumulator
-  },
-  {}
-)
+export const URLS = {}

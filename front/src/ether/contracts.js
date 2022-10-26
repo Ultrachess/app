@@ -49,7 +49,7 @@ export const CONTRACTS = {
   },
   polygon_mumbai: {
       CartesiToken: CartesiTokenPolygonMumbai,
-      ERC20PortalFacetPolygonMumbai: ERC20PortalFacetPolygonMumbai,
+      ERC20PortalFacet: ERC20PortalFacetPolygonMumbai,
       InputFacet: InputFacetPolygonMumbai,
   },
 }
