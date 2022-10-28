@@ -105,7 +105,7 @@ class Game:
                 self.score[player.lower()] = 0
                 #open betting phase
                 if self.__isMinPlayers():
-                    betManager.open(id, timestamp, self.bettingDuration)
+                    deps.betManager.open(id, timestamp, self.bettingDuration)
                 return True
             return False
         except:
