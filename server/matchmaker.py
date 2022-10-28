@@ -5,7 +5,6 @@ from game import *
 class Matchmaker:
     def __init__(self):
         self.games = {}
-        self.botGames = {}
         self.timestamp = 0
 
     def get(self, id):

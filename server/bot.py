@@ -71,7 +71,6 @@ class BotFactory:
 
 class BotManager:
     def __init__(self):
-        self.pending_actions = {}
         self.last_challenged = {}
         self.pending_game_moves = []
         self.last_step_timestamp = 0
