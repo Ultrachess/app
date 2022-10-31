@@ -6,10 +6,10 @@ const { useProvider } = hooks
 import { FaCoins } from "react-icons/fa";
 import { TransactionType } from "../common/types";
 import { useActionCreator } from "../state/game/hooks";
-import TokenList from "../utils/lists/ultrachess.tokenlists.json"
 import { truncateAddress } from "../ether/utils";
 import { useEffect, useMemo, useState } from 'react'
 import Select from "react-select"
+import { useTokenList } from "../hooks/token";
 
 export default ({visible, closeHandler}) => {
     const dispatch = useDispatch()
@@ -17,6 +17,7 @@ export default ({visible, closeHandler}) => {
     const addAction = useActionCreator()
     const [depositValue, setDepositValue] = React.useState(0)
     const [tokenAddress, setTokenAddress] = React.useState()
+    const tokenList = useTokenList()
     const onDepositValueChange = (event) => setDepositValue(event.target.value)
     const onTokenAddressChange = ( newValue ) => {
         //console.log(newValue)
@@ -37,7 +38,7 @@ export default ({visible, closeHandler}) => {
         })
     }
 
-    const tokens = TokenList.map((token) => {
+    const tokens = tokenList.map((token) => {
         return {
             value: token.address,
             label: token.name

@@ -8,8 +8,8 @@ import { TransactionTypes } from "ethers/lib/utils";
 import { TransactionType } from "../common/types";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
-import TokenList from "../utils/lists/ultrachess.tokenlists.json"
 import Select from "react-select"
+import { useTokenList } from "../hooks/token";
 
 export default ({visible, closeHandler}) => {
     const dispatch = useDispatch()
@@ -17,8 +17,9 @@ export default ({visible, closeHandler}) => {
     const navigate = useNavigate()
     const [wagerValue, setWagerValue] = React.useState(0)
     const [tokenAddress, setTokenAddress] = React.useState(0)
+    const tokenList = useTokenList()
 
-    const tokens = TokenList.map((token) => {
+    const tokens = tokenList.map((token) => {
         return {
             value: token.address,
             label: token.name

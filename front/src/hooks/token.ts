@@ -2,6 +2,7 @@ import { useWeb3React } from "@web3-react/core"
 import { useEffect, useMemo, useState } from "react"
 import { COINGECKO_LIST, fetchTokenList } from "../utils/lists"
 import { useContractCallResult, useErc20Contract } from "./contract"
+import ULTRACHESS_LIST from "../utils/lists/ultrachess.tokenlists.json"
 
 export interface Token {
     address: string,
@@ -13,18 +14,20 @@ export interface Token {
 }
 
 export function useTokenList() : Token[] {
+    const { chainId } = useWeb3React()
     const [tokenList, setTokenList] = useState<Token[]>([])
 
     useEffect(() => {
         const callFetch = async () => {
-            const result = await fetchTokenList(
-                COINGECKO_LIST,
-                (ensName: string) => {
-                    return {} as Promise<string>
-                }
-            )
-
-            setTokenList(result)
+            // const result = await fetchTokenList(
+            //     ULTRACHESS_LIST,
+            //     (ensName: string) => {
+            //         return {} as Promise<string>
+            //     }
+            // )
+            console.log("chainId: ", chainId)
+            const tokens = ULTRACHESS_LIST.filter(token => token.chainId == chainId)
+            setTokenList(tokens)
         }
 
         callFetch()
@@ -33,6 +36,7 @@ export function useTokenList() : Token[] {
 
     return tokenList
 }
+
 
 export function useTokenFromList(list: Token[], address: string): Token {
     const tokenList = useTokenList()

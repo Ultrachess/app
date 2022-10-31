@@ -3,7 +3,6 @@ import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import { createBotGame } from "../state/game/gameSlice";
 import { FaCoins } from "react-icons/fa";
-import TokenList from "../utils/lists/ultrachess.tokenlists.json"
 import { useAppSelector } from "../state/hooks";
 import { useWeb3React } from "@web3-react/core";
 import { isAddress } from "../utils";
@@ -13,12 +12,14 @@ import Select from "react-select"
 import { TransactionType } from "../common/types";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
+import { useTokenList } from "../hooks/token";
 
 export default ({visible, closeHandler, botId}) => {
     const dispatch = useDispatch()
     const [autoMaxWagerAmount, setAutoMaxWagerAmount] = React.useState(0)
     const [autoWagerTokenAddress, setAutoWagerTokenAddress] = React.useState()
     const [autoBattleEnabled, setAutoBattleEnabled] = React.useState()
+    const tokenList = useTokenList()
     const bots = useSelector(state => state.game.bots)
     const { account } = useWeb3React()
     const addAction = useActionCreator()
@@ -37,7 +38,7 @@ export default ({visible, closeHandler, botId}) => {
         })
     }
 
-    const tokens = TokenList.map((token) => {
+    const tokens = tokenList.map((token) => {
         return {
             value: token.address,
             label: token.name
