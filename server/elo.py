@@ -43,23 +43,3 @@ class EloManager:
     
     def getState(self):
         return self.elo.ratingDict
-
-
-# class Elo:
-# 	def __init__(self,k):
-# 	    self.ratingDict = {}	
-# 	    self.k = k
-
-# 	def addPlayer(self,name,rating = 1500):
-# 		self.ratingDict[name] = rating
-		
-# 	def gameOver(self, p1, p2, score1, score2):
-# 	    expected_score1 = self.expectResult(self.ratingDict[p1], self.ratingDict[p2])
-#         expected_score2 = self.expectResult(self.ratingDict[p2], self.ratingDict[p1])
-
-#         self.ratingDict[p1] = self.ratingDict[p1] + (self.k * (score1 - expected_score1))  
-#         self.ratingDict[p2] = self.ratingDict[p2] + (self.k * (score2 - expected_score2))
-        		
-# 	def expectResult(self, p1, p2):
-# 		exp = (p2-p1)/400.0
-# 		return 1/((10.0**(exp))+1)

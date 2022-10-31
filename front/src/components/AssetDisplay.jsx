@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Text, Grid, Row, Button } from "@nextui-org/react";
-//import CartesiToken from "../../../deployments/localhost/CartesiToken.json"
-import { contracts } from "../../../export/localhost.json";
+import { CONTRACTS } from "../ether/contracts";
 
 import { getTokenNameFromAddress, truncateAddress } from "../ether/utils";
 import { FaCoins } from "react-icons/fa";
@@ -15,7 +14,7 @@ export default () => {
     const accounts = useSelector(state => state.auth.accounts);
     const accountBalances = useSelector(state => state.game.accounts);
     const address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0].toLowerCase() : ""
-    const balances = accountBalances[address.toLowerCase()] ?? {[contracts.CartesiToken.address.toLowerCase()] : 0}
+    const balances = accountBalances[address.toLowerCase()] ?? {[CONTRACTS.localhost.CartesiToken.address.toLowerCase()] : 0}
     const token = useTokenFromNetwork("0x326C977E6efc84E512bB9C30f76E30c160eD06FB")
     //console.log(token)
     const addAction = useActionCreator()

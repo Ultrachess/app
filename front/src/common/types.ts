@@ -69,7 +69,7 @@ export interface DepositErc20TransactionInfo extends BaseTransactionInfo {
     amount: string,
 }
 
-export interface ApproveErc20Transaction extends BaseTransactionInfo {
+export interface ApproveErc20TransactionInfo extends BaseTransactionInfo {
     type: TransactionType.APPROVE_ERC20,
     tokenAddress: string,
     spender: string,
@@ -94,7 +94,7 @@ export type TransactionInfo =
     | JoinGameTransactionInfo
     | DeployBotTransactionInfo
     | DepositErc20TransactionInfo
-    | ApproveErc20Transaction
+    | ApproveErc20TransactionInfo
     | ResignGameTransactionInfo
     | BotStepTransactionInfo
     | ManagerBotTransactionInfo
