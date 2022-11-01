@@ -280,6 +280,9 @@ def handle_advance(data):
     logger.info(accountManager.accounts)
     logger.info("Here is the elo state: " )
     logger.info(eloManager.getStringState())
+    logger.info("Here is the betting state: " )
+    logger.info(str(betManager.games))
+
 
     lastProcessedBlock = blockNumber
 

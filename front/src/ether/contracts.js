@@ -46,6 +46,8 @@ export const CONTRACTS = {
   },
   polygon_mainnet: {
       CartesiToken: CartesiTokenPolygonMainnet,
+      InputFacet: contractsLocalhost.InputFacet,
+      ERC20PortalFacet: contractsLocalhost.ERC20PortalFacet,
   },
   polygon_mumbai: {
       CartesiToken: CartesiTokenPolygonMumbai,

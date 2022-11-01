@@ -38,14 +38,15 @@ class BetManager:
     def open(self, id, timeStamp, duration):
         self.games[id] = CreateBetPhase(id, timeStamp, duration)
     
-    def bet(self, sender, timeStamp, value, gameId, tokenAddress, amount, winningId):
+    def bet(self, sender, timeStamp, value):
         gameId = value["gameId"]
-        tokenAddress = value["tokenAddress"]
+        game = self.games[gameId]
+        tokenAddress = value["tokenAddress"] if "tokenAddress" in value else game.token
         amount = value["amount"]
         winningId = value["winningId"]
 
-        game = self.games[gameId]
-
+        if tokenAddress.lower() != game.token.lower():
+            return False 
         if sender in deps.matchMaker.games[gameId].players:
             return False
         if timeStamp > (game["openTime"] + game["duration"]):
