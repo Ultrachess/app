@@ -269,9 +269,16 @@ export const initContracts = (signer, chainId) => async dispatch => {
 
     //init contract
     // TODO: Handle DAPP_ADDRESSES[networkName] or CONTRACTS[networkName] not defined
-    var inputFacetAbi = CONTRACTS[networkName].InputFacet.abi
-    var erc20PortalAbi = CONTRACTS[networkName].ERC20PortalFacet.abi
-    var cartesiDappAddress = DAPP_ADDRESSES[networkName]
+    const contract = CONTRACTS[networkName]
+    const contracts = contract && 
+        contract.InputFacet &&
+        contract.ERC20PortalFacet ?
+            contract : 
+            CONTRACTS.localhost
+            
+    const inputFacetAbi = contracts.InputFacet.abi
+    const erc20PortalAbi = contracts.ERC20PortalFacet.abi 
+    const cartesiDappAddress = DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost
 
 
     cartesiDappContract = new ethers.Contract(
@@ -285,10 +292,6 @@ export const initContracts = (signer, chainId) => async dispatch => {
         erc20PortalAbi,
         signer
     )
-
-    
-
-
 
     //start polling
     poll(dispatch)

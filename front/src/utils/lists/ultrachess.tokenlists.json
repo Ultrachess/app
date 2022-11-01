@@ -5,7 +5,7 @@
     "symbol": "CTSI",
     "decimals": 18,
     "chainId": 5, 
-    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6/logo.png"
+    "logoURI": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
   },
   {
     "name": "Cartesi",
@@ -13,7 +13,7 @@
     "symbol": "CTSI",
     "decimals": 18,
     "chainId": 80001,
-    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6/logo.png"
+    "logoURI": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
   },
   {
     "name": "Cartesi",
@@ -21,6 +21,14 @@
     "symbol": "CTSI",
     "decimals": 18,
     "chainId": 1,
-    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6/logo.png"
+    "logoURI": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
+  },
+  {
+    "name": "Cartesi",
+    "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+    "symbol": "CTSI",
+    "decimals": 18,
+    "chainId": 31337,
+    "logoURI": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
   }
 ]

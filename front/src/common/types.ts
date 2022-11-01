@@ -78,6 +78,7 @@ export interface ApproveErc20Transaction extends BaseTransactionInfo {
 
 export interface BetTransactionInfo extends BaseTransactionInfo {
     type: TransactionType.BET_INPUT,
+    gameId: string,
     tokenAddress: string,
     amount: string,
     winningId: string,
@@ -99,4 +100,5 @@ export type TransactionInfo =
     | BotStepTransactionInfo
     | ManagerBotTransactionInfo
     | ReleaseFundsTransactionInfo
+    | BetTransactionInfo
 

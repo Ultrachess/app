@@ -17,6 +17,10 @@ import { ActionResolverObject } from "./updater";
 import { CONTRACTS } from '../../ether/contracts';
 import { CHAINS } from '../../ether/chains';
 
+export function useGame(id): any | undefined {
+    const games = useAppSelector(state => state.game.games)
+    return games[id]
+}
 export function useActions(): ActionList {
     const actions = useAppSelector(state => state.actions)
     return actions
@@ -74,12 +78,23 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
     const CHAIN = CHAINS[chainId];
     const networkName = CHAIN && CHAIN.networkName ? CHAIN.networkName : "localhost";
 
+    // Fetch abi list
+    const contracts = CONTRACTS[networkName]
+    const abis = contracts && 
+        contracts.InputFacet &&
+        contracts.ERC20PortalFacet ?
+            contracts : 
+            CONTRACTS.localhost
+
+    //Fetch dapp address
+    const dappAddress = DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost
+    
     const dispatch = useDispatch()
     const addAction = useAddAction()
     const addTransaction = useTransactionAdder()
     // TODO: Handle DAPP_ADDRESSES[networkName] or CONTRACTS[networkName] not defined
-    const contract = useContract(DAPP_ADDRESSES[networkName], CONTRACTS[networkName].InputFacet.abi)
-    const erc20PortalContract = useContract(DAPP_ADDRESSES[networkName], CONTRACTS[networkName].ERC20PortalFacet.abi)
+    const contract = useContract(dappAddress, abis.InputFacet.abi)
+    const erc20PortalContract = useContract(dappAddress, abis.ERC20PortalFacet.abi)
 
     return useCallback(async (info: TransactionInfo) => {
         var input: Uint8Array
@@ -143,7 +158,20 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                             "playerId" : "${playerId ?? "blank"}",
                             "token" : "${wagerTokenAddress}",
                             "wagerAmount" : ${wagerAmount},
-                            "bettingDuration" : "${bettingDuration ?? "0"}"
+                            "bettingDuration" : ${bettingDuration ?? "0"}
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.BET_INPUT:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "bet", 
+                        "value": {
+                            "gameId" : "${info.gameId}",
+                            "tokenAddress" : "${info.tokenAddress}",
+                            "amount" : "${info.amount}",
+                            "winningId" : "${info.winningId}"
                         }
                     }`)
                     input = appendNumberToUInt8Array(id, input)
@@ -187,6 +215,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     break;
                 case TransactionType.DEPOSIT_ERC20:
                     let { amount } = info
+                    console.log("DEPOSITING TOKENS")
+                    console.log(erc20PortalContract.address)
                     var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(info.amount))
                     result = await erc20PortalContract.erc20Deposit(info.tokenAddress, erc20Amount, "0x")
                     break;
@@ -194,6 +224,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     let { spender } = info
                     var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(info.amount))
                     const erc20Contract = getErc20Contract(info.tokenAddress, provider, account)
+                    console.log("erc20 portal contract address")
+                    console.log(erc20PortalContract.address)
                     result = await erc20Contract.approve(
                         spender ?? erc20PortalContract.address,
                         erc20Amount

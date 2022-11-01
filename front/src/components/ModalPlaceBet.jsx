@@ -3,21 +3,23 @@ import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { createGame } from "../state/game/gameSlice";
 import { FaCoins } from "react-icons/fa";
-import { useActionCreator } from "../state/game/hooks";
+import { useActionCreator, useGame } from "../state/game/hooks";
 import { TransactionTypes } from "ethers/lib/utils";
 import { TransactionType } from "../common/types";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import Select from "react-select"
 import { useTokenList } from "../hooks/token";
+import { getGameById } from "../state/game/gameHelper";
 
-export default ({visible, closeHandler}) => {
+export default ({visible, closeHandler, gameId}) => {
     const dispatch = useDispatch()
     const addAction = useActionCreator()
     const navigate = useNavigate()
+    const game = useGame(gameId)
     const [wagerValue, setWagerValue] = React.useState(0)
     const [tokenAddress, setTokenAddress] = React.useState(0)
-    const [betDuration, setBetDuration] = React.useState(0)
+    const [winningId, setWinningId] = React.useState(0)
     const tokenList = useTokenList()
 
     const tokens = tokenList.map((token) => {
@@ -26,29 +28,27 @@ export default ({visible, closeHandler}) => {
             label: token.name
         }
     })
+    const definedPlayers = game && game.players ? game.players : []
+    const players = definedPlayers.map((player) => {
+        return {
+            value: player,
+            label: player,
+        }
+    })
 
     const onWagerValueChange = (event) => setWagerValue(event.target.value)
     const onTokenAddressChange = (newValue) => setTokenAddress(newValue.value)
-    const onBetDurationChange = (event) => setBetDuration(event.target.value)
-    const handleCreateGame = async () => {
+    const onWinningIdChange = (event) => setWinningId(event.target.value)
+    const handlePlaceBet = async () => {
         //dispatch(createGame(tokenAddress, wagerValue))
         const [action, wait] = await addAction({
-            type: TransactionType.CREATE_GAME_INPUT,
-            name: "default",
-            isBot: false,
-            wagerTokenAddress: tokenAddress,
-            wagerAmount: ethers.utils.parseUnits(wagerValue),
-            bettingDuration: betDuration,
+            type: TransactionType.BET_INPUT,
+            tokenAddress: tokenAddress,
+            amount: ethers.utils.parseUnits(wagerValue),
+            winningId,
         })
-        const roomId = await wait
-        console.log("jumping to" + roomId)
-        if(roomId) navigate(`game/${roomId}`, { replace: true })
     }
 
-    const jumpToGame = () => {
-        var roomId = "ZAKNPJ1XQ5"
-        navigate(`game/${roomId}`, { replace: true })
-    }
 
     return (
         <Modal
@@ -59,7 +59,7 @@ export default ({visible, closeHandler}) => {
         >
             <Modal.Header>
             <Text id="modal-title" size={18}>
-                Create your game
+                Place your bet
             </Text>
             </Modal.Header>
             <Modal.Body>
@@ -79,23 +79,17 @@ export default ({visible, closeHandler}) => {
                     onChange= {onTokenAddressChange}
                 />
             </Row>
-            <Input
-                clearable
-                bordered
-                fullWidth
-                color="primary"
-                size="lg"
-                placeholder="Betting duration in seconds"
-                contentLeft={<FaCoins/>}
-                onChange = {onBetDurationChange}
+            <Select 
+                options={players}
+                onChange= {onWinningIdChange}
             />
             <Row justify="space-between">
                 <Text size={14}>Need Help?</Text>
             </Row>
             </Modal.Body>
             <Modal.Footer>
-            <Button auto onClick={handleCreateGame}>
-                Create
+            <Button auto onClick={handlePlaceBet}>
+                Bet
             </Button>
             </Modal.Footer>
         </Modal>

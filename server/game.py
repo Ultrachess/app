@@ -101,11 +101,15 @@ class Game:
             logger.info("cannAdd:" + str(canAdd) + " hasFunds:"+str(hasFunds) + " player: " + str(player))
             if canAdd and hasFunds:
                 self.players.append(player.lower())
+                logger.info("added player")
                 deps.accountManager.withdraw(address, self.wagerAmount, self.token)
-                self.score[player.lower()] = 0
+                logger.info("widthdrew funds")
+                self.scores[player.lower()] = 0
+                logger.info("isMinPlayer: " + str(self.__isMinPlayers()))
                 #open betting phase
                 if self.__isMinPlayers():
-                    betManager.open(id, timestamp, self.bettingDuration)
+                    logger.info("is opening bet phase")
+                    deps.betManager.open(self.id, timestamp, self.bettingDuration)
                 return True
             return False
         except:
