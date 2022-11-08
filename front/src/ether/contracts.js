@@ -15,7 +15,7 @@ import * as CartesiTokenOptimismMainnet from "@cartesi/token/deployments/optimis
 import * as CartesiTokenPolygonMainnet from "@cartesi/token/deployments/polygon_mainnet/CartesiToken.json";
 import * as CartesiTokenPolygonMumbai from "@cartesi/token/deployments/polygon_mumbai/CartesiToken.json";
 import * as SimpleFaucetGoerli from "@cartesi/token/deployments/goerli/SimpleFaucet.json";
-import { contracts as contractsLocalhost } from "../../../export/localhost.json";
+import { contracts as contractsLocalhost } from "../abis/localhost.json";
 
 export const CONTRACTS = {
   arbitrum_goerli: {
