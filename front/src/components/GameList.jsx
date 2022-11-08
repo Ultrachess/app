@@ -93,8 +93,8 @@ export default ({games}) => {
 
     const betButton = (gameId) => {
         const game = getGameById(games, gameId)
-        const bettingDuration = game.bettingDuration
-        const wagerInfo = game.wagering
+        const bettingDuration = game && game.bettingDuration ? game.bettingDuration: 0
+        const wagerInfo = game && game.wagering ? game.wagering : 0
         const bettingIsOpen = wagerInfo && wagerInfo.openTime
         return <Button
                     onClick={ () => {if(bettingIsOpen) handleOpenBettingModal(gameId)}}

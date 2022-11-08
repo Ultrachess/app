@@ -109,6 +109,19 @@ class BotManager:
 
         return newIdList[self.last_challenged[botId]]
 
+    def runPendingMoves(self, timestamp):
+        #run pending bot game moves
+        while len(self.pending_game_moves) > 0:
+            pending_move = self.pending_game_moves.pop()
+            #get game and bot
+            gameId = pending_move["gameId"]
+            botId = pending_move["botId"]
+            game = deps.matchMaker.games[gameId]
+            bot = deps.botFactory.bots[botId]
+            #process move
+            board = game.state.board()
+            uci = bot.run(board, timestamp)
+            game.move(botId, timestamp, uci)
     
     def __matchMake(self, sender, timestamp, rand, factory, matchmaker):
         bots = factory.bots
@@ -132,18 +145,7 @@ class BotManager:
                     "wagerAmount": bot1.autoMaxWagerAmount,
                 })  
 
-        #run pending bot game moves
-        while len(self.pending_game_moves) > 0:
-            pending_move = self.pending_game_moves.pop()
-            #get game and bot
-            gameId = pending_move["gameId"]
-            botId = pending_move["botId"]
-            game = matchmaker.games[gameId]
-            bot = bots[botId]
-            #process move
-            board = game.state.board()
-            uci = bot.run(board, timestamp)
-            game.move(botId, timestamp, uci)
+        self.runPendingMoves(timestamp)
 
 
 

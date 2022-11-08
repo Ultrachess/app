@@ -13,11 +13,11 @@ export default () => {
     const elo = React.useMemo(()=> allElos[userId], [allElos])
     const userBots = React.useMemo(()=> 
         Object.values(allBots)
-            .filter(val => val.owner == userId),
+            .filter((val:any) => val.owner == userId),
             [allBots])
     const userGames = React.useMemo(()=> 
         Object.values(allGames)
-            .filter(val => val.players.includes(userId.toLowerCase())),
+            .filter((val:any)  => val.players.includes(userId.toLowerCase())),
             [allGames])
 
     console.log("user games")
