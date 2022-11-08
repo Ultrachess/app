@@ -267,6 +267,8 @@ def handle_advance(data):
         except Exception:
             traceback.print_exc()
             success = False
+
+    botManager.runPendingMoves(timeStamp)
     
     #Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)

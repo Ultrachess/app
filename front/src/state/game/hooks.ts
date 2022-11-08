@@ -235,17 +235,17 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     break;     
             }
    
-            while (!result.hash) {
-                console.log("waiting for result hash")
-                await result.wait()
-            }
+            // while (!result.hash) {
+            //     console.log("waiting for result hash")
+            //     await result.wait()
+            // }
             addTransaction(result, info)
             dispatch(setActionTransactionHash({
                 id: id,
                 transactionHash: result.hash,
             }))
             ActionResolverObject[id] = createPromise()
-            await result.wait()
+            //await result.wait()
         }
         catch(e){
             console.log(e)
