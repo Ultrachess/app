@@ -3,10 +3,8 @@
 !*.*
 node_modules
 .env
-localhost/*
 ngrok
 __pycache__/
-/deployments/localhost
 
 deploy-commands.txt
 
