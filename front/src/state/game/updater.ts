@@ -15,6 +15,8 @@ import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 import { SERVER_URL } from "./gameSlice";
 
+export interface NoticeInfo {}
+
 export interface ActionResult {
     success: boolean,
     actionId: string,
