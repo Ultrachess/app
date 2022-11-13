@@ -1,13 +1,16 @@
 from participant import Participant
+from deps import matchMaker
 
 class Match:
-    def __init__(self, left, right):
+    def __init__(self, left, right, owner):
         #Left and Right participants
         self.__left = left
         self.__right = right
         
         self.__winner = Participant()
         self.__loser = Participant()
+
+        self.games = []
 
     def set_winner(self, winner):
         if winner == self.__left.get():
@@ -30,3 +33,8 @@ class Match:
         right_set = self.__right.get() is not None
         winner_defined = self.__winner.get() is not None
         return left_set and right_set and not winner_defined
+
+    def create_game(self):
+        if not self.can_start():
+            return False
+        matchMaker.create()
