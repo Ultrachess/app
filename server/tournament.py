@@ -21,13 +21,16 @@ class Tournament:
         assert len(participants) > 1
         assert len(participants) % 2 == 0
         self.type = options.type
-        self.winner_amount = options.winner_amount
+        self.amount_of_winners = options.amount_of_winners
+        self.participant_count = options.participant_count
         self.participants = participants
         self.owner = owner
         self.round_count = options.round_count
 
         self.__matches = []
         self.__rounds = []
+        self.__current_round = 0
+        self.__is_finished = False
 
         if self.type == TournamentTypes.RoundRobin:
             self.__gen_round_robin_matches()
@@ -57,9 +60,21 @@ class Tournament:
             self.__matches = new_match
 
             println("hello")    
+    
+    def is_last_round(self):
+        return self.curr
         
-    def start(self):
-        #create games
+    def run(self):
+        #generate matches if none
+
+        #run all matches
+        for match in self.__matches:
+            match.run()
+
+        #proceed to next round if applicable
+        if self.round_finish():
+            self.__is_finished = self.is_last_round()
+
 
 
 

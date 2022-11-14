@@ -19,6 +19,7 @@ import sys
 import string
 import traceback
 from eth_abi import decode_abi
+from time import set_timestamp
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -196,6 +197,7 @@ def handle_advance(data):
 
     #set timestamp
     matchMaker.setTimestamp(timeStamp)
+    set_timestamp(timeStamp)
 
      #Handle operator
     success = False
