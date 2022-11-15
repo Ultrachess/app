@@ -1,9 +1,9 @@
 from participant import Participant
 from deps import matchMaker, botManager
-from time import get_timestamp
+from times import get_timestamp
 
 class Match:
-    def __init__(self, owner, round_count, left, right):
+    def __init__(self, owner, match_count, left, right):
         #Left and Right participants
         self.__left = left
         self.__right = right
@@ -17,6 +17,7 @@ class Match:
         self.match_count = match_count
         self.current_match = 0
         self.games = []
+        self.owner = owner
 
     def set_winner(self, winner):
         if winner == self.__left.get():
@@ -42,6 +43,13 @@ class Match:
 
     def is_last_match(self):
         return self.current_match >= self.match_count
+    
+    def is_finished(self):
+        if not self.is_last_match():
+            return False
+        
+        game = self.games[self.current_match - 1]
+        return game.isGameEnd()
 
     def create_game(self):
         #check if participants have joined, and no winner is declared
@@ -104,4 +112,15 @@ class Match:
             self.create_game()
         
         return True
+
+    def getStringState(self):
+        return {
+            "games": self.games,
+            "matchCount": self.match_count,
+            "currentMatch": self.current_match,
+            "left": self.__left.get(),
+            "right": self.__right.get(),
+            "leftScore": self.left_score_final,
+            "rightScore": self.right_score_final,
+        }
             
