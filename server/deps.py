@@ -4,10 +4,12 @@ from account import *
 from elo import *
 from actions import *
 from bets import *
+from tournament import *
 import chess.engine
 import chess.pgn
 import random
 
+tournamentManager = TournamentManager()
 betManager = BetManager()
 #Initialize global matchmaking object
 matchMaker = Matchmaker()

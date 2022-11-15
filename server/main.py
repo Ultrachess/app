@@ -98,6 +98,7 @@ def get_state_hex():
         "bots": botFactory.getState(), 
         "accounts": accountManager.getState(),
         "elo": eloManager.getState(),
+        "tournaments" : tournamentManager.getStringState(),
         "lastProcessedBlock": str(lastProcessedBlock),
         "lastStepTimestamp": str(botManager.last_step_timestamp),
         "actionList": actionManager.actionList()
@@ -260,6 +261,18 @@ def handle_advance(data):
     elif operator == "manageBot":
         try:
             botManager.manage(sender, value, botFactory)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "createTourney":
+        try:
+            tourneyManager.create(sender, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "joinTourney":
+        try:
+            tourneyManager.join(sender, value)
         except Exception:
             traceback.print_exc()
             success = False
