@@ -11,6 +11,7 @@ import { ethers } from "ethers";
 import Select from "react-select"
 import { useTokenList } from "../hooks/token";
 import { getGameById } from "../state/game/gameHelper";
+import Address from "./Address";
 
 export default ({visible, closeHandler, gameId}) => {
     const dispatch = useDispatch()
@@ -21,6 +22,18 @@ export default ({visible, closeHandler, gameId}) => {
     const [tokenAddress, setTokenAddress] = React.useState(0)
     const [winningId, setWinningId] = React.useState(0)
     const tokenList = useTokenList()
+
+    const bets = game?.wagering?.betsArray?.map((bet)=>{
+        return (
+            <li>    
+                <Address value={bet?.sender}/> 
+                bets 
+                <span>{bet?.amount}</span> 
+                on 
+                <Address value={bet.winningId}/>
+            </li>
+        )
+    })
 
     const tokens = tokenList.map((token) => {
         return {
@@ -86,6 +99,12 @@ export default ({visible, closeHandler, gameId}) => {
             <Row justify="space-between">
                 <Text size={14}>Need Help?</Text>
             </Row>
+            <div>
+                <Text>Existing bets</Text>
+                <ul>
+                {bets}
+                </ul>
+            </div>
             </Modal.Body>
             <Modal.Footer>
             <Button auto onClick={handlePlaceBet}>

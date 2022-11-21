@@ -32,11 +32,10 @@ class TournamentManager:
         self.tournaments[id] = Tournament(sender, options)
         return options.type
     
-    def join(self, value):
-        if "tournament_id" not in value and "player_id" not in value:
+    def join(self, player_id, value):
+        if "tournament_id" not in value:
             return False
         tournament_id = value["tournament_id"]
-        player_id = value["player_id"]
         if not player_id:
             return False
         participant = Participant()
