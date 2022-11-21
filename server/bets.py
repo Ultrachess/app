@@ -13,6 +13,7 @@ def CreateBetPhase(gameId, openTime, duration):
         "pots": {},
         "totalPot": 0,
         "bets": {},
+        "betsArray": []
     }
 
 def CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId):
@@ -45,17 +46,22 @@ class BetManager:
         amount = value["amount"]
         winningId = value["winningId"]
 
+        #check if token matches the game token
         if tokenAddress.lower() != game.token.lower():
             return False 
+        #return if bet is being sent by a match participant
         if sender in deps.matchMaker.games[gameId].players:
             return False
+        #make sure this submission is not passed the betting phase
         if timeStamp > (game["openTime"] + game["duration"]):
             return False
+        
         if not deps.accountManager.withdraw(sender, amount, tokenAddress):
             return False
         if not self.games[gameId]["bets"][winningId]:
             self.games[gameId]["bets"][winningId] = {}
         self.games[gameId]["bets"][winningId][sender] = CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId)
+        self.games[gameId]["betsArray"].append(CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId))
         if not self.games[gameId]["pots"][winningId]:
             self.games[gameId]["pots"][winningId] = 0
         self.games[gameId]["pots"][winningId] += amount
@@ -63,7 +69,7 @@ class BetManager:
         return True
 
     def end(self, id, winningId):
-        if not gameId in self.games:
+        if not id in self.games:
             return False 
         game = self.games[id]
         bets = game["bets"][winningId]

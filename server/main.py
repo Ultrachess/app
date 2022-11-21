@@ -142,7 +142,7 @@ def handle_advance(data):
 
     logger.info("data:"+ str(data))
     logger.info(f"metadata: {metadata}")
-    #logger.info(f"payload: {payload}")
+    #logger.info(f"payload:        {payload}")                                                                                     
     logger.info(f"sender: {sender}")
     logger.info(f"epochIndex: {epochIndex}")
     logger.info(f"inputIndex: {inputIndex}")
@@ -266,13 +266,13 @@ def handle_advance(data):
             success = False
     elif operator == "createTourney":
         try:
-            tourneyManager.create(sender, value)
+            tournamentManager.create(sender, value)
         except Exception:
             traceback.print_exc()
             success = False
     elif operator == "joinTourney":
         try:
-            tourneyManager.join(sender, value)
+            tournamentManager.join(sender, value)
         except Exception:
             traceback.print_exc()
             success = False
