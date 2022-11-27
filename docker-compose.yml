@@ -32,6 +32,24 @@ services:
       - ./deployments:/app/deployments
       - ./export:/opt/cartesi/share/blockchain
 
+  ultrachess_deployer:
+    image: juztamau5/ultrachess-deployer:devel
+    restart: on-failure
+    depends_on:
+      hardhat:
+        condition: service_healthy
+    command:
+      [
+        "deploy",
+        "--network",
+        "docker",
+        "--export",
+        "/opt/cartesi/share/blockchain/localhost-ultrachess.json",
+      ]
+    volumes:
+      - ./deployments:/app/deployments
+      - ./export:/opt/cartesi/share/blockchain
+
   rollups_dispatcher:
     image: cartesi/rollups-dispatcher:0.7.0
     command:
@@ -152,6 +170,8 @@ services:
       hardhat:
         condition: service_healthy
       deployer:
+        condition: service_completed_successfully
+      ultrachess_deployer:
         condition: service_completed_successfully
     command:
       [
