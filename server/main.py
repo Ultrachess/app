@@ -19,7 +19,7 @@ import sys
 import string
 import traceback
 from eth_abi import decode_abi
-from time import set_timestamp
+from times import set_timestamp
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -275,7 +275,7 @@ def handle_advance(data):
             tournamentManager.join(sender, value)
         except Exception:
             traceback.print_exc()
-            success = False
+            success = False        
     elif operator == "bet":
         try:
             betManager.bet(sender, timeStamp, value)

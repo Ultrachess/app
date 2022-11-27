@@ -32,14 +32,16 @@ class TournamentManager:
         self.tournaments[id] = Tournament(sender, options)
         return options.type
     
-    def join(self, player_id, value):
-        if "tournament_id" not in value:
+    def join(self, sender, options):
+        is_bot = value["is_bot"] if "is_bot" in options else False
+        player_to_add = options["bot_id"] if "bot_id" in options and options["bot_id"] != "blank" else sender
+        if "tournament_id" not in options:
             return False
+        is_bot = value["is_bot"]
         tournament_id = value["tournament_id"]
-        if not player_id:
-            return False
+        
         participant = Participant()
-        participant.set(player_id)
+        participant.set(player_to_add)
         self.tournaments[tournament_id] = participant
         return True
     
@@ -54,9 +56,10 @@ class TournamentManager:
         return tournaments
 
 class Tournament: 
-    def __init__(self, owner: str, options: TournamentOptions):
+    def __init__(self, owner: str, options: TournamentOptions, id: str):
         # assert len(participants) > 1
         # assert len(participants) % 2 == 0
+        self.id = id
         self.type = options.type
         self.amount_of_winners = options.amount_of_winners
         self.participant_count = options.participant_count
@@ -145,12 +148,18 @@ class Tournament:
             for match in round:
                 matchesFormatted.append(match.getStringState())
             roundsFormatted.append(matchesFormatted)
+        
+        participantsFormatted = []
+        for participant in self.participant:
+            participantsFormatted.append(participant.get())
 
         return {
+            "id": self.id,
             "type": self.type,
             "rounds": self.round_count,
             "amountOfWinners": self.amount_of_winners,
             "participantCount": self.participant_count,
+            "participant": participantsFormatted,
             "owner": self.owner,
             "currentRound": self.__current_round,
             "matches": roundsFormatted,

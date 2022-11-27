@@ -177,6 +177,39 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = appendNumberToUInt8Array(id, input)
                     result = await contract.addInput(input)
                     break;
+                case TransactionType.CREATE_TOURNAMENT:
+                    let { 
+                        tourneyType, 
+                        participants, 
+                        participantCount, 
+                        roundCount, 
+                        amountOfWinners
+                    } = info
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "createTourney", 
+                        "value": {
+                            "type" : "${tourneyType}",
+                            "participants" : ${participants},
+                            "participant_count": ${participantCount},
+                            "round_count": ${roundCount},
+                            "amount_of_winners": ${amountOfWinners}
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.JOIN_TOURNAMENT:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "joinTourney", 
+                        "value": {
+                            "tournament_id": ${info.tournamentId}
+                            "is_bot" : ${info.isBot ?? false},
+                            "bot_id" : "${info.botId ?? "blank"}"
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
                 case TransactionType.SEND_MOVE_INPUT:
                     let { value, roomId } = info
                     input = ethers.utils.toUtf8Bytes(`{

@@ -1,5 +1,4 @@
 from participant import Participant
-from deps import matchMaker, botManager
 from times import get_timestamp
 
 class Match:

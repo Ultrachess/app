@@ -1,10 +1,10 @@
-from bot import *
-from matchmaker import *
-from account import *
-from elo import *
-from actions import *
-from bets import *
-from tournament import *
+from bot import BotManager, BotFactory
+from matchmaker import Matchmaker
+from account import AccountBalanceManager
+from elo import EloManager
+from actions import ActionManager
+from bets import BetManager
+from tournament import TournamentManager
 import chess.engine
 import chess.pgn
 import random
