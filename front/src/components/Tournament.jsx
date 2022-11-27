@@ -16,7 +16,7 @@ export default () => {
                 <Card shadow={true} css={{ width:"1300px", height:"700px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
                     <Card.Header>
                         <Row justify="center">
-                            <Text>Recent games</Text>
+                            <Text>Tournament {tournamentId}</Text>
                         </Row>
                     </Card.Header>
                     {tournament.matches.map((round, index) => {
