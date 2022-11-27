@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { useAppSelector } from "../state/hooks"
-import TournamentsList from "./TournamentsList"
+import GameList from "./GameList"
 
 export default () => {
     const { tournamentId } = useParams()
@@ -23,7 +23,7 @@ export default () => {
                         return(
                             <div id="roundView">
                                 <Text h1>Round {index}</Text>
-                                <TournamentsList tournaments={round}/>
+                                <GameList games={round.map(match => match.game[0] ?? {})}/>
                             </div>
                         )
                     })}
