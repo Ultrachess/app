@@ -7,6 +7,7 @@ import ModalCreateTournament from "./ModalCreateTournament";
 
 export default () => {
     const tournaments = useAppSelector(state => state.game.tournaments);
+    console.log(tournaments)
     const [createModalVisible, setCreateModalVisible] = React.useState(false)
 
     const handleShowCreateModal = () => {setCreateModalVisible(true)}

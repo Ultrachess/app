@@ -189,7 +189,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                         "op": "createTourney", 
                         "value": {
                             "type" : "${tourneyType}",
-                            "participants" : ${participants},
+                            "participants" : ${JSON.stringify(participants)},
                             "participant_count": ${participantCount},
                             "round_count": ${roundCount},
                             "amount_of_winners": ${amountOfWinners}

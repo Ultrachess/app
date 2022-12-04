@@ -4,6 +4,10 @@ import string
 from collections import namedtuple
 from match import Match
 from participant import Participant
+import logging
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger(__name__)
 
 class _TournamentTypes:
     def __init__(self) -> None:
@@ -29,16 +33,16 @@ class TournamentManager:
     
     def create(self, sender: str, options: TournamentOptions):
         id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10)))
-        self.tournaments[id] = Tournament(sender, options)
-        return options.type
+        self.tournaments[id] = Tournament(sender, options, id)
+        return id
     
     def join(self, sender, options):
-        is_bot = value["is_bot"] if "is_bot" in options else False
+        is_bot = options["is_bot"] if "is_bot" in options else False
         player_to_add = options["bot_id"] if "bot_id" in options and options["bot_id"] != "blank" else sender
         if "tournament_id" not in options:
             return False
-        is_bot = value["is_bot"]
-        tournament_id = value["tournament_id"]
+        is_bot = options["is_bot"]
+        tournament_id = options["tournament_id"]
         
         participant = Participant()
         participant.set(player_to_add)
@@ -51,7 +55,8 @@ class TournamentManager:
     
     def getStringState(self):
         tournaments = []
-        for tournament in self.tournaments:
+        for tournamentId in self.tournaments:
+            tournament = self.tournaments[tournamentId]
             tournaments.append(tournament.getStringState())
         return tournaments
 
@@ -60,12 +65,12 @@ class Tournament:
         # assert len(participants) > 1
         # assert len(participants) % 2 == 0
         self.id = id
-        self.type = options.type
-        self.amount_of_winners = options.amount_of_winners
-        self.participant_count = options.participant_count
-        self.participants = options.participants
+        self.type = options["type"]
+        self.amount_of_winners = options["amount_of_winners"]
+        self.participant_count = options["participant_count"]
+        self.participants = list(map(lambda x: Participant(x), options["participants"]))
         self.owner = owner
-        self.round_count = options.round_count
+        self.round_count = options["round_count"]
 
         self.__matches = []
         self.__rounds = []
@@ -73,6 +78,8 @@ class Tournament:
         self.is_tourney_over = False    
 
     def __gen_matches(self):
+        logger.info("attempting to generate matches")
+        logger.info("knockout Type: " + TournamentTypes.Knockout)
         if self.type == TournamentTypes.RoundRobin:
             self.__gen_round_robin_matches()
         elif self.type == TournamentTypes.Knockout:
@@ -85,10 +92,14 @@ class Tournament:
                 self.__matches.append(Match(self.owner, self.participants[i], self.participants[j]))
 
     def __gen_knockout_matches(self):
+        logger.info("generating knockout matches")
         new = len(self.__matches) < 1
         if new:
+            logger.info("is new tournament")
             for i in range(len(self.participants)):
-                self.__matches.append(Match(self.owner, self.participants[i]), self.participants[i+1])
+                newMatch = Match(self.owner, self.participants[i], self.participants[i+1])
+                logger.info(str(newMatch))
+                self.__matches.append(newMatch)
                 i += 2
         else:
             new_match = []
@@ -145,12 +156,12 @@ class Tournament:
         roundsFormatted = []
         for matches in self.__rounds:
             matchesFormatted = []
-            for match in round:
+            for match in matches:
                 matchesFormatted.append(match.getStringState())
             roundsFormatted.append(matchesFormatted)
         
         participantsFormatted = []
-        for participant in self.participant:
+        for participant in self.participants:
             participantsFormatted.append(participant.get())
 
         return {

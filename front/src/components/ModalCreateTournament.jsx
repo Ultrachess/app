@@ -28,15 +28,18 @@ export default ({visible, closeHandler}) => {
         {value:"DoubleRoundRobin", label:"DoubleRoundRobin"}
     ]
 
-    const addParticipant = () => {
-        var temp = participants
+    const addParticipant = React.useCallback(() => {
+        var temp = [...participants]
         temp.push(participantToAdd)
         setParticipants(temp)
-    }
-    const removeParticipant = () =>{
-        var temp = participants.pop()
+    }, [participants, participantToAdd])
+
+    const removeParticipant = React.useCallback(() =>{
+        var temp = [...participants]
+        temp.pop()
         setParticipants(temp)
-    }
+    }, [participants])
+
     const onParticipantToAddChange = (event) => setParticipantToAdd(event.target.value)
     const onTournamentTypeChange = (newValue) => setTournamentType(newValue.value)
     const onParticipantCountChange = (event) => setParticipantCount(event.target.value)
@@ -54,7 +57,7 @@ export default ({visible, closeHandler}) => {
         })
         const tournamentId = await wait
         console.log("jumping to tournament" + tournamentId)
-        if(roomId) navigate(`tournaments/${roomId}`, { replace: true })
+        if(tournamentId) navigate(`tournaments/${tournamentId}`, { replace: true })
     }
 
     return (
@@ -76,17 +79,17 @@ export default ({visible, closeHandler}) => {
                 options={tournamentTypes}
                 onChange={onTournamentTypeChange}
             />
-            <Text size={14}>Add participants</Text>
+            <Text size={14}>{participants.toString()}</Text>
+            <Input
+                clearable
+                bordered
+                fullWidth
+                color="primary"
+                size="lg"
+                placeholder="Participant to add"
+                onChange = {onParticipantToAddChange}
+            />
             <Row>
-                <Input
-                    clearable
-                    bordered
-                    fullWidth
-                    color="primary"
-                    size="lg"
-                    placeholder="Participant to add"
-                    onChange = {onParticipantToAddChange}
-                />
                  <Button onClick={addParticipant}>Add</Button>
                  <Button onClick={removeParticipant}>Remove</Button>
             </Row>
@@ -126,7 +129,7 @@ export default ({visible, closeHandler}) => {
             </Row>
             </Modal.Body>
             <Modal.Footer>
-            <Button auto onClick={handleCreateGame}>
+            <Button auto onClick={handleTournamentCreate}>
                 Create
             </Button>
             </Modal.Footer>

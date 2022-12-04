@@ -13,10 +13,11 @@ export default () => {
       <div className="center">
         <div className="nav-left">
           <Link to="/"><img className="logo" src={logo} alt="logo" /></Link>
-          <Button className="navItem" light color="default" auto><Link color="default" to="/game">Play</Link></Button>
           <Button className="navItem" light color="default" auto>About</Button>
           <Button className="navItem" light color="default" auto><Link to="/rankings">Rankings</Link></Button>
           <Button className="navItem" light color="default" auto><Link to="/bots">Bots</Link></Button>
+          <Button className="navItem" light color="default" auto><Link to="/tournaments">Tournaments</Link></Button>
+
         </div>
         <div className="nav-right">
           <Auth/>

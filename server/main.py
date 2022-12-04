@@ -104,6 +104,7 @@ def get_state_hex():
         "actionList": actionManager.actionList()
     }
     json_object = json.dumps(data_set)
+    logger.info("Inspect element return: " + json_object)
     hex_string = convert_to_hex(json_object)
     #logger.info("Inspect element return: "+ hex_string)
     return hex_string
@@ -284,6 +285,7 @@ def handle_advance(data):
             success = False
 
     botManager.runPendingMoves(timeStamp)
+    tournamentManager.run()
     
     #Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)
@@ -299,6 +301,10 @@ def handle_advance(data):
     logger.info(eloManager.getStringState())
     logger.info("Here is the betting state: " )
     logger.info(str(betManager.games))
+    logger.info("Here is the tournament state: " )
+    logger.info(tournamentManager.getStringState())
+    logger.info(str(tournamentManager))
+
 
 
     lastProcessedBlock = blockNumber

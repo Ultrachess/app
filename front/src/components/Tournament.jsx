@@ -2,6 +2,8 @@ import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import { useAppSelector } from "../state/hooks"
 import GameList from "./GameList"
+import { Row, Text, Button, Spacer, Card} from "@nextui-org/react";
+
 
 export default () => {
     const { tournamentId } = useParams()

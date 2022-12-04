@@ -18,6 +18,7 @@ import { useWeb3React } from "@web3-react/core";
 export default ({tournaments}) => {
     const [selectedTournament, setSelectedTournament] = useState()
     var { account } = useWeb3React()
+    console.log(tournaments)
 
     const columns = [
         {
@@ -58,9 +59,10 @@ export default ({tournaments}) => {
         }
     ];
 
-    const rows = Object.values(tournaments).map((tournament, index) => {
+    const rows = Object.values(tournaments?? []).map((tournament, index) => {
         const participants = tournament.participants ?? []
         const { 
+            id,
             type, 
             owner,
             participantCount, 
@@ -79,6 +81,7 @@ export default ({tournaments}) => {
         </Col>
         return {
             key: index,
+            id,
             owner,
             type,
             participantCount,
@@ -90,7 +93,7 @@ export default ({tournaments}) => {
     })
 
     const viewButton = (tournamentId) => {
-        return <Link to={"tournament/" + tournamentId}>view</Link>
+        return <Link to={"/tournament/" + tournamentId}>view</Link>
     }
 
     return (
@@ -115,7 +118,7 @@ export default ({tournaments}) => {
                             {(columnKey) => 
                                 <Table.Cell>{
                                     columnKey == "view" ? 
-                                            joinButton(item.id): 
+                                            viewButton(item.id): 
                                             columnKey == "bet"?
                                                 viewButton(item.id):
                                         item[columnKey]}

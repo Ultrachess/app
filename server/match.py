@@ -2,7 +2,7 @@ from participant import Participant
 from times import get_timestamp
 
 class Match:
-    def __init__(self, owner, match_count, left, right):
+    def __init__(self, owner, left, right, match_count=1):
         #Left and Right participants
         self.__left = left
         self.__right = right
