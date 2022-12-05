@@ -1,5 +1,6 @@
 from participant import Participant
 from times import get_timestamp
+import deps
 
 class Match:
     def __init__(self, owner, left, right, match_count=1):
@@ -37,8 +38,7 @@ class Match:
     def can_start(self):
         left_set = self.__left.get() is not None
         right_set = self.__right.get() is not None
-        winner_defined = self.__winner.get() is not None
-        return left_set and right_set and not winner_defined
+        return left_set and right_set and not self.is_finished()
 
     def is_last_match(self):
         return self.current_match >= self.match_count
@@ -61,8 +61,8 @@ class Match:
         
         p1 = self.__left.get()
         p2 = self.__right.get()
-        p1_is_bot = "0x" not in p1 and p1.lower() in botManager.bots
-        p2_is_bot = "0x" not in p2 and p2.lower() in botManager.bots
+        p1_is_bot = "0x" not in p1 and p1.lower() in deps.botFactory.bots
+        p2_is_bot = "0x" not in p2 and p2.lower() in deps.botFactory.bots
         is_bot = p1_is_bot or p2_is_bot
         is_only_bot = p1_is_bot and p2_is_bot
 
@@ -70,7 +70,7 @@ class Match:
         botId2 = p2 if is_only_bot else "blank"
         playerId = p1 if p1_is_bot else p2 if p2_is_bot else "blank"
 
-        obj = matchMaker.create(self.owner, get_timestamp(), {
+        obj = deps.matchMaker.create(self.owner, get_timestamp(), {
                 "name": "tournament match",
                 "isBot": is_bot,
                 "botId1": botId1,

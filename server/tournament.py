@@ -96,14 +96,16 @@ class Tournament:
         new = len(self.__matches) < 1
         if new:
             logger.info("is new tournament")
-            for i in range(len(self.participants)):
+            i = 0
+            while i < len(self.participants):
                 newMatch = Match(self.owner, self.participants[i], self.participants[i+1])
-                logger.info(str(newMatch))
+                logger.info(str(newMatch.getStringState()))
                 self.__matches.append(newMatch)
                 i += 2
         else:
             new_match = []
-            for i in range(len(self.__matches)):
+            i = 0
+            while i < len(self.participants):
                 winner_left = self.__matches[i].get_winner()
                 winner_right = self.__matches[i+1].get_winner()
                 new_match.append(Match(self.owner, winner_right, winner_left))
@@ -133,11 +135,14 @@ class Tournament:
         
     def run(self):
         if self.is_tourney_over:
+            logger.info("tournament is over, returning")
             return False
-        if self.has_all_participants():
+        if not self.has_all_participants():
+            logger.info("tournament does not have enough participants")
             return False
         #generate matches if none
         if self.has_not_started():
+            logger.info("generating matches because tournament has not started")
             self.__gen_matches()
 
         #run all matches

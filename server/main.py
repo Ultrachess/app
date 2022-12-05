@@ -285,6 +285,8 @@ def handle_advance(data):
             success = False
 
     botManager.runPendingMoves(timeStamp)
+
+    logger.info("Running tournament manager from main")
     tournamentManager.run()
     
     #Send notice on state change
