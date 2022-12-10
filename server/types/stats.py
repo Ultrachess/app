@@ -12,5 +12,6 @@ class EngineMoveStatistics:
     r_mobility: int
     speed: int
     depth: int
+    s_depth: int
     nodes: int
     tb_hits: int

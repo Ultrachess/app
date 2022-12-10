@@ -4,7 +4,7 @@ from dataclasses import dataclass
 class Balance:
     token: str
     amount: int
-    
+
 @dataclass
 class Account:
-    balance: list[Balance]
+    balances: list[Balance]
