@@ -7,11 +7,15 @@ class ComputeResources:
 
 @dataclass
 class EngineMoveStatistics:
-    eval: int
-    mobility: int
-    r_mobility: int
-    speed: int
     depth: int
-    s_depth: int
+    seldepth: int
+    time: int
     nodes: int
-    tb_hits: int
+    pv: list[str]
+    score: float
+    nps: int
+    tbhits: int
+    sbhits: int
+    cpuload: int
+    
+

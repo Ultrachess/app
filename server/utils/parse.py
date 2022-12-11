@@ -18,4 +18,4 @@ def parse_payload(payload: bytes) -> Input:
     type = int(payload[0])
     order = InputPackingOrder[type]
     obj = struct.unpack(order, payload[1:])
-    return Input(type, *obj)
+    return Input(type=type, order=order, *obj)
