@@ -53,16 +53,16 @@ class BaseInput(StructBinary):
 class MoveInput(BaseInput):
     type = 0
     order = 'krk'
-    game: int
+    game: str
     uci: str
 
 @dataclass
 class CreateGameInput(BaseInput):
     type = 1
-    player_1: str
-    player_2: str
+    p1: str
+    p2: str
     token: str
-    amount: int
+    wager: int
     bet_duration: int
 
 @dataclass

@@ -9,10 +9,10 @@ class Game:
     score: list[int]
     wager: int
     token: str
-    betting_duration: int
+    bet_duration: int
     created: int
-    root: chess.pgn.Game
-    state: chess.pgn.Game
+    root: chess.pgn.Game = chess.pgn.Game()
+    state: chess.pgn.Game = root
 
 @dataclass
 class Match:
