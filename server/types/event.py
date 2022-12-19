@@ -32,6 +32,17 @@ class ResignGameEvent(BaseEvent):
     game: str
 
 @dataclass
+class GameEndEvent(BaseEvent):
+    game: str
+
+@dataclass
+class EloEvent(BaseEvent):
+    user: str
+    game: str
+    prev: int
+    now: int
+
+@dataclass
 class DeployBotEvent(BaseEvent):
     creator: str
     bot_id: str
