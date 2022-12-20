@@ -4,6 +4,7 @@ from types.struct import StructBinary
 
 @dataclass
 class BaseEvent(StructBinary):
+    success: bool
     timestamp: int
     compute: ComputeResources
 
@@ -46,6 +47,25 @@ class EloEvent(BaseEvent):
 class DeployBotEvent(BaseEvent):
     creator: str
     bot_id: str
+
+@dataclass
+class DepositFundsEvent(BaseEvent):
+    user: str
+    token: str
+    amount: int
+
+@dataclass
+class TransferFundsEvent(BaseEvent):
+    user: str
+    destination: str
+    token: str
+    amount: int
+
+@dataclass
+class WithdrawFundsEvent(BaseEvent):
+    user: str
+    token: str
+    amount: int
 
 Event = CreateGameEvent | JoinGameEvent 
 

@@ -5,7 +5,7 @@ k = 1
 
 def expected_result(elo1: float, elo2: float) -> float:
     exp = (elo2 - elo1)/400.0
-    return 1 / ((19,9**(exp)) + 1)
+    return 1 / ((10.0**(exp)) + 1)
 
 
 def process_elo(game:str, p1: str, p2: str, score1: float, score2: float) -> tuple[EloEvent, EloEvent]:
