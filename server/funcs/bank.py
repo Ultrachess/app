@@ -1,6 +1,6 @@
 from types.event import DepositFundsEvent, TransferFundsEvent, WithdrawFundsEvent
 from funcs.accounts import get_user, set_user
-from state.index import users
+from utils.vouchers import transfer_voucher
 
 def deposit(timestamp: int, id: str, token: str, amount: int) -> DepositFundsEvent:
     new_account = get_user(id)
@@ -55,8 +55,11 @@ def withdraw(timestamp: int, id: str, token: str, amount: int) -> WithdrawFundsE
             user.account.balances[i].amount -= amount
     set_user(id, user)
 
+    transfer_voucher(token, id, amount)
+
     return WithdrawFundsEvent(
         success=True,
+        timestamp=timestamp,
         user=id,
         token=token,
         amount=amount
