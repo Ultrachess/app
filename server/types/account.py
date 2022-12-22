@@ -7,4 +7,4 @@ class Balance:
 
 @dataclass
 class Account:
-    balances: list[Balance]
+    balances: dict[str, Balance]

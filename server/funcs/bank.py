@@ -1,14 +1,22 @@
 from types.event import DepositFundsEvent, TransferFundsEvent, WithdrawFundsEvent
+from types.account import Balance
 from funcs.accounts import get_user, set_user
 from utils.vouchers import transfer_voucher
 
+def get_balance(id: str, token: str) -> int:
+    user = get_user(id)
+    if token not in user.account.balances:
+        return 0
+
+    return user.account.balances[token].amount
+
 def deposit(timestamp: int, id: str, token: str, amount: int) -> DepositFundsEvent:
-    new_account = get_user(id)
-    for i in range(new_account.account.balances):
-        balance = new_account.account.balances[i]
-        if balance.token == token:
-            new_account.account.balances[i].amount += amount
-    set_user(id, new_account)
+    user = get_user(id)
+    if not token in user.account.balances:
+        user.account.balances[token] = Balance(token, amount)
+
+    user.account.balances[token].amount += amount
+    set_user(id, user)
 
     return DepositFundsEvent(
         success=True,
@@ -20,19 +28,16 @@ def deposit(timestamp: int, id: str, token: str, amount: int) -> DepositFundsEve
     
 def transfer(timestamp: int, id: str, destination: str, token: str, amount: int) -> TransferFundsEvent:
     user = get_user(id)
-    completed = False
-    for i in range(user.account.balances):
-        balance = user.account.balances[i]
-        if balance.token == token and balance.amount >= amount:
-            user.account.balances[i].amount -= amount
-            completed = True
-
     dest = get_user(destination)
-    if completed:
-        for i in range(dest.account.balances):
-            balance = dest.account.balances[i]
-            if balance.token == token:
-                dest.account.balances[i].amount += amount
+    
+    if not token in user.account.balances:
+        return TransferFundsEvent(success=False)
+
+    if user.account.balances[token].amount >= amount:
+        return TransferFundsEvent(success=False)
+    
+    user.account.balances[token].amount -= amount
+    dest.account.balances[token].amount += amount
 
     set_user(id, user)
     set_user(id, dest)
@@ -49,12 +54,14 @@ def transfer(timestamp: int, id: str, destination: str, token: str, amount: int)
 
 def withdraw(timestamp: int, id: str, token: str, amount: int) -> WithdrawFundsEvent:
     user = get_user(id)
-    for i in range(user.account.balances):
-        balance = user.account.balances[i]
-        if balance.token == token:
-            user.account.balances[i].amount -= amount
-    set_user(id, user)
+    if not token in user.account.balances:
+        return WithdrawFundsEvent(success=False)
 
+    if user.account.balances[token].amount < amount:
+        return WithdrawFundsEvent(success=False)
+
+    user.account.balances[token].amount -= amount
+    set_user(id, user)
     transfer_voucher(token, id, amount)
 
     return WithdrawFundsEvent(

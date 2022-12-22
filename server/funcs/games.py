@@ -3,8 +3,11 @@ from types.input import CreateGameInput, JoinGameInput, MoveInput
 from types.event import CreateGameEvent, JoinGameEvent, MoveEvent
 from utils.index import generate_id
 from state.index import games
+from funcs.bank import get_balance
+from funcs.bot import get_bot
 
-def handle_game_end(game_id):
+def handle_game_end(id: str):
+    game = games[id]
     return
 
 def create_game(sender: str, timestamp: int, input: CreateGameInput) -> CreateGameEvent:
@@ -28,11 +31,22 @@ def create_game(sender: str, timestamp: int, input: CreateGameInput) -> CreateGa
     )
 
 def join_game(sender: str, timestamp: int, input: JoinGameInput) -> JoinGameEvent | bool:
-    if not input.id in games:
+    id = input.id
+    
+    if not id in games:
         return False
-    if not can_join_game(sender):
-        False
-    games[id].players.append(sender)
+
+    game = games[id]
+
+    is_max_players = len(game.players) >= 2
+    is_in_game = sender in game.players
+    address = sender if "0x" in sender else get_bot(sender).owner
+    has_funds = get_balance(address, game.token) >= game.wager
+    
+    if not has_funds and is_max_players and is_in_game:
+        return JoinGameEvent(success=False)
+
+    games[input].players.append(sender)
     return JoinGameEvent(
         timestamp=timestamp,
         user=sender,
