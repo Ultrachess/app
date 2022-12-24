@@ -34,7 +34,7 @@ class MetaData:
     epoch_index: int
     input_index: int
     block_number: int
-    time_stamp: str
+    timestamp: str
 
 @dataclass
 class AdvanceStateData:

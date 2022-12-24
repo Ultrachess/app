@@ -1,14 +1,14 @@
+import chess.engine
+import chess.pgn
 from types.game import Game
 from types.input import CreateGameInput, JoinGameInput, MoveInput
 from types.event import CreateGameEvent, JoinGameEvent, MoveEvent
 from utils.index import generate_id
 from state.index import games
-from funcs.bank import get_balance
+from funcs.bank import get_balance, deposit, transfer
 from funcs.bot import get_bot
+from funcs.ratings import process_elo
 
-def handle_game_end(id: str):
-    game = games[id]
-    return
 
 def create_game(sender: str, timestamp: int, input: CreateGameInput) -> CreateGameEvent:
     id = generate_id()
@@ -46,7 +46,9 @@ def join_game(sender: str, timestamp: int, input: JoinGameInput) -> JoinGameEven
     if not has_funds and is_max_players and is_in_game:
         return JoinGameEvent(success=False)
 
+    transfer(timestamp, sender, "game_pot_"+id, game.token, game.wager)
     games[input].players.append(sender)
+
     return JoinGameEvent(
         timestamp=timestamp,
         user=sender,
@@ -58,6 +60,7 @@ def send_move(sender: str, timestamp: int, input: MoveInput) -> MoveEvent | bool
     if not game_id in games:
         return False
     game = games[game_id]
+
     #check is can move
     new_move = chess.Move.from_uci(uci)
     is_legal = new_move in game.state.board().legal_moves
@@ -72,10 +75,18 @@ def send_move(sender: str, timestamp: int, input: MoveInput) -> MoveEvent | bool
         return False
     #apply move
     games[game_id].state.add_variation(new_move)
+
     #check if end
     is_game_end = game.state.board().outcome() != None
     if is_game_end:
-        handle_game_end(game_id)
+        game = games[id]
+        winner = game.state.board().outcome().winner
+        game.score[0] = 1 if winner == chess.WHITE else 0
+        game.score[1] = 1 if winner == chess.BLACK else 0
+        winner_id = game.players[0] if game.score[0] else game.players[1]
+        process_elo(game, game.players[0], game.players[1], game.score[0], game.score[1])
+        transfer(timestamp, "game_pot_"+game.id, winner_id, game.token, game.wager)
+
     return MoveEvent(
         timestamp=timestamp,
         sender=sender,
