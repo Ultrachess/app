@@ -1,6 +1,7 @@
 from os import environ
 from utils.parse import parse_advance_state, parse_inspect_state, parse_payload
 from funcs.input import process_input
+from funcs.app import process_state
 import requests
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
@@ -11,17 +12,18 @@ def reject_input(payload):
 
 def handle_advance(data):
     parsed = parse_advance_state(data)
-    
     metadata = parsed.metadata
     input = parse_payload(parsed.payload)
 
     if not process_input(metadata, input):
         reject_input("Problem in processing input. Rejecting")
 
+    if not process_state(metadata, input):
+        reject_input("Problem in processing application state. Rejecting")
+
     return "accept"
 
 def handle_inspect(data):
-
     return "accept"
 
 handlers = {  

@@ -1,16 +1,20 @@
 import chess.engine
 import chess.pgn
 from types.game import Game
-from types.input import CreateGameInput, JoinGameInput, MoveInput
-from types.event import CreateGameEvent, JoinGameEvent, MoveEvent
+from types.input import MetaData, CreateGameInput, JoinGameInput, MoveInput, ResignGameInput
+from types.event import CreateGameEvent, JoinGameEvent, MoveEvent, ResignGameEvent
 from utils.index import generate_id
 from state.index import games
-from funcs.bank import get_balance, deposit, transfer
+from funcs.bank import get_balance, transfer
 from funcs.bot import get_bot
 from funcs.ratings import process_elo
+from funcs.events import send_notice
 
 
-def create_game(sender: str, timestamp: int, input: CreateGameInput) -> CreateGameEvent:
+def create_game(metadata: MetaData, input: CreateGameInput) -> CreateGameEvent:
+    timestamp = metadata.timestamp
+    sender = metadata.sender
+
     id = generate_id()
     p1, p2, token, wager, bet_duration = input.p1, input.p2, input.token, input.wager, input.bet_duration
     players = [p1, p2] if p1 and p2 else [p1] if p1 else []
@@ -24,13 +28,18 @@ def create_game(sender: str, timestamp: int, input: CreateGameInput) -> CreateGa
         created=timestamp
     )
     games[id] = game
-    return CreateGameEvent(
-        timestamp=timestamp,
-        creator=sender,
-        game=id
+    
+    send_notice(
+        CreateGameEvent(
+            timestamp=timestamp,
+            creator=sender,
+            game=id
+        )
     )
 
-def join_game(sender: str, timestamp: int, input: JoinGameInput) -> JoinGameEvent | bool:
+def join_game(metadata: MetaData, input: JoinGameInput) -> JoinGameEvent | bool:
+    sender = metadata.sender
+    timestamp = metadata.timestamp
     id = input.id
     
     if not id in games:
@@ -49,13 +58,19 @@ def join_game(sender: str, timestamp: int, input: JoinGameInput) -> JoinGameEven
     transfer(timestamp, sender, "game_pot_"+id, game.token, game.wager)
     games[input].players.append(sender)
 
-    return JoinGameEvent(
-        timestamp=timestamp,
-        user=sender,
-        game=input.id
+    send_notice(
+        JoinGameEvent(
+            timestamp=timestamp,
+            user=sender,
+            game=input.id
+        )
     )
+    
 
-def send_move(sender: str, timestamp: int, input: MoveInput) -> MoveEvent | bool:
+def send_move(metadata: MetaData, input: MoveInput) -> MoveEvent | bool:
+    sender = metadata.sender
+    timestamp = metadata.timestamp
+
     game_id, uci = input.game, input.uci
     if not game_id in games:
         return False
@@ -87,11 +102,17 @@ def send_move(sender: str, timestamp: int, input: MoveInput) -> MoveEvent | bool
         process_elo(game, game.players[0], game.players[1], game.score[0], game.score[1])
         transfer(timestamp, "game_pot_"+game.id, winner_id, game.token, game.wager)
 
-    return MoveEvent(
-        timestamp=timestamp,
-        sender=sender,
-        uci=uci
+    send_notice(
+        MoveEvent(
+            timestamp=timestamp,
+            sender=sender,
+            uci=uci
+        )
     )
+    
+
+def resign_game(metadata: MetaData, input: ResignGameInput) -> bool:
+    return True
 
     
     
