@@ -16,4 +16,6 @@ class Game:
 
 @dataclass
 class Match:
+    p1: str
+    p2: str
     games: list[str]

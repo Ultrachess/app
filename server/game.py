@@ -28,7 +28,6 @@ class Game:
         self.scores = {}
         self.bettingDuration = duration
         
-
     def __isInGame(self, address):
         return address in self.players
     

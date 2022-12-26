@@ -11,6 +11,9 @@ from funcs.ratings import process_elo
 from funcs.events import send_notice
 
 
+def is_game_over(game: Game) -> bool:
+    return game.state.board().outcome() != None
+
 def create_game(metadata: MetaData, input: CreateGameInput) -> CreateGameEvent:
     timestamp = metadata.timestamp
     sender = metadata.sender
