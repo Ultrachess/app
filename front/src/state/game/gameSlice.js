@@ -42,6 +42,7 @@ export const gameSlice = createSlice({
         bots: {},
         elo: {},
         accounts: {},
+        tournaments: {},
         blockNumber: 0,
         lastProcessedBlock: 0,
         lastStepTimestamp: 0,
@@ -75,7 +76,7 @@ export const gameSlice = createSlice({
             state.bots = action.payload
         },
         setAppState: (state, action) => {
-            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp} = action.payload
+            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp, tournaments} = action.payload
             if(
                 !deepEqual(state.elo, elo) ||
                 !deepEqual(state.games, game) ||
@@ -90,6 +91,7 @@ export const gameSlice = createSlice({
             state.games = game
             state.bots = bots
             state.accounts = accounts
+            state.tournaments = tournaments
             state.lastProcessedBlock = lastProcessedBlock
             state.lastStepTimestamp = lastStepTimestamp
             state.actionList = actionList
@@ -268,9 +270,16 @@ export const initContracts = (signer, chainId) => async dispatch => {
 
     //init contract
     // TODO: Handle DAPP_ADDRESSES[networkName] or CONTRACTS[networkName] not defined
-    var inputFacetAbi = CONTRACTS[networkName].InputFacet.abi
-    var erc20PortalAbi = CONTRACTS[networkName].ERC20PortalFacet.abi
-    var cartesiDappAddress = DAPP_ADDRESSES[networkName]
+    const contract = CONTRACTS[networkName]
+    const contracts = contract && 
+        contract.InputFacet &&
+        contract.ERC20PortalFacet ?
+            contract : 
+            CONTRACTS.localhost
+            
+    const inputFacetAbi = contracts.InputFacet.abi
+    const erc20PortalAbi = contracts.ERC20PortalFacet.abi 
+    const cartesiDappAddress = DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost
 
 
     cartesiDappContract = new ethers.Contract(
@@ -284,10 +293,6 @@ export const initContracts = (signer, chainId) => async dispatch => {
         erc20PortalAbi,
         signer
     )
-
-    
-
-
 
     //start polling
     poll(dispatch)

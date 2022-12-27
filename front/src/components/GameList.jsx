@@ -10,10 +10,13 @@ import { truncateAddress, formatDate, getTokenNameFromAddress } from "../ether/u
 import { playerIsInGame, getGameById } from "../state/game/gameHelper";
 import { ethers } from "ethers";
 import Address from "./Address";
+import ModalPlaceBet from "./ModalPlaceBet";
 
 
 export default ({games}) => {
     const accounts = useSelector(state => state.auth.accounts);
+    const [selectedGame, setSelectedGame] = React.useState()
+    const [bettingModalVisibility, setBettingModalVisible] = React.useState()
     var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
     const dispatch = useDispatch()
 
@@ -39,6 +42,10 @@ export default ({games}) => {
             label: "CREATED",
         },
         {
+            key:"bet",
+            label: "BET"
+        },
+        {
             key: "join",
             label: "",
         }
@@ -62,6 +69,7 @@ export default ({games}) => {
             players,
             wagerAmount: ethers.utils.formatUnits(ethers.BigNumber.from(wagerAmount)) + " " + getTokenNameFromAddress(game.token),
             mode: game.isBot ? "Bot": "Human",
+            bet: game.id,
             created: formatDate(date)
         }
     })
@@ -76,9 +84,37 @@ export default ({games}) => {
         return <Link to={"game/" + gameId}>{buttonText}</Link>
     }
 
+    const handleOpenBettingModal = (gameId) => {
+        setSelectedGame(gameId)
+        setBettingModalVisible(true)
+    }
+
+    const handleCloseBettingModal = () => { setBettingModalVisible(false)}
+
+    const betButton = (gameId) => {
+        const game = getGameById(games, gameId)
+        const bettingDuration = game && game.bettingDuration ? game.bettingDuration: 0
+        const wagerInfo = game && game.wagering ? game.wagering : 0
+        const bettingIsOpen = wagerInfo && wagerInfo.openTime
+        return <Button
+                    onClick={ () => {if(bettingIsOpen) handleOpenBettingModal(gameId)}}
+                >{
+                    bettingDuration == 0 ? 
+                        "Betting not enabled":
+                        bettingIsOpen ?
+                            wagerInfo.openTime:
+                            "Betting phase pending"
+                    }
+                </Button>
+    }
+
     return (
         <div className="gameListItem">
-            
+            <ModalPlaceBet
+                visible={bettingModalVisibility}
+                gameId = {selectedGame}
+                closeHandler = {handleCloseBettingModal}
+            /> 
             <Table
                     aria-label="Example table with dynamic content"
                     css={{
@@ -100,6 +136,8 @@ export default ({games}) => {
                                 <Table.Cell>{
                                     columnKey == "join" ? 
                                             joinButton(item.id): 
+                                            columnKey == "bet"?
+                                                betButton(item.id):
                                         item[columnKey]}
                                 </Table.Cell>
                             }

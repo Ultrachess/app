@@ -10,6 +10,15 @@ export enum TransactionType {
     MANAGER_BOT_INPUT,
     RELEASE_FUNDS,
     BET_INPUT,
+    CREATE_TOURNAMENT,
+    JOIN_TOURNAMENT,
+}
+
+export enum TourneyType {
+    SWISS = "Swiss",
+    KNOCKOUT = "Knockout",
+    ROUNDROBIN = "RoundRobin",
+    DOUBLEROUNDROBIN = "DoubleRoundRobin",
 }
 
 export interface BaseTransactionInfo {
@@ -78,6 +87,7 @@ export interface ApproveErc20TransactionInfo extends BaseTransactionInfo {
 
 export interface BetTransactionInfo extends BaseTransactionInfo {
     type: TransactionType.BET_INPUT,
+    gameId: string,
     tokenAddress: string,
     amount: string,
     winningId: string,
@@ -86,6 +96,22 @@ export interface BetTransactionInfo extends BaseTransactionInfo {
 export interface ReleaseFundsTransactionInfo extends BaseTransactionInfo {
     type: TransactionType.RELEASE_FUNDS,
     tokenAddress: string,
+}
+
+export interface CreateTournamentTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.CREATE_TOURNAMENT,
+    tourneyType: TourneyType,
+    participants: string[],
+    participantCount: number,
+    roundCount: number,
+    amountOfWinners: number,    
+}
+
+export interface JoinTournamentTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.JOIN_TOURNAMENT,
+    tournamentId: string,
+    isBot?: boolean,
+    botId?: string,
 }
 
 export type TransactionInfo = 
@@ -99,4 +125,7 @@ export type TransactionInfo =
     | BotStepTransactionInfo
     | ManagerBotTransactionInfo
     | ReleaseFundsTransactionInfo
+    | BetTransactionInfo
+    | CreateTournamentTransactionInfo
+    | JoinTournamentTransactionInfo
 

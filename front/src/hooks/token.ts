@@ -25,8 +25,9 @@ export function useTokenList() : Token[] {
             //         return {} as Promise<string>
             //     }
             // )
-            console.log("chainId: ", chainId)
-            const tokens = ULTRACHESS_LIST.filter(token => token.chainId == chainId)
+            const _chainId = chainId ?? 31337
+            console.log("chainId: ", _chainId)
+            const tokens = ULTRACHESS_LIST.filter(token => token.chainId == _chainId)
             setTokenList(tokens)
         }
 
@@ -38,7 +39,7 @@ export function useTokenList() : Token[] {
 }
 
 
-export function useTokenFromList(list: Token[], address: string): Token {
+export function useTokenFromList(address: string): Token {
     const tokenList = useTokenList()
 
     return useMemo(() => {
@@ -54,7 +55,7 @@ export function useTokenFromList(list: Token[], address: string): Token {
                 decimals: 0
             }
         }
-    }, [tokenList, address, list])
+    }, [tokenList, address])
 }
 
 export function useTokenFromNetwork(address: string | null | undefined) : Token | null | undefined {

@@ -1,6 +1,6 @@
 # Ultrachess application code
 
-chessAppNew is a customized DApp written in Python, which originally resembles the one provided by the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python).
+Ultrachess is a customized DApp written in Python, which originally resembles the one provided by the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python).
 Contrary to that example, this DApp does not use shared resources from the `rollups-examples` main directory, and as such the commands for building, running and deploying it are slightly different.
 
 The documentation below reflects the original application code, and should also be used as a basis for documenting any DApp created with this mechanism.
@@ -174,4 +174,5 @@ After that, you can interact with the application normally [as explained above](
 
 
 docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./docker-compose-host.yml up
+docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose-host.yml down -v
 

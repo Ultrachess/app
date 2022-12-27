@@ -28,7 +28,6 @@ class Game:
         self.scores = {}
         self.bettingDuration = duration
         
-
     def __isInGame(self, address):
         return address in self.players
     
@@ -101,8 +100,11 @@ class Game:
             logger.info("cannAdd:" + str(canAdd) + " hasFunds:"+str(hasFunds) + " player: " + str(player))
             if canAdd and hasFunds:
                 self.players.append(player.lower())
+                logger.info("added player")
                 deps.accountManager.withdraw(address, self.wagerAmount, self.token)
-                self.score[player.lower()] = 0
+                logger.info("widthdrew funds")
+                self.scores[player.lower()] = 0
+                logger.info("isMinPlayer: " + str(self.__isMinPlayers()))
                 #open betting phase
                 if self.__isMinPlayers():
                     deps.betManager.open(id, timestamp, self.bettingDuration)
