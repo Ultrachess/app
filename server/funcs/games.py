@@ -14,7 +14,7 @@ from funcs.events import send_notice
 def is_game_over(game: Game) -> bool:
     return game.state.board().outcome() != None
 
-def create_game(metadata: MetaData, input: CreateGameInput) -> CreateGameEvent:
+def create_game(metadata: MetaData, input: CreateGameInput) -> int | bool:
     timestamp = metadata.timestamp
     sender = metadata.sender
 
@@ -39,6 +39,8 @@ def create_game(metadata: MetaData, input: CreateGameInput) -> CreateGameEvent:
             game=id
         )
     )
+
+    return id
 
 def join_game(metadata: MetaData, input: JoinGameInput) -> JoinGameEvent | bool:
     sender = metadata.sender

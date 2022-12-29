@@ -18,4 +18,5 @@ class Game:
 class Match:
     p1: str
     p2: str
+    game_count: int
     games: list[str]

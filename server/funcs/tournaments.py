@@ -2,14 +2,20 @@ from server.types.game import Match
 from server.types.event import CreateTournamentEvent
 from server.state.index import games, tournaments
 from server.utils.index import generate_id
-from server.funcs.games import is_game_over
+from server.funcs.games import is_game_over, create_game
 from server.funcs.events import send_notice
-from server.types.input import CreateTournamentInput, JoinTournamentInput
+from server.types.input import CreateTournamentInput, JoinTournamentInput, CreateGameInput
 from types.tournaments import Tournament, TournamentType
 from types.input import MetaData
 
+def has_started(tournament: Tournament) -> bool:
+    return len(tournament.rounds) > 0
 
-def is_knockout_round_over(matches: list[list[Match]]) -> bool:
+def get_current_round(tournament: Tournament) -> list[Match]:
+    round_count = len(tournament.rounds)
+    return tournament.rounds[round_count - 1]
+
+def is_round_over(matches: list[list[Match]]) -> bool:
     current_round = len(matches) - 1
     round = matches[current_round]
     for match in round:
@@ -19,14 +25,12 @@ def is_knockout_round_over(matches: list[list[Match]]) -> bool:
                 return False
     return True
 
-
 def is_enough_participants(participants: list[str], participant_count: int) -> bool:
     if len(participants) < participant_count:
         return False
     return True
 
-
-def is_knockout_tournament_input_valid(input: CreateTournamentInput) -> bool:
+def is_tournament_input_valid(input: CreateTournamentInput) -> bool:
     participant_count = input.participant_count
     round_count = input.round_count
     winner_count = input.winner_count
@@ -52,10 +56,12 @@ def create_knockout_tournament(metadata:MetaData, input: CreateTournamentInput) 
     tourney_type = input.tourney_type
     participants = input.participants
     participant_count = input.participant_count
+    games_per_match = input.game_count
+    game_info = input.game_info
     
     if not is_enough_participants(input.participants, input.participant_count):
         return False
-    if not is_knockout_tournament_input_valid(input):
+    if not is_tournament_input_valid(input):
         return False
 
     participants = input.participants
@@ -65,7 +71,7 @@ def create_knockout_tournament(metadata:MetaData, input: CreateTournamentInput) 
     for i in range(round_count):
         matches.append([])
         for j in range(participant_count):
-            matches[i].append(Match(participants[j], participants[j+1]))
+            matches[i].append(Match(participants[j], participants[j+1], game_count, []))
             j += 2
     
     id = generate_id()           
@@ -75,6 +81,8 @@ def create_knockout_tournament(metadata:MetaData, input: CreateTournamentInput) 
         type=tourney_type,
         participants=participants,
         rounds=matches,
+        games_per_match=games_per_match,
+        game_info=game_info
     )
 
     send_notice(
@@ -85,7 +93,6 @@ def create_knockout_tournament(metadata:MetaData, input: CreateTournamentInput) 
             rounds=matches,
         )
     )
-
     return True
 
 
@@ -103,4 +110,34 @@ def create_tournament(metadata: MetaData, input: CreateTournamentInput) -> bool:
 
 
 def join_tournament(metadata: MetaData, input: JoinTournamentInput) -> bool:
+    return True
+
+def create_new_rounds(tournament: Tournament) -> bool:
+    return True
+
+def create_match_games(metadata: MetaData) -> bool:
+    #loop through all matches within tournaments
+    for tournament_id in tournaments:
+        tournament = tournaments[tournament_id]
+        current_round = get_current_round(tournament)
+        
+        if is_round_over(current_round):
+            return create_new_rounds(tournament)
+
+        round: list[Match] = tournament.rounds[current_round]
+        for match in round:
+            current_game_count = len(match.games)
+            is_last_game = current_game_count == match.game_count
+            is_current_game_done = is_game_over(games[match.games[current_game_count - 1]]) if current_game_count > 0 else True
+            has_players = match.p1 != "" and match.p2 != ""
+            if has_players and not is_last_game and is_current_game_done:
+                pass
+            
+            game_id = create_game(
+                metadata,
+                tournament.game_info
+            )
+            match.games.append(game_id)
+
+
     return True

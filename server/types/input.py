@@ -114,8 +114,9 @@ class CreateTournamentInput(BaseInput):
     tourney_type: TournamentType
     participants: list[str]
     participant_count: int
-    round_count: int
+    game_count: int
     winner_count: int
+    game_info: CreateGameInput
 
 @dataclass
 class JoinTournamentInput(BaseInput):
