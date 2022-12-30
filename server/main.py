@@ -24,6 +24,7 @@ def handle_advance(data):
     return "accept"
 
 def handle_inspect(data):
+    parsed = parse_inspect_state(data)
     return "accept"
 
 handlers = {  
