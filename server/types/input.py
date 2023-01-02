@@ -125,5 +125,5 @@ class JoinTournamentInput(BaseInput):
     user_id: str
 
 
-Input = MoveInput | CreateGameInput | JoinGameInput | ResignGameInput | DeployBotInput | UpdateBotInput 
+Input = MoveInput | CreateGameInput | JoinGameInput | ResignGameInput | DeployBotInput | UpdateBotInput | DepositInput | WithdrawInput | BetInput | CreateTournamentInput | JoinTournamentInput
 

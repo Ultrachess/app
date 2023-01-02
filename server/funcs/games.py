@@ -9,6 +9,7 @@ from funcs.bank import get_balance, transfer
 from funcs.bot import get_bot
 from funcs.ratings import process_elo
 from funcs.events import send_notice
+from utils.constants import BETTING_POOL_ADDRESS
 
 
 def is_game_over(game: Game) -> bool:
@@ -60,7 +61,7 @@ def join_game(metadata: MetaData, input: JoinGameInput) -> JoinGameEvent | bool:
     if not has_funds and is_max_players and is_in_game:
         return JoinGameEvent(success=False)
 
-    transfer(timestamp, sender, "game_pot_"+id, game.token, game.wager)
+    transfer(timestamp, sender, BETTING_POOL_ADDRESS, game.token, game.wager)
     games[input].players.append(sender)
 
     send_notice(
@@ -105,7 +106,7 @@ def send_move(metadata: MetaData, input: MoveInput) -> MoveEvent | bool:
         game.score[1] = 1 if winner == chess.BLACK else 0
         winner_id = game.players[0] if game.score[0] else game.players[1]
         process_elo(game, game.players[0], game.players[1], game.score[0], game.score[1])
-        transfer(timestamp, "game_pot_"+game.id, winner_id, game.token, game.wager)
+        transfer(timestamp, BETTING_POOL_ADDRESS, winner_id, game.token, game.wager)
 
     send_notice(
         MoveEvent(

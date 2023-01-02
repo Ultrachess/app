@@ -24,7 +24,7 @@ class EventType(Enum):
 
 @dataclass
 class BaseEvent(StructBinary):
-    type: int
+    type: EventType
     success: bool
     timestamp: int
     compute: ComputeResources
@@ -61,7 +61,8 @@ class ResignGameEvent(BaseEvent):
 @dataclass
 class GameEndEvent(BaseEvent):
     type = EventType.GAME_END
-    game: str
+    game_id: str
+    score1: int
 
 @dataclass
 class EloEvent(BaseEvent):
@@ -108,6 +109,6 @@ class BetEvent(BaseEvent):
     condition: int
     attr: int
 
-Event = CreateGameEvent | JoinGameEvent 
+Event = CreateGameEvent | JoinGameEvent | MoveEvent | ResignGameEvent | DeployBotEvent | DepositFundsEvent | WithdrawFundsEvent | BetEvent | EloEvent | GameEndEvent | BotMoveEvent | TransferFundsEvent
 
 
