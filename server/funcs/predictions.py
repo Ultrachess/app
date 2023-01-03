@@ -98,31 +98,36 @@ def get_predicted_id(event: Event) -> tuple(str, str, str):
     #get pot and betting pool ids based on event type
     pot_id = ""
     betting_pool_id = ""
+    #create lambda function to check if event matches bet
+    event_matches_bet = lambda event, bet: True
     event_type = event.type
     if event_type == EventType.MOVE:
-        pass
+        return ("", "", "")
     elif event_type == EventType.CREATE_GAME:
-        pass
+        return ("", "", "")
     elif event_type == EventType.JOIN_GAME:
-        pass
+        return ("", "", "")
     elif event_type == EventType.BOT_MOVE:
-        pass
+        return ("", "", "")
     elif event_type == EventType.RESIGN_GAME:
-        pass
+        return ("", "", "")
     elif event_type == EventType.GAME_END:
         game_id = event.game_id
         pot_id = BETTING_POOL_ADDRESS + game_id
         betting_pool_id = pot_id + str(event.score1)
+        event_matches_bet = lambda event, bet: event.game_id == bet.prediction.game_id and event.score1 == bet.prediction.score1 
     elif event_type == EventType.ELO_EVENT:
-        pass
+        return ("", "", "")
     elif event_type == EventType.DEPLOY_BOT:
-        pass
+        return ("", "", "")
     elif event_type == EventType.DEPOSIT:
-        pass
+        return ("", "", "")
     elif event_type == EventType.WITHDRAW:
-        pass
+        return ("", "", "")
     elif event_type == EventType.TRANSFER:
-        pass 
+        return ("", "", "") 
+    elif event_type == EventType.PAYOUT:
+        return ("", "", "")
 
     #check if betting pool exists
     if betting_pool_id not in pools:
