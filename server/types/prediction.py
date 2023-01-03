@@ -29,12 +29,14 @@ class Bet:
 
 @dataclass
 class BettingPool:
+    id: str
     token: str
-    amount: int
-    bets: list[str]
+    amount: int = 0
+    bets: list[str] = []
 
 @dataclass
 class Pot:
+    id: str
     token: str
-    amount: int
-    pools: list[BettingPool]
+    amount: int = 0
+    pools: list[str] = []
