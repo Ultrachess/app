@@ -1,14 +1,16 @@
 from types.input import MetaData, BetInput
-from types.event import Event, EventType
+from types.event import Event, EventType, PayoutEvent, PotCreateEvent, BetEvent
 from types.prediction import Bet, Condition, BettingPool, Pot
 from state.index import bets, games, pools, pots
 from utils.constants import BETTING_POOL_ADDRESS
 from utils.index import generate_id
 from funcs.bank import get_balance, transfer
+from funcs.events import send_event
 
 
 #make a prediction
 def bet(metadata: MetaData, input: BetInput) -> bool:
+    #get sender and timestamp
     sender = metadata.sender
     timestamp = metadata.timestamp
     
@@ -45,9 +47,11 @@ def bet(metadata: MetaData, input: BetInput) -> bool:
         pass
     elif event_type == EventType.TRANSFER:
         pass 
+    else:
+        return False
 
+    #check if user has funds to bet
     has_funds = get_balance(sender, input.token) >= input.amount
-
     if not can_bet or not has_funds:
         return False
 
@@ -88,57 +92,72 @@ def bet(metadata: MetaData, input: BetInput) -> bool:
     if bet_id not in pools[betting_pool_id].bets:
         pools[betting_pool_id].bets.append(bet_id)
 
-    
+    #send bet event
+    send_event(
+        BetEvent(
+            timestamp=timestamp,
+            bet_id=bet_id,
+            pool_id=betting_pool_id,
+            pot_id=pot_id,
+            user=sender,
+            token=input.token,
+            amount=input.amount,
+        )
+    )
     return True
 
 
 #check if event was predicted by bets
 #if so, return bet_id, betting_pool_id, and pot_id
-def get_predicted_id(event: Event) -> tuple(str, str, str):
+def get_predicted_ids(event: Event) -> tuple(str, str, str):
+    #default values
+    default = ("", "", "")
     #get pot and betting pool ids based on event type
     pot_id = ""
     betting_pool_id = ""
     #create lambda function to check if event matches bet
-    event_matches_bet = lambda event, bet: True
+    event_matches_bet = lambda : True
     event_type = event.type
     if event_type == EventType.MOVE:
-        return ("", "", "")
+        return default
     elif event_type == EventType.CREATE_GAME:
-        return ("", "", "")
+        return default
     elif event_type == EventType.JOIN_GAME:
-        return ("", "", "")
+        return default
     elif event_type == EventType.BOT_MOVE:
-        return ("", "", "")
+        return default
     elif event_type == EventType.RESIGN_GAME:
-        return ("", "", "")
+        return default
     elif event_type == EventType.GAME_END:
         game_id = event.game_id
         pot_id = BETTING_POOL_ADDRESS + game_id
         betting_pool_id = pot_id + str(event.score1)
         event_matches_bet = lambda event, bet: event.game_id == bet.prediction.game_id and event.score1 == bet.prediction.score1 
     elif event_type == EventType.ELO_EVENT:
-        return ("", "", "")
+        return default
     elif event_type == EventType.DEPLOY_BOT:
-        return ("", "", "")
+        return default
     elif event_type == EventType.DEPOSIT:
-        return ("", "", "")
+        return default
     elif event_type == EventType.WITHDRAW:
-        return ("", "", "")
+        return default
     elif event_type == EventType.TRANSFER:
-        return ("", "", "") 
+        return default 
     elif event_type == EventType.PAYOUT:
-        return ("", "", "")
+        return default
+    else:
+        return default
 
     #check if betting pool exists
     if betting_pool_id not in pools:
-        return ("", "", "")
+        return default
 
     #check if any bets match event
     for bet_id in pools[betting_pool_id].bets:
         if event_matches_bet(event, bets[bet_id]):
             return (bet_id, betting_pool_id, pot_id)
 
-    return ("", "", "")
+    return default
 
 def get_pool_percentage(betting_pool_id: str, bet_id: str) -> float:
     #get bet amount
@@ -161,10 +180,23 @@ def apply_winning_pool(metadata: MetaData, pot_id: str, winning_pool_id: str):
         percentage = get_pool_percentage(winning_pool_id, bet_id)
 
         #get amount to transfer
-        amount = int(pots[pot_id].amount * percentage)
+        amount = int(float(pots[pot_id].amount) * percentage)
 
         #transfer funds to user
-        transfer(timestamp, pots[pot_id].token, bets[bet_id].user, pots[pot_id].token, amount)
+        transfer(timestamp, pot_id, bets[bet_id].user, pots[pot_id].token, amount)
+
+        #send payout event
+        send_event(
+            PayoutEvent(
+                timestamp=timestamp,
+                bet_id=bet_id,
+                pool_id=winning_pool_id,
+                pot_id=pot_id,
+                user=bets[bet_id].user,
+                token=pots[pot_id].token,
+                amount=amount
+            )
+        )
 
     #delete pot
     del pots[pot_id]
@@ -172,13 +204,13 @@ def apply_winning_pool(metadata: MetaData, pot_id: str, winning_pool_id: str):
     for betting_pool_id in pots[pot_id].pools:
         del pools[betting_pool_id]
 
-def on_event(metadata: MetaData, event: Event):
+def check_bets(metadata: MetaData, event: Event):
     #check if event matches any bets
     #if not, return
-    bet_id, betting_pool_id, pot_id = get_predicted_id(event)
+    bet_id, betting_pool_id, pot_id = get_predicted_ids(event)
     if bet_id == "" or betting_pool_id == "" or pot_id == "":
         return
     
     #set winning pool
-    apply_winning_pool(pot_id, betting_pool_id)
+    apply_winning_pool(metadata, pot_id, betting_pool_id)
 

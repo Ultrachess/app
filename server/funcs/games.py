@@ -2,13 +2,16 @@ import chess.engine
 import chess.pgn
 from types.game import Game
 from types.input import MetaData, CreateGameInput, JoinGameInput, MoveInput, ResignGameInput
-from types.event import CreateGameEvent, JoinGameEvent, MoveEvent, ResignGameEvent
+from types.event import CreateGameEvent, JoinGameEvent, MoveEvent, BotMoveEvent
+from types.request import BotMoveRequest
+from types.stats import EngineMoveStatistics
 from utils.index import generate_id
 from state.index import games
 from funcs.bank import get_balance, transfer
 from funcs.bot import get_bot
 from funcs.ratings import process_elo
-from funcs.events import send_notice
+from funcs.events import send_event
+from funcs.request import add_request
 from utils.constants import BETTING_POOL_ADDRESS
 
 
@@ -33,7 +36,7 @@ def create_game(metadata: MetaData, input: CreateGameInput) -> int | bool:
     )
     games[id] = game
     
-    send_notice(
+    send_event(
         CreateGameEvent(
             timestamp=timestamp,
             creator=sender,
@@ -64,16 +67,18 @@ def join_game(metadata: MetaData, input: JoinGameInput) -> JoinGameEvent | bool:
     transfer(timestamp, sender, BETTING_POOL_ADDRESS, game.token, game.wager)
     games[input].players.append(sender)
 
-    send_notice(
+    send_event(
         JoinGameEvent(
             timestamp=timestamp,
             user=sender,
             game=input.id
         )
     )
-    
 
-def send_move(metadata: MetaData, input: MoveInput) -> MoveEvent | bool:
+def get_opponent(game: Game, player: str) -> str:
+    return game.players[0] if game.players[1] == player else game.players[1]
+
+def send_move(metadata: MetaData, input: MoveInput, engine_stats: EngineMoveStatistics = None) -> MoveEvent | bool:
     sender = metadata.sender
     timestamp = metadata.timestamp
 
@@ -91,7 +96,7 @@ def send_move(metadata: MetaData, input: MoveInput) -> MoveEvent | bool:
     is_game_end = game.state.board().outcome() != None
     is_betting_phase_open = timestamp <= (game.bet_duration + game.created)
     can_move = is_legal and is_in_game and is_turn and is_min_players and not is_game_end and not is_betting_phase_open
-    is_bot = is_bot()
+    is_bot = "0x" not in sender
     if not can_move:
         return False
     #apply move
@@ -108,13 +113,36 @@ def send_move(metadata: MetaData, input: MoveInput) -> MoveEvent | bool:
         process_elo(game, game.players[0], game.players[1], game.score[0], game.score[1])
         transfer(timestamp, BETTING_POOL_ADDRESS, winner_id, game.token, game.wager)
 
-    send_notice(
-        MoveEvent(
-            timestamp=timestamp,
-            sender=sender,
-            uci=uci
+    #request bot move if opponent is bot
+    opponent = get_opponent(game, sender)
+    if "0x" not in opponent:
+        add_request(
+            BotMoveRequest(
+                timestamp=timestamp,
+                sender=sender,
+                opponent=opponent,
+                game=game_id
+            )
         )
-    )
+
+    #send move event
+    if not is_bot:
+        send_event(
+            MoveEvent(
+                timestamp=timestamp,
+                sender=sender,
+                uci=uci
+            )
+        ) 
+    elif is_bot and engine_stats:
+        send_event(
+            BotMoveEvent(
+                timestamp=timestamp,
+                sender=sender,
+                uci=uci,
+                engine_stats=engine_stats
+            )
+        )
     
 
 def resign_game(metadata: MetaData, input: ResignGameInput) -> bool:

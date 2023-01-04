@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from types.stats import ComputeResources, EngineMoveStatistics
 from types.struct import StructBinary
+from types.request import RequestType
 from enum import Enum
 
 class EventType(Enum):
@@ -20,6 +21,7 @@ class EventType(Enum):
     ELO_EVENT = 13
     TOURNAMENT_END = 14
     TRANSFER = 15
+    PAYOUT = 16
 
 
 @dataclass
@@ -106,8 +108,31 @@ class BetEvent(BaseEvent):
     user: str
     amount: int
     token: str
-    condition: int
-    attr: int
+    bet_id: str
+    pot_id: str
+    pool_id: str
+
+@dataclass
+class PayoutEvent(BaseEvent):
+    type = EventType.PAYOUT
+    user: str
+    amount: int
+    token: str
+    pot_id: str
+    pool_id: str
+    bet_id: str
+
+@dataclass
+class CreateTournamentEvent(BaseEvent):
+    type = EventType.CREATE_TOURNAMENT
+    creator: str
+    tournament_id: str
+
+@dataclass
+class BotMoveRequestEvent(BaseEvent):
+    type = EventType.REQUEST_ADDED
+    request_type: RequestType
+
 
 Event = CreateGameEvent | JoinGameEvent | MoveEvent | ResignGameEvent | DeployBotEvent | DepositFundsEvent | WithdrawFundsEvent | BetEvent | EloEvent | GameEndEvent | BotMoveEvent | TransferFundsEvent
 

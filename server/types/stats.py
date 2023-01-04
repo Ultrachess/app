@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 @dataclass
 class ComputeResources:
-    cycles: int
-    memory: int
+    cycles: int = 0
+    memory: int = 0
 
 @dataclass
 class EngineMoveStatistics:

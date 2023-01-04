@@ -3,7 +3,7 @@ from server.types.event import CreateTournamentEvent
 from server.state.index import games, tournaments
 from server.utils.index import generate_id
 from server.funcs.games import is_game_over, create_game
-from server.funcs.events import send_notice
+from server.funcs.events import send_event
 from server.types.input import CreateTournamentInput, JoinTournamentInput, CreateGameInput
 from types.tournaments import Tournament, TournamentType
 from types.input import MetaData
@@ -85,12 +85,11 @@ def create_knockout_tournament(metadata:MetaData, input: CreateTournamentInput) 
         game_info=game_info
     )
 
-    send_notice(
+    send_event(
         CreateTournamentEvent(
             timestamp=timestamp,
             creator=sender,
-            tournament=id,
-            rounds=matches,
+            tournament_id=id,
         )
     )
     return True

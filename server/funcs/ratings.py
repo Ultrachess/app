@@ -1,5 +1,6 @@
 from types.event import EloEvent
 from funcs.accounts import get_user, set_user
+from funcs.events import send_event
 
 k = 1
 
@@ -32,13 +33,15 @@ def process_elo(game:str, p1: str, p2: str, score1: float, score2: float) -> tup
     set_user(p1, user1)
     set_user(p2, user2)
 
-    return (
+    send_event(
         EloEvent(
             user=p1,
             game=game,
             prev=elo1,
             now=new_elo1
-        ),
+        )
+    )
+    send_event(
         EloEvent(
             user=p2,
             game=game,
@@ -46,3 +49,4 @@ def process_elo(game:str, p1: str, p2: str, score1: float, score2: float) -> tup
             now=new_elo2
         )
     )
+    
