@@ -75,13 +75,16 @@ def join_game(metadata: MetaData, input: JoinGameInput) -> JoinGameEvent | bool:
         )
     )
 
+def is_bot(player: str) -> bool:
+    return "0x" not in player
+
 def get_opponent(game: Game, player: str) -> str:
     return game.players[0] if game.players[1] == player else game.players[1]
 
 def send_move(metadata: MetaData, input: MoveInput, engine_stats: EngineMoveStatistics = None) -> MoveEvent | bool:
     sender = metadata.sender
     timestamp = metadata.timestamp
-
+    
     game_id, uci = input.game, input.uci
     if not game_id in games:
         return False
