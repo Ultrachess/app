@@ -22,6 +22,7 @@ class EventType(Enum):
     TOURNAMENT_END = 14
     TRANSFER = 15
     PAYOUT = 16
+    TICK = 17
 
 
 @dataclass
@@ -132,6 +133,12 @@ class CreateTournamentEvent(BaseEvent):
 class BotMoveRequestEvent(BaseEvent):
     type = EventType.REQUEST_ADDED
     request_type: RequestType
+
+@dataclass
+class TickEvent(BaseEvent):
+    type = EventType.TICK
+    address: str
+    random: int
 
 
 Event = CreateGameEvent | JoinGameEvent | MoveEvent | ResignGameEvent | DeployBotEvent | DepositFundsEvent | WithdrawFundsEvent | BetEvent | EloEvent | GameEndEvent | BotMoveEvent | TransferFundsEvent

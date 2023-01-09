@@ -11,10 +11,12 @@ from funcs.events import send_event
 from utils.index import generate_id
 from utils.constants import MAX_BOT_TIME
 
+#fetch bot from state
 def get_bot(id: str) -> Bot:
     if id in bots:
         return bots[id]
 
+#process bot move request
 def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:
     #get bot
     bot = get_bot(request.bot_id)
@@ -51,6 +53,7 @@ def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:
     #return true
     pass
 
+#create bot
 def create_bot(metadata: MetaData, input: DeployBotInput) -> bool:
     #get input and id
     sender = metadata.sender

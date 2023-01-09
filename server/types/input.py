@@ -124,6 +124,11 @@ class JoinTournamentInput(BaseInput):
     id: str
     user_id: str
 
+@dataclass
+class TickInput(BaseInput):
+    type = 11
+    random: int
+
 
 Input = MoveInput | CreateGameInput | JoinGameInput | ResignGameInput | DeployBotInput | UpdateBotInput | DepositInput | WithdrawInput | BetInput | CreateTournamentInput | JoinTournamentInput
 

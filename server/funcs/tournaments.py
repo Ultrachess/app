@@ -111,7 +111,16 @@ def create_tournament(metadata: MetaData, input: CreateTournamentInput) -> bool:
 def join_tournament(metadata: MetaData, input: JoinTournamentInput) -> bool:
     return True
 
-def create_new_rounds(tournament: Tournament) -> bool:
+def create_new_rounds(tournament_id: str) -> bool:
+    tournament = tournaments[tournament_id]
+    current_round = get_current_round(tournament)
+    matches = []
+    for match in current_round:
+        if match.winner == "":
+            return False
+        matches.append(Match(match.winner, "", tournament.games_per_match, []))
+    tournament.rounds.append(matches)
+    
     return True
 
 def create_match_games(metadata: MetaData) -> bool:
@@ -121,7 +130,7 @@ def create_match_games(metadata: MetaData) -> bool:
         current_round = get_current_round(tournament)
         
         if is_round_over(current_round):
-            return create_new_rounds(tournament)
+            return create_new_rounds(tournament_id)
 
         round: list[Match] = tournament.rounds[current_round]
         for match in round:
@@ -139,4 +148,8 @@ def create_match_games(metadata: MetaData) -> bool:
             match.games.append(game_id)
 
 
+    return True
+
+def process_tournaments(metadata: MetaData) -> bool:
+    create_match_games(metadata)
     return True
