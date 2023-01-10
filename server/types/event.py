@@ -23,6 +23,7 @@ class EventType(Enum):
     TRANSFER = 15
     PAYOUT = 16
     TICK = 17
+    BOT_MOVE_REQUEST = 18
 
 
 @dataclass
@@ -131,7 +132,7 @@ class CreateTournamentEvent(BaseEvent):
 
 @dataclass
 class BotMoveRequestEvent(BaseEvent):
-    type = EventType.REQUEST_ADDED
+    type = EventType.BOT_MOVE_REQUEST
     request_type: RequestType
 
 @dataclass

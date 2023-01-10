@@ -1,5 +1,6 @@
 import struct
-from types.input import MetaData, AdvanceStateData, InspectElementData, Input, InputPackingOrder
+from types.input import MetaData, AdvanceStateData, Input, InputPackingOrder
+from types.inspect import Inspect, InspectPackingOrder
 
 def parse_advance_state(data: dict) -> AdvanceStateData | None:
     payload = bytes.fromhex(data["payload"][2:])
@@ -11,8 +12,11 @@ def parse_advance_state(data: dict) -> AdvanceStateData | None:
     metadata = MetaData(sender, epoch_index, input_index, block_number, timestamp)
     return AdvanceStateData(metadata, payload)
 
-def parse_inspect_state(data: dict) -> InspectElementData | None:
-    return 
+def parse_inspect_state(payload: bytes) -> Inspect | None:
+    type = int(payload[0])
+    order = InspectPackingOrder[type]
+    obj = struct.unpack(order, payload[1:])
+    return Inspect(type=type, order=order, *obj)
 
 def parse_payload(payload: bytes) -> Input:
     type = int(payload[0])

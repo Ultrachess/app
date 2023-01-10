@@ -2,13 +2,18 @@ from os import environ
 from utils.parse import parse_advance_state, parse_inspect_state, parse_payload
 from funcs.input import process_input
 from funcs.app import process_state
+from funcs.inspect import process_inspect
 import requests
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
 
-def reject_input(payload):
+def reject(payload):
     requests.post(rollup_server + "/report", json={"payload": payload})
     return "reject"
+
+def accept(payload):
+    requests.post(rollup_server + "/report", json={"payload": payload})
+    return "accept"
 
 def handle_advance(data):
     parsed = parse_advance_state(data)
@@ -16,15 +21,23 @@ def handle_advance(data):
     input = parse_payload(parsed.payload)
 
     if not process_input(metadata, input):
-        reject_input("Problem in processing input. Rejecting")
+        reject("Problem in processing input. Rejecting")
 
     if not process_state(metadata, input):
-        reject_input("Problem in processing application state. Rejecting")
+        reject("Problem in processing application state. Rejecting")
 
     return "accept"
 
 def handle_inspect(data):
     parsed = parse_inspect_state(data)
+
+    response, success = process_inspect(parsed)
+    
+    if success:
+        accept(response)
+    else:
+        reject(response)
+
     return "accept"
 
 handlers = {  

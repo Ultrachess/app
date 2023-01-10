@@ -13,3 +13,5 @@ bets: dict[str, Bet] = {}
 pools: dict[str, BettingPool] = {}
 pots: dict[str, Pot] = {}
 requests: dict[str, Request] = {}
+
+block: int = 0
