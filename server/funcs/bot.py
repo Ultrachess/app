@@ -2,8 +2,8 @@ import chess.engine
 import subprocess
 from state.index import bots, games
 from types.bot import Bot
-from types.input import DeployBotInput, MetaData, MoveInput
-from types.event import DeployBotEvent
+from types.input import DeployBotInput, MetaData, MoveInput, UpdateBotInput
+from types.event import DeployBotEvent, UpdateBotEvent
 from types.request import BotMoveRequest
 from types.stats import EngineMoveStatistics
 from funcs.games import send_move
@@ -52,6 +52,58 @@ def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:
     )
     #return true
     pass
+
+#update bot
+def update_bot(metadata: MetaData, input: UpdateBotInput) -> bool:
+    #get input and id
+    sender = metadata.sender
+    timestamp = metadata.timestamp
+    
+    id = input.id
+    new_owner = input.new_owner
+    auto_enabled = input.auto_enabled
+    wager_token = input.wager_token
+    wager_amount = input.wager_amount
+    lowest_elo = input.lowest_elo
+    highest_elo = input.highest_elo
+    time_limit = input.time_limit
+    depth_limit = input.depth_limit
+    nodes_limit = input.nodes_limit
+
+    #update bot
+    bot = get_bot(id)
+
+    bot.owner = new_owner
+
+    bot.matchmaking_preferences.auto_enabled = auto_enabled
+    bot.matchmaking_preferences.wager_token = wager_token
+    bot.matchmaking_preferences.wager_amount = wager_amount
+    bot.matchmaking_preferences.lowest_elo = lowest_elo
+    bot.matchmaking_preferences.highest_elo = highest_elo
+
+    bot.move_preferences.time_limit = time_limit
+    bot.move_preferences.depth_limit = depth_limit
+    bot.move_preferences.nodes_limit = nodes_limit
+    global bots
+    bots[id] = bot
+
+
+    send_event(
+        UpdateBotEvent(
+            sender=sender,
+            timestamp=timestamp,
+            bot_id=id,
+            new_owner=new_owner,
+            auto_enabled=auto_enabled,
+            wager_token=wager_token,
+            wager_amount=wager_amount,
+            lowest_elo=lowest_elo,
+            highest_elo=highest_elo,
+            time_limit=time_limit,
+            depth_limit=depth_limit,
+            nodes_limit=nodes_limit
+        )
+    )
 
 #create bot
 def create_bot(metadata: MetaData, input: DeployBotInput) -> bool:

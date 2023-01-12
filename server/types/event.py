@@ -141,6 +141,24 @@ class TickEvent(BaseEvent):
     address: str
     random: int
 
+@dataclass
+class UpdateBotEvent(BaseEvent):
+    type = EventType.UPDATE_BOT
+    sender: str
+
+    owner: str
+    bot_id: str
+    
+    auto_enabled: bool
+    wager_token: str
+    wager_amount: int
+    lowest_elo: int
+    highest_elo: int
+
+    time_limit: int
+    depth_limit: int
+    nodes_limit: int
+
 
 Event = CreateGameEvent | JoinGameEvent | MoveEvent | ResignGameEvent | DeployBotEvent | DepositFundsEvent | WithdrawFundsEvent | BetEvent | EloEvent | GameEndEvent | BotMoveEvent | TransferFundsEvent
 

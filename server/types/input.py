@@ -85,8 +85,16 @@ class DeployBotInput(BaseInput):
 class UpdateBotInput(BaseInput):
     type = 5
     id: str
+    owner: str
     auto_enabled: bool
+    wager_token: str
     wager_amount: int
+    lowest_elo: int
+    highest_elo: int
+    time_limit: int
+    depth_limit: int
+    nodes_limit: int
+
 
 @dataclass
 class DepositInput(BaseInput):
