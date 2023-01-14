@@ -71,7 +71,7 @@ def create_knockout_tournament(metadata:MetaData, input: CreateTournamentInput) 
     for i in range(round_count):
         matches.append([])
         for j in range(participant_count):
-            matches[i].append(Match(participants[j], participants[j+1], game_count, []))
+            matches[i].append(Match(participants[j], participants[j+1], games_per_match, []))
             j += 2
     
     id = generate_id()           

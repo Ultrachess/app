@@ -7,6 +7,7 @@ class BotMatchMakingPreferences:
     wager_amount: int = 0
     lowest_elo: int = 0
     highest_elo: int = 4000
+    bet_duration: int = 0
 
 @dataclass
 class BotMovePreferences:

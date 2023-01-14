@@ -1,20 +1,69 @@
 import chess.engine
 import subprocess
-from state.index import bots, games
+from state.index import bots, games, users, tournaments, bets, pools, pots, requests
 from types.bot import Bot
-from types.input import DeployBotInput, MetaData, MoveInput, UpdateBotInput
+from types.input import DeployBotInput, MetaData, MoveInput, UpdateBotInput, CreateGameInput
 from types.event import DeployBotEvent, UpdateBotEvent
-from types.request import BotMoveRequest
+from types.request import BotMoveRequest, BotSearchMatchRequest, Request, RequestType
 from types.stats import EngineMoveStatistics
-from funcs.games import send_move
+from funcs.games import send_move, create_game
+from funcs.request import add_request
 from funcs.events import send_event
 from utils.index import generate_id
 from utils.constants import MAX_BOT_TIME
+import random
 
 #fetch bot from state
 def get_bot(id: str) -> Bot:
     if id in bots:
         return bots[id]
+
+#process move search request
+def process_search_match_request(metadata: MetaData, request: BotSearchMatchRequest) -> bool:
+    bot = get_bot(request.bot_id)
+    bot_id = bot.id
+    wager_token = bot.matchmaking_preferences.wager_token
+    wager_amount = bot.matchmaking_preferences.wager_amount
+    lowest_elo = bot.matchmaking_preferences.lowest_elo
+    highest_elo = bot.matchmaking_preferences.highest_elo
+    bet_duration = bot.matchmaking_preferences.bet_duration
+
+    #get list of opponents that match the bots preferences from list of BotSearchMatchRequest in requests
+    opponents = []
+    for request in requests.values():
+        if request.request_type == RequestType.BOT_SEARCH_MATCH:
+            opponent = get_bot(request.bot_id)
+            is_not_same = opponent.id != bot_id
+            is_within_elo_for_bot = opponent.rating.ultrachess >= lowest_elo and opponent.rating.ultrachess <= highest_elo
+            is_within_elo_for_opponent = bot.rating.ultrachess >= opponent.matchmaking_preferences.lowest_elo and bot.rating.ultrachess <= opponent.matchmaking_preferences.highest_elo
+            is_same_token = opponent.matchmaking_preferences.wager_token == wager_token
+            is_within_wager_amount = opponent.matchmaking_preferences.wager_amount >= wager_amount
+            if is_not_same and is_within_elo_for_bot and is_within_elo_for_opponent and is_same_token and is_within_wager_amount:
+                opponents.append(opponent)
+
+    #choose random opponent from opponents
+    if len(opponents) > 0:
+        rand_index = random.randint(0, len(opponents) - 1)
+        opponent = opponents[rand_index]
+        #create game
+        create_game(
+            metadata=metadata,
+            input=CreateGameInput(
+                p1=bot_id,
+                p2=opponent.id,
+                wager_token=wager_token,
+                wager_amount=wager_amount,
+                bet_duration=bet_duration
+            )
+        )
+        #remove requests
+        del requests[request.id]
+        del requests[opponent.id]
+        return True
+    else:
+        return False
+
+
 
 #process bot move request
 def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:
@@ -50,8 +99,29 @@ def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:
             cpuload= info["cpuload"] if "cpuload" in info else 0,
         )
     )
+    #remove request
+    del requests[request.id]
+
     #return true
     pass
+
+#auto create bot matches
+def auto_create_bot_matches(metadata: MetaData) -> bool:
+    #get bots
+    bots_list = list(bots.values())
+    #sort bots by elo
+    bots_list.sort(key=lambda bot: bot.rating.ultrachess, reverse=True)
+    for i in range(len(bots_list)):
+        bot = bots_list[i]
+        #pass if not auto enabled
+        if not bot.matchmaking_preferences.auto_enabled:
+            continue
+        #pass if not in a game by getting all games and checking if bot_id is in game.players
+        if any(bot.id in game.players for game in games.values()):
+            continue
+
+        add_request(BotSearchMatchRequest(bot_id=bot.id))
+    return True
 
 #update bot
 def update_bot(metadata: MetaData, input: UpdateBotInput) -> bool:
