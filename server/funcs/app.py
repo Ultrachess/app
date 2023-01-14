@@ -4,8 +4,12 @@ from funcs.tournaments import process_tournaments
 from funcs.events import send_event
 from types.event import TickEvent
 from state.index import block
+from funcs.bot import process_bot_match_search
 
 def process_state(metadata: MetaData, input: TickInput) -> bool:
+
+    #auto search for bot matches
+    process_bot_match_search(metadata)
 
     #run tournaments
     process_tournaments(metadata)

@@ -106,7 +106,7 @@ def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:
     pass
 
 #auto create bot matches
-def auto_create_bot_matches(metadata: MetaData) -> bool:
+def process_bot_match_search(metadata: MetaData) -> bool:
     #get bots
     bots_list = list(bots.values())
     #sort bots by elo
