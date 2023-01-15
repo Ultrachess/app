@@ -18,4 +18,7 @@ class Tournament:
     rounds: list[list[Match]]
     games_per_match: int
     game_info: CreateGameInput
+    entrance_fee: int = 0
+    entrance_token: str = "ETH"
+    over: bool = False
 

@@ -5,12 +5,14 @@ from dataclasses import dataclass
 @dataclass
 class Game:
     id: str
-    players: list[str]
-    score: list[int]
-    wager: int
-    token: str
-    bet_duration: int
-    created: int
+    p1: str
+    p2: str
+    score1: float = 0
+    score2: float = 0
+    wager: int = 0
+    token: str = "ETH"
+    bet_duration: int = 0
+    created: int = 0
     root: chess.pgn.Game = chess.pgn.Game()
     state: chess.pgn.Game = root
 

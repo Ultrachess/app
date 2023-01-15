@@ -131,6 +131,12 @@ class CreateTournamentEvent(BaseEvent):
     tournament_id: str
 
 @dataclass
+class JoinTournamentEvent(BaseEvent):
+    type = EventType.JOIN_TOURNAMENT
+    user: str
+    tournament_id: str
+
+@dataclass
 class BotMoveRequestEvent(BaseEvent):
     type = EventType.BOT_MOVE_REQUEST
     request_type: RequestType

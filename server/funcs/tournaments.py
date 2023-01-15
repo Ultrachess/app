@@ -1,12 +1,14 @@
 from server.types.game import Match
-from server.types.event import CreateTournamentEvent
-from server.state.index import games, tournaments
+from server.types.event import CreateTournamentEvent, JoinTournamentEvent, TournamentEndEvent
+from server.state.index import games, tournaments, users
 from server.utils.index import generate_id
 from server.funcs.games import is_game_over, create_game
+from server.funcs.bank import get_balance, transfer
 from server.funcs.events import send_event
 from server.types.input import CreateTournamentInput, JoinTournamentInput, CreateGameInput
 from types.tournaments import Tournament, TournamentType
 from types.input import MetaData
+from utils.constants import TOURNAMENT_FEE_ADDRESS
 
 def has_started(tournament: Tournament) -> bool:
     return len(tournament.rounds) > 0
@@ -109,6 +111,45 @@ def create_tournament(metadata: MetaData, input: CreateTournamentInput) -> bool:
 
 
 def join_tournament(metadata: MetaData, input: JoinTournamentInput) -> bool:
+    timestamp = metadata.timestamp
+    sender = metadata.sender
+
+    tournament_id = input.tournament_id
+    tournament = tournaments[tournament_id]
+
+    if has_started(tournament):
+        return False
+
+    #check if sender has funds to pay entrance fee
+    user = users[sender]
+    if get_balance() < tournament.entrance_fee:
+        return False
+
+    #check if sender is already in tournament
+    if sender in tournament.participants:
+        return False
+
+    #check if tournament is full
+    if len(tournament.participants) >= tournament.participant_count:
+        return False
+
+    #deduct entrance fee from sender by transfering to TOURNAMENT_FEE_ADDRESS
+    pot = get_balance(TOURNAMENT_FEE_ADDRESS+tournament_id, tournament.entrance_token)
+    if not transfer(timestamp, sender, TOURNAMENT_FEE_ADDRESS+tournament_id, tournament.entrance_token, pot):
+        return False
+
+
+    #add sender to tournament
+    tournaments[tournament_id].participants.append(sender)
+
+    #send event
+    send_event(
+        JoinTournamentEvent(
+            timestamp=timestamp,
+            sender=sender,
+            tournament_id=tournament_id
+        )
+    )
     return True
 
 def create_new_rounds(tournament_id: str) -> bool:
@@ -123,6 +164,51 @@ def create_new_rounds(tournament_id: str) -> bool:
     
     return True
 
+def is_last_round(tournament_id: str) -> bool:
+    tournament = tournaments[tournament_id]
+    current_round = get_current_round(tournament)
+    return len(current_round) == 1
+
+def get_match_scores(match: Match) -> tuple[float, float]:
+    score1 = 0
+    score2 = 0
+    for game_id in match.games:
+        game = games[game_id]
+        score1 += game.score1
+        score2 += game.score2
+
+    return (score1, score2)
+
+
+
+def handle_tournament_end(metadata: MetaData, tournament_id: str) -> bool:
+    tournament = tournaments[tournament_id]
+
+    #get current round
+    current_round = get_current_round(tournament)
+
+    #get winner of tournament
+    score1, score2 = get_match_scores(current_round[0])
+    winner = current_round[0].p1 if score1 > score2 else current_round[0].p2
+
+    #transfer tournament fee to winner
+    if not transfer(metadata.timestamp, TOURNAMENT_FEE_ADDRESS+tournament_id, winner, tournament.entrance_token, tournament.entrance_fee):
+        return False
+
+    #set tournament over
+    global tournaments
+    tournaments[tournament_id].over = True
+
+    #send event
+    send_event(
+        TournamentEndEvent(
+            timestamp=metadata.timestamp,
+            tournament_id=tournament_id,
+            winner=winner
+        )
+    )
+    return True
+
 def create_match_games(metadata: MetaData) -> bool:
     #loop through all matches within tournaments
     for tournament_id in tournaments:
@@ -130,6 +216,8 @@ def create_match_games(metadata: MetaData) -> bool:
         current_round = get_current_round(tournament)
         
         if is_round_over(current_round):
+            if is_last_round(tournament_id):
+                return handle_tournament_end(metadata, tournament_id)
             return create_new_rounds(tournament_id)
 
         round: list[Match] = tournament.rounds[current_round]

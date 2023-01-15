@@ -175,6 +175,8 @@ def update_bot(metadata: MetaData, input: UpdateBotInput) -> bool:
         )
     )
 
+    return True
+
 #create bot
 def create_bot(metadata: MetaData, input: DeployBotInput) -> bool:
     #get input and id
