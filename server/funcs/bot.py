@@ -190,11 +190,14 @@ def create_bot(metadata: MetaData, input: DeployBotInput) -> bool:
     file.close()
     subprocess.call(f"chmod +x bots/{id}.exe", shell=True)
 
+    # Start the engine in a firejail sandbox
+    engine = subprocess.Popen(["firejail", "--quiet", "--private", "python3", "-c", "import chess.engine; chess.engine.SimpleEngine.popen_uci('bots/{id}.exe')"], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+
     #create bot
     bot = Bot(
         id=id,
         name=name,
-        engine=chess.engine.SimpleEngine.popen_uci(f"bots/{id}.exe")
+        engine=chess.engine.Engine(engine.stdin, engine.stdout)
     )
     bots[id] = bot
     

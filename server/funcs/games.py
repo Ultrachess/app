@@ -75,6 +75,8 @@ def join_game(metadata: MetaData, input: JoinGameInput) -> JoinGameEvent | bool:
         )
     )
 
+    return True
+
 def is_bot(player: str) -> bool:
     return "0x" not in player
 
@@ -146,6 +148,8 @@ def send_move(metadata: MetaData, input: MoveInput, engine_stats: EngineMoveStat
                 engine_stats=engine_stats
             )
         )
+
+    return True
     
 
 def resign_game(metadata: MetaData, input: ResignGameInput) -> bool:
