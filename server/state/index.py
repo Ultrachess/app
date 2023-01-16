@@ -15,3 +15,4 @@ pots: dict[str, Pot] = {}
 requests: dict[str, Request] = {}
 
 block: int = 0
+rand: int = 0

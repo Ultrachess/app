@@ -1,6 +1,6 @@
 import chess.engine
 import subprocess
-from state.index import bots, games, users, tournaments, bets, pools, pots, requests
+from state.index import bots, games, users, tournaments, bets, pools, pots, requests, rand
 from types.bot import Bot
 from types.input import DeployBotInput, MetaData, MoveInput, UpdateBotInput, CreateGameInput
 from types.event import DeployBotEvent, UpdateBotEvent
@@ -66,14 +66,15 @@ def process_search_match_request(metadata: MetaData, request: BotSearchMatchRequ
 
 
 #process bot move request
-def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:
+def process_move_request(metadata: MetaData, request: BotMoveRequest) -> bool:    
     #get bot
     bot = get_bot(request.bot_id)
     #get game
     game = games[request.game_id]
     #get move
     board = game.state.board()
-    result = bot.engine.play(board, chess.engine.Limit(time=MAX_BOT_TIME), info=chess.engine.INFO_ALL)
+    time_to_move = MAX_BOT_TIME - random.randint(0, rand)
+    result = bot.engine.play(board, chess.engine.Limit(time=time_to_move), info=chess.engine.INFO_ALL)
     uci = result.move.uci()
     info = result.info
     #send move

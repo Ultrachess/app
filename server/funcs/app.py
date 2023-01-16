@@ -3,10 +3,13 @@ from funcs.request import process_requests
 from funcs.tournaments import process_tournaments
 from funcs.events import send_event
 from types.event import TickEvent
-from state.index import block
+from state.index import block, rand
 from funcs.bot import process_bot_match_search
 
 def process_state(metadata: MetaData, input: TickInput) -> bool:
+    #set random
+    global rand
+    rand = input.random
 
     #auto search for bot matches
     process_bot_match_search(metadata)
