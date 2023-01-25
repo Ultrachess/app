@@ -11,6 +11,7 @@ import AssetDisplay from "./AssetDisplay";
 import { useAppSelector } from "../state/hooks";
 import { useTime } from "./ActionView";
 import "./Auth.css"
+import AuthNetwork from "./AuthNetwork";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -28,6 +29,10 @@ export default () => {
   const isActive = useIsActive()
   const provider = useProvider()
   const ENSNames = useENSNames(provider)
+
+  //create newtork dropdown
+
+  //create wallet dropdown
 
   // attempt to connect eagerly on mount
   useEffect(() => {
@@ -66,6 +71,7 @@ export default () => {
           }}>cycle: {Math.max(Math.round((now/1000)-lastStepTimestamp), 0)} secs ago</Text>
           }
           <AssetDisplay/>
+          <AuthNetwork chainId={chainId}/>
           <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => metaMask.deactivate()}>
             {truncateAddress( accounts[0])}
           </Button>
