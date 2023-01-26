@@ -166,66 +166,46 @@ const DropdownMenuMain = ({address, chainId}) => {
 
       <DropdownMenu.Portal>
         <DropdownMenuContent sideOffset={5}>
+          <DropdownMenuLabel>Profile</DropdownMenuLabel>
           <DropdownMenuItem>
-            New Tab <RightSlot>⌘+T</RightSlot>
+            View Profile <RightSlot css={{display:"flex"}}><ProfileImage address={address} /><Text bold>{truncateAddress(address)}</Text></RightSlot>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            New Window <RightSlot>⌘+N</RightSlot>
+            Deposit funds to L2 <RightSlot><AssetDisplay tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/></RightSlot>
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
-            New Private Window <RightSlot>⇧+⌘+N</RightSlot>
-          </DropdownMenuItem>
+          <DropdownMenuSeparator/>
+          <DropdownMenuLabel>Settings</DropdownMenuLabel>
           <DropdownMenu.Sub>
             <DropdownMenuSubTrigger>
-              More Tools
+              Toggle Light/Dark mode <RightSlot>⌘+S</RightSlot>
               <RightSlot>
                 <ChevronRightIcon />
               </RightSlot>
             </DropdownMenuSubTrigger>
             <DropdownMenu.Portal>
               <DropdownMenuSubContent sideOffset={2} alignOffset={-5}>
-                <DropdownMenuItem>
-                  Save Page As… <RightSlot>⌘+S</RightSlot>
-                </DropdownMenuItem>
-                <DropdownMenuItem>Create Shortcut…</DropdownMenuItem>
-                <DropdownMenuItem>Name Window…</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Developer Tools</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Sub>
-          <DropdownMenuSeparator />
-          <DropdownMenuCheckboxItem
+              <DropdownMenuCheckboxItem
             checked={bookmarksChecked}
             onCheckedChange={setBookmarksChecked}
           >
             <DropdownMenuItemIndicator>
               <CheckIcon />
             </DropdownMenuItemIndicator>
-            Show Bookmarks <RightSlot>⌘+B</RightSlot>
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem checked={urlsChecked} onCheckedChange={setUrlsChecked}>
+            Light mode <RightSlot>⌘+B</RightSlot>
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem checked={!setBookmarksChecked} onCheckedChange={setUrlsChecked}>
             <DropdownMenuItemIndicator>
               <CheckIcon />
             </DropdownMenuItemIndicator>
-            Show Full URLs
+            Dark mode
           </DropdownMenuCheckboxItem>
+              </DropdownMenuSubContent>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Sub>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>People</DropdownMenuLabel>
-          <DropdownMenu.RadioGroup value={person} onValueChange={setPerson}>
-            <DropdownMenuRadioItem value="pedro">
-              <DropdownMenuItemIndicator>
-                <DotFilledIcon />
-              </DropdownMenuItemIndicator>
-              Pedro Duarte
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="colm">
-              <DropdownMenuItemIndicator>
-                <DotFilledIcon />
-              </DropdownMenuItemIndicator>
-              Colm Tuite
-            </DropdownMenuRadioItem>
-          </DropdownMenu.RadioGroup>
+          
+          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+          <DropdownMenuItem><Text>none</Text></DropdownMenuItem>
 
           <DropdownMenuArrow />
         </DropdownMenuContent>
