@@ -1,52 +1,37 @@
 import * as React from "react";
-import { Text, Grid, Row, Button } from "@nextui-org/react";
+import { Grid, Row, Button } from "@nextui-org/react";
 import { CONTRACTS } from "../ether/contracts";
 
 import { getTokenNameFromAddress, truncateAddress } from "../ether/utils";
 import { FaCoins } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { ethers } from "ethers";
-import { useTokenFromNetwork } from "../hooks/token";
+import { useTokenFromList, useTokenFromNetwork } from "../hooks/token";
 import { useActionCreator } from "../state/game/hooks";
 import { TransactionType } from "../common/types";
+import { useWeb3React } from "@web3-react/core";
+import { Text } from "./Text";
+import Profile from "./Profile";
+import ProfileImage from "./ProfileImage";
+import TokenIcon from "./TokenIcon";
+import { SelectIcon } from "@radix-ui/react-select";
 
-export default () => {
-    const accounts = useSelector(state => state.auth.accounts);
-    const accountBalances = useSelector(state => state.game.accounts);
-    const address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0].toLowerCase() : ""
-    const balances = accountBalances[address.toLowerCase()] ?? {[CONTRACTS.localhost.CartesiToken.address.toLowerCase()] : 0}
-    const token = useTokenFromNetwork("0x326C977E6efc84E512bB9C30f76E30c160eD06FB")
-    //console.log(token)
-    const addAction = useActionCreator()
-    const handleReleaseFunds = async (tokenAddress) => {
-        addAction({
-            type: TransactionType.RELEASE_FUNDS,
-            tokenAddress,
-        })
-    }
-    const getAssets = () => {
-        let content = [];
-        let index = 0
-        for (const tokenAddress in balances) {
-            const balance = balances[tokenAddress];
-            content.push(
-                <Button.Group 
-                    css={{height:"100%", marginTop:"0"}} key={index} color="primary" 
-                    bordered
-                >
-                    <Button onClick={()=>handleReleaseFunds(tokenAddress)}>{balance/(10 ** 18)}</Button>
-                    <Button onClick={()=>handleReleaseFunds(tokenAddress)} icon={<FaCoins/>}>{getTokenNameFromAddress(tokenAddress)}</Button>
-                </Button.Group>
-            );
-            index++
-        }
+export default ({tokenAddress}) => {
+    const token = useTokenFromList(tokenAddress)
+    const {account} = useWeb3React()
+    //get account balance of token
+    const balances = useSelector(state => state.game.balances)
+    const accountBalances = balances?.[account] ?? undefined
+    const balance = accountBalances?.[tokenAddress] ?? "0.0"
 
-        return content;
-    };
+    console.log("tokenAddress", tokenAddress)
+    console.log("token", token)
 
     return (
-        <Row css={{height:"40px"}} justify="space-evenly">
-            {getAssets()}
+        <Row justify="space-evenly">
+            <Text css={{padding:"0 5px"}}>{balance?? "0.0"}</Text>
+            <SelectIcon><TokenIcon uri={token?.logoUri}/> </SelectIcon>
+            <Text css={{paddingLeft:"5px"}} bold>{token?.name?? "undefined"}</Text>
         </Row> 
     );
 }

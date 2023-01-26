@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, useModal, Modal, Text, Row } from "@nextui-org/react";
+import { useModal, Modal, Row } from "@nextui-org/react";
 import { FaUser } from 'react-icons/fa';
 import { toHex, truncateAddress } from "../ether/utils";
 import { setChainId, setAccounts, setError, setIsActivating, setIsActive, setProvider } from "../state/auth/authSlice";
@@ -12,6 +12,23 @@ import { useAppSelector } from "../state/hooks";
 import { useTime } from "./ActionView";
 import "./Auth.css"
 import AuthNetwork from "./AuthNetwork";
+import * as Separator from "@radix-ui/react-separator"
+import * as Popover from '@radix-ui/react-popover';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { styled, keyframes } from '@stitches/react';
+import { violet, mauve, blackA, red } from '@radix-ui/colors';
+import {
+  HamburgerMenuIcon,
+  DotFilledIcon,
+  CheckIcon,
+  ChevronRightIcon,
+  ChevronDownIcon,
+} from '@radix-ui/react-icons';
+import { useWeb3React } from "@web3-react/core";
+import ProfileImage from "./ProfileImage";
+import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import { SelectIcon } from "@radix-ui/react-select";
+import { Text } from "./Text";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -29,6 +46,7 @@ export default () => {
   const isActive = useIsActive()
   const provider = useProvider()
   const ENSNames = useENSNames(provider)
+  const { account } = useWeb3React()
 
   //create newtork dropdown
 
@@ -70,11 +88,9 @@ export default () => {
               textGradient: "45deg, $blue600 -20%, $pink600 50%",
           }}>cycle: {Math.max(Math.round((now/1000)-lastStepTimestamp), 0)} secs ago</Text>
           }
-          <AssetDisplay/>
           <AuthNetwork chainId={chainId}/>
-          <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => metaMask.deactivate()}>
-            {truncateAddress( accounts[0])}
-          </Button>
+          
+          <DropdownMenuMain address = {account} chainId = {chainId}/>
         </Row>
       ) : (
         <Button shadow icon={<FaUser/>} flat color="primary" auto onClick={() => setVisible(true)}>
@@ -123,3 +139,272 @@ export default () => {
     
   );
 }
+
+
+
+
+const DropdownMenuMain = ({address, chainId}) => {
+  const [bookmarksChecked, setBookmarksChecked] = React.useState(true);
+  const [urlsChecked, setUrlsChecked] = React.useState(false);
+  const [person, setPerson] = React.useState('pedro');
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <Button>
+          <AssetDisplay tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/>
+          <SeparatorRoot decorative orientation="vertical" css={{ margin: '0 15px' }} />
+          <SelectIcon>
+          <ProfileImage address={address} />
+          </SelectIcon>
+          <Text bold>{truncateAddress(address)}</Text>
+          <SelectIcon>
+          <ChevronDownIcon />
+          </SelectIcon>
+        </Button>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Portal>
+        <DropdownMenuContent sideOffset={5}>
+          <DropdownMenuItem>
+            New Tab <RightSlot>⌘+T</RightSlot>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            New Window <RightSlot>⌘+N</RightSlot>
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            New Private Window <RightSlot>⇧+⌘+N</RightSlot>
+          </DropdownMenuItem>
+          <DropdownMenu.Sub>
+            <DropdownMenuSubTrigger>
+              More Tools
+              <RightSlot>
+                <ChevronRightIcon />
+              </RightSlot>
+            </DropdownMenuSubTrigger>
+            <DropdownMenu.Portal>
+              <DropdownMenuSubContent sideOffset={2} alignOffset={-5}>
+                <DropdownMenuItem>
+                  Save Page As… <RightSlot>⌘+S</RightSlot>
+                </DropdownMenuItem>
+                <DropdownMenuItem>Create Shortcut…</DropdownMenuItem>
+                <DropdownMenuItem>Name Window…</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Developer Tools</DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Sub>
+          <DropdownMenuSeparator />
+          <DropdownMenuCheckboxItem
+            checked={bookmarksChecked}
+            onCheckedChange={setBookmarksChecked}
+          >
+            <DropdownMenuItemIndicator>
+              <CheckIcon />
+            </DropdownMenuItemIndicator>
+            Show Bookmarks <RightSlot>⌘+B</RightSlot>
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem checked={urlsChecked} onCheckedChange={setUrlsChecked}>
+            <DropdownMenuItemIndicator>
+              <CheckIcon />
+            </DropdownMenuItemIndicator>
+            Show Full URLs
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>People</DropdownMenuLabel>
+          <DropdownMenu.RadioGroup value={person} onValueChange={setPerson}>
+            <DropdownMenuRadioItem value="pedro">
+              <DropdownMenuItemIndicator>
+                <DotFilledIcon />
+              </DropdownMenuItemIndicator>
+              Pedro Duarte
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="colm">
+              <DropdownMenuItemIndicator>
+                <DotFilledIcon />
+              </DropdownMenuItemIndicator>
+              Colm Tuite
+            </DropdownMenuRadioItem>
+          </DropdownMenu.RadioGroup>
+
+          <DropdownMenuArrow />
+        </DropdownMenuContent>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+};
+
+const slideUpAndFade = keyframes({
+  '0%': { opacity: 0, transform: 'translateY(2px)' },
+  '100%': { opacity: 1, transform: 'translateY(0)' },
+});
+
+const slideRightAndFade = keyframes({
+  '0%': { opacity: 0, transform: 'translateX(-2px)' },
+  '100%': { opacity: 1, transform: 'translateX(0)' },
+});
+
+const slideDownAndFade = keyframes({
+  '0%': { opacity: 0, transform: 'translateY(-2px)' },
+  '100%': { opacity: 1, transform: 'translateY(0)' },
+});
+
+const slideLeftAndFade = keyframes({
+  '0%': { opacity: 0, transform: 'translateX(2px)' },
+  '100%': { opacity: 1, transform: 'translateX(0)' },
+});
+
+const contentStyles = {
+  minWidth: 220,
+  backgroundColor: 'white',
+  borderRadius: 6,
+  padding: 5,
+  boxShadow:
+    '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
+  animationDuration: '400ms',
+  animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+  willChange: 'transform, opacity',
+  '&[data-state="open"]': {
+    '&[data-side="top"]': { animationName: slideDownAndFade },
+    '&[data-side="right"]': { animationName: slideLeftAndFade },
+    '&[data-side="bottom"]': { animationName: slideUpAndFade },
+    '&[data-side="left"]': { animationName: slideRightAndFade },
+  },
+};
+
+const DropdownMenuContent = styled(DropdownMenu.Content, contentStyles);
+const DropdownMenuSubContent = styled(DropdownMenu.SubContent, contentStyles);
+
+const DropdownMenuArrow = styled(DropdownMenu.Arrow, { fill: 'white' });
+
+const itemStyles = {
+  all: 'unset',
+  fontSize: 13,
+  lineHeight: 1,
+  color: violet.violet11,
+  borderRadius: 3,
+  display: 'flex',
+  alignItems: 'center',
+  height: 25,
+  padding: '0 5px',
+  position: 'relative',
+  paddingLeft: 25,
+  userSelect: 'none',
+
+  '&[data-disabled]': {
+    color: mauve.mauve8,
+    pointerEvents: 'none',
+  },
+
+  '&[data-highlighted]': {
+    backgroundColor: violet.violet9,
+    color: violet.violet1,
+  },
+};
+
+const DropdownMenuItem = styled(DropdownMenu.Item, itemStyles);
+const DropdownMenuCheckboxItem = styled(DropdownMenu.CheckboxItem, itemStyles);
+const DropdownMenuRadioItem = styled(DropdownMenu.RadioItem, itemStyles);
+const DropdownMenuSubTrigger = styled(DropdownMenu.SubTrigger, {
+  '&[data-state="open"]': {
+    backgroundColor: violet.violet4,
+    color: violet.violet11,
+  },
+  ...itemStyles,
+});
+
+const DropdownMenuLabel = styled(DropdownMenu.Label, {
+  paddingLeft: 25,
+  fontSize: 12,
+  lineHeight: '25px',
+  color: mauve.mauve11,
+});
+
+const DropdownMenuSeparator = styled(DropdownMenu.Separator, {
+  height: 1,
+  backgroundColor: violet.violet6,
+  margin: 5,
+});
+
+const DropdownMenuItemIndicator = styled(DropdownMenu.ItemIndicator, {
+  position: 'absolute',
+  left: 0,
+  width: 25,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const RightSlot = styled('div', {
+  marginLeft: 'auto',
+  paddingLeft: 20,
+  color: mauve.mauve11,
+  '[data-highlighted] > &': { color: 'white' },
+  '[data-disabled] &': { color: mauve.mauve8 },
+});
+
+const IconButton = styled('button', {
+  all: 'unset',
+  fontFamily: 'inherit',
+  borderRadius: '100%',
+  height: 35,
+  width: 35,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: violet.violet11,
+  backgroundColor: 'white',
+  boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  '&:hover': { backgroundColor: violet.violet3 },
+});
+
+const Button = styled('button', {
+  all: 'unset',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 4,
+  padding: '0 15px',
+  fontSize: 15,
+  lineHeight: 1,
+  fontWeight: 300,
+  height: 35,
+
+  variants: {
+    variant: {
+      violet: {
+        backgroundColor: 'white',
+        color: violet.violet11,
+        boxShadow: `0 2px 10px ${blackA.blackA7}`,
+        '&:hover': { backgroundColor: mauve.mauve3 },
+        //'&:focus': { boxShadow: `0 0 0 2px black` },
+      },
+      red: {
+        backgroundColor: red.red4,
+        color: red.red11,
+        '&:hover': { backgroundColor: red.red5 },
+        '&:focus': { boxShadow: `0 0 0 2px ${red.red7}` },
+      },
+      mauve: {
+        backgroundColor: mauve.mauve4,
+        color: mauve.mauve11,
+        '&:hover': { backgroundColor: mauve.mauve5 },
+        '&:focus': { boxShadow: `0 0 0 2px ${mauve.mauve7}` },
+      },
+    },
+  },
+
+  defaultVariants: {
+    variant: 'violet',
+  },
+});
+
+const SeparatorRoot = styled(Separator.Root, {
+  backgroundColor: violet.violet6,
+  '&[data-orientation=horizontal]': { height: 0.5, width: '80%' },
+  '&[data-orientation=vertical]': { height: '50%', width: 1 },
+});
+
+const Box = styled('div', {});
+const Flex = styled('div', { display: 'flex' });
+

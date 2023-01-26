@@ -26,14 +26,14 @@ export function useTokenList() : Token[] {
             //     }
             // )
             const _chainId = chainId ?? 31337
-            console.log("chainId: ", _chainId)
+            console.log("chainId from token: ", _chainId)
             const tokens = ULTRACHESS_LIST.filter(token => token.chainId == _chainId)
             setTokenList(tokens)
         }
 
         callFetch()
             .catch(console.error)
-    }, [])
+    }, [chainId])
 
     return tokenList
 }

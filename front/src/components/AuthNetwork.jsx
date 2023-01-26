@@ -5,6 +5,8 @@ import { styled } from '@stitches/react';
 import { violet, mauve, blackA } from '@radix-ui/colors';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { toHex } from '../ether/utils';
+import {Text} from './Text';
+import TokenIcon from './TokenIcon';
 
 const switchEthereumChain = async (chainId) => {
     var chain = CHAINS[chainId];
@@ -49,15 +51,13 @@ export default ({chainId}) => {
             <Select.Root 
                 value={current.name}
                 onValueChange={async (value) => {
-                    //find VALUE in CHAINS with name === value
                     var { id } = Object.values(CHAINS).find((chain) => chain.name === value);
-                    //change id to hex string
-
                     await switchEthereumChain(id);
                 }}
             >
               <SelectTrigger aria-label="Chain">
-                <Select.Value placeholder="Select networks" />
+                  <Select.Value><Text>{current.name}</Text></Select.Value>
+                  <TokenIcon uri={current.networkImg} />
                 <SelectIcon>
                   <ChevronDownIcon />
                 </SelectIcon>
@@ -87,7 +87,6 @@ export default ({chainId}) => {
 
 const SelectTrigger = styled(Select.SelectTrigger, {
   all: 'unset',
-  display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: 4,
@@ -95,12 +94,14 @@ const SelectTrigger = styled(Select.SelectTrigger, {
   fontSize: 13,
   lineHeight: 1,
   height: 35,
+  display: 'flex',
+  flexDirection: 'row',
   gap: 5,
   backgroundColor: 'white',
   color: violet.violet11,
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  //boxShadow: `0 2px 10px ${blackA.blackA7}`,
   '&:hover': { backgroundColor: mauve.mauve3 },
-  '&:focus': { boxShadow: `0 0 0 2px black` },
+  //'&:focus': { boxShadow: `0 0 0 2px black` },
   '&[data-placeholder]': { color: violet.violet9 },
 });
 
@@ -129,6 +130,12 @@ const SelectItem = React.forwardRef(({ children, ...props }, forwardedRef) => {
       </StyledItemIndicator>
     </StyledItem>
   );
+});
+
+const SelectValue = styled(Select.Value, {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row',
 });
 
 const StyledItem = styled(Select.Item, {
