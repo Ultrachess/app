@@ -1,5 +1,4 @@
 nav {
-    position: fixed;
     top: 0; /* Stick it to the top */
     max-height: 100px;
     width: 100vw;
@@ -15,20 +14,25 @@ nav a {
 }
 
 nav .logo {
-  width: 60px;
-  margin-top: 10px;
+  width: 45px;
+  margin-top: 15px;
   margin-right: 20px;
 }
 
 nav .navItem {
   margin-top: 15px;
+  text-decoration: none;
+}
+
+nav .noUnderLine {
+  text-decoration: none;
 }
 
 nav .center {
     display: flex;
     justify-content: space-between;
-    min-width: 200px;
-    width: 1200px;
+    min-width: 500px;
+    width: 1700px;
 }
 
 .nav-right {

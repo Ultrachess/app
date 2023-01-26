@@ -80,14 +80,14 @@ export default () => {
       <div>
       {isActive ? (
         <Row justify="space-evenly">
-          {lastStepTimestamp == 0 ? 
+          {/* {lastStepTimestamp == 0 ? 
             <Row><Text className="smallText" css={{
               textGradient: "45deg, $blue600 -20%, $pink600 50%",
           }}>waiting on cycle update</Text></Row> :
             <Text className="smallText" css={{
               textGradient: "45deg, $blue600 -20%, $pink600 50%",
           }}>cycle: {Math.max(Math.round((now/1000)-lastStepTimestamp), 0)} secs ago</Text>
-          }
+          } */}
           <AuthNetwork chainId={chainId}/>
           
           <DropdownMenuMain address = {account} chainId = {chainId}/>
