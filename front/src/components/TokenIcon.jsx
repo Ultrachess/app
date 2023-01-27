@@ -14,7 +14,6 @@ export default ({uri}) => {
         <AvatarImage
           src={uri}
           alt="Colm Tuite"
-          height={45}
         />
         <AvatarFallback delayMs={600}>CT</AvatarFallback>
       </AvatarRoot>
@@ -59,7 +58,7 @@ const AvatarDemo = () => (
   const AvatarImage = styled(AvatarPrimitive.Image, {
     width: '100%',
     height: '100%',
-    borderRadius: '50%',
+    borderRadius: '100%',
   });
   
   const AvatarFallback = styled(AvatarPrimitive.Fallback, {

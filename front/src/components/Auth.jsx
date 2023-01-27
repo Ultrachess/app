@@ -29,6 +29,7 @@ import ProfileImage from "./ProfileImage";
 import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { SelectIcon } from "@radix-ui/react-select";
 import { Text } from "./Text";
+import ModalNewDepositFunds from "./ModalNewDepositFunds";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -170,9 +171,29 @@ const DropdownMenuMain = ({address, chainId}) => {
           <DropdownMenuItem>
             View Profile <RightSlot css={{display:"flex"}}><ProfileImage address={address} /><Text bold>{truncateAddress(address)}</Text></RightSlot>
           </DropdownMenuItem>
+          <ModalNewDepositFunds triggerElement={
+            <ClickableDropdownMenuItem>Deposit <Text>&nbsp;(to portal)</Text> <RightSlot><AssetDisplay tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/></RightSlot></ClickableDropdownMenuItem>
+          }/>
           <DropdownMenuItem>
-            Deposit funds to L2 <RightSlot><AssetDisplay tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/></RightSlot>
+            Withdraw <Text>&nbsp;(from portal) </Text><RightSlot><AssetDisplay isL2={true} tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/></RightSlot>
           </DropdownMenuItem>
+
+          <DropdownMenuItem>
+            Create game
+          </DropdownMenuItem>
+
+          <DropdownMenuItem>
+            Create tournament
+          </DropdownMenuItem>
+
+          <DropdownMenuItem>
+            Upload Bot
+          </DropdownMenuItem>
+
+          <DropdownMenuItem>
+            Challenge
+          </DropdownMenuItem>
+          
           <DropdownMenuSeparator/>
           <DropdownMenuLabel>Settings</DropdownMenuLabel>
           <DropdownMenu.Sub>
@@ -283,6 +304,7 @@ const itemStyles = {
 };
 
 const DropdownMenuItem = styled(DropdownMenu.Item, itemStyles);
+const ClickableDropdownMenuItem = styled('div', itemStyles);
 const DropdownMenuCheckboxItem = styled(DropdownMenu.CheckboxItem, itemStyles);
 const DropdownMenuRadioItem = styled(DropdownMenu.RadioItem, itemStyles);
 const DropdownMenuSubTrigger = styled(DropdownMenu.SubTrigger, {
