@@ -196,6 +196,9 @@ const DropdownMenuMain = ({address, chainId}) => {
           
           <DropdownMenuSeparator/>
           <DropdownMenuLabel>Settings</DropdownMenuLabel>
+          <DropdownMenuItem>
+            Generate new burner wallet <RightSlot css={{display:"flex"}}><ProfileImage address={address} /><Text bold>{truncateAddress(address)}</Text></RightSlot>
+          </DropdownMenuItem>
           <DropdownMenu.Sub>
             <DropdownMenuSubTrigger>
               Toggle Light/Dark mode <RightSlot>⌘+S</RightSlot>

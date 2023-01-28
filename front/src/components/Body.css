@@ -7,17 +7,26 @@
 }
 
 .buttons {
-    margin-top: 50px;
     display: flex;
+    justify-content: left;
+    align-items: left;
 }
 
 .header {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    min-width: 500px;
+    width: 1400px;
 
+}
+.header div {
+    display: flex;
+    flex-direction: row;
+    
 }
 
 .content {
-    margin-top: 100px;
+    background-color: rgba(221, 221, 221, 0.164);
+    width: 100%;
 }

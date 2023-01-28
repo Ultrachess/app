@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Row, Text, Grid, Button, Spacer, Card, Pagination, Divider, Table} from "@nextui-org/react";
+import { Row, Grid, Spacer, Card, Pagination, Divider, Table} from "@nextui-org/react";
 import "./Body.css"
 import { FaArrowDown, FaCoins, FaPlay } from 'react-icons/fa';
 import GameList from "./GameList";
@@ -9,6 +9,12 @@ import FileUploader from "./BotUploader";
 import ModalCreateGame from "./ModalCreateGame";
 import ModalDepositToken from "./ModalDepositToken";
 import { useAppSelector } from "../state/hooks";
+import Button  from "./Button";
+import { Text } from "./Text";
+import ModalNewDepositFunds from "./ModalNewDepositFunds";
+import {styled } from "@stitches/react";
+import { violet } from "@radix-ui/colors";
+import ModalNewCreateGame from "./ModalNewCreateGame";
 
 export default () => {
     var dispatch = useDispatch()
@@ -24,46 +30,87 @@ export default () => {
 
     return (
         <div className="body">
-            <ModalCreateGame 
-                visible={createModalVisible} 
-                closeHandler={handleCloseCreateModal}
-            />
-            <ModalDepositToken 
-                visible={depositModalVisible} 
-                closeHandler={handleCloseDepositModal}
-            />
+            
             <div className="header">
-                <Row>
-                    <Text h2 size={90}>Ultrachess.org</Text>
-                    <Text 
-                        css={{
-                            textGradient: "45deg, $blue600 -20%, $pink600 50%",
-                        }}
-                        weight="bold" 
-                        h5
+                <div>
+                    <Text bold black size={"max"} css = {{textAlign:"center", marginBottom:"30px"}}>Ultrachess.org</Text>
+                    <Text bold
+                        violet
                     >pre-alpha</Text> 
-                </Row>
-                <Text>Immutable chess backed by blockchain technology. Play with more than just your elo at stake</Text>
+                </div>
+                <LeftSlot><Label>Introduction</Label></LeftSlot>
+                <Text black size={2} css={{width:"100%", textAlign:"left", lineHeight:"30px"}}>
+                    Immutable chess backed by blockchain technology. Play with more than just your elo at stake.
+                    Start by fetching some testnet stable coins from the faucet within our discord (https://discord.gg/7WtTFvR3dN) 
+                    Once recieved, deposit them into the portal and they will be ready for use within Ultrachess.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    <br/>
+                    <br/>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.                    Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+                    <br/>
+                    <br/>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </Text>
+                
             </div>
-            <div className="buttons">
-                <Button color="gradient" onClick={handleShowCreateModal} shadow>
-                    Create game
-                </Button>
-                <Spacer x={1}/>
-                <Button iconRight={<FaCoins/>} light color="default" onClick={handleShowDepositModal}  shadow>
-                    Deposit Token
-                </Button>
-            </div>
+            
             <div className="content">
-            <Card shadow={true} css={{ width:"1300px", height:"700px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
-                <Card.Header>
-                    <Row justify="center">
-                        <Text>Recent games</Text>
-                    </Row>
-                </Card.Header>
-                <GameList games={games}/>
+                <div className="contentHolder">
+                    <div className="contentHeader">
+                        <Label>Active games</Label>
+                        <RightSlot>
+                            <ModalNewCreateGame triggerElement={
+                                <Button variant={"outline"} onClick={handleShowCreateModal} shadow>
+                                    create game
+                                </Button>
+                            } />
+                            <Spacer x={1}/>
+                            <ModalNewDepositFunds triggerElement={
+                                <Button variant={"outline"} iconRight={<FaCoins/>} onClick={handleShowDepositModal} >
+                                deposit Token
+                                </Button>
+                            } />
+                        </RightSlot>
+                    </div>
+                
+                <Card shadow={true} css={{ width:"100%", height:"700px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
+                    <Card.Header>
+                        <Row justify="center">
+                            <Text>Recent games</Text>
+                        </Row>
+                    </Card.Header>
+                    <GameList games={games}/>
                 </Card>
+                </div>
             </div>
         </div>    
     );
 }
+
+const Label = styled('label', {
+    fontSize: 23,
+    lineHeight: 1,
+    fontWeight: 500,
+    marginBottom: 20,
+    color: violet.violet12,
+    display: 'block',
+  });
+
+  const LeftSlot = styled('div', {
+    marginRight: 'auto',
+    paddingRight: 0,
+    display: 'flex',
+    color: violet.violet11,
+    '[data-highlighted] > &': { color: 'white' },
+    '[data-disabled] &': { color: violet.violet4 },
+  });
+
+  const RightSlot = styled('div', {
+    marginLeft: 'auto',
+    paddingLeft: 0,
+    display: 'flex',
+    '[data-highlighted] > &': { color: 'white' },
+  });
