@@ -9,6 +9,8 @@ import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hoo
 import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
 import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
+import { useActionCreator } from '../state/game/hooks';
+import { TransactionType } from '../common/types';
 
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
@@ -17,6 +19,25 @@ export default ({triggerElement}) => {
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const portalBalance = useTokenPortalBalance(token, account) 
     const balance = useTokenBalance(token, account)
+
+    const addAction = useActionCreator()
+
+    const handleDeposit = async () => {
+      const [approvalActionId, wait] = await addAction({
+        type: TransactionType.APPROVE_ERC20,
+        tokenAddress: token.address,
+        amount: amount,
+      })
+      await wait()
+
+      const [depositActionId, wait2] = await addAction({
+        type: TransactionType.DEPOSIT_ERC20,
+        tokenAddress: token.address,
+        amount: amount,
+      })
+      await wait2()
+    }
+
     console.log("amount", amount)
     return (
         <Dialog.Root>
@@ -38,7 +59,7 @@ export default ({triggerElement}) => {
                 <RightSlot>
                     <AssetDisplay tokenAddress={token?.address} balance={balance - amount}/> 
                     <Text>→</Text> 
-                    <AssetDisplay tokenAddress={token?.address} balance={balance + amount} isL2={true}/>
+                    <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
                 </RightSlot>
             </Fieldset>
             <Fieldset>

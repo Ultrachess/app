@@ -33,17 +33,17 @@ export default () => {
             
             <div className="header">
                 <div>
-                    <Text bold black size={"max"} css = {{textAlign:"center", marginBottom:"30px"}}>Ultrachess.org</Text>
+                    <Text bold black size={"max"} css = {{textAlign:"center", marginBottom:"10px"}}>Ultrachess.org</Text>
                     <Text bold
                         violet
                     >pre-alpha</Text> 
                 </div>
                 <LeftSlot><Label>Introduction</Label></LeftSlot>
-                <Text black size={2} css={{width:"100%", textAlign:"left", lineHeight:"30px"}}>
+                <Text black size={2} css={{width:"100%", textAlign:"left", lineHeight:"30px", marginBottom:"-80px"}}>
                     Immutable chess backed by blockchain technology. Play with more than just your elo at stake.
                     Start by fetching some testnet stable coins from the faucet within our discord (https://discord.gg/7WtTFvR3dN) 
                     Once recieved, deposit them into the portal and they will be ready for use within Ultrachess.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Check out our github for more technical information. Also check out our discord for more information and to chat with the team.
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     <br/>
