@@ -22,6 +22,7 @@ export enum NotificationType {
 }
 
 export interface Notification {
+    id: string;
     timestamp: number;
     type: NotificationType;
 }

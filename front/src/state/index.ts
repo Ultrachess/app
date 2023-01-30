@@ -4,9 +4,10 @@ import authSlice from "./auth/authSlice";
 import gameSlice from "./game/gameSlice";
 import transactions from "./transactions/reducer"
 import actions from "./actions/reducer"
+import notifications from "./notifications/reducer"
 import { ActionList } from "./game/types";
 
-const PERSISTED_STATE: string[] = ['auth', 'game', 'transactions']
+const PERSISTED_STATE: string[] = ['auth', 'game', 'transactions', 'actions', 'notifications']
 
 // const onLoad = () => {
 //     let state: any = load({states: PERSISTED_STATE}) ?? {}
@@ -26,7 +27,8 @@ export const store = configureStore({
         auth: authSlice,
         game: gameSlice,
         transactions: transactions,
-        actions: actions
+        actions: actions,
+        notifications: notifications,
     },
     middleware: (getDefaultMiddleware) => 
         getDefaultMiddleware({ serializableCheck: false })

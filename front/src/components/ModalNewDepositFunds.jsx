@@ -72,7 +72,12 @@ export default ({triggerElement}) => {
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
-                <Button variant="green">Deposit</Button>
+                <Button 
+                  variant="green"
+                  onClick={handleDeposit}
+                >
+                  Deposit
+                </Button>
               </Dialog.Close>
             </Flex>
             <Dialog.Close asChild>

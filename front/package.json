@@ -21,6 +21,7 @@
     "@radix-ui/react-select": "^1.2.0",
     "@radix-ui/react-separator": "^1.0.1",
     "@radix-ui/react-slider": "^1.1.0",
+    "@radix-ui/react-toast": "^1.1.2",
     "@reduxjs/toolkit": "^1.8.5",
     "@stitches/react": "^1.2.8",
     "@web3-react/core": "^8.0.30-beta.0",
