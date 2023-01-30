@@ -30,6 +30,7 @@ import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { SelectIcon } from "@radix-ui/react-select";
 import { Text } from "./Text";
 import ModalNewDepositFunds from "./ModalNewDepositFunds";
+import NotificationDropdown from "./NotificationDropdown";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -89,6 +90,7 @@ export default () => {
               textGradient: "45deg, $blue600 -20%, $pink600 50%",
           }}>cycle: {Math.max(Math.round((now/1000)-lastStepTimestamp), 0)} secs ago</Text>
           } */}
+          <NotificationDropdown/>
           <AuthNetwork chainId={chainId}/>
           
           <DropdownMenuMain address = {account} chainId = {chainId}/>

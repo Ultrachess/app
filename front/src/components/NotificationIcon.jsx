@@ -26,7 +26,7 @@ export const NotificationIcon = () => {
 
     return (
         <NotificationDropdown
-            trigger={<StyledBellIcon />}
+            dropdownTrigger={<StyledBellIcon />}
         />
     );
 }

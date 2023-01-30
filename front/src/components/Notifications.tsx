@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Toast from '@radix-ui/react-toast';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, slate, green } from '@radix-ui/colors';
+import NotificationItem from './NotificationItem';
 
 const ToastDemo = () => {
   const [open, setOpen] = React.useState(false);
@@ -14,26 +15,15 @@ const ToastDemo = () => {
 
   return (
     <Toast.Provider swipeDirection="right">
-      <Button
-        onClick={() => {
-          setOpen(false);
-          window.clearTimeout(timerRef.current);
-          timerRef.current = window.setTimeout(() => {
-            eventDateRef.current = oneWeekAway();
-            setOpen(true);
-          }, 100);
-        }}
-      >
-        Add to calendar
-      </Button>
-
       <ToastRoot open={open} onOpenChange={setOpen}>
-        <ToastTitle>Scheduled: Catch up</ToastTitle>
-        <ToastDescription asChild>
-          <time dateTime={eventDateRef.current.toISOString()}>
+        <NotificationItem
+          title="Scheduled: Catch up"
+          description={
+            <time dateTime={eventDateRef.current.toISOString()}>
             {prettyDate(eventDateRef.current)}
           </time>
-        </ToastDescription>
+          }
+        />
         <ToastAction asChild altText="Goto schedule to undo">
           <Button size="small" variant="green">
             Undo
@@ -47,20 +37,8 @@ const ToastDemo = () => {
 
 const VIEWPORT_PADDING = 25;
 
-const ToastViewport = styled(Toast.Viewport, {
-  position: 'fixed',
-  bottom: 0,
-  right: 0,
-  display: 'flex',
-  flexDirection: 'column',
-  padding: VIEWPORT_PADDING,
-  gap: 10,
-  width: 390,
-  maxWidth: '100vw',
-  margin: 0,
-  listStyle: 'none',
-  zIndex: 2147483647,
-  outline: 'none',
+const ToastAction = styled(Toast.Action, {
+  gridArea: 'action',
 });
 
 const hide = keyframes({
@@ -107,25 +85,36 @@ const ToastRoot = styled(Toast.Root, {
   },
 });
 
-const ToastTitle = styled(Toast.Title, {
-  gridArea: 'title',
-  marginBottom: 5,
-  fontWeight: 500,
-  color: slate.slate12,
-  fontSize: 15,
-});
 
-const ToastDescription = styled(Toast.Description, {
-  gridArea: 'description',
+const ToastViewport = styled(Toast.Viewport, {
+  position: 'fixed',
+  bottom: 0,
+  right: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  padding: VIEWPORT_PADDING,
+  gap: 10,
+  width: 390,
+  maxWidth: '100vw',
   margin: 0,
-  color: slate.slate11,
-  fontSize: 13,
-  lineHeight: 1.3,
+  listStyle: 'none',
+  zIndex: 2147483647,
+  outline: 'none',
 });
 
-const ToastAction = styled(Toast.Action, {
-  gridArea: 'action',
-});
+
+
+
+function oneWeekAway(date) {
+  const now = new Date();
+  const inOneWeek = now.setDate(now.getDate() + 7);
+  return new Date(inOneWeek);
+}
+
+function prettyDate(date) {
+  return new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'short' }).format(date);
+}
+
 
 const Button = styled('button', {
   all: 'unset',
@@ -173,15 +162,5 @@ const Button = styled('button', {
     variant: 'violet',
   },
 });
-
-function oneWeekAway(date) {
-  const now = new Date();
-  const inOneWeek = now.setDate(now.getDate() + 7);
-  return new Date(inOneWeek);
-}
-
-function prettyDate(date) {
-  return new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'short' }).format(date);
-}
 
 export default ToastDemo;
