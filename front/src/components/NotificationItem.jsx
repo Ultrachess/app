@@ -4,7 +4,8 @@ import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, slate, green } from '@radix-ui/colors';
 
 export default ({title, description}) => {
-  
+  const eventDateRef = React.useRef(new Date());
+  const timerRef = React.useRef(0);
     React.useEffect(() => {
       return () => clearTimeout(timerRef.current);
     }, []);

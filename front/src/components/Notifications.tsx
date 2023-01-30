@@ -4,7 +4,7 @@ import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, slate, green } from '@radix-ui/colors';
 import NotificationItem from './NotificationItem';
 
-const ToastDemo = () => {
+const Notifications = () => {
   const [open, setOpen] = React.useState(false);
   const eventDateRef = React.useRef(new Date());
   const timerRef = React.useRef(0);
@@ -15,7 +15,20 @@ const ToastDemo = () => {
 
   return (
     <Toast.Provider swipeDirection="right">
+      <Button
+        onClick={() => {
+          setOpen(false);
+          window.clearTimeout(timerRef.current);
+          timerRef.current = window.setTimeout(() => {
+            eventDateRef.current = oneWeekAway();
+            setOpen(true);
+          }, 100);
+        }}
+      >
+        Add to calendar
+      </Button>
       <ToastRoot open={open} onOpenChange={setOpen}>
+      
         <NotificationItem
           title="Scheduled: Catch up"
           description={
@@ -163,4 +176,4 @@ const Button = styled('button', {
   },
 });
 
-export default ToastDemo;
+export default Notifications;
