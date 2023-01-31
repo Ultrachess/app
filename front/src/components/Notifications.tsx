@@ -15,7 +15,7 @@ const Notifications = () => {
 
   return (
     <Toast.Provider swipeDirection="right">
-      <Button
+      {/* <Button
         onClick={() => {
           setOpen(false);
           window.clearTimeout(timerRef.current);
@@ -26,7 +26,7 @@ const Notifications = () => {
         }}
       >
         Add to calendar
-      </Button>
+      </Button> */}
       <ToastRoot open={open} onOpenChange={setOpen}>
       
         <NotificationItem
