@@ -3,46 +3,36 @@ import * as Toast from '@radix-ui/react-toast';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, slate, green } from '@radix-ui/colors';
 import NotificationItem from './NotificationItem';
+import { useNewNotifications, useNotifications } from '../state/notifications/hooks';
+import { useTime } from './ActionView';
+import { NOTIFICATION_TOAST_DURATION_MILLIS } from '../utils/constants';
 
 const Notifications = () => {
   const [open, setOpen] = React.useState(false);
   const eventDateRef = React.useRef(new Date());
   const timerRef = React.useRef(0);
+  const notifications  = useNewNotifications()
 
   React.useEffect(() => {
     return () => clearTimeout(timerRef.current);
   }, []);
 
+  
+
   return (
     <Toast.Provider swipeDirection="right">
-      {/* <Button
-        onClick={() => {
-          setOpen(false);
-          window.clearTimeout(timerRef.current);
-          timerRef.current = window.setTimeout(() => {
-            eventDateRef.current = oneWeekAway();
-            setOpen(true);
-          }, 100);
-        }}
-      >
-        Add to calendar
-      </Button> */}
-      <ToastRoot open={open} onOpenChange={setOpen}>
-      
-        <NotificationItem
-          title="Scheduled: Catch up"
-          description={
-            <time dateTime={eventDateRef.current.toISOString()}>
-            {prettyDate(eventDateRef.current)}
-          </time>
-          }
-        />
-        <ToastAction asChild altText="Goto schedule to undo">
-          <Button size="small" variant="green">
-            Undo
-          </Button>
-        </ToastAction>
-      </ToastRoot>
+      {notifications.map((notification) => {
+        return (
+          <ToastRoot
+            key={notification.id}
+            duration={NOTIFICATION_TOAST_DURATION_MILLIS}
+          >
+            <NotificationItem
+              notification={notification}
+            />
+          </ToastRoot>
+        );
+      })}
       <ToastViewport />
     </Toast.Provider>
   );

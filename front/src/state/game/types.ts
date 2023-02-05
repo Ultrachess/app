@@ -30,3 +30,45 @@ export type ActionList = {
     [actionId: string]: Action
 }
 
+export interface Bet {
+    sender : string,
+    timestamp : number,
+    gameId : string,
+    tokenAddress : string,
+    amount : number,
+    winningId : number,
+}
+
+export interface GameWagers {
+    gameId: string,
+    openTime: number,
+    duration: number,
+    bets: {
+        [winningId: string]: {
+            [playerId: string]: Bet
+        }
+    },
+    pots: {
+        [winningId: string]: {
+            [playerId: string]: Number
+        }
+    },
+    totalPot: number,
+    betsArray: Bet[],
+}
+
+export interface Game {
+    id: string,
+    players: string[],
+    pgn: string,
+    isBot : boolean,
+    isEnd : boolean,
+    matchCount : number,
+    wagerAmount : number,
+    token : string,
+    timestamp : number,
+    resigner : string,
+    scores : number[],
+    bettingDuration : number,
+    wagering: GameWagers
+}

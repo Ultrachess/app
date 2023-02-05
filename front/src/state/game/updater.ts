@@ -8,6 +8,8 @@ import { delay } from "wonka";
 import { ethers } from "ethers";
 import { useDispatch } from "react-redux";
 import { setAction } from "../actions/reducer";
+import { addNotification } from "../notifications/reducer";
+import { Notification, NotificationType } from "../notifications/notifications";
 import { Action, ActionList, ActionStates, ActionType } from "./types"
 import { useAllTransactions } from "../transactions/hooks";
 import { useWeb3React } from "@web3-react/core";

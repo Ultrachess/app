@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Notification } from "../../common/notifications";
+import { Notification } from "./notifications";
 
 export interface NotificationState {
     [notificationId: string]: Notification

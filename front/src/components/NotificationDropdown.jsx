@@ -9,12 +9,11 @@ import {
   ChevronRightIcon,
   BellIcon
 } from '@radix-ui/react-icons';
-import { NotificationIcon } from './NotificationIcon';
+import { useNotifications } from '../state/notifications/hooks';
+import NotificationItem from './NotificationItem';
 
-const NotificationDropdown = ({triggerItem}) => {
-  const [bookmarksChecked, setBookmarksChecked] = React.useState(true);
-  const [urlsChecked, setUrlsChecked] = React.useState(false);
-  const [person, setPerson] = React.useState('pedro');
+const NotificationDropdown = () => {
+  const notifications = useNotifications()
 
   return (
     <DropdownMenu.Root>
@@ -27,9 +26,12 @@ const NotificationDropdown = ({triggerItem}) => {
       <DropdownMenu.Portal>
         <DropdownMenuContent sideOffset={5}>
         <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-          <DropdownMenuItem>none</DropdownMenuItem>
-          
-
+        {notifications.length > 0 ? notifications.map((notification) => (
+          <NotificationItem 
+            key={notification.id}
+            notification={notification} 
+          />
+        )) : <DropdownMenuItem>none</DropdownMenuItem>}          
           <DropdownMenuArrow />
         </DropdownMenuContent>
       </DropdownMenu.Portal>

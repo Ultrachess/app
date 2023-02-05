@@ -1,13 +1,15 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
 import { useContract, useErc20Contract } from "../../hooks/contract";
 import { DAPP_ADDRESSES } from "./gameSlice";
 import { addAction, setAction, setActionTransactionHash } from "../actions/reducer";
+import { addNotification } from "../notifications/reducer";
+import { Notification, NotificationType, ActionNotification } from "../notifications/notifications";
 import { ethers } from "ethers";
 import { useAppSelector } from "../hooks";
 import { delay, filter } from "wonka";
@@ -17,13 +19,49 @@ import { ActionResolverObject } from "./updater";
 import { CONTRACTS } from '../../ether/contracts';
 import { CHAINS } from '../../ether/chains';
 
-export function useGame(id): any | undefined {
+export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)
     return games[id]
 }
 export function useActions(): ActionList {
     const actions = useAppSelector(state => state.actions)
     return actions
+}
+
+//return list of games that you are in and are not completed
+export function useUserGames(): String[] {
+    const games = useAppSelector(state => state.game.games)
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players.includes(game.playerId) && !game.isEnd
+    })
+}
+
+//return list of all bots you own
+export function useUserBots(): String[] {
+    const bots = useAppSelector(state => state.game.bots)
+    return Object.keys(bots).filter((botId) => {
+        const bot = bots[botId]
+        return bot.owner == bot.playerId
+    })
+}
+
+//return list of all games your bots are in
+export function useUserBotGames(): String[] {
+    const bots = useUserBots()
+    const games = useAppSelector(state => state.game.games)
+
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return bots.some((botId) => game.players.includes(botId))
+    })
+}
+
+//return list of wagers in a game
+export function useGameWagers(gameId: string, playerId: string): Bet[] {
+    const game = useGame(gameId)
+    if (!game) return []
+    return Object.values(game.wagering.bets[playerId])
 }
 
 export function useActionsNotProcessed(): Action[] {
@@ -59,6 +97,16 @@ export function useAddAction(): (action: Action) => number {
 
     return useCallback((action: Action) => {
         dispatch(addAction(action))
+
+        // Add notification
+        const notification: ActionNotification = {
+            id: action.id,
+            timestamp: action.initTime,
+            type: NotificationType.ACTION,
+            actionId: action.id,
+        }
+        dispatch(addNotification(notification))
+
         console.log(action.id.toString())
         return action.id
     }, [dispatch])

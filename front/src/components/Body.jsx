@@ -63,14 +63,14 @@ export default () => {
                         <Label>Active games</Label>
                         <RightSlot>
                             <ModalNewCreateGame triggerElement={
-                                <Button variant={"outline"} onClick={handleShowCreateModal} shadow>
-                                    create game
+                                <Button  onClick={handleShowCreateModal} shadow>
+                                    <Text>Create Game</Text>
                                 </Button>
                             } />
                             <Spacer x={1}/>
                             <ModalNewDepositFunds triggerElement={
-                                <Button variant={"outline"} iconRight={<FaCoins/>} onClick={handleShowDepositModal} >
-                                deposit Token
+                                <Button  iconRight={<FaCoins/>} onClick={handleShowDepositModal} >
+                                <Text>Deposit Funds</Text>
                                 </Button>
                             } />
                         </RightSlot>
