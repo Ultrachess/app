@@ -9,6 +9,7 @@ import AddressGame from './AddressGame';
 import AssetDisplay from './AssetDisplay';
 import ChallengeAction from './ChallengeAction';
 import AddressTournament from './AddressTournament';
+import ActionItem from './ActionItem';
 
 export default ({ notification }: {notification: Notification}) => {
   const { id, timestamp, type } = notification;
@@ -158,13 +159,19 @@ export default ({ notification }: {notification: Notification}) => {
         for <AssetDisplay tokenAddress={notification.token} balance={notification.price} isL2={true}/>
       </>
       break;
+    case NotificationType.ACTION:
+      title = 'Action';
+      description = <ActionItem actionId={notification.actionId} />
+      break;
+
+
   }
 
   return (
       <>
-        <ToastTitle>id#{id} {title}</ToastTitle>
+        <ToastTitle>id#{id} {title} at {timestamp}</ToastTitle>
         <ToastDescription asChild>
-            {description} at {timestamp}
+            {description}
         </ToastDescription>
         
       </>
