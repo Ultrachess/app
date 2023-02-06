@@ -33,7 +33,8 @@ export default ({ notification }: {notification: Notification}) => {
       title = 'Game Completed';
       let score = notification.score;
       description = <>
-        {score > 0.5 ? 'You won' : score < 0.5 ? 'You lost' : 'You had a draw'} in game <AddressGame id={notification.gameId} /> against <Address value={notification.opponentId} />
+        {score > 0.5 ? 'You won' : score < 0.5 ? 'You lost' : 'You had a draw'} in game <AddressGame id={notification.gameId} /> against <Address value={notification.opponentId} /> for <AssetDisplay tokenAddress={notification.token} balance={notification.wager} isL2={true}/>
+        and a pot of <AssetDisplay tokenAddress={notification.token} balance={notification.pot} isL2={true}/> has been rewarded to {notification.winningIdBettorCount} bettors on <Address value={notification.winningId} />
       </>
       break;
     case NotificationType.GAME_WAGER:
@@ -99,39 +100,63 @@ export default ({ notification }: {notification: Notification}) => {
       break;
     case NotificationType.BOT_GAME_CREATED:
       title = 'Bot Game Created';
-      description = 'A bot game has been created';
+      description = <>
+        You bot <Address value={notification.botId} /> is now in game <AddressGame id={notification.gameId} /> with player <Address value={notification.playerId} /> for <AssetDisplay tokenAddress={notification.token} balance={notification.wager} isL2={true}/>
+      </>
       break;
     case NotificationType.BOT_GAME_COMPLETED:
       title = 'Bot Game Completed';
-      description = 'A bot game has been completed';
+      description = <>
+        Your bot <Address value={notification.botId} /> has {notification.score > 0.5 ? 'won' : notification.score < 0.5 ? 'lost' : 'had a draw'} in game <AddressGame id={notification.gameId} /> against player <Address value={notification.opponentId} /> for <AssetDisplay tokenAddress={notification.token} balance={notification.wager} isL2={true}/>
+        and a pot of <AssetDisplay tokenAddress={notification.token} balance={notification.pot} isL2={true}/> has been rewarded to {notification.winningIdBettorCount} bettors on {notification.winningId}
+      </>
       break;
     case NotificationType.BOT_JOINED_TOURNAMENT:
       title = 'Bot Joined Tournament';
-      description = 'A bot has joined a tournament';
+      description = <>
+        Your bot <Address value={notification.botId} /> has joined tournament <AddressTournament id={notification.tournamentId} />
+      </>
       break;
     case NotificationType.BOT_TOURNAMENT_MATCH_COMPLETED:
       title = 'Bot Tournament Match Completed';
-      description = 'A bot has completed a tournament match';
+      description = <>
+        Your bot <Address value={notification.botId} /> has scored {notification.score} in tournament <AddressTournament id={notification.tournamentId} /> against player <Address value={notification.opponentId} />
+        now has a score of {notification.totalScore}
+      </>
       break;
     case NotificationType.BOT_TOURNAMENT_ROUND_COMPLETED:
       title = 'Bot Tournament Round Completed';
-      description = 'A bot has completed a tournament round';
+      description = <>
+        Your bot <Address value={notification.botId} /> has completed round {notification.roundNumber} in tournament <AddressTournament id={notification.tournamentId} />
+        currently has a score of {notification.totalScore}
+      </>
       break;
     case NotificationType.BOT_TOURNAMENT_COMPLETED:
       title = 'Bot Tournament Completed';
-      description = 'A bot has completed a tournament';
+      description = <>
+        Your bot <Address value={notification.botId} /> has completed tournament <AddressTournament id={notification.tournamentId} />
+        placed {notification.placement} with a score of {notification.totalScore}
+      </>
       break;
     case NotificationType.BOT_OFFER_RECEIVED:
       title = 'Bot Offer Received';
-      description = 'A bot has sent you an offer';
+      description = <>
+        Player <Address value={notification.from} /> has offered to purchase your bot <Address value={notification.botId} /> for <AssetDisplay tokenAddress={notification.token} balance={notification.price} isL2={true}/>
+      </>
       break;
     case NotificationType.BOT_OFFER_ACCEPTED:
       title = 'Bot Offer Accepted';
-      description = 'A bot has accepted your offer';
+      description = <>
+        Player <Address value={notification.acceptor} /> has accepted your offer to purchase bot <Address value={notification.botId} />
+        for <AssetDisplay tokenAddress={notification.token} balance={notification.price} isL2={true}/>
+      </>
       break;
     case NotificationType.BOT_OFFER_DECLINED:
       title = 'Bot Offer Declined';
-      description = 'Owner declined your offer to purchase bot # $botId';
+      description = <>
+        Player <Address value={notification.decliner} /> has declined your offer to purchase bot <Address value={notification.botId} />
+        for <AssetDisplay tokenAddress={notification.token} balance={notification.price} isL2={true}/>
+      </>
       break;
   }
 

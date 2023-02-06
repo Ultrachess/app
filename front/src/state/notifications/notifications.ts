@@ -52,6 +52,10 @@ export interface GameCompletedNotification extends BaseNotification {
     gameId: string;
     score: number;
     opponentId: string;
+    token: string;
+    pot: number;
+    winningId: string;
+    winningIdBettorCount: number;
 }
 
 export interface GameWagerNotification extends BaseNotification {
@@ -121,7 +125,6 @@ export interface TournamentRoundCompletedNotification extends BaseNotification {
     type: NotificationType.TOURNAMENT_ROUND_COMPLETED;
     tournamentId: string;
     roundNumber: number;
-
 }
 
 export interface BotGameCreatedNotification extends BaseNotification {
@@ -136,6 +139,13 @@ export interface BotGameCompletedNotification extends BaseNotification {
     type: NotificationType.BOT_GAME_COMPLETED;
     gameId: string;
     botId: string;
+    opponentId: string;
+    score: number;
+    token: string;
+    wager: number;
+    pot: number;
+    winningId: string;
+    winningIdBettorCount: number;
 }
 
 export interface BotJoinedTournamentNotification extends BaseNotification {
@@ -149,6 +159,9 @@ export interface BotTournamentMatchCompletedNotification extends BaseNotificatio
     tournamentId: string;
     matchId: string;
     botId: string;
+    opponentId: string;
+    score: number;
+    totalScore: number;
 }
 
 export interface BotTournamentRoundCompletedNotification extends BaseNotification {
@@ -156,30 +169,42 @@ export interface BotTournamentRoundCompletedNotification extends BaseNotificatio
     tournamentId: string;
     roundNumber: number;
     botId: string;
+    totalScore: number;
 }
 
 export interface BotTournamentCompletedNotification extends BaseNotification {
     type: NotificationType.BOT_TOURNAMENT_COMPLETED;
     tournamentId: string;
     botId: string;
+    placement: number;
+    totalScore: number;
 }
 
 export interface BotOfferReceivedNotification extends BaseNotification {
     type: NotificationType.BOT_OFFER_RECEIVED;
     botId: string;
     offerId: string;
+    from: string;
+    price: number;
+    token : string;
 }
 
 export interface BotOfferAcceptedNotification extends BaseNotification {
     type: NotificationType.BOT_OFFER_ACCEPTED;
     botId: string;
     offerId: string;
+    acceptor: string;
+    price: number;
+    token : string;
 }
 
 export interface BotOfferDeclinedNotification extends BaseNotification {
     type: NotificationType.BOT_OFFER_DECLINED;
     botId: string;
     offerId: string;
+    decliner: string;
+    price: number;
+    token : string;
 }
 
 export interface ActionNotification extends BaseNotification {
@@ -187,6 +212,29 @@ export interface ActionNotification extends BaseNotification {
     actionId: number;
 }
 
-export type Notification = GameJoinedNotification | GameMoveNotification | GameCompletedNotification | GameWagerNotification | GameBettingClosedNotification | ChallengeAcceptedNotification | ChallengeDeclinedNotification | ChallengeRecievedNotification | TournamentJoinedNotification | TournamentCompletedNotification | TournamentMatchCreatedNotification | TournamentMatchCompletedNotification | TournamentRoundCompletedNotification | BotGameCreatedNotification | BotGameCompletedNotification | BotJoinedTournamentNotification | BotTournamentMatchCompletedNotification | BotTournamentRoundCompletedNotification | BotTournamentCompletedNotification | BotOfferReceivedNotification | BotOfferAcceptedNotification | BotOfferDeclinedNotification | ActionNotification;
+export type Notification = 
+    GameJoinedNotification | 
+    GameMoveNotification | 
+    GameCompletedNotification | 
+    GameWagerNotification | 
+    GameBettingClosedNotification | 
+    ChallengeAcceptedNotification | 
+    ChallengeDeclinedNotification | 
+    ChallengeRecievedNotification | 
+    TournamentJoinedNotification | 
+    TournamentCompletedNotification | 
+    TournamentMatchCreatedNotification | 
+    TournamentMatchCompletedNotification | 
+    TournamentRoundCompletedNotification | 
+    BotGameCreatedNotification | 
+    BotGameCompletedNotification | 
+    BotJoinedTournamentNotification | 
+    BotTournamentMatchCompletedNotification | 
+    BotTournamentRoundCompletedNotification | 
+    BotTournamentCompletedNotification | 
+    BotOfferReceivedNotification | 
+    BotOfferAcceptedNotification | 
+    BotOfferDeclinedNotification | 
+    ActionNotification;
 
 
