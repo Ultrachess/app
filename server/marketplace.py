@@ -18,12 +18,9 @@ class BotMarketPlaceManager:
     def __init__(self):
         self.offers = {}
 
-    def create(self, sender, timestamp, options):
+    def create_offer(self, sender, timestamp, options):
         if "botId" not in options or "price" not in options or "token" not in options or "0x" in sender:
-            return {
-                "value": "",
-                "success": False
-            }
+            return False
 
         botId = options["botId"]
         price = options["price"]
@@ -32,19 +29,12 @@ class BotMarketPlaceManager:
 
         #make sure not sending offer to your own bot
         if sender == owner:
-            return {
-                "value": "",
-                "success": False
-            }
-
+            return False
         #make sure is botId valid and user has funds
         #make sure owner is valid
         hasFunds = deps.accountManager.getBalance(sender, token) >= price
         if not "0x" in botId and not hasFunds and owner != None:
-            return {
-                "value": "",
-                "success": False
-            }
+            return False
         
         offerId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
         self.offers[offerId] = CreateBotOffer(sender, offerId, timestamp, botId, price, token)
@@ -59,10 +49,7 @@ class BotMarketPlaceManager:
                 bot_id=botId
             )
         )
-        return {
-            "value": offerId,
-            "success": True
-        }
+        return True
 
         
     def accept(self, acceptor, timestamp, offerId):
@@ -105,6 +92,7 @@ class BotMarketPlaceManager:
             )
         )
         del self.offers[offerId]
+        return True
 
 
     def decline(self, decliner, timestamp, offerId):
@@ -137,4 +125,11 @@ class BotMarketPlaceManager:
         )
 
         del self.offers[offerId]
+        return True
+
+    def getStringState(self):
+        return str(self.offers)
+
+    def getState(self):
+        return self.offers
 

@@ -300,6 +300,62 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = appendNumberToUInt8Array(id, input)
                     result = await contract.addInput(input)
                     break;
+                case TransactionType.CREATE_CHALLENGE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "createChallenge", 
+                        "value": {
+                            "recipient" : "${info.recipient}",
+                            "wager" : ${info.wager},
+                            "token": "${info.token}"
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.ACCEPT_CHALLENGE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "acceptChallenge", 
+                        "value": "${info.challengeId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.DECLINE_CHALLENGE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "declineChallenge", 
+                        "value": "${info.challengeId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.CREATE_OFFER:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "createBotOffer", 
+                        "value": {
+                            "recipient" : "${info.botId}",
+                            "wager" : ${info.price},
+                            "token": "${info.token}"
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.ACCEPT_OFFER:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "acceptBotOffer", 
+                        "value": "${info.offerId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.DECLINE_OFFER:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "declineBotOffer", 
+                        "value": "${info.offerId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
                 case TransactionType.RESIGN_GAME_INPUT:
                     roomId = info.roomId
                     input = ethers.utils.toUtf8Bytes(`{

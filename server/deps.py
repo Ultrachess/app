@@ -5,10 +5,15 @@ from elo import EloManager
 from actions import ActionManager
 from bets import BetManager
 from tournament import TournamentManager
+from challenge import ChallengeManager
+from marketplace import BotMarketPlaceManager
 import chess.engine
 import chess.pgn
 import random
 
+
+challengeManager = ChallengeManager()
+botMarketPlace = BotMarketPlaceManager()
 tournamentManager = TournamentManager()
 betManager = BetManager()
 #Initialize global matchmaking object

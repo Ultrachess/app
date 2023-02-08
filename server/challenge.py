@@ -22,18 +22,12 @@ class ChallengeManager:
 
     def create(self, sender, timestamp, options):
         if "recipient" not in options or "wager" not in options or "token" not in options:
-            return {
-                "value": "",
-                "success": False
-            }
+            return False
 
         owner_sender = sender if "0x" in sender else deps.botFactory.getOwner(sender)
         hasFunds = deps.accountManager.getBalance(owner_sender, options["token"]) >= options["wager"]
         if not hasFunds:
-            return {
-                "value": "",
-                "success": False
-            }
+            return False
         
         recipient = options["recipient"]
         wager = options["wager"]
@@ -51,10 +45,7 @@ class ChallengeManager:
                 token=token,
             )
         )
-        return {
-            "value": challengeId,
-            "success": True
-        }
+        return True
 
     def accept(self, sender, timestamp, challengeId):
         challenge = self.challenges[challengeId]
@@ -91,7 +82,6 @@ class ChallengeManager:
                     "token": token,
                     "wagerAmount": wager,
                 })
-                return True
             elif p1IsBot:
                 deps.matchmaker.create(sender, timestamp, {
                     "name": "auto triggered match",
@@ -101,7 +91,6 @@ class ChallengeManager:
                     "token": token,
                     "wagerAmount": wager,
                 })
-                return True
             elif p2IsBot:
                 deps.matchmaker.create(sender, timestamp, {
                     "name": "auto triggered match",
@@ -111,7 +100,6 @@ class ChallengeManager:
                     "token": token,
                     "wagerAmount": wager,
                 })
-                return True
             else:
                 deps.matchmaker.create(sender, timestamp, {
                     "name": "auto triggered match",
@@ -120,8 +108,8 @@ class ChallengeManager:
                     "token": token,
                     "wagerAmount": wager,
                 })
-                return True
-        return False
+        del self.challenges[challengeId]
+        return True
 
     def decline(self, sender, timestamp, challengeId):
         challenge = self.challenges[challengeId]
@@ -137,6 +125,12 @@ class ChallengeManager:
                 )
             )
             return True
+        del self.challenges[challengeId]
         return False
 
+    def getStringState(self):
+        return str(self.offers)
+
+    def getState(self):
+        return self.offers
 

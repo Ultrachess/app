@@ -12,6 +12,12 @@ export enum TransactionType {
     BET_INPUT,
     CREATE_TOURNAMENT,
     JOIN_TOURNAMENT,
+    CREATE_CHALLENGE,
+    ACCEPT_CHALLENGE,
+    DECLINE_CHALLENGE,
+    CREATE_OFFER,
+    ACCEPT_OFFER,
+    DECLINE_OFFER,
 }
 
 export enum TourneyType {
@@ -23,6 +29,40 @@ export enum TourneyType {
 
 export interface BaseTransactionInfo {
     type: TransactionType
+}
+
+export interface CreateChallengeTransactionsInfo extends BaseTransactionInfo {
+    type: TransactionType.CREATE_CHALLENGE,
+    recipient: string,
+    wager: string,
+    token: string,
+}
+
+export interface AcceptChallengeTransactionsInfo extends BaseTransactionInfo {
+    type: TransactionType.ACCEPT_CHALLENGE,
+    challengeId: string
+}
+
+export interface DeclineChallengeTransactionsInfo extends BaseTransactionInfo {
+    type: TransactionType.DECLINE_CHALLENGE,
+    challengeId: string
+}
+
+export interface CreateBotOfferTransactionsInfo extends BaseTransactionInfo {
+    type: TransactionType.CREATE_OFFER,
+    botId: string,
+    price: string,
+    token: string,
+}
+
+export interface AcceptBotOfferTransactionsInfo extends BaseTransactionInfo {
+    type: TransactionType.ACCEPT_OFFER,
+    offerId: string
+}
+
+export interface DeclineBotOfferTransactionsInfo extends BaseTransactionInfo {
+    type: TransactionType.DECLINE_OFFER,
+    offerId: string
 }
 
 export interface SendMoveTransactionInfo extends BaseTransactionInfo {
@@ -128,4 +168,10 @@ export type TransactionInfo =
     | BetTransactionInfo
     | CreateTournamentTransactionInfo
     | JoinTournamentTransactionInfo
+    | CreateChallengeTransactionsInfo
+    | AcceptChallengeTransactionsInfo
+    | DeclineChallengeTransactionsInfo
+    | CreateBotOfferTransactionsInfo
+    | AcceptBotOfferTransactionsInfo
+    | DeclineBotOfferTransactionsInfo
 

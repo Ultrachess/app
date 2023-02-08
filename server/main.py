@@ -101,7 +101,9 @@ def get_state_hex():
         "tournaments" : tournamentManager.getStringState(),
         "lastProcessedBlock": str(lastProcessedBlock),
         "lastStepTimestamp": str(botManager.last_step_timestamp),
-        "actionList": actionManager.actionList()
+        "actionList": actionManager.actionList(),
+        "challenges": challengeManager.getState(),
+        "marketplace": botMarketPlace.getState(),
     }
     json_object = json.dumps(data_set)
     logger.info("Inspect element return: " + json_object)
@@ -283,6 +285,44 @@ def handle_advance(data):
         except Exception:
             traceback.print_exc()
             success = False
+    elif operator == "createChallenge":
+        try:
+            success = challengeManager.create(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "declineChallenge":
+        try:
+            success = challengeManager.decline(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "acceptChallenge":
+        try:
+            success = challengeManager.accept(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "createBotOffer":
+        try:
+            success = botMarketPlace.create_offer(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "acceptBotOffer":
+        try:
+            success = botMarketPlace.accept(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "declineBotOffer":
+        try:
+            success = botMarketPlace.decline(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    
+        
 
     botManager.runPendingMoves(timeStamp)
 
