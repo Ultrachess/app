@@ -16,6 +16,7 @@ import { useWeb3React } from "@web3-react/core";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 import { SERVER_URL } from "./gameSlice";
+import { useUserBots, useUserBotGames, useUserBotTournaments, useUserGames, useUserTournaments } from "./hooks";
 
 export interface NoticeInfo {}
 
@@ -67,6 +68,86 @@ const getNotices = async (
     }
 };
 
+function getRelevantNotifications(
+        notifications: Notification[], 
+        account: String,
+        userBots: String[],
+        userGames: String[], 
+        userBotGames: String[], 
+        userTournaments: String[],
+        userBotTournaments: String[]
+    ){
+    return notifications
+        .filter(notification => {
+            const { type } = notification
+            if(type == NotificationType.GAME_JOINED ||
+                type == NotificationType.GAME_MOVE ||
+                type == NotificationType.GAME_COMPLETED ||
+                type == NotificationType.GAME_WAGER ||
+                type == NotificationType.GAME_BETTING_CLOSED
+            ){
+                return userGames.includes(notification.gameId)
+            }
+            if (type == NotificationType.CHALLENGE_ACCEPTED){
+                return notification.sender == account
+            }
+            if (type == NotificationType.CHALLENGE_DECLINED){
+                return notification.sender == account
+            }
+            if (type == NotificationType.CHALLENGE_RECIEVED){
+                return notification.recipient == account
+            }
+            if (type == NotificationType.TOURNAMENT_JOINED){
+                return userTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.TOURNAMENT_COMPLETED){
+                return userTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.TOURNAMENT_MATCH_CREATED){
+                return userTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.TOURNAMENT_MATCH_COMPLETED){
+                return userTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.TOURNAMENT_ROUND_COMPLETED){
+                return userTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.BOT_GAME_CREATED){
+                return userBotGames.includes(notification.gameId) || 
+                    userBots.includes(notification.playerId1) ||
+                    userBots.includes(notification.playerId2)
+            }
+            if (type == NotificationType.BOT_GAME_COMPLETED){
+                return userBotGames.includes(notification.gameId) || 
+                    userBots.includes(notification.playerId1) ||
+                    userBots.includes(notification.playerId2)
+            }
+            if (type == NotificationType.BOT_JOINED_TOURNAMENT){
+                return userBotTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.BOT_TOURNAMENT_MATCH_COMPLETED){
+                return userBotTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.BOT_TOURNAMENT_ROUND_COMPLETED){
+                return userBotTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.BOT_TOURNAMENT_COMPLETED){
+                return userBotTournaments.includes(notification.tournamentId)
+            }
+            if (type == NotificationType.BOT_OFFER_RECEIVED){
+                return notification.recipient == account
+            }
+            if (type == NotificationType.BOT_OFFER_ACCEPTED){
+                return notification.sender == account
+            }
+            if (type == NotificationType.BOT_OFFER_DECLINED){
+                return notification.sender == account
+            }
+                
+        })
+}
+
+
 function useNotices(): PartialNotice[] | undefined {
     const [notices, setNotices] = useState<PartialNotice[]>(undefined)
 
@@ -81,6 +162,24 @@ function useNotices(): PartialNotice[] | undefined {
     },[])
 
     return notices
+}
+
+function useNewNotifications(): Notification[] | undefined {
+    const notices = useNotices()
+    const [lastNoticeIndex, setLastNoticeIndex] = useState(0)
+
+    const notifications: Notification[] = notices
+        .sort((a, b) => parseInt(a.input_index) - parseInt(b.input_index))
+        .filter(n => parseInt(n.notice_index) > lastNoticeIndex)
+        .map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)))
+    
+    useEffect(() => {
+        if (notices.length > 0) {
+            setLastNoticeIndex(parseInt(notices[notices.length - 1].notice_index))
+        }
+    },[notices])
+
+    return notifications
 }
 
 const fetchActionResult = async (id: string): Promise<ActionResult> => {
@@ -105,13 +204,21 @@ function shouldCheckAction(a: Action): boolean {
 
 
 export function GameStateUpdater() {
-    const { chainId } = useWeb3React()
+    const { account, chainId } = useWeb3React()
     const actions: ActionList = useAppSelector(state => state.actions)
-    //const notices = useNotices()
+    const notices = useNotices()
     const transactions = useAppSelector((state) => state.transactions)
     const pendingTransactions = useMemo(() => (chainId ? transactions[chainId] ?? {} : {}), [chainId, transactions])
-    //const lastBlockProcessed = useMemo(() => Math.max(...notices.map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)).timeStamp)), [notices])
+    const lastBlockProcessed = useMemo(() => Math.max(...notices.map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)).timeStamp)), [notices])
     const actionList = useActionList()
+
+    const userBots = useUserBots()
+    const userGames = useUserGames()
+    const botGames = useUserBotGames()
+    const userTournaments = useUserTournaments()
+    const botTournaments = useUserBotTournaments()
+
+    const newNotifications = useNewNotifications()
 
     const dispatch = useDispatch()
     useEffect(() => {
@@ -161,6 +268,24 @@ export function GameStateUpdater() {
         run()
         
     }, [actionList, dispatch])
+
+    useEffect(() => {
+        const run = async () => {
+            getRelevantNotifications(
+                newNotifications, 
+                account,
+                userBots,
+                userGames, 
+                botGames, 
+                userTournaments, 
+                botTournaments
+            )
+                .forEach((notification) =>
+                    dispatch(addNotification(notification))
+                )
+        }
+        run()
+    }, [newNotifications])
 
     return null
 }

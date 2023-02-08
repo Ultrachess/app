@@ -3,6 +3,7 @@ import chess.engine
 import chess.pgn
 import logging
 import traceback
+from notification import send_notification, GameJoinedNotification, GameCompletedNotification, GameMoveNotification, GameWagerNotification, GameBettingClosedNotification, BotCreatedNotification, BotGameCompletedNotification
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -93,6 +94,42 @@ class Game:
         winningId = p1 if score1 > score2 else p2 if score2 > score1 else "DRAW"
         deps.betManager.end(self.id, winningId)
 
+        #send notification
+        if self.isBot:
+            send_notification(
+                BotGameCompletedNotification(
+                    game_id=self.id,
+                    player_id1=p1,
+                    player_id2=p2,
+                    score1=score1,
+                    score2=score2,
+                    pot=deps.betManager.getPot(self.id),
+                    wager=self.wagerAmount,
+                    token=self.token,
+                    timestamp=self.timestamp,
+                    winningId=winningId,
+                    winnings1=funds1,
+                    winnings2=funds2
+                )
+            )
+        else:
+            send_notification(
+                GameCompletedNotification(
+                    game_id=self.id,
+                    player_id1=p1,
+                    player_id2=p2,
+                    score1=score1,
+                    score2=score2,
+                    pot=deps.betManager.getPot(self.id),
+                    wager=self.wagerAmount,
+                    token=self.token,
+                    timestamp=self.timestamp,
+                    winningId=winningId,
+                    winnings1=funds1,
+                    winnings2=funds2
+                )
+            )
+
     def addPlayer(self, timestamp, player):
         try:
             canAdd = (not self.__isMaxPlayers()) and (not self.__isInGame(player))
@@ -109,6 +146,15 @@ class Game:
                 #open betting phase
                 if self.__isMinPlayers():
                     deps.betManager.open(id, timestamp, self.bettingDuration)
+                send_notification(
+                    GameJoinedNotification(
+                        timestamp= timestamp,
+                        player_id=player,
+                        game_id=self.id,
+                        wager = self.wagerAmount,
+                        token = self.token,
+                    )
+                )
                 return True
             return False
         except:

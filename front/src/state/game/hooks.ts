@@ -57,6 +57,27 @@ export function useUserBotGames(): String[] {
     })
 }
 
+//return list of all tournaments you are in or own
+export function useUserTournaments(): String[] {
+    const { account } = useWeb3React()
+    const tournaments = useAppSelector(state => state.game.tournaments)
+    return Object.keys(tournaments).filter((tournamentId) => {
+        const tournament = tournaments[tournamentId]
+        return tournament.participants.includes(account) || tournament.owner == account
+    })
+}
+        
+//return list of all tournaments your bots are in
+export function useUserBotTournaments(): String[] {
+    const bots = useUserBots()
+    const tournaments = useAppSelector(state => state.game.tournaments)
+
+    return Object.keys(tournaments).filter((tournamentId) => {
+        const tournament = tournaments[tournamentId]
+        return bots.some((botId) => tournament.participants.includes(botId))
+    })
+}
+
 //return list of wagers in a game
 export function useGameWagers(gameId: string, playerId: string): Bet[] {
     const game = useGame(gameId)
