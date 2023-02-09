@@ -10,6 +10,9 @@ export const Text = styled('div', {
     textAlign: 'center',
     display: 'flex',
     variants: {
+        underline: {
+            true: { textDecoration: 'underline' },
+        },
         faded: {
             true: { color: mauve.mauve10 },
         },
