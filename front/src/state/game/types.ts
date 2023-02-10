@@ -72,3 +72,62 @@ export interface Game {
     bettingDuration : number,
     wagering: GameWagers
 }
+
+//enum of all countries
+export enum Country {
+    FRANCE,
+    GERMANY,
+    ITALY,
+    SPAIN,
+    UK,
+    USA,
+    CHINA,
+    JAPAN,
+    KOREA,
+    INDIA,
+    BRAZIL,
+    MEXICO,
+    CANADA,
+    AUSTRALIA,
+    RUSSIA,
+    TURKEY,
+    NETHERLANDS,
+    BELGIUM,
+    SWITZERLAND,
+}
+
+export interface Balance {
+    token: string,
+    amount: number,
+}
+
+export enum ProfileType {
+    HUMAN,
+    BOT,
+}
+
+export interface BaseProfile {
+    type: ProfileType,
+    id: string,
+    name: string,
+    avatar: string,
+    elo: number,
+    games: Game[],
+    nationality: Country,
+}
+
+export interface UserProfile extends BaseProfile { 
+    balances: Balance[],
+    bots: BotProfile[],
+}
+
+export interface BotProfile extends BaseProfile {
+    owner: string,
+    autoBattleEnabled: boolean,
+    autoMaxWagerAmount: number,
+    autoWagerTokenAddress: string,
+}
+
+export type Profile = 
+    | UserProfile
+    | BotProfile

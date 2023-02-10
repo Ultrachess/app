@@ -66,7 +66,7 @@ export default ({ notification }: {notification: Notification}) => {
     case NotificationType.CHALLENGE_RECIEVED:
       title = 'Challenge Recieved';
       description = <>
-        Player <Address value={notification.playerId} /> has challenged you to a game wagering <AssetDisplay tokenAddress={notification.token} balance={notification.wager} isL2={true}/> <ChallengeAction accept={true} /> or <ChallengeAction accept={false} />
+        Player <Address value={notification.playerId} /> has challenged you to a game wagering <AssetDisplay tokenAddress={notification.token} balance={notification.wager} isL2={true}/> <ChallengeAction challengeId={notification.challengeId} accept={true} /> or <ChallengeAction challengeId={notification.challengeId} accept={false} />
       </>
       break;
     case NotificationType.TOURNAMENT_JOINED:
@@ -139,7 +139,7 @@ export default ({ notification }: {notification: Notification}) => {
         placed {notification.placement} with a score of {notification.totalScore}
       </>
       break;
-    case NotificationType.BOT_OFFER_RECEIVED:
+    case NotificationType.BOT_OFFER_CREATED:
       title = 'Bot Offer Received';
       description = <>
         Player <Address value={notification.from} /> has offered to purchase your bot <Address value={notification.botId} /> for <AssetDisplay tokenAddress={notification.token} balance={notification.price} isL2={true}/>

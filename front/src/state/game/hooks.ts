@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList, Game, Bet } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
@@ -19,6 +19,75 @@ import { ActionResolverObject } from "./updater";
 import { CONTRACTS } from '../../ether/contracts';
 import { CHAINS } from '../../ether/chains';
 
+export function useNationality(id): Country {
+    return Country.FRANCE
+}
+
+export function useAvatarImgUrl(id): string {
+    return id
+}
+
+export function useName(id): string {
+    return id
+}
+
+export function useBalances(id): Balance[] {
+    const accounts: {[address: string]:{[token:string]: Balance}} = useAppSelector(state => state.game.accounts)
+    return accounts[id] ? Object.values(accounts[id]) : []
+}
+
+export function useElo(id): number {
+    const elos = useAppSelector(state => state.game.elo)
+    return elos[id] ? elos[id] : 0
+}
+
+export function useProfile(id: string): Profile {
+    const bots = useAppSelector(state => state.game.bots)
+    const isBot = !id.includes("0x")
+
+    //common
+    const type = isBot ? ProfileType.BOT : ProfileType.HUMAN
+    const name = useName(id)
+    const avatar = useAvatarImgUrl(id)
+    const elo = useElo(id)
+    const nationality = useNationality(id)
+    const games = useUserGames(id)
+
+    //bot only
+    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: ""}
+
+    //human only
+    const balances = useBalances(id)
+    const userBots = useUserBots(id)
+
+    //return the correct profile type
+    const profile: Profile = isBot ? {
+        type,
+        id,
+        name,
+        avatar,
+        elo,
+        nationality,
+        games,
+        owner,
+        autoBattleEnabled,
+        autoMaxWagerAmount,
+        autoWagerTokenAddress
+    } : {
+        type,
+        id,
+        name,
+        avatar,
+        elo,
+        nationality,
+        games,
+        balances,
+        bots:userBots,
+    }
+    return profile
+
+}
+
 export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)
     return games[id]
@@ -28,27 +97,62 @@ export function useActions(): ActionList {
     return actions
 }
 
-//return list of games that you are in and are not completed
-export function useUserGames(): String[] {
-    const games = useAppSelector(state => state.game.games)
-    return Object.keys(games).filter((gameId) => {
-        const game = games[gameId]
-        return game.players.includes(game.playerId) && !game.isEnd
+export function useUserGames(id: string): Game[] {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    return Object.values(games).filter((game) => {
+        return game.players.includes(id)
     })
 }
 
+//return list of games that you are in and are not completed
+export function useUserGameIds(id: string): string[] {
+    const games = useAppSelector(state => state.game.games)
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players.includes(id)
+    })
+}
+
+export function useUserCompletedGameIds(id: string): string[] {
+    const games = useAppSelector(state => state.game.games)
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players.includes(id) && game.isEnd
+    })
+}
+
+export function useUserActiveGameIds(id: string): string[] {
+    const games = useAppSelector(state => state.game.games)
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players.includes(id) && !game.isEnd
+    })
+}
+
+export function useUserBots(id: string): BotProfile[] {
+    const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
+    return Object.values(bots).filter((bot) => {
+        return bot.owner == id
+    })
+}
+
+export function useOwner(id: string): string {
+    const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
+    return bots[id] ? bots[id].owner : ""
+}
+
 //return list of all bots you own
-export function useUserBots(): String[] {
+export function useUserBotIds(id: string): string[] {
     const bots = useAppSelector(state => state.game.bots)
     return Object.keys(bots).filter((botId) => {
         const bot = bots[botId]
-        return bot.owner == bot.playerId
+        return bot.owner == id
     })
 }
 
 //return list of all games your bots are in
-export function useUserBotGames(): String[] {
-    const bots = useUserBots()
+export function useUserBotGameIds(id: string): string[] {
+    const bots = useUserBotIds(id)
     const games = useAppSelector(state => state.game.games)
 
     return Object.keys(games).filter((gameId) => {
@@ -58,18 +162,17 @@ export function useUserBotGames(): String[] {
 }
 
 //return list of all tournaments you are in or own
-export function useUserTournaments(): String[] {
-    const { account } = useWeb3React()
+export function useUserTournamentIds(id: string): string[] {
     const tournaments = useAppSelector(state => state.game.tournaments)
     return Object.keys(tournaments).filter((tournamentId) => {
         const tournament = tournaments[tournamentId]
-        return tournament.participants.includes(account) || tournament.owner == account
+        return tournament.participants.includes(id) || tournament.owner == id
     })
 }
         
 //return list of all tournaments your bots are in
-export function useUserBotTournaments(): String[] {
-    const bots = useUserBots()
+export function useUserBotTournamentIds(id: string): string[] {
+    const bots = useUserBotIds(id)
     const tournaments = useAppSelector(state => state.game.tournaments)
 
     return Object.keys(tournaments).filter((tournamentId) => {

@@ -16,7 +16,7 @@ import { useWeb3React } from "@web3-react/core";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 import { SERVER_URL } from "./gameSlice";
-import { useUserBots, useUserBotGames, useUserBotTournaments, useUserGames, useUserTournaments } from "./hooks";
+import { useUserBotIds, useUserBotGameIds, useUserBotTournamentIds, useUserTournamentIds, useUserActiveGameIds } from "./hooks";
 
 export interface NoticeInfo {}
 
@@ -212,11 +212,11 @@ export function GameStateUpdater() {
     const lastBlockProcessed = useMemo(() => Math.max(...notices.map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)).timeStamp)), [notices])
     const actionList = useActionList()
 
-    const userBots = useUserBots()
-    const userGames = useUserGames()
-    const botGames = useUserBotGames()
-    const userTournaments = useUserTournaments()
-    const botTournaments = useUserBotTournaments()
+    const userBots = useUserBotIds(account)
+    const userGames = useUserActiveGameIds(account)
+    const botGames = useUserBotGameIds(account)
+    const userTournaments = useUserTournamentIds(account)
+    const botTournaments = useUserBotTournamentIds(account)
 
     const newNotifications = useNewNotifications()
 
