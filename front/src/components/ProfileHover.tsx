@@ -5,6 +5,7 @@ import { mauve } from '@radix-ui/colors';
 import { useProfile } from '../state/game/hooks';
 import { Profile, ProfileType, BotProfile, UserProfile } from '../state/game/types';
 import Address from './Address';
+import AssetDisplay from './AssetDisplay';
 
 
 const BotProfileCard = ({profile}: {profile: BotProfile}) => {
@@ -18,23 +19,20 @@ const BotProfileCard = ({profile}: {profile: BotProfile}) => {
                 />
                 <Flex css={{ flexDirection: 'column', gap: 15 }}>
                     <div>
-                    <Flex css={{ gap: 5 }}>
-                        <Address value={profile.id} /> <Text faded>🇺🇸</Text>
-                    </Flex>
-                    <Flex css={{ gap: 5 }}>
-                        <Text faded>owner</Text><Address value={profile.owner} /> 
-                    </Flex>
+                      <Flex css={{ gap: 5 }}>
+                          <Address value={profile.id} /> <Text faded>🇺🇸</Text>
+                      </Flex>
+                      <Flex css={{ gap: 5 }}>
+                          <Text faded>owner</Text><Address value={profile.owner} /> 
+                      </Flex>
                     </div>
-                    <Text>
-                        This is a bot profile. It is not a real person.
-                    </Text>
                     <Flex css={{ gap: 15 }}>
-                    <Flex css={{ gap: 5 }}>
-                        <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
-                    </Flex>
-                    <Flex css={{ gap: 5 }}>
-                        <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
-                    </Flex>
+                      <Flex css={{ gap: 5 }}>
+                          <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
+                      </Flex>
+                      <Flex css={{ gap: 5 }}>
+                          <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
+                      </Flex>
                     </Flex>
                 </Flex>
                 </Flex>
@@ -46,39 +44,44 @@ const BotProfileCard = ({profile}: {profile: BotProfile}) => {
 
 const UserProfileCard = ({profile}: {profile: UserProfile}) => {
     return (
-        <div>
-            <Flex css={{ flexDirection: 'column', gap: 7 }}>
-                <Img
-                    size="large"
-                    src={profile.avatar}
-                    alt="Radix UI"
-                />
-                <Flex css={{ flexDirection: 'column', gap: 15 }}>
-                    <div>
-                    <Flex css={{ gap: 5 }}>
-                        <Address value={profile.id} /> <Text faded>🇺🇸</Text>
-                    </Flex>
-                    <Flex css={{ gap: 5 }}>
-                        <Text faded>owner</Text><Address value={profile.owner} />
-                    </Flex>
-                    </div>
-                    <Text>
-                        This is a user profile. It is a real person.
-                    </Text>
-                    <Flex css={{ gap: 15 }}>
-                    <Flex css={{ gap: 5 }}>
-                        <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
-                    </Flex>
-                    <Flex css={{ gap: 5 }}>
-                        <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
-                    </Flex>
-                    </Flex>
-                </Flex>
-                </Flex>
-                
-                <HoverCardArrow />
-        </div>
-
+      <div>
+        <Flex css={{ flexDirection: 'column', gap: 7 }}>
+          <Img
+              size="large"
+              src={profile.avatar}
+              alt="Radix UI"
+          />
+          <Flex css={{ flexDirection: 'column', gap: 15 }}>
+            <div>
+              <Flex css={{ gap: 5 }}>
+                  <Address value={profile.id} /> <Text faded>🇺🇸</Text>
+              </Flex>
+              <Flex css={{ gap: 5 }}>
+                  <AssetDisplay tokenAddress={profile.balances[0].token} balance={profile.balances[0].amount} isL2={true} /> <Text faded>Balance</Text>
+              </Flex>
+            </div>
+            <Flex css={{ gap: 15 }}>
+              <Flex css={{ gap: 5 }}>
+                  <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
+              </Flex>
+              <Flex css={{ gap: 5 }}>
+                  <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
+              </Flex>
+            </Flex>
+            <Flex css={{ gap: 5, flexDirection: 'column' }}>
+                <Text>Bots</Text>
+                <Flex css={{ gap: 5 }}>
+                    {profile.bots.map((bot) => (
+                        <><Address value={bot.id} />,</>
+                    ))}
+                  </Flex>
+            </Flex>
+              
+          </Flex>
+        </Flex>
+            
+        <HoverCardArrow />
+      </div>
     )
 }
 
@@ -86,7 +89,10 @@ const HoverCardDemo = ({triggerElement, profileId}) =>{
     const profile = useProfile(profileId);
     return (
 
-        <HoverCard.Root>
+        <HoverCard.Root 
+          openDelay={10}
+          closeDelay={10}
+        >
             <HoverCard.Trigger asChild>
                 {triggerElement}
             </HoverCard.Trigger>
