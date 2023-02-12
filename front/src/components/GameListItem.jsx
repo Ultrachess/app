@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Text, Grid, Card, Divider, Row, Button } from "@nextui-org/react";
-import { Chessboard } from "react-chessboard";
 import UserItem from "./UserItem";
 export default (props) => {
   const [mainItems, setMainItems] = React.useState([]);
@@ -10,9 +9,7 @@ export default (props) => {
             
         </Card.Header>
         <Card.Body css={{ py: "$3", px: "$-4" }}>
-        <Chessboard 
-            boardWidth={330}
-        />
+
         </Card.Body>
         <Card.Footer css={{ py: "$3", px: "$2" }}>
             <Row justify="flex-center">
