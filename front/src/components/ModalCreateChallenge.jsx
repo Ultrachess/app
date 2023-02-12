@@ -11,6 +11,7 @@ import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
 import { useActionCreator } from '../state/game/hooks';
 import { TransactionType } from '../common/types';
+import Address from './Address';
 
 export default ({triggerElement, playerId}) => {
     const { chainId, account } = useWeb3React()
@@ -24,9 +25,10 @@ export default ({triggerElement, playerId}) => {
 
     const handleOffer = async () => {
       const [approvalActionId, wait] = await addAction({
-        type: TransactionType.CREATE_OFFER,
-        tokenAddress: token.address,
+        type: TransactionType.CREATE_CHALLENGE,
+        recipient: playerId,
         amount: amount,
+        token: token.address,
       })
       await wait()
     }
@@ -40,19 +42,16 @@ export default ({triggerElement, playerId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Deposit funds</DialogTitle>
+            <DialogTitle>Challenge <Address address={playerId}/></DialogTitle>
             <DialogDescription>
-              Deposit funds to Cartesi's ERC-20 portal. 
-              This will give the Ultrachess dApp access to your funds, allowing you to interact with the dApp as intended.
-              You can withdraw your funds at any time.
+              This will send a challenge request to <Address address={playerId}/> and if accepted, a game will be created.
             </DialogDescription>
-            
+          
             <Fieldset>
-                <Label>Amount</Label>
+                <Label>Wager amount</Label>
                 <RightSlot>
-                    <AssetDisplay tokenAddress={token?.address} balance={balance - amount}/> 
-                    <Text>→</Text> 
-                    <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
+                  <Text>Remaining funds on loss:</Text>
+                  <AssetDisplay tokenAddress={token?.address} balance={balance - amount}/> 
                 </RightSlot>
             </Fieldset>
             <Fieldset>
@@ -69,7 +68,7 @@ export default ({triggerElement, playerId}) => {
                   variant="green"
                   onClick={handleDeposit}
                 >
-                  Deposit
+                  Challenge
                 </Button>
               </Dialog.Close>
             </Flex>

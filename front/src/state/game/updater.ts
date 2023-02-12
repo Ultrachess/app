@@ -94,20 +94,20 @@ function getRelevantNotifications(
             if (type == NotificationType.CHALLENGE_DECLINED){
                 return notification.sender == account
             }
-            if (type == NotificationType.CHALLENGE_RECIEVED){
+            if (type == NotificationType.CHALLENGE_CREATED){
                 return notification.recipient == account
             }
             if (type == NotificationType.TOURNAMENT_JOINED){
-                return userTournaments.includes(notification.tournamentId)
+                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
             }
             if (type == NotificationType.TOURNAMENT_COMPLETED){
-                return userTournaments.includes(notification.tournamentId)
+                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
             }
             if (type == NotificationType.TOURNAMENT_MATCH_CREATED){
-                return userTournaments.includes(notification.tournamentId)
+                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
             }
             if (type == NotificationType.TOURNAMENT_MATCH_COMPLETED){
-                return userTournaments.includes(notification.tournamentId)
+                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
             }
             if (type == NotificationType.TOURNAMENT_ROUND_COMPLETED){
                 return userTournaments.includes(notification.tournamentId)
@@ -122,20 +122,8 @@ function getRelevantNotifications(
                     userBots.includes(notification.playerId1) ||
                     userBots.includes(notification.playerId2)
             }
-            if (type == NotificationType.BOT_JOINED_TOURNAMENT){
-                return userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.BOT_TOURNAMENT_MATCH_COMPLETED){
-                return userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.BOT_TOURNAMENT_ROUND_COMPLETED){
-                return userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.BOT_TOURNAMENT_COMPLETED){
-                return userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.BOT_OFFER_RECEIVED){
-                return notification.recipient == account
+            if (type == NotificationType.BOT_OFFER_CREATED){
+                return notification.owner == account
             }
             if (type == NotificationType.BOT_OFFER_ACCEPTED){
                 return notification.sender == account

@@ -96,6 +96,22 @@ export enum Country {
     SWITZERLAND,
 }
 
+export interface Challenge {
+    id: string,
+    challenger: string,
+    challenged: string,
+    timestamp: number,
+}
+
+export interface BotOffer {
+    offerId: string,
+    botId: string,
+    sender: string,
+    owner: string,
+    token: string,
+    price: number,
+}
+
 export interface Balance {
     token: string,
     amount: number,
@@ -114,6 +130,7 @@ export interface BaseProfile {
     elo: number,
     games: Game[],
     nationality: Country,
+    //challenges: Challenge[],
 }
 
 export interface UserProfile extends BaseProfile { 
@@ -123,6 +140,7 @@ export interface UserProfile extends BaseProfile {
 
 export interface BotProfile extends BaseProfile {
     owner: string,
+    //offers: BotOffer[],
     autoBattleEnabled: boolean,
     autoMaxWagerAmount: number,
     autoWagerTokenAddress: string,

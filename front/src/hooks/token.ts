@@ -93,7 +93,7 @@ export function useTokenBalance(token: Token, address: string | null | undefined
     return balance
 }
 
-export function useTokenPortalBalance(token: Token, address: string) : number | string {
+export function useTokenPortalBalance(token: Token, address: string) : number {
     
     const balances = {}
     console.log("balances: ", balances)

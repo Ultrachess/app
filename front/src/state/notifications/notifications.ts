@@ -237,9 +237,9 @@ export type Notification =
     GameCompletedNotification | 
     GameWagerNotification | 
     GameBettingClosedNotification | 
+    ChallengeCreatedNotification |
     ChallengeAcceptedNotification | 
     ChallengeDeclinedNotification | 
-    ChallengeRecievedNotification | 
     TournamentJoinedNotification | 
     TournamentCompletedNotification | 
     TournamentMatchCreatedNotification | 
@@ -247,9 +247,9 @@ export type Notification =
     TournamentRoundCompletedNotification | 
     BotGameCreatedNotification | 
     BotGameCompletedNotification | 
-    BotOfferReceivedNotification | 
     BotOfferAcceptedNotification | 
     BotOfferDeclinedNotification | 
+    BotOfferCreatedNotification |
     ActionNotification;
 
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Text } from "./Text";
 import { useActionCreator } from "../state/game/hooks";
 import { TransactionType, AcceptChallengeTransactionsInfo, DeclineChallengeTransactionsInfo } from "../common/types";
-TransactionType
 
 export default ({challengeId, accept}: {challengeId: string, accept: boolean}) => {
     const addAction = useActionCreator()
@@ -14,7 +13,7 @@ export default ({challengeId, accept}: {challengeId: string, accept: boolean}) =
             type: accept ? TransactionType.ACCEPT_CHALLENGE : TransactionType.DECLINE_CHALLENGE,
             challengeId,
         }
-        const [action, wait] = await addAction(transactionInfo)
+        const [actionId, wait] = await addAction(transactionInfo)
         await wait
         setWaiting(false)
     }

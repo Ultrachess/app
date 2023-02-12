@@ -11,6 +11,9 @@ import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
 import { useActionCreator } from '../state/game/hooks';
 import { TransactionType } from '../common/types';
+import Address from './Address';
+import { useProfile } from '../state/game/hooks';
+import { BotProfile } from '../state/game/types';
 
 export default ({triggerElement, botId}) => {
     const { chainId, account } = useWeb3React()
@@ -18,18 +21,21 @@ export default ({triggerElement, botId}) => {
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const portalBalance = useTokenPortalBalance(token, account) 
-    const balance = useTokenBalance(token, account)
 
     const addAction = useActionCreator()
+
+    //const bot: BotProfile = useProfile(botId)
 
     const handleOffer = async () => {
       const [approvalActionId, wait] = await addAction({
         type: TransactionType.CREATE_OFFER,
-        tokenAddress: token.address,
-        amount: amount,
+        botId: botId,
+        token: token.address,
+        price: amount,
       })
-      await wait()
+      await wait
     }
+
 
     console.log("amount", amount)
     return (
@@ -40,19 +46,17 @@ export default ({triggerElement, botId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Deposit funds</DialogTitle>
+            <DialogTitle>Create offer for <Address address={botId} /></DialogTitle>
             <DialogDescription>
-              Deposit funds to Cartesi's ERC-20 portal. 
-              This will give the Ultrachess dApp access to your funds, allowing you to interact with the dApp as intended.
-              You can withdraw your funds at any time.
+              You are offering to buy this bot for <AssetDisplay tokenAddress={token?.address} balance={amount} isL2={true}/>. 
+              Make sure to deposit funds to the portal first if you have not done so.
             </DialogDescription>
             
             <Fieldset>
-                <Label>Amount</Label>
+                <Label>Price</Label>
                 <RightSlot>
-                    <AssetDisplay tokenAddress={token?.address} balance={balance - amount}/> 
-                    <Text>→</Text> 
-                    <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
+                  <Text>Balance if offer accepted:</Text>
+                  <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
                 </RightSlot>
             </Fieldset>
             <Fieldset>
@@ -67,9 +71,9 @@ export default ({triggerElement, botId}) => {
               <Dialog.Close asChild>
                 <Button 
                   variant="green"
-                  onClick={handleDeposit}
+                  onClick={handleOffer}
                 >
-                  Deposit
+                  Make offer
                 </Button>
               </Dialog.Close>
             </Flex>

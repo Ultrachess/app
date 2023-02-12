@@ -6,6 +6,9 @@ import { useProfile } from '../state/game/hooks';
 import { Profile, ProfileType, BotProfile, UserProfile } from '../state/game/types';
 import Address from './Address';
 import AssetDisplay from './AssetDisplay';
+import ModalCreateChallenge from './ModalCreateChallenge';
+import Button from './Button';
+import ModalCreateOffer from './ModalCreateOffer';
 
 
 const BotProfileCard = ({profile}: {profile: BotProfile}) => {
@@ -33,6 +36,10 @@ const BotProfileCard = ({profile}: {profile: BotProfile}) => {
                       <Flex css={{ gap: 5 }}>
                           <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
                       </Flex>
+                    </Flex>
+                    <Flex css={{ gap: 15 }}>
+                      <ModalCreateChallenge triggerElement={<Button>Challenge</Button>} playerId={profile.id} />
+                      <ModalCreateOffer triggerElement={<Button>Offer</Button>} botId={profile.id} />
                     </Flex>
                 </Flex>
                 </Flex>
@@ -76,6 +83,9 @@ const UserProfileCard = ({profile}: {profile: UserProfile}) => {
                     ))}
                   </Flex>
             </Flex>
+            <Flex css={{ gap: 15 }}>
+              <ModalCreateChallenge triggerElement={<Button>Challenge</Button>} playerId={profile.id} />
+            </Flex>
               
           </Flex>
         </Flex>
@@ -85,7 +95,7 @@ const UserProfileCard = ({profile}: {profile: UserProfile}) => {
     )
 }
 
-const HoverCardDemo = ({triggerElement, profileId}) =>{
+const ProfileHover = ({triggerElement, profileId}) =>{
     const profile = useProfile(profileId);
     return (
 
@@ -189,4 +199,4 @@ const Text = styled('div', {
 
 const Flex = styled('div', { display: 'flex' });
 
-export default HoverCardDemo;
+export default ProfileHover;
