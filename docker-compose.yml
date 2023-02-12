@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   hardhat:
-    image: cartesi/rollups-hardhat:0.7.0
+    image: juztamau5/rollups-hardhat:devel
     command:
       [
         "node",
