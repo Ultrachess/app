@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   hardhat:
-    image: juztamau5/rollups-hardhat:devel
+    image: cartesi/rollups-hardhat:0.7.0
     command:
       [
         "node",
@@ -28,24 +28,6 @@ services:
       interval: 30s
       timeout: 30s
       retries: 5
-    volumes:
-      - ./deployments:/app/deployments
-      - ./export:/opt/cartesi/share/blockchain
-
-  ultrachess_deployer:
-    image: juztamau5/ultrachess-deployer:devel
-    restart: on-failure
-    depends_on:
-      hardhat:
-        condition: service_healthy
-    command:
-      [
-        "deploy",
-        "--network",
-        "docker",
-        "--export",
-        "/opt/cartesi/share/blockchain/localhost-ultrachess.json",
-      ]
     volumes:
       - ./deployments:/app/deployments
       - ./export:/opt/cartesi/share/blockchain
@@ -170,8 +152,6 @@ services:
       hardhat:
         condition: service_healthy
       deployer:
-        condition: service_completed_successfully
-      ultrachess_deployer:
         condition: service_completed_successfully
     command:
       [
