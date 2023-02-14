@@ -7,18 +7,23 @@ import { Row } from 'react-bootstrap';
 import ProfileImage from "./ProfileImage";
 import { truncateAddress } from "../ether/utils";
 import { Text } from "./Text";
+import ProfileHover from './ProfileHover';
 
-export default (props) => {
-  const { value } = props
+export default ({value, hoverable = false}) => {
   const isBot = useMemo(()=>!value.includes("0x"))
-  return (
+  const temp = 
     <div className='addressView'>
       <Link to={ (isBot? "/bot/":"/users/") + value}>
         <Row>
-          <ProfileImage address={address} />
-          <Text bold>{truncateAddress(address)}</Text>
+          <ProfileImage address={value} />
+          <Text bold>{truncateAddress(value)}</Text>
         </Row>
       </Link>
     </div>
+
+  return (
+    <>
+      {hoverable ? <ProfileHover triggerElement={temp} profileId={value}/>: temp}
+    </>
   );
 }

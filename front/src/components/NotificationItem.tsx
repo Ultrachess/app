@@ -21,13 +21,13 @@ export default ({ notification }: {notification: Notification}) => {
     case NotificationType.GAME_JOINED:
       title = `Someone joined your game`
       description = <>
-        Player <Address value={notification.playerId} /> has joined your game <AddressGame id={notification.gameId} />
+        Player <Address value={notification.playerId} hoverable={true}  /> has joined your game <AddressGame id={notification.gameId} />
       </>;
       break;
     case NotificationType.GAME_MOVE:
       title = 'Someone made a move';
       description = <>
-        Player <Address value={notification.playerId} /> has made a move in your game <AddressGame id={notification.gameId} />
+        Player <Address value={notification.playerId} hoverable={true}  /> has made a move in your game <AddressGame id={notification.gameId} />
       </>
       break;
     case NotificationType.GAME_COMPLETED:
@@ -42,7 +42,7 @@ export default ({ notification }: {notification: Notification}) => {
       title = 'Game Wager';
       let { wager, token } = notification;
       description = <>
-        <Address value={notification.playerId} /> has wagered <AssetDisplay tokenAddress={token} balance={wager} isL2={true}/> in game <AddressGame id={notification.gameId} />
+        <Address value={notification.playerId} hoverable={true}  /> has wagered <AssetDisplay tokenAddress={token} balance={wager} isL2={true}/> in game <AddressGame id={notification.gameId} />
       </>;
       break;
     case NotificationType.GAME_BETTING_CLOSED:
@@ -54,7 +54,7 @@ export default ({ notification }: {notification: Notification}) => {
     case NotificationType.CHALLENGE_ACCEPTED:
       title = 'Challenge accepted';
       description = <>
-        Player <Address value={notification.playerId} /> has accepted your challenge. Join the game <AddressGame id={notification.gameId} />
+        Player <Address value={notification.playerId} hoverable={true}  /> has accepted your challenge. Join the game <AddressGame id={notification.gameId} />
       </>
       break;
     case NotificationType.CHALLENGE_DECLINED:

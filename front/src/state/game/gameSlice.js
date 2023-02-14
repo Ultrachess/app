@@ -47,6 +47,8 @@ export const gameSlice = createSlice({
         lastProcessedBlock: 0,
         lastStepTimestamp: 0,
         actionList: [],
+        challenges: {},
+        marketplace: {},
     },
     reducers: {
         setLastProcessedBlock: (state, action) => {
@@ -76,12 +78,15 @@ export const gameSlice = createSlice({
             state.bots = action.payload
         },
         setAppState: (state, action) => {
-            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp, tournaments} = action.payload
+            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp, tournaments, challenges, marketplace} = action.payload
             if(
                 !deepEqual(state.elo, elo) ||
                 !deepEqual(state.games, game) ||
                 !deepEqual(state.bots, bots) ||
-                !deepEqual(state.accounts, accounts)
+                !deepEqual(state.accounts, accounts) ||
+                !deepEqual(state.tournaments, tournaments) ||
+                !deepEqual(state.challenges, challenges) ||
+                !deepEqual(state.marketplace, marketplace)
             ){ 
                 state.cache.isUpToDate = !state.cache.isUpToDate
                 console.log("is not up to date, updating")
@@ -95,6 +100,8 @@ export const gameSlice = createSlice({
             state.lastProcessedBlock = lastProcessedBlock
             state.lastStepTimestamp = lastStepTimestamp
             state.actionList = actionList
+            state.challenges = challenges
+            state.marketplace = marketplace
         },
         updateGame: (state, action) => {
             var {id, game} = action.payload

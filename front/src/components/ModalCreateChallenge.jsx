@@ -18,19 +18,18 @@ export default ({triggerElement, playerId}) => {
     const [amount, setAmount ] = useState(0)
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
-    const portalBalance = useTokenPortalBalance(token, account) 
-    const balance = useTokenBalance(token, account)
+    const balance = useTokenPortalBalance(token, account) 
 
     const addAction = useActionCreator()
 
-    const handleOffer = async () => {
+    const handleChallenge = async () => {
       const [approvalActionId, wait] = await addAction({
         type: TransactionType.CREATE_CHALLENGE,
         recipient: playerId,
         amount: amount,
         token: token.address,
       })
-      await wait()
+      await wait
     }
 
     console.log("amount", amount)
@@ -45,6 +44,7 @@ export default ({triggerElement, playerId}) => {
             <DialogTitle>Challenge <Address address={playerId}/></DialogTitle>
             <DialogDescription>
               This will send a challenge request to <Address address={playerId}/> and if accepted, a game will be created.
+              This game will have a wager of {amount} USDC.
             </DialogDescription>
           
             <Fieldset>
@@ -66,7 +66,7 @@ export default ({triggerElement, playerId}) => {
               <Dialog.Close asChild>
                 <Button 
                   variant="green"
-                  onClick={handleDeposit}
+                  onClick={handleChallenge}
                 >
                   Challenge
                 </Button>

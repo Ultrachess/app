@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
@@ -52,9 +52,11 @@ export function useProfile(id: string): Profile {
     const elo = useElo(id)
     const nationality = useNationality(id)
     const games = useUserGames(id)
+    const challenges = useRecievedChallenges(id)
 
     //bot only
     const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: ""}
+    const offers = bots[id] ? useOffersByBotId(id) : []
 
     //human only
     const balances = useBalances(id)
@@ -72,7 +74,9 @@ export function useProfile(id: string): Profile {
         owner,
         autoBattleEnabled,
         autoMaxWagerAmount,
-        autoWagerTokenAddress
+        autoWagerTokenAddress,
+        offers,
+        challenges,
     } : {
         type,
         id,
@@ -83,6 +87,7 @@ export function useProfile(id: string): Profile {
         games,
         balances,
         bots:userBots,
+        challenges,
     }
     return profile
 
@@ -101,6 +106,34 @@ export function useUserGames(id: string): Game[] {
     const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
     return Object.values(games).filter((game) => {
         return game.players.includes(id)
+    })
+}
+
+export function useRecievedChallenges(id: string): Challenge[] {
+    const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
+    return Object.values(challenges).filter((challenge) => {
+        return challenge.recipient == id
+    })
+}
+
+export function useUserSentChallenges(id: string): Challenge[] {
+    const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
+    return Object.values(challenges).filter((challenge) => {
+        return challenge.sender == id
+    })
+}
+
+export function useUserBotOffers(id: string): BotOffer[] {
+    const offers: {[offerIds: string]: BotOffer} = useAppSelector(state => state.game.marketplace)
+    return Object.values(offers).filter((offer) => {
+        return offer.owner == id
+    })
+}
+
+export function useOffersByBotId(id: string): BotOffer[] {
+    const offers: {[offerIds: string]: BotOffer} = useAppSelector(state => state.game.marketplace)
+    return Object.values(offers).filter((offer) => {
+        return offer.botId == id
     })
 }
 

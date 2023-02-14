@@ -98,8 +98,10 @@ export enum Country {
 
 export interface Challenge {
     id: string,
-    challenger: string,
-    challenged: string,
+    sender: string,
+    recipient: string,
+    token: string,
+    wager: number,
     timestamp: number,
 }
 
@@ -130,7 +132,7 @@ export interface BaseProfile {
     elo: number,
     games: Game[],
     nationality: Country,
-    //challenges: Challenge[],
+    challenges: Challenge[],
 }
 
 export interface UserProfile extends BaseProfile { 
@@ -140,7 +142,7 @@ export interface UserProfile extends BaseProfile {
 
 export interface BotProfile extends BaseProfile {
     owner: string,
-    //offers: BotOffer[],
+    offers: BotOffer[],
     autoBattleEnabled: boolean,
     autoMaxWagerAmount: number,
     autoWagerTokenAddress: string,

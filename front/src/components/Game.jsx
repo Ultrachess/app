@@ -260,7 +260,7 @@ export default () => {
     <div className="game">
         <div className="gameView">
           <Row justify="space-evenly">
-            <Address value={topAddress} />
+            <Address value={topAddress} hoverable={true} />
             <Text color="primary" className="tokenValue"> {wagerAmount}  {tokenName}</Text>
             {topAddressScore == undefined ? "" : topAddressWinAmount == 0 ? 
               <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
@@ -288,7 +288,7 @@ export default () => {
             }}
           />
           <Row justify="space-evenly">
-            <Address value={bottomAddress} />
+            <Address value={bottomAddress} hoverable={true}  />
             <Text color="primary" className="tokenValue">{wagerAmount}  {tokenName}</Text>
             {bottomAddressScore == undefined ? "" : bottomAddressWinAmount == 0 ? 
               <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
