@@ -15,18 +15,14 @@ import ModalNewDepositFunds from "./ModalNewDepositFunds";
 import {styled } from "@stitches/react";
 import { violet } from "@radix-ui/colors";
 import ModalNewCreateGame from "./ModalNewCreateGame";
+import Separator from "./ui/Separator";
+import { useAllActiveAndCompletedGamesSeparated } from "../state/game/hooks";
 
 export default () => {
-    var dispatch = useDispatch()
-    const games = useAppSelector(state => state.game.games);
-    const [mainItems, setMainItems] = React.useState([]);
-    const [createModalVisible, setCreateModalVisible] = React.useState(false)
-    const [depositModalVisible, setDepositModalVisible] = React.useState(false)
-
-    const handleShowCreateModal = () => {setCreateModalVisible(true)}
-    const handleShowDepositModal = () => {setDepositModalVisible(true)}
-    const handleCloseCreateModal = () => {setCreateModalVisible(false)}
-    const handleCloseDepositModal = () => {setDepositModalVisible(false)}
+    const { 
+        activeGames, 
+        completedGames 
+    } = useAllActiveAndCompletedGamesSeparated()
 
     return (
         <div className="body">
@@ -59,34 +55,40 @@ export default () => {
             
             <div className="content">
                 <div className="contentHolder">
-                    <div className="contentHeader">
-                        <Label>Active games</Label>
-                        <RightSlot>
-                            <ModalNewCreateGame triggerElement={
-                                <Button  onClick={handleShowCreateModal} shadow>
-                                    <Text>Create Game</Text>
-                                </Button>
-                            } />
-                            <Spacer x={1}/>
-                            <ModalNewDepositFunds triggerElement={
-                                <Button  iconRight={<FaCoins/>} onClick={handleShowDepositModal} >
-                                <Text>Deposit Funds</Text>
-                                </Button>
-                            } />
-                        </RightSlot>
+                    <div>
+                        <div className="contentHeader">
+                            <Label>Active games</Label>
+                            <RightSlot>
+                                <ModalNewCreateGame triggerElement={
+                                    <Button shadow>
+                                        <Text>Create Game</Text>
+                                    </Button>
+                                } />
+                                <Spacer x={1}/>
+                                <ModalNewDepositFunds triggerElement={
+                                    <Button  iconRight={<FaCoins/>}>
+                                    <Text>Deposit Funds</Text>
+                                    </Button>
+                                } />
+                            </RightSlot>
+                        </div>
+                        <Separator/>
+                        <GameList games={activeGames}/>
                     </div>
-                
-                <Card shadow={true} css={{ width:"100%", height:"700px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
-                    <Card.Header>
-                        <Row justify="center">
-                            <Text>Recent games</Text>
-                        </Row>
-                    </Card.Header>
-                    <GameList games={games}/>
-                </Card>
+                    <div>
+                        <div className="contentHeader">
+                            <Label>Finished games</Label>
+                        </div>
+                        <Separator/>
+                        <GameList games={completedGames}/>
+                    </div>
+                    
+                    
                 </div>
             </div>
-        </div>    
+        </div>
+
+  
     );
 }
 

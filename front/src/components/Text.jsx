@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@stitches/react';
-import { violet, mauve, blueA, blackA} from '@radix-ui/colors';
+import { violet, mauve, blueA, blackA, greenA} from '@radix-ui/colors';
 
 export const Text = styled('div', {
     margin: 0,
@@ -27,6 +27,9 @@ export const Text = styled('div', {
         },
         yellow: {
             true: { color: blueA.blueA10 },
+        },
+        green: {
+            true: { color: greenA.greenA10 },
         },
         link: {
             true: { 

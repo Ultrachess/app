@@ -137,6 +137,34 @@ export function useOffersByBotId(id: string): BotOffer[] {
     })
 }
 
+export function useAllActiveAndCompletedGamesSeparated(): {activeGames: Game[], completedGames: Game[]} {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    const activeGames: Game[] = []
+    const completedGames: Game[] = []
+    Object.values(games).forEach((game) => {
+        if (game.isEnd) {
+            completedGames.push(game)
+        } else {
+            activeGames.push(game)
+        }
+    })
+    return {activeGames, completedGames}
+}
+
+export function useAllActiveGames(): Game[] {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    return Object.values(games).filter((game) => {
+        return !game.isEnd
+    })
+}
+
+export function useAllCompletedGames(): Game[] {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    return Object.values(games).filter((game) => {
+        return game.isEnd
+    })
+}
+
 //return list of games that you are in and are not completed
 export function useUserGameIds(id: string): string[] {
     const games = useAppSelector(state => state.game.games)
