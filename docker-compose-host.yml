@@ -2,9 +2,11 @@ version: "3"
 
 services:
   server_manager:
-    image: cartesi/host-server-manager:0.6.0
+    image: cartesi/host-server-manager:0.7.0
     ports:
       - "5004:5004"
+    environment:
+      - RUST_LOG=warn
 
   deployer:
     command: [
@@ -19,7 +21,5 @@ services:
         "--templateHash",
         "0x0000000000000000000000000000000000000000000000000000000000000000",
         "--outputFile",
-        "/deployments/localhost/dapp.address",
-        "--jsonFile",
         "/deployments/localhost/dapp.json",
       ]

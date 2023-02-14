@@ -92,7 +92,7 @@ With that in place, you can submit a deploy transaction to the Cartesi DApp Fact
 DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml up
 ```
 
-This will create a file at `./deployments/<network>/chessAppNew.address` with the deployed contract's address.
+This will create a file at `./deployments/<network>/chessAppNew.json` with the deployed contract's address.
 Once the command finishes, it is advisable to stop the docker compose and remove the volumes created when executing it.
 
 ```shell
@@ -130,7 +130,7 @@ export RPC_URL=<https://your.rpc.gateway>
 Then, inputs can be sent by specifying the DApp contract's address, as follows:
 
 ```shell
-yarn start input send --payload "Hello there" --addressFile path/to/chessAppNew/deployments/<network>/chessAppNew.address
+yarn start input send --payload "Hello there" --addressFile path/to/chessAppNew/deployments/<network>/chessAppNew.json
 ```
 
 Resulting notices can then be retrieved by querying the local Cartesi Node, as before:
@@ -148,8 +148,8 @@ This DApp's back-end is written in Python, so to run it in your machine you need
 In order to start the back-end, run the following commands in a dedicated terminal:
 
 ```shell
-python3 -m venv .env
-. .env/bin/activate
+python3 -m venv .venv
+. .venv/bin/activate
 pip install -r requirements.txt
 ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" python3 main.py
 ```
