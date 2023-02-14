@@ -12,7 +12,7 @@ import { Text } from "./Text";
 import AddressGame from "./AddressGame";
 import { DotIcon } from '@radix-ui/react-icons';
 import Flex from "./ui/Flex";
-import DateDisplay from "./Date";
+import DateDisplay from "./ui/Date";
 import AssetDisplay from "./AssetDisplay";
 
 
