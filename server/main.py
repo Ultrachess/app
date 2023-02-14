@@ -20,6 +20,7 @@ import string
 import traceback
 from eth_abi import decode_abi
 from times import set_timestamp
+import subprocess
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -32,6 +33,9 @@ rollup_address = "0xF119CC4Ed90379e5E0CC2e5Dd1c8F8750BAfC812"
 logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 lastProcessedBlock = 0
+
+# Initialize IPFS
+subprocess.run(['ipfs', 'init'])
 
 def format_to_input(index, sender, operation, value, success, timeStamp):
     data_set = {
