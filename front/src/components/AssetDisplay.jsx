@@ -16,7 +16,7 @@ import ProfileImage from "./ProfileImage";
 import TokenIcon from "./TokenIcon";
 import { SelectIcon } from "@radix-ui/react-select";
 
-export default ({tokenAddress, balance, isL2}) => {
+export default ({tokenAddress, balance, isL2=false, green=false, blue=false, grey=false, red=false}) => {
     const token = useTokenFromList(tokenAddress)
     const {account} = useWeb3React()
     //get account balance of token
@@ -29,10 +29,10 @@ export default ({tokenAddress, balance, isL2}) => {
 
     return (
         <Row justify="space-evenly" css={{padding:"0"}}>
-            <Text yellow={isL2} css={{padding:"0 5px"}}>{_balance?? "0.0"}</Text>
+            <Text blue={blue} green={green} grey={grey} red={red}  css={{padding:"0 5px"}}>{_balance?? "0.0"}</Text>
             <TokenIcon uri={token?.logoUri}/> 
-            <Text yellow={isL2} css={{paddingLeft:"5px"}} bold>{token?.name?? "undefined"}</Text>
-            {isL2 && <Text size={1} yellow={true} bold>L2</Text>}
+            <Text blue={blue} green={green} grey={grey} red={red} css={{paddingLeft:"5px"}} bold>{token?.name?? "undefined"}</Text>
+            {isL2 && <Text size={1} blue={blue} green={green} grey={grey} red={red} bold>L2</Text>}
         </Row> 
     );
 }

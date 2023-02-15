@@ -1,8 +1,11 @@
 import * as React from "react";
-import { Text, Grid, Card, Divider } from "@nextui-org/react";
+import { Grid, Card, Divider } from "@nextui-org/react";
 import { FaFastForward, FaFastBackward, FaForward, FaBackward } from "react-icons/fa";
 import { ImLoop } from "react-icons/im"
 import { Chess } from "chess.js";
+import Separator from "./ui/Separator";
+import List from "./List";
+import Flex from "./ui/Flex";
 import "./GameMovesView.css"
 
 export default (props) => {
@@ -17,10 +20,11 @@ export default (props) => {
             const element = moves[index];
             const element2 = moves[index+1] ?? ""
             content.push(
-                <tr key={index}>
-                    <td className = {flip ? 'highlight' : ''} key={index}>{element}</td>
-                    <td className = {!flip ? 'highlight' : ''} key = {index+1}>{element2}</td>
-                </tr>
+                <Flex key={index} css={{gap: 5}} >
+                    <Text underline = {highlightIndex == index} key={index}>{element}</Text>
+                    <Separator key={index+0.5} vertical={true} />
+                    <Text underline = {highlightIndex == index+1} key = {index+1}>{element2}</Text>
+                </Flex>
             );
             flip = !flip
         }
@@ -29,13 +33,8 @@ export default (props) => {
     };
 
     return (
-        <div className="movesView">
-            <Card 
-                shadow={false} 
-                bordered={true} 
-                css={{ height:"300px", width: "500px"}}
-            >
-                <Card.Header>
+        <Flex css={{gap:2, flexDirection:'column'}}>
+
                     <div className="movesHeader">
                         <ImLoop/>
                         <FaFastBackward onClick={firstMove}/>
@@ -43,21 +42,7 @@ export default (props) => {
                         <FaForward onClick={nextMove}/>
                         <FaFastForward onClick={lastMove}/>
                     </div>
-                </Card.Header>
-                <Divider/>
-                <Card.Body>
-                    <table css={{width:"100%"}}>
-                        <tbody>
-                            {getMoves()}
-                        </tbody>
-                    </table>
-                </Card.Body>
-                <Divider/>
-                <Card.Footer>
-
-                </Card.Footer>
-            </Card>
-            
-        </div> 
+                    <List items={getMoves()} />
+        </Flex> 
     );
 }

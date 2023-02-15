@@ -68,7 +68,7 @@ export interface Game {
     token : string,
     timestamp : number,
     resigner : string,
-    scores : number[],
+    scores : { [playerId: string]: number },
     bettingDuration : number,
     wagering: GameWagers
 }

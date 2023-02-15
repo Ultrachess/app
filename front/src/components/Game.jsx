@@ -12,11 +12,13 @@ import { joinGame, sendMove } from "../state/game/gameSlice";
 import { TransactionType } from "../common/types";
 import GameMovesView from "./GameMovesView";
 import GameTimer from "./GameTimer";
-import { useActionCreator, useActionsNotProcessed, useActions } from "../state/game/hooks";
+import { useActionCreator, useActionsNotProcessed, useActions, useGame } from "../state/game/hooks";
 import { useAllTransactions } from "../state/transactions/hooks";
 import { Row, Text } from "@nextui-org/react";
 import { useToken } from "../hooks/token";
 import { ethers } from "ethers";
+import Flex from "./ui/Flex";
+import AssetDisplay from "./AssetDisplay";
 
 export default () => {
   let { gameId } = useParams()
@@ -41,14 +43,11 @@ export default () => {
       .filter(({transactionInfo}) => transactionInfo.type == TransactionType.SEND_MOVE_INPUT)
       .map(({transactionInfo}) => transactionInfo.value)
   },[actionsNotProcessed])
-  const game = useMemo(()=> games[gameId], [games])
-  const tokenAddress = useMemo(()=>game.token, [game])
-  const token = useToken(tokenAddress)
-  const tokenName = token.symbol
-  const wagerAmount = useMemo(()=> ethers.utils.formatUnits(ethers.BigNumber.from(game.wagerAmount.toString())), [game])
-  const resigner = useMemo(() => game.resigner, [game])
-  const topAddressScore = useMemo(() => game.scores[topAddress])
-  const bottomAddressScore = useMemo(() => game.scores[bottomAddress])
+  const game = useGame(gameId)
+  const tokenAddress = game.token
+  const wagerAmount = game.wagerAmount
+  const topAddressScore = useMemo(() => game.scores[topAddress], [topAddress])
+  const bottomAddressScore = useMemo(() => game.scores[bottomAddress], [bottomAddress])
   console.log("topScore " + topAddressScore)
 
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
@@ -259,41 +258,56 @@ export default () => {
   return (
     <div className="game">
         <div className="gameView">
-          <Row justify="space-evenly">
-            <Address value={topAddress} hoverable={true} />
-            <Text color="primary" className="tokenValue"> {wagerAmount}  {tokenName}</Text>
-            {topAddressScore == undefined ? "" : topAddressWinAmount == 0 ? 
-              <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
-              <Text className="tokenValue" color="success">{"+"+wagerAmount}</Text>
-            }
-          </Row>
-          <Chessboard 
-            position={currentFen}
-            onPieceDrop={onDrop}
-            arePremovesAllowed={false}
-            boardOrientation={gameSide}
-            onMouseOverSquare={onMouseOverSquare}
-            onMouseOutSquare={onMouseOutSquare}
-            onSquareClick={onSquareClick}
-            onSquareRightClick={onSquareRightClick}
-            isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
-            customBoardStyle={{
-              borderRadius: '4px',
-              boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
-            }}
-            customSquareStyles={{
-              ...moveSquares,
-              ...optionSquares,
-              ...rightClickedSquares
-            }}
-          />
-          <Row justify="space-evenly">
-            <Address value={bottomAddress} hoverable={true}  />
-            <Text color="primary" className="tokenValue">{wagerAmount}  {tokenName}</Text>
-            {bottomAddressScore == undefined ? "" : bottomAddressWinAmount == 0 ? 
-              <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
-              <Text className="tokenValue" color="success">{"+"+wagerAmount}</Text>            }
-          </Row>
+          <Flex css={{gap: 5, flexDirection:'column'}}>
+            <Flex css={{justifyContent: 'space-between'}}>
+              <Address value={topAddress} />
+              <Flex css={{gap: 1}}>
+                {completed && <Text faded>+{topAddressScore}</Text>}
+                {topAddressWon ? 
+                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                 : topAddressLost ?
+                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : draw ?
+                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                }
+              </Flex>
+            </Flex>
+            <Chessboard 
+              position={currentFen}
+              onPieceDrop={onDrop}
+              arePremovesAllowed={false}
+              boardOrientation={gameSide}
+              onMouseOverSquare={onMouseOverSquare}
+              onMouseOutSquare={onMouseOutSquare}
+              onSquareClick={onSquareClick}
+              onSquareRightClick={onSquareRightClick}
+              isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
+              customBoardStyle={{
+                borderRadius: '4px',
+                boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
+              }}
+              customSquareStyles={{
+                ...moveSquares,
+                ...optionSquares,
+                ...rightClickedSquares
+              }}
+            />
+            <Flex css={{justifyContent: 'space-between'}}>
+              <Address value={topAddress} />
+              <Flex css={{gap: 1}}>
+                {completed && <Text faded>+{topAddressScore}</Text>}
+                {bottomAddressWon ? 
+                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                 : bottomAddressLost ?
+                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : draw ?
+                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                }
+              </Flex>
+            </Flex>
+          </Flex>
         </div>
         <div className="gameMovesView"> 
           <GameMovesView 
