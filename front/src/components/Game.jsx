@@ -36,6 +36,7 @@ export default () => {
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1)
+  const [isAutoPlay, setAutoPlay] = useState(false)
   const [currentFen, setCurrentFen] = useState()
   const actionsNotProcessed = useActionsNotProcessed()
   const pendingMoves = useMemo(()=>{
@@ -48,6 +49,12 @@ export default () => {
   const wagerAmount = game.wagerAmount
   const topAddressScore = useMemo(() => game.scores[topAddress], [topAddress])
   const bottomAddressScore = useMemo(() => game.scores[bottomAddress], [bottomAddress])
+  const completed = game.isEnd
+  const topAddressLost = topAddressScore == 0
+  const bottomAddressLost = bottomAddressScore == 0
+  const topAddressWon = topAddressScore == 1
+  const bottomAddressWon = bottomAddressScore == 1
+  const draw = topAddressScore == 0.5 && bottomAddressScore == 0.5
   console.log("topScore " + topAddressScore)
 
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
@@ -59,8 +66,22 @@ export default () => {
   const minPlayers = useMemo(()=> game.players.length > 1)
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
 
-  
 
+  //auto play and loop useEffect.
+  //checks if autoplay is on and automatically increments the move index every second
+  //asynchronously
+  useEffect(() => {
+    if(isAutoPlay){
+      var interval = setInterval(() => {
+        if(currentMoveIndex < gameState.history().length - 1)
+          setCurrentMoveIndex(currentMoveIndex + 1)
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isAutoPlay, currentMoveIndex])
+
+
+  //updates the game state when the game changes
   useEffect(() => {
       var isAlreadyInGame = playerIsInGame(games, address, gameId),
       canJoin = canJoinGame(games, gameId),
@@ -255,6 +276,10 @@ export default () => {
     setCurrentMoveIndex(currentMoveIndex + 1)
   }, [currentMoveIndex])
 
+  const autoPlay = useCallback(() => {
+    setAutoPlay(!autoPlayState)
+  }, [autoPlayState])
+
   return (
     <div className="game">
         <div className="gameView">
@@ -310,14 +335,19 @@ export default () => {
           </Flex>
         </div>
         <div className="gameMovesView"> 
-          <GameMovesView 
-            pgn={gameState.pgn()}
-            firstMove = {firstMove}
-            lastMove = {lastMove}
-            nextMove = {nextMove}
-            prevMove = {prevMove}
-            highlightIndex = {currentMoveIndex}
-          />
+          <Flex css={{flexDirection:'column', gap:5}}>
+            <GameBetsView wagers={wagers} />
+            <GameMovesView 
+              pgn={gameState.pgn()}
+              firstMove = {firstMove}
+              lastMove = {lastMove}
+              nextMove = {nextMove}
+              prevMove = {prevMove}
+              autoPlay = {autoPlay}
+              highlightIndex = {currentMoveIndex}
+              botMoveStats = {botMoveStats}
+            />
+          </Flex>
         </div>
     </div>
   );

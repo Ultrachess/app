@@ -57,6 +57,10 @@ export interface GameWagers {
     betsArray: Bet[],
 }
 
+export interface BotMoveStats {
+    
+
+
 export interface Game {
     id: string,
     players: string[],
