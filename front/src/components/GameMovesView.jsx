@@ -7,9 +7,17 @@ import Separator from "./ui/Separator";
 import List from "./List";
 import Flex from "./ui/Flex";
 import "./GameMovesView.css"
+//import radix icons
+import { 
+    LoopIcon,
+    DoubleArrowRightIcon, 
+    DoubleArrowLeftIcon,
+    ArrowRightIcon,
+    ArrowLeftIcon
+} from "@radix-ui/react-icons";
 
 export default (props) => {
-    const { pgn, firstMove, lastMove, nextMove, prevMove, highlightIndex } = props
+    const { pgn, firstMove, lastMove, nextMove, prevMove, highlightIndex , autoPlay, botMoveStats} = props
     var chess = new Chess()
     chess.load_pgn(pgn)
     var moves = chess.history()
@@ -21,7 +29,11 @@ export default (props) => {
             const element2 = moves[index+1] ?? ""
             content.push(
                 <Flex key={index} css={{gap: 5}} >
+                    <BotMoveStatisticsHoverable
+                     botMoveStat={botMoveStats[index]}
+                     triggerElement={
                     <Text underline = {highlightIndex == index} key={index}>{element}</Text>
+                    }/>
                     <Separator key={index+0.5} vertical={true} />
                     <Text underline = {highlightIndex == index+1} key = {index+1}>{element2}</Text>
                 </Flex>
@@ -34,15 +46,14 @@ export default (props) => {
 
     return (
         <Flex css={{gap:2, flexDirection:'column'}}>
-
-                    <div className="movesHeader">
-                        <ImLoop/>
-                        <FaFastBackward onClick={firstMove}/>
-                        <FaBackward onClick={prevMove}/>
-                        <FaForward onClick={nextMove}/>
-                        <FaFastForward onClick={lastMove}/>
-                    </div>
-                    <List items={getMoves()} />
+            <Flex css={{justifyContent:'space-evenly'}}>
+                <LoopIcon onClick={autoPlay}/>
+                <DoubleArrowLeftIcon onClick={firstMove}/>
+                <ArrowLeftIcon onClick={prevMove}/>
+                <ArrowRightIcon onClick={nextMove}/>
+                <DoubleArrowRightIcon onClick={lastMove}/>
+            </Flex>
+            <List items={getMoves()} />
         </Flex> 
     );
 }
