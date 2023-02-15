@@ -1,6 +1,6 @@
 {
   "fs": {
-    "files": ["server", "entrypoint.sh"],
-    "size": 128000
+    "files": ["bin", "entrypoint.sh", "server"],
+    "size": 256000
   }
 }

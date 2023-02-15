@@ -1,5 +1,6 @@
 #!/bin/sh
 # Copyright 2022 Cartesi Pte. Ltd.
+# Copyright 2023 Ultrachess team
 #
 # SPDX-License-Identifier: Apache-2.0
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -11,5 +12,33 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-set -e
-PYTHONPATH=/mnt/dapp/server/.venv/cross/lib/python3.10/site-packages rollup-init python3 server/main.py
+# Enable strict shell mode
+set -o errexit
+set -o nounset
+set -o pipefail
+
+################################################################################
+# Environement configuration
+################################################################################
+
+# The current Python version
+PYTHON_VERSION="3.10"
+
+################################################################################
+# Environement paths
+################################################################################
+
+# Get the absolute path to the entrypoint script
+SCRIPT_DIR="$(pwd)"
+
+# Add the "bin" subdirectory to PATH
+export PATH="${SCRIPT_DIR}/bin:${PATH}"
+
+# Add the Python cross environment to PYTHONPATH
+export PYTHONPATH="${SCRIPT_DIR}/server/.venv/cross/lib/python${PYTHON_VERSION}/site-packages"
+
+################################################################################
+# Entry point
+################################################################################
+
+rollup-init python3 server/main.py
