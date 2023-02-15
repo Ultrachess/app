@@ -1,8 +1,8 @@
 # syntax=docker.io/docker/dockerfile:1.4
 # layers for caching and versioning
-FROM cartesi/toolchain:0.11.0 as toolchain
-FROM cartesi/rootfs:0.14.1 as rootfs
-FROM cartesi/server-manager:0.4.2 as server-manager
+FROM cartesi/toolchain:0.12.0 as toolchain
+FROM cartesi/rootfs:0.15.0 as rootfs
+FROM cartesi/server-manager:0.5.0 as server-manager
 
 FROM rootfs as toolchain-python
 
@@ -20,7 +20,7 @@ RUN apt update \
     libssl-dev
 
 ENV PYTHON_VERSION=3.10
-ENV PYTHON_VERSION_FULL=3.10.1
+ENV PYTHON_VERSION_FULL=3.10.10
 ENV BUILD_PYTHON_PREFIX=/opt/build-python
 ENV HOST_PYTHON_PREFIX=/mnt/python-dapp
 

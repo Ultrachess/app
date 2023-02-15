@@ -32,8 +32,8 @@
     "urql": "^3.0.2"
   },
   "devDependencies": {
-    "@cartesi/rollups": "^0.6.1",
-    "@cartesi/token": "^1.7.0",
+    "@cartesi/rollups": "^0.8.2",
+    "@cartesi/token": "^1.8.0",
     "@graphql-codegen/cli": "^2.11.6",
     "@graphql-codegen/typed-document-node": "^2.2.5",
     "@graphql-codegen/typescript": "2.4.5",

@@ -29,7 +29,7 @@ services:
       timeout: 30s
       retries: 5
     volumes:
-      - ./deployments:/app/deployments
+      - ./deployments:/app/rollups/deployments
       - ./export:/opt/cartesi/share/blockchain
 
   ultrachess_deployer:
@@ -47,19 +47,15 @@ services:
         "/opt/cartesi/share/blockchain/localhost-ultrachess.json",
       ]
     volumes:
-      - ./deployments:/app/deployments
+      - ./deployments:/app/rollups/deployments
       - ./export:/opt/cartesi/share/blockchain
 
   rollups_dispatcher:
-    image: cartesi/rollups-dispatcher:0.7.0
+    image: cartesi/rollups-dispatcher:0.8.2
     command:
       [
         "--rd-dapp-contract-address-file",
-        "/deployments/localhost/dapp.address",
-        "--mm-endpoint",
-        "http://server_manager:5001",
-        "--mm-session-id",
-        "default_rollups_id",
+        "/deployments/localhost/dapp.json",
         "--rd-initial-epoch",
         "0",
         "--sc-grpc-endpoint",
@@ -72,8 +68,12 @@ services:
         "test test test test test test test test test test test junk",
         "--tx-chain-id",
         "31337",
+        "--tx-chain-is-legacy",
+        "${TX_LEGACY:-false}",
         "--tx-default-confirmations",
         "2",
+        "--redis-endpoint",
+        "redis://redis:6379",
       ]
     restart: always
     depends_on:
@@ -83,7 +83,7 @@ services:
         condition: service_completed_successfully
       state_server:
         condition: service_healthy
-      server_manager:
+      redis:
         condition: service_healthy
     environment:
       RUST_LOG: info
@@ -92,9 +92,8 @@ services:
       - ./export:/opt/cartesi/share/blockchain:ro
 
   state_server:
-    image: cartesi/rollups-state-server:0.7.0
-    command:
-      [
+    image: cartesi/rollups-state-server:0.8.2
+    command: [
         "--sf-genesis-block",
         "0x1",
         "--sf-safety-margin",
@@ -104,7 +103,7 @@ services:
         "--bh-ws-endpoint",
         "ws://hardhat:8545",
         "--bh-block-timeout",
-        "120",
+        "8", # just a few seconds more than the configured automatic interval mining
       ]
     restart: always
     healthcheck:
@@ -120,6 +119,39 @@ services:
     environment:
       RUST_LOG: info
 
+  server_manager_broker_proxy:
+    image: cartesi/rollups-server-manager-broker-proxy:0.8.2
+    command:
+      [
+        "--chain-id",
+        "31337",
+        "--dapp-contract-address-file",
+        "/deployments/localhost/dapp.json",
+        "--redis-endpoint",
+        "redis://redis:6379",
+        "--server-manager-endpoint",
+        "http://server_manager:5001",
+        "--session-id",
+        "default_rollups_id",
+      ]
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      redis:
+        condition: service_healthy
+      server_manager:
+        condition: service_healthy
+      deployer:
+        condition: service_completed_successfully
+    volumes:
+      - ./deployments:/deployments
+    environment:
+      RUST_LOG: info
+
   server_manager:
     restart: always
     ports:
@@ -132,7 +164,8 @@ services:
     volumes:
       - machine:/opt/cartesi/share/dapp-bin
     environment:
-      RUST_LOG: warn
+      - SERVER_MANAGER_LOG_LEVEL=warning
+      - REMOTE_CARTESI_MACHINE_LOG_LEVEL=info
 
   deployer:
     image: juztamau5/rollups-cli:devel
@@ -154,8 +187,6 @@ services:
         "--templateHashFile",
         "/opt/cartesi/share/dapp-bin/hash",
         "--outputFile",
-        "/deployments/localhost/dapp.address",
-        "--jsonFile",
         "/deployments/localhost/dapp.json",
       ]
     volumes:
@@ -196,7 +227,7 @@ services:
       ]
 
   rollups_inspect_server:
-    image: cartesi/rollups-inspect-server:0.7.0
+    image: cartesi/rollups-inspect-server:0.8.2
     command:
       [
         "--inspect-server-address",
@@ -213,14 +244,14 @@ services:
       server_manager:
         condition: service_healthy
     environment:
-      RUST_LOG: warn
+      RUST_LOG: info
 
   rollups_indexer:
-    image: cartesi/rollups-indexer:0.7.0
+    image: cartesi/rollups-indexer:0.8.2
     command:
       [
         "--dapp-contract-address-file",
-        "/deployments/localhost/dapp.address",
+        "/deployments/localhost/dapp.json",
         "--session-id",
         "default_rollups_id",
         "--initial-epoch",
@@ -248,13 +279,13 @@ services:
         condition: service_healthy
     environment:
       <<: *postgres-config
-      RUST_LOG: warn
+      RUST_LOG: info
     volumes:
       - ./deployments:/deployments
       - ./export:/opt/cartesi/share/blockchain
 
   query_server:
-    image: cartesi/query-server:0.7.0
+    image: cartesi/query-server:0.8.2
     ports:
       - "4000:4000"
     depends_on:
@@ -280,6 +311,20 @@ services:
     volumes:
       - database-data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:6-alpine
+    ports:
+      - 6379:6379
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis-data:/data
+
 volumes:
   machine: {}
   database-data: {}
+  redis-data: {}
