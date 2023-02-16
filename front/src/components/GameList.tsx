@@ -1,6 +1,6 @@
 import GameListItem from "./GameListItem";
 import { Game } from "../state/game/types";
-import List from "./List";
+import List from "./ui/List";
 
 export default ({games}: {games: Game[]}) => {
     const gameItems = games.map((game) => <GameListItem game={game} />)

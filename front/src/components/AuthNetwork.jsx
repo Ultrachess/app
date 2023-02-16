@@ -5,7 +5,7 @@ import { styled } from '@stitches/react';
 import { violet, mauve, blackA } from '@radix-ui/colors';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { toHex } from '../ether/utils';
-import {Text} from './Text';
+import {Text} from './ui/Text';
 import TokenIcon from './TokenIcon';
 
 const switchEthereumChain = async (chainId) => {

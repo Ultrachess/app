@@ -18,7 +18,7 @@ import { useTokenPortalBalance, useTokenFromList } from "../hooks/token";
 import * as RadioGroup from '@radix-ui/react-radio-group';
 
 import AddressGame from "./AddressGame";
-import List from "./List";
+import List from "./ui/List";
 import AssetDisplay from "./AssetDisplay";
 
 

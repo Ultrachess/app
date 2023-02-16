@@ -19,11 +19,13 @@ import { useToken } from "../hooks/token";
 import { ethers } from "ethers";
 import Flex from "./ui/Flex";
 import AssetDisplay from "./AssetDisplay";
+import { useTime } from "./ActionView";
 
 export default () => {
   let { gameId } = useParams()
   //const dispatch = useDispatch()
   const addAction = useActionCreator()
+  const now = useTime(1000)
   const games = useSelector(state => state.game.games);
   const accounts = useSelector(state => state.auth.accounts);
   const inputState = useSelector(state => state.game.currentInputState)
@@ -55,6 +57,15 @@ export default () => {
   const topAddressWon = topAddressScore == 1
   const bottomAddressWon = bottomAddressScore == 1
   const draw = topAddressScore == 0.5 && bottomAddressScore == 0.5
+  const winningId = useMemo(() => {
+    if(topAddressWon)
+      return topAddress
+    if(bottomAddressWon)
+      return bottomAddress
+    if(draw)
+      return "DRAW"
+    return null
+  }, [topAddressWon, bottomAddressWon])
   console.log("topScore " + topAddressScore)
 
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
@@ -285,7 +296,10 @@ export default () => {
         <div className="gameView">
           <Flex css={{gap: 5, flexDirection:'column'}}>
             <Flex css={{justifyContent: 'space-between'}}>
-              <Address value={topAddress} />
+              <Flex css={{gap: 1}}>
+                <Address value={topAddress} />
+                {topAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedMoveFromIndex(currentMoveIndex)]} />}
+              </Flex>
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
                 {topAddressWon ? 
@@ -319,7 +333,10 @@ export default () => {
               }}
             />
             <Flex css={{justifyContent: 'space-between'}}>
-              <Address value={topAddress} />
+              <Flex css={{gap: 1}}>
+                <Address value={topAddress} />
+                {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedMoveFromIndex(currentMoveIndex)]} />}
+              </Flex>
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
                 {bottomAddressWon ? 
@@ -336,7 +353,11 @@ export default () => {
         </div>
         <div className="gameMovesView"> 
           <Flex css={{flexDirection:'column', gap:5}}>
-            <GameBetsView wagers={wagers} />
+            <GameWagersView 
+              winningId={winningId}
+              wagers={game.wagering} 
+              now = {now}
+            />
             <GameMovesView 
               pgn={gameState.pgn()}
               firstMove = {firstMove}
@@ -345,7 +366,7 @@ export default () => {
               prevMove = {prevMove}
               autoPlay = {autoPlay}
               highlightIndex = {currentMoveIndex}
-              botMoveStats = {botMoveStats}
+              botMoveStats = {game.botMoveStats}
             />
           </Flex>
         </div>

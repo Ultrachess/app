@@ -4,7 +4,7 @@ import { FaFastForward, FaFastBackward, FaForward, FaBackward } from "react-icon
 import { ImLoop } from "react-icons/im"
 import { Chess } from "chess.js";
 import Separator from "./ui/Separator";
-import List from "./List";
+import List from "./ui/List";
 import Flex from "./ui/Flex";
 import "./GameMovesView.css"
 //import radix icons
@@ -29,13 +29,17 @@ export default (props) => {
             const element2 = moves[index+1] ?? ""
             content.push(
                 <Flex key={index} css={{gap: 5}} >
-                    <BotMoveStatisticsHoverable
+                    <GameBotMoveStatisticsHoverable
                      botMoveStat={botMoveStats[index]}
                      triggerElement={
-                    <Text underline = {highlightIndex == index} key={index}>{element}</Text>
+                        <Text underline = {highlightIndex == index} key={index}>{element}</Text>
                     }/>
                     <Separator key={index+0.5} vertical={true} />
-                    <Text underline = {highlightIndex == index+1} key = {index+1}>{element2}</Text>
+                    <GameBotMoveStatisticsHoverable
+                        botMoveStat={botMoveStats[index+1]}
+                        triggerElement={
+                        <Text underline = {highlightIndex == index+1} key = {index+1}>{element2}</Text>
+                    }/>
                 </Flex>
             );
             flip = !flip

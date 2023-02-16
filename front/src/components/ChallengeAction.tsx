@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text } from "./Text";
+import { Text } from "./ui/Text";
 import { useActionCreator } from "../state/game/hooks";
 import { TransactionType, AcceptChallengeTransactionsInfo, DeclineChallengeTransactionsInfo } from "../common/types";
 

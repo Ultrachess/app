@@ -5,7 +5,7 @@ import { Spacer, Button } from "@nextui-org/react";
 import "./Navbar.css"
 import { Link } from "react-router-dom";
 import logo from "../assets/horse.png"
-import { Text } from "./Text";
+import { Text } from "./ui/Text";
 
 export default () => {
   const [mainItems, setMainItems] = React.useState([]);

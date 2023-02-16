@@ -31,9 +31,22 @@ class Bot:
         #logger.info("bot: processing chess board: " + board.fen())
         time = (int(timeStamp) % 10)/1000.0
         logger.info("running bot with time: " + str(time))
+        botMoveStat = {}
+        #get bot move statistics such as time, depth, nodes, score
         result = self.engine.play(board, chess.engine.Limit(time=time))
+        botMoveStat["depth"] = result.info["depth"]
+        botMoveStat["seldepth"] = result.info["seldepth"]
+        botMoveStat["time"] = result.info["time"]
+        botMoveStat["nodes"] = result.info["nodes"]
+        botMoveStat["pv"] = result.info["pv"]
+        botMoveStat["score"] = result.info["score"]
+        botMoveStat["nps"] = result.info["nps"]
+        botMoveStat["tbhits"] = result.info["tbhits"]
+        botMoveStat["sbhits"] = result.info["sbhits"]
+        botMoveStat["cpuload"] = result.info["cpuload"]
+
         move = result.move
-        return move.uci()
+        return (move.uci(), botMoveStat)
 
     def getState(self):
         return {
@@ -119,8 +132,8 @@ class BotManager:
             bot = deps.botFactory.bots[botId]
             #process move
             board = game.state.board()
-            uci = bot.run(board, timestamp)
-            game.move(botId, timestamp, uci)
+            (uci, botMoveStat) = bot.run(board, timestamp)
+            game.move(botId, timestamp, uci, botMoveStat)
     
     def __matchMake(self, sender, timestamp, rand, factory, matchmaker):
         bots = factory.bots

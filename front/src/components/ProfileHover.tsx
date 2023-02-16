@@ -7,7 +7,7 @@ import { Profile, ProfileType, BotProfile, UserProfile } from '../state/game/typ
 import Address from './Address';
 import AssetDisplay from './AssetDisplay';
 import ModalCreateChallenge from './ModalCreateChallenge';
-import Button from './Button';
+import Button from './ui/Button';
 import ModalCreateOffer from './ModalCreateOffer';
 
 

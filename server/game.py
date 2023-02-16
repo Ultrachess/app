@@ -28,6 +28,7 @@ class Game:
         self.resigner = None
         self.scores = {}
         self.bettingDuration = duration
+        self.botMoveStats = []
         
 
     def __isInGame(self, address):
@@ -172,7 +173,7 @@ class Game:
         self.handleEnd()
         return True
 
-    def move(self, sender, timestamp, moveString):
+    def move(self, sender, timestamp, moveString, botMoveStat=None):
         #logger.info("isMoving now" + moveString)
         try:
             #Determine if player can move
@@ -191,6 +192,7 @@ class Game:
             if(canMove):
                 #Handle move
                 self.state = self.state.add_variation(newMove)
+                self.botMoveStats.append(botMoveStat)
                 #Send end game notice
                 isGameEnd = self.isGameEnd()
                 if isGameEnd:
@@ -234,8 +236,8 @@ class Game:
 
             #Fetch game move and run
             board = self.state.board()
-            uci = bot.run(board, timestamp)
-            self.move(botId, timestamp, uci)
+            (uci, botMoveStat) = bot.run(board, timestamp)
+            self.move(botId, timestamp, uci, botMoveStat)
 
     
     ##def runMatches(self, matchCount):
@@ -255,5 +257,6 @@ class Game:
             "resigner": self.resigner,
             "scores": self.scores,
             "bettingDuration": self.bettingDuration,
-            "wagering": deps.betManager.games[self.id] if self.id in deps.betManager.games else {}
+            "wagering": deps.betManager.games[self.id] if self.id in deps.betManager.games else {},
+            "botMoveStats": self.botMoveStats
         }

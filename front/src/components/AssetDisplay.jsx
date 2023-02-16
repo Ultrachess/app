@@ -10,7 +10,7 @@ import { useTokenFromList, useTokenFromNetwork } from "../hooks/token";
 import { useActionCreator } from "../state/game/hooks";
 import { TransactionType } from "../common/types";
 import { useWeb3React } from "@web3-react/core";
-import { Text } from "./Text";
+import { Text } from "./ui/Text";
 import Profile from "./Profile";
 import ProfileImage from "./ProfileImage";
 import TokenIcon from "./TokenIcon";

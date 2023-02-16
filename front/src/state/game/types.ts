@@ -58,8 +58,17 @@ export interface GameWagers {
 }
 
 export interface BotMoveStats {
-    
-
+    depth: number
+    seldepth: number
+    time: number
+    nodes: number
+    pv: string[]
+    score: number
+    nps: number
+    tbhits: number
+    sbhits: number
+    cpuload: number
+}
 
 export interface Game {
     id: string,
@@ -75,6 +84,7 @@ export interface Game {
     scores : { [playerId: string]: number },
     bettingDuration : number,
     wagering: GameWagers
+    botMoveStats: BotMoveStats[]
 }
 
 //enum of all countries
