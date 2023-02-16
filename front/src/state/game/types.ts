@@ -49,9 +49,7 @@ export interface GameWagers {
         }
     },
     pots: {
-        [winningId: string]: {
-            [playerId: string]: Number
-        }
+        [winningId: string]: number
     },
     totalPot: number,
     betsArray: Bet[],
