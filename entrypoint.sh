@@ -41,4 +41,4 @@ export PYTHONPATH="${SCRIPT_DIR}/server/.venv/cross/lib/python${PYTHON_VERSION}/
 # Entry point
 ################################################################################
 
-rollup-init python3 server/main.py
+cd server && rollup-init python3 main.py
