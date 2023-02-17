@@ -39,7 +39,8 @@ export default () => {
     const activeGames = games.filter((game) => game.isEnd === false)
     const pastGames = games.filter((game) => game.isEnd === true)
 
-
+    //get highest offer price
+    const highestOffer = offers.reduce((prev, current) => (prev.price > current.price) ? prev : current)
 
     const isOwner = account === owner
     return (
@@ -58,6 +59,10 @@ export default () => {
                     <Flex css={{ gap: 2 , flexDirection:'column'}}>
                         <Text faded>From</Text>
                         <Text>🇦🇱</Text>
+                    </Flex>
+                    <Flex css={{ gap: 2, flexDirection:'column' }}>
+                        <Text faded>Current Price</Text>
+                        {highestOffer === undefined ? <Text>0</Text> : <AssetDisplay balance={highestOffer.price} tokenAddress={highestOffer.token} isL2={true}/>}
                     </Flex>
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         <Text faded>created at</Text>
