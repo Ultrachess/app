@@ -143,7 +143,7 @@ export interface BaseProfile {
     avatar: string,
     elo: number,
     games: Game[],
-    nationality: Country,
+    nationality: string,
     challenges: Challenge[],
 }
 
@@ -158,6 +158,7 @@ export interface BotProfile extends BaseProfile {
     autoBattleEnabled: boolean,
     autoMaxWagerAmount: number,
     autoWagerTokenAddress: string,
+    timestamp: number,
 }
 
 export type Profile = 

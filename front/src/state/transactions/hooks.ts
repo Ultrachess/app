@@ -92,3 +92,81 @@ export function useBlockNumber(): number | undefined {
 
     return blockNumber
 }
+
+//get latest block number from chain
+export function useLatestBlockNumber(): number | undefined {
+    const { provider } = useWeb3React()
+    const [blockNumber, setBlockNumber] = useState<number | undefined>()
+    useEffect(() => {
+        const getBlock = async () => {
+            try{
+                var result = await provider.getBlockNumber()
+                setBlockNumber(result)
+                await delay(1000)
+                await getBlock()
+            }
+            catch {
+                
+            }
+            
+        }
+
+        getBlock()
+            .catch(console.error)
+    }, [provider])
+
+    return blockNumber
+}
+
+//use latest timestamp from chain
+export function useLatestTimestamp(): number | undefined {
+    const { provider } = useWeb3React()
+    const [timestamp, setTimestamp] = useState<number | undefined>()
+    useEffect(() => {
+        const getBlock = async () => {
+            try{
+                var result = await provider.getBlock('latest')
+                setTimestamp(result.timestamp)
+                await delay(1000)
+                await getBlock()
+            }
+            catch {
+                
+            }
+            
+        }
+
+        getBlock()
+            .catch(console.error)
+    }, [provider])
+
+    return timestamp
+}
+
+//use latest timestamp and block number from chain
+//returns a tuple of [timestamp, blockNumber]
+export function useLatestTimestampAndBlockNumber(): [number | undefined, number | undefined] {
+    const { provider } = useWeb3React()
+    const [timestamp, setTimestamp] = useState<number | undefined>()
+    const [blockNumber, setBlockNumber] = useState<number | undefined>()
+    useEffect(() => {
+        const getBlock = async () => {
+            try{
+                var result = await provider.getBlock('latest')
+                setTimestamp(result.timestamp)
+                setBlockNumber(result.number)
+                await delay(1000)
+                await getBlock()
+            }
+            catch {
+                
+            }
+            
+        }
+
+        getBlock()
+            .catch(console.error)
+    }, [provider])
+
+    return [timestamp, blockNumber]
+}

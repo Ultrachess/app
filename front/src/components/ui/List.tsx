@@ -3,7 +3,7 @@ import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { styled } from '@stitches/react';
 import { violet, mauve, blackA } from '@radix-ui/colors';
 
-const List = (items) => (
+const List = ({items}) => (
   <ScrollAreaRoot>
     <ScrollAreaViewport>
       <Box style={{ padding: '15px 20px' }}>

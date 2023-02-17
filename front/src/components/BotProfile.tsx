@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, Divider, Card, Col, Row, Button } from "@nextui-org/react";
 import { useMatch, useParams } from "react-router-dom";
-import BotListView from "./BotListView";
+import BotListView from "./BotList";
 import { useAppSelector } from "../state/hooks";
 import GameList from "./GameList";
 import ModalManageBot from "./ModalManageBot";

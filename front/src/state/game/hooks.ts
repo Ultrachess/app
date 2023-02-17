@@ -19,8 +19,8 @@ import { ActionResolverObject } from "./updater";
 import { CONTRACTS } from '../../ether/contracts';
 import { CHAINS } from '../../ether/chains';
 
-export function useNationality(id): Country {
-    return Country.FRANCE
+export function useNationality(id): string {
+    return "US"
 }
 
 export function useAvatarImgUrl(id): string {
@@ -41,7 +41,7 @@ export function useElo(id): number {
     return elos[id] ? elos[id] : 0
 }
 
-export function useProfile(id: string): Profile {
+export function useProfile(id: string): BotProfile | UserProfile {
     const bots = useAppSelector(state => state.game.bots)
     const isBot = !id.includes("0x")
 
@@ -55,7 +55,7 @@ export function useProfile(id: string): Profile {
     const challenges = useRecievedChallenges(id)
 
     //bot only
-    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: ""}
+    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress, timestamp } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: "", timestamp: 0}
     const offers = bots[id] ? useOffersByBotId(id) : []
 
     //human only
@@ -77,6 +77,7 @@ export function useProfile(id: string): Profile {
         autoWagerTokenAddress,
         offers,
         challenges,
+        timestamp
     } : {
         type,
         id,
@@ -92,6 +93,19 @@ export function useProfile(id: string): Profile {
     return profile
 
 }
+
+//get all bot profiles
+export function useAllBots(): BotProfile[] {
+    const botBaseVals: {[botIds: string]: {owner: string, autoBattleEnabled: boolean, autoMaxWagerAmount: number, autoWagerTokenAddress: string, timestamp: number}} = useAppSelector(state => state.game.bots)
+    const botIds = Object.keys(botBaseVals)
+    const profiles: BotProfile[] = []
+    botIds.forEach((id) => {
+        const profile = useProfile(id)
+        profiles.push(profile as BotProfile)
+    })
+    return profiles
+}
+
 
 export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)

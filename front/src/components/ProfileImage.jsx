@@ -9,7 +9,7 @@ import { styled } from '@stitches/react';
 import { violet, blackA } from '@radix-ui/colors';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
-export default ({address}) => {
+export default ({address, diameter=20}) => {
   var dataUrlSrc = createIcon({ // All options are optional
       seed: address, // seed used to generate icon data, default: random
       color: '#dfe', // to manually specify the icon color, default: random
@@ -20,7 +20,7 @@ export default ({address}) => {
   const isBot = useMemo(()=>!dataUrlSrc.includes("0x"))
   return (
     <AvatarRoot>
-        <Jazzicon diameter={20} seed={jsNumberForAddress(address?? "0x")} />
+        <Jazzicon diameter={diameter} seed={jsNumberForAddress(address?? "0x")} />
       </AvatarRoot>
   );
 }

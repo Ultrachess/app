@@ -8,10 +8,11 @@ import ProfileImage from "./ProfileImage";
 import { truncateAddress } from "../ether/utils";
 import { Text } from "./ui/Text";
 import ProfileHover from './ProfileHover';
+import Flex from './ui/Flex';
 
-export default ({value, hoverable = false}) => {
+export default ({value, hoverable = false, isImageBig=false}) => {
   const isBot = useMemo(()=>!value.includes("0x"))
-  const temp = 
+  const addressView = 
     <div className='addressView'>
       <Link to={ (isBot? "/bot/":"/users/") + value}>
         <Row>
@@ -20,10 +21,25 @@ export default ({value, hoverable = false}) => {
         </Row>
       </Link>
     </div>
+  
+  //bigAddressView is used for the profile page
+  //It renders the ProfileImage component with a bigger size
+  //in a flex column
+  const bigAddressView =
+    <div className='addressView'>
+      <Link to={ (isBot? "/bot/":"/users/") + value}>
+        <Flex css={{flexDirection: "column", alignItems: "center"}}>
+          <ProfileImage address={value} diameter={100} />
+          <Text bold>{truncateAddress(value)}</Text>
+        </Flex>
+      </Link>
+    </div>
+
+  const component = isImageBig? bigAddressView: addressView;
 
   return (
     <>
-      {hoverable ? <ProfileHover triggerElement={temp} profileId={value}/>: temp}
+      {hoverable ? <ProfileHover triggerElement={component} profileId={value}/>: component}
     </>
   );
 }
