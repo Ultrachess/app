@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
@@ -41,7 +41,8 @@ export function useElo(id): number {
     return elos[id] ? elos[id] : 0
 }
 
-export function useProfile(id: string): BotProfile | UserProfile {
+
+export function useProfile(id: string): Profile | any{
     const bots = useAppSelector(state => state.game.bots)
     const isBot = !id.includes("0x")
 
@@ -211,9 +212,9 @@ export function useUserBots(id: string): BotProfile[] {
     })
 }
 
-export function useOwner(id: string): string {
+export function useOwner(id: string): string | undefined {
     const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
-    return bots[id] ? bots[id].owner : ""
+    return bots[id] ? bots[id].owner : undefined
 }
 
 //return list of all bots you own

@@ -7,7 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 import Address from './Address';
 import AddressGame from './AddressGame';
 import AssetDisplay from './AssetDisplay';
-import ChallengeAction from './ChallengeAction';
+import ChallengeAction from './HandleChallenge';
 import AddressTournament from './AddressTournament';
 import ActionItem from './ActionItem';
 

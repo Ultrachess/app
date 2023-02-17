@@ -62,7 +62,6 @@ export default ({ winningId, wagers, now, p1="undefined", p2="undefined", tokenA
             </Flex>
             <List
                 items={betItems}
-                emptyMessage="No bets placed yet"
             />
         </Flex>
 

@@ -124,6 +124,7 @@ export interface BotOffer {
     owner: string,
     token: string,
     price: number,
+    timestamp: number,
 }
 
 export interface Balance {
