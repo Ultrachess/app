@@ -107,6 +107,30 @@ export function useAllBots(): BotProfile[] {
     return profiles
 }
 
+//get all user profiles
+export function useAllUsers(): UserProfile[] {
+    const accounts: {[address: string]:{[token:string]: Balance}} = useAppSelector(state => state.game.accounts)
+    const accountIds = Object.keys(accounts)
+    const profiles: UserProfile[] = []
+    accountIds.forEach((id) => {
+        const profile = useProfile(id)
+        profiles.push(profile as UserProfile)
+    })
+    return profiles
+}
+
+export function useAllProfiles(rankByElo: boolean = false): BaseProfile[] {
+    const bots = useAllBots()
+    const users = useAllUsers()
+    const profiles = [...bots, ...users]
+    if(rankByElo) {
+        profiles.sort((a, b) => {
+            return b.elo - a.elo
+        })
+    }
+    return profiles
+}
+
 
 export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)
