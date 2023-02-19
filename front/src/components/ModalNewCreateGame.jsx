@@ -9,6 +9,9 @@ import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hoo
 import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
 import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
+import { useActionCreator } from '../state/game/hooks';
+import { TransactionType } from '../common/types';
+
 
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
@@ -18,6 +21,22 @@ export default ({triggerElement}) => {
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const portalBalance = useTokenPortalBalance(token, account) 
     const balance = useTokenBalance(token, account)
+
+    const addAction = useActionCreator()
+
+    const handleCreate = async () => {
+      const [approvalActionId, wait] = await addAction({
+        type: TransactionType.CREATE_GAME_INPUT,
+            name: "default",
+            isBot: false,
+            wagerTokenAddress: token.address,
+            wagerAmount: ethers.utils.parseUnits(amount),
+            bettingDuration,
+      })
+      await wait()
+
+    }
+
     console.log("amount", amount)
     return (
         <Dialog.Root>
@@ -62,7 +81,10 @@ export default ({triggerElement}) => {
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
-                <Button>Create</Button>
+                <Button
+                  variant="green"
+                  onClick={handleCreate}
+                  >Create</Button>
               </Dialog.Close>
             </Flex>
             <Dialog.Close asChild>

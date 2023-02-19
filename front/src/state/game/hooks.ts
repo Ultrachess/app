@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile, Tournament } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
@@ -227,6 +227,11 @@ export function useUserActiveGameIds(id: string): string[] {
         const game = games[gameId]
         return game.players.includes(id) && !game.isEnd
     })
+}
+
+export function useAllTournaments(): Tournament[] {
+    const tournaments: {[tournamentIds: string]: Tournament} = useAppSelector(state => state.game.tournaments)
+    return Object.values(tournaments)
 }
 
 export function useUserBots(id: string): BotProfile[] {
