@@ -1,7 +1,7 @@
 import * as React from "react";
 import BotUploader from "./BotUploader";
 import { useSelector } from "react-redux";
-import BotListView from "./BotList";
+import BotListView from "./list/BotList";
 import BotGameCreator from "./BotGameCreator";
 import { useAllBots } from "../state/game/hooks";
 import Flex from "./ui/Flex";

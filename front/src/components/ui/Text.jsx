@@ -31,6 +31,9 @@ export const Text = styled('div', {
         green: {
             true: { color: greenA.greenA10 },
         },
+        blue: {
+            true: { color: blueA.blueA10}
+        },
         link: {
             true: { 
                 color: blackA.blackA12, 

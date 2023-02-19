@@ -1,19 +1,16 @@
 import * as React from "react";
-import { Grid, Card, Divider, Row } from "@nextui-org/react";
-import UserItem from "./UserItem";
-import { useGame } from "../state/game/hooks";
-import { Game } from "../state/game/types";
-import { useTime } from "./ActionView";
+import { Game } from "../../state/game/types";
+import { useTime } from "../ActionView";
 import { useWeb3React } from "@web3-react/core";
-import Address from "./Address";
-import ModalPlaceBet from "./ModalPlaceBet";
-import Button from "./ui/Button";
-import { Text } from "./ui/Text";
-import AddressGame from "./AddressGame";
+import Address from "../Address";
+import ModalPlaceBet from "../ModalPlaceBet";
+import Button from "../ui/Button";
+import { Text } from "../ui/Text";
+import AddressGame from "../AddressGame";
 import { DotIcon } from '@radix-ui/react-icons';
-import Flex from "./ui/Flex";
-import DateDisplay from "./ui/Date";
-import AssetDisplay from "./AssetDisplay";
+import Flex from "../ui/Flex";
+import DateDisplay from "../ui/Date";
+import AssetDisplay from "../AssetDisplay";
 
 
 

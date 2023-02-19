@@ -175,7 +175,7 @@ class Tournament:
             "rounds": self.round_count,
             "amountOfWinners": self.amount_of_winners,
             "participantCount": self.participant_count,
-            "participant": participantsFormatted,
+            "participants": participantsFormatted,
             "owner": self.owner,
             "currentRound": self.__current_round,
             "matches": roundsFormatted,

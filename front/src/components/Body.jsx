@@ -2,7 +2,7 @@ import * as React from "react";
 import { Row, Grid, Spacer, Card, Pagination, Divider, Table} from "@nextui-org/react";
 import "./Body.css"
 import { FaArrowDown, FaCoins, FaPlay } from 'react-icons/fa';
-import GameList from "./GameList";
+import GameList from "./list/GameList";
 import { createGame } from "../state/game/gameSlice";
 import { useDispatch } from "react-redux";
 import FileUploader from "./BotUploader";

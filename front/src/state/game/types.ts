@@ -165,3 +165,35 @@ export interface BotProfile extends BaseProfile {
 export type Profile = 
     | UserProfile
     | BotProfile
+
+export enum TournamentType {
+    KNOCKOUT = "Knockout",
+}
+
+export interface TournamentMatch {
+    games: string[],
+    matchCount: number,
+    currentMatch: number,
+    left: string,
+    right: string,
+    leftScore: number,
+    rightScore: number,
+} 
+
+export interface TournamentRound {
+    matches: TournamentMatch[],
+}
+
+export interface Tournament {
+    id: string,
+    type: TournamentType,
+    rounds: number,
+    amountOfWinners: number,
+    participantCount: number,
+    participants: string[],
+    owner: string,
+    currentRound: number,
+    matches: TournamentRound[],
+    isOver: boolean,
+    isRoundOver: boolean,
+}

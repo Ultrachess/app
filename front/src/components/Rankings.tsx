@@ -1,7 +1,7 @@
 import * as React from "react";
 import BotUploader from "./BotUploader";
 import { useSelector } from "react-redux";
-import BotListView from "./BotList";
+import BotListView from "./list/BotList";
 import BotGameCreator from "./BotGameCreator";
 import { useAllProfiles } from "../state/game/hooks";
 import Flex from "./ui/Flex";
@@ -12,10 +12,10 @@ import Separator from "./ui/Separator";
 import { ZoomOutIcon, StitchesLogoIcon } from "@radix-ui/react-icons";
 import Button from "./ui/Button";
 import { violet } from "@radix-ui/colors";
-import ProfileList from "./ProfileList";
+import ProfileList from "./list/ProfileList";
 
 export default () => {
-  const profiles = useAllProfiles(true)
+  const profiles: any = useAllProfiles(true)
 
   return (
     <div className="body">
@@ -43,7 +43,7 @@ export default () => {
             <Separator />
             <ProfileList 
                 profiles={profiles}
-                showRanking={true}
+                showRank={true}
             />
           </div>
         </div>

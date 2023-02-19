@@ -1,14 +1,13 @@
 //React component that takes in BotProfile and renders it with multiple Flex components
 
-import Flex from "./ui/Flex";
-import DateDisplay from "./ui/Date";
-import AssetDisplay from "./AssetDisplay";
+import Flex from "../ui/Flex";
+import DateDisplay from "../ui/Date";
+import AssetDisplay from "../AssetDisplay";
 import { useWeb3React } from "@web3-react/core";
-import Address from "./Address";
-import { Text } from "./ui/Text";
+import Address from "../Address";
+import { Text } from "../ui/Text";
 import { DotIcon } from '@radix-ui/react-icons';
-import { BotProfile } from "../state/game/types";
-import { useProfile } from "../state/game/hooks";
+import { Profile, ProfileType, UserProfile } from "../../state/game/types";
 
 //function that converts country string to flag emoji
 //return flag emoji
@@ -19,7 +18,8 @@ const getFlag = (country: string) => {
     return emoji;
 }
 
-export default ({bot, rank = 0}: {bot: BotProfile, rank: number}) => {
+export default ({profile, rank = 0}: {profile: UserProfile, rank: number}) => {
+    const type = profile.type
     const { 
         id,
         name,
@@ -28,15 +28,9 @@ export default ({bot, rank = 0}: {bot: BotProfile, rank: number}) => {
         games,
         nationality,
         challenges,
-        owner,
-        offers,
-        autoBattleEnabled,
-        autoMaxWagerAmount,
-        autoWagerTokenAddress,
-        timestamp
-    } = bot
-
-
+        balances,
+        bots,
+    } = profile
 
     return (
         <Flex css={{gap: 5, justifyContent:'space-between'}}>
@@ -47,10 +41,6 @@ export default ({bot, rank = 0}: {bot: BotProfile, rank: number}) => {
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>id</Text>
                 <Address value={id} hoverable={true} />
-            </Flex>
-            <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>name</Text>
-                <Text>{name}</Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>elo</Text>
@@ -69,24 +59,12 @@ export default ({bot, rank = 0}: {bot: BotProfile, rank: number}) => {
                 <Text>{challenges.length}</Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>offers</Text>
-                <Text>{offers.length}</Text>
+                <Text faded>Amount of bots</Text>
+                <Text>{bots.length}</Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>owner</Text>
-                <Address value={owner} hoverable={true} />
-            </Flex>
-            <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>auto battle</Text>
-                <Text>{autoBattleEnabled ? "enabled" : "disabled"}</Text>
-            </Flex>
-            <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>auto max wager</Text>
-                <Text><AssetDisplay balance={autoMaxWagerAmount} tokenAddress={autoWagerTokenAddress} isL2={true}/></Text>
-            </Flex>
-            <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>created at</Text>
-                <DateDisplay current={timestamp} />
+                <Text faded>Balance</Text>
+                <AssetDisplay balance={balances[0].amount} tokenAddress={balances[0].token} />
             </Flex>
 
         </Flex>

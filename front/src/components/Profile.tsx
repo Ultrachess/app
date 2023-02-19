@@ -1,9 +1,9 @@
 import * as React from "react";
 import {Divider, Card, Col, Row, Button } from "@nextui-org/react";
 import { useMatch, useParams } from "react-router-dom";
-import BotListView from "./BotList";
+import BotListView from "./list/BotList";
 import { useAppSelector } from "../state/hooks";
-import GameList from "./GameList";
+import GameList from "./list/GameList";
 import ModalManageBot from "./ModalManageBot";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
@@ -15,7 +15,7 @@ import Flex from "./ui/Flex";
 import {Text} from "./ui/Text";
 import Date from "./ui/Date";
 import OffersList from "./OffersList";
-import ChallengesList from "./ChallengesList";
+import ChallengesList from "./list/ChallengesList";
 
 export default () => {
     let { botId } = useParams()
