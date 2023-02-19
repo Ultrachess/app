@@ -20,7 +20,7 @@ const tournamentTypes = [
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
-    const [tourneyType, setTourneyType] = useState(0)
+    const [tourneyType, setTourneyType] = useState(tournamentTypes[0])
     const [participants, setParticipants] = useState([])
     const [participantCount, setParticipantCount] = useState(400)
     const [currenSelectedParticipant, setCurrentSelectedParticipant] = useState(account)
@@ -95,14 +95,6 @@ export default ({triggerElement}) => {
                     <Button variant="green" onClick={() => addParticipant(currentSelectedParticipant)}>Add</Button>
                 </Flex>
                     
-            </Fieldset>
-            <Fieldset>
-                <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.value)}}>
-                </Input>
-                <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
-            </Fieldset>
-            <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ console.log(value); setAmount(value)}} />
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>

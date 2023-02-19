@@ -21,14 +21,20 @@ class ChallengeManager:
         self.challenges = {}
 
     def create(self, sender, timestamp, options):
+        #make sure all options are present
         if "recipient" not in options or "wager" not in options or "token" not in options:
             return False
 
-        owner_sender = sender if "0x" in sender else deps.botFactory.getOwner(sender)
+        #make sure sender has enough funds
+        owner_sender = sender if "0x" not in sender else deps.botFactory.getOwner(sender)
         hasFunds = deps.accountManager.getBalance(owner_sender, options["token"]) >= options["wager"]
         if not hasFunds:
             return False
+        #make sure not challenging yourself
+        if sender == options["recipient"]:
+            return False
         
+        #create challenge
         recipient = options["recipient"]
         wager = options["wager"]
         token = options["token"]
@@ -48,12 +54,19 @@ class ChallengeManager:
         return True
 
     def accept(self, sender, timestamp, challengeId):
+        #make sure challenge exists
+        if not challengeId in self.challenges:
+            return False
+        
+        #make sure sender has enough funds
         challenge = self.challenges[challengeId]
-        owner_sender = challenge["sender"] if "0x" in challenge["sender"] else deps.botFactory.getOwner(sender)
+        owner_sender = challenge["sender"] if "0x" not in challenge["sender"] else deps.botFactory.getOwner(sender)
         hasFunds = deps.accountManager.getBalance(owner_sender, challenge["token"]) >= challenge["wager"]
         if not hasFunds or challenge["recipient"] != sender:
             return False
 
+        #accept challenge if sender is recipient
+        #then create game
         if challenge["recipient"] == sender:
             send_notification(
                 ChallengeAcceptedNotification(

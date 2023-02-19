@@ -86,7 +86,7 @@ function getRelevantNotifications(
                 type == NotificationType.GAME_WAGER ||
                 type == NotificationType.GAME_BETTING_CLOSED
             ){
-                return userGames.includes(notification.gameId)
+                return userGames.includes(notification.gameId) || userBotGames.includes(notification.gameId)
             }
             if (type == NotificationType.CHALLENGE_ACCEPTED){
                 return notification.sender == account
