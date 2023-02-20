@@ -29,9 +29,9 @@ export default () => {
             
             <div className="header">
                 <div>
-                    <Text bold black size={"max"} css = {{textAlign:"center", marginBottom:"10px"}}>Ultrachess.org</Text>
+                    <Text superBold black size={"max"} css = {{textAlign:"center", marginBottom:"10px"}}>Ultrachess.org</Text>
                     <Text bold
-                        violet
+                        blue
                     >pre-alpha</Text> 
                 </div>
                 <LeftSlot><Label>Introduction</Label></LeftSlot>
@@ -72,14 +72,12 @@ export default () => {
                                 } />
                             </RightSlot>
                         </div>
-                        <Separator/>
                         <GameList games={activeGames}/>
                     </div>
                     <div>
                         <div className="contentHeader">
                             <Label>Finished games</Label>
                         </div>
-                        <Separator/>
                         <GameList games={completedGames}/>
                     </div>
                     

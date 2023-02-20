@@ -6,7 +6,7 @@ import { violet, mauve, blackA } from '@radix-ui/colors';
 const List = ({items}) => (
   <ScrollAreaRoot>
     <ScrollAreaViewport>
-      <Box style={{ padding: '15px 20px' }}>
+      <Box>
         {items.map((item, index) => (
           <ListItem key={index}>{item}</ListItem>
         ))}
@@ -25,12 +25,8 @@ const List = ({items}) => (
 const SCROLLBAR_SIZE = 10;
 
 const ScrollAreaRoot = styled(ScrollArea.Root, {
-  width: 200,
-  height: 225,
   borderRadius: 4,
   overflow: 'hidden',
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
-  backgroundColor: 'white',
 });
 
 const ScrollAreaViewport = styled(ScrollArea.Viewport, {
@@ -92,7 +88,8 @@ const ListItem = styled('div', {
   lineHeight: '18px',
   marginTop: 10,
   borderTop: `1px solid ${mauve.mauve6}`,
-  paddingTop: 10,
+  borderBottom: `1px solid ${mauve.mauve6}`,
+  padding: "20px 0px"
 });
 
 export default List;

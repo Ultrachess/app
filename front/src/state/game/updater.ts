@@ -77,7 +77,8 @@ function getRelevantNotifications(
         userTournaments: String[],
         userBotTournaments: String[]
     ){
-    return notifications
+    return notifications ?
+        notifications
         .filter(notification => {
             const { type } = notification
             if(type == NotificationType.GAME_JOINED ||
@@ -133,6 +134,7 @@ function getRelevantNotifications(
             }
                 
         })
+        : []
 }
 
 

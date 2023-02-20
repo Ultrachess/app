@@ -36,17 +36,20 @@ export default () => {
         timestamp
     }: BotProfile = useProfile(botId)
 
-    const activeGames = games.filter((game) => game.isEnd === false)
-    const pastGames = games.filter((game) => game.isEnd === true)
+    const activeGames = games ? games.filter((game) => game.isEnd === false) : []
+    const pastGames = games ? games.filter((game) => game.isEnd === true) : []
 
     //get highest offer price
-    const highestOffer = offers.reduce((prev, current) => (prev.price > current.price) ? prev : current)
-
+    let highestOffer = 0
+    if ( offers && offers.length > 0) {
+        highestOffer = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current)
+    }
     const isOwner = account === owner
     return (
         <div className="body">
-            <Flex css={{ alignItems: 'center', gap: 5, justifyContent: 'center' }}>
-                <Flex css={{ gap: 5, flexDirection:'column' }}>
+            <Flex css={{  gap: 50, justifyContent: 'center' }}>
+                <Flex css={{
+                     gap: 5, flexDirection:'column' }}>
                     <Address value={id} isImageBig={true} />
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         <Text faded>owner</Text>
@@ -90,7 +93,7 @@ export default () => {
                     </Flex>
 
                 </Flex>
-                <Flex css={{ gap: 5 }}>
+                <Flex css={{ gap: 5, flexDirection:'column' }}>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
                         <Text faded>active games</Text>
                         <GameList games={activeGames} />

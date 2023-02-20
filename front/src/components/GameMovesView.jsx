@@ -6,7 +6,9 @@ import { Chess } from "chess.js";
 import Separator from "./ui/Separator";
 import List from "./ui/List";
 import Flex from "./ui/Flex";
+import { Text } from "./ui/Text";
 import "./GameMovesView.css"
+
 //import radix icons
 import { 
     LoopIcon,
@@ -15,6 +17,7 @@ import {
     ArrowRightIcon,
     ArrowLeftIcon
 } from "@radix-ui/react-icons";
+import GameBotMoveStatisticsHoverable from "./GameBotMoveStatisticsHoverable";
 
 export default (props) => {
     const { pgn, firstMove, lastMove, nextMove, prevMove, highlightIndex , autoPlay, botMoveStats} = props

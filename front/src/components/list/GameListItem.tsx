@@ -37,17 +37,17 @@ export default ({game}: {game:Game}) => {
     const draw = score1 === score2
 
     return (
-        <Flex css={{gap: 5}}>
+        <Flex css={{gap: 50}}>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>id</Text>
+                <Text bold>id</Text>
                 <AddressGame id={id} />
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>created at</Text>
+                <Text bold>created at</Text>
                 <DateDisplay current={time} />
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>player 1</Text>
+                <Text bold>player 1</Text>
                 <Flex css={{gap: 1}}>
                     <Address value={p1} hoverable={true} />
                     <Text faded>{score1 ?? ""}</Text>
@@ -55,7 +55,7 @@ export default ({game}: {game:Game}) => {
                 </Flex>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>player 2</Text>
+                <Text bold>player 2</Text>
                 <Flex css={{gap: 1}}>
                     {p2 ? <Address value={p2} hoverable={true} /> : <Text faded>waiting for player</Text>}
                     <Text faded>{score2 ?? ""}</Text>
@@ -64,14 +64,14 @@ export default ({game}: {game:Game}) => {
                 </Flex>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>wager</Text>
+                <Text bold>wager</Text>
                 <div>
                     <AssetDisplay balance={wager} tokenAddress={token} isL2={true}/>
                 </div>
                 
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
-                <Text faded>status</Text>
+                <Text bold>status</Text>
                 <Flex css={{gap: 1}}>
                     <Text green>{completed ? "completed" : bettingIsClosed ? "playing" : "betting phase"}</Text>
                     <DotIcon color={completed ? "blue" : bettingIsClosed ? "green" : "red"} />

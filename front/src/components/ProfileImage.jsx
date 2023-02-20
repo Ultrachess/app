@@ -19,7 +19,10 @@ export default ({address, diameter=20}) => {
   }).toDataURL();
   const isBot = useMemo(()=>!dataUrlSrc.includes("0x"))
   return (
-    <AvatarRoot>
+    <AvatarRoot css={{
+      width: diameter,
+      height: diameter,
+    }}>
         <Jazzicon diameter={diameter} seed={jsNumberForAddress(address?? "0x")} />
       </AvatarRoot>
   );
@@ -57,7 +60,6 @@ const AvatarDemo = () => (
     userSelect: 'none',
     width: 20,
     height: 20,
-    marginRight: 10,
     borderRadius: '100%',
     backgroundColor: blackA.blackA3,
   });

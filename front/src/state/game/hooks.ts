@@ -41,9 +41,22 @@ export function useElo(id): number {
     return elos[id] ? elos[id] : 0
 }
 
+const PLACE_HOLDER_PROFILE: Profile = {
+    type: ProfileType.HUMAN,
+    id: "",
+    name: "",
+    avatar: "",
+    elo: 0,
+    games: [],
+    nationality: "",
+    challenges: [],
+    balances: [],
+    bots: [],
+}
 
-export function useProfile(id: string): Profile | any{
+export function useProfile(id: string): Profile | undefined{
     const bots = useAppSelector(state => state.game.bots)
+    if(!id) return PLACE_HOLDER_PROFILE
     const isBot = !id.includes("0x")
 
     //common
@@ -135,6 +148,8 @@ export function useAllProfiles(rankByElo: boolean = false): BaseProfile[] {
 export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)
     if (!games) return null
+    if (!games[id]) return null
+    if(!games[id].botMoveStats) games[id].botMoveStats = []
     return games[id]
 }
 export function useActions(): ActionList {

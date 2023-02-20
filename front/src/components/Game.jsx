@@ -20,6 +20,32 @@ import { ethers } from "ethers";
 import Flex from "./ui/Flex";
 import AssetDisplay from "./AssetDisplay";
 import { useTime } from "./ActionView";
+import BotMoveStatisticsView from "./BotMoveStatisticsView";
+import GameWagersView from "./GameWagersView";
+
+const placerHolderBotMoveStat = {
+  depth: 0,
+  seldepth: 0,
+  time: 0,
+  nodes: 0,
+  pv: "",
+  score: 0,
+  nps: 0,
+  tbhits: 0,
+  sbhits: 0,
+  cpuload: 0,
+}
+
+const placeHolderGameWagers = {
+  gameId: "",
+  openTime: 0,
+  duration: 0,
+  bets: {},
+  pots: {},
+  totalPot: 0,
+  betsArray: []
+}
+  
 
 export default () => {
   let { gameId } = useParams()
@@ -54,6 +80,8 @@ export default () => {
   const completed = game.isEnd
   const topAddressLost = topAddressScore == 0
   const bottomAddressLost = bottomAddressScore == 0
+  const topAddressIsBot = useMemo(() => !topAddress.includes("0x"), [topAddress])
+  const bottomAddressIsBot = useMemo(() => !bottomAddress.includes("0x"), [bottomAddress])
   const topAddressWon = topAddressScore == 1
   const bottomAddressWon = bottomAddressScore == 1
   const draw = topAddressScore == 0.5 && bottomAddressScore == 0.5
@@ -288,8 +316,20 @@ export default () => {
   }, [currentMoveIndex])
 
   const autoPlay = useCallback(() => {
-    setAutoPlay(!autoPlayState)
-  }, [autoPlayState])
+    setAutoPlay(!isAutoPlay)
+  }, [isAutoPlay])
+
+  const getLastProcessedBotMoveIndexFromCurrentIndex = (index) => {
+    const botMoveStats = game.botMoveStats
+    //get the last processed bot move that is closest to the current index and less than or equal to the current index
+    //by checking if botMoveStats[index] is undefined, we can check if the bot has processed the move at index
+    //if it is undefined, then we know the bot has not processed the move at index, so we can decrement index and check again
+    if(index < 0) return 0
+    while(botMoveStats[index] === undefined && index > 0){
+      index--
+    }
+    return index
+  }
 
   return (
     <div className="game">
@@ -298,7 +338,7 @@ export default () => {
             <Flex css={{justifyContent: 'space-between'}}>
               <Flex css={{gap: 1}}>
                 <Address value={topAddress} />
-                {topAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedMoveFromIndex(currentMoveIndex)]} />}
+                {topAddressIsBot && <BotMoveStatisticsView botMoveStat={game?.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]??placerHolderBotMoveStat} />}
               </Flex>
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
@@ -335,7 +375,7 @@ export default () => {
             <Flex css={{justifyContent: 'space-between'}}>
               <Flex css={{gap: 1}}>
                 <Address value={topAddress} />
-                {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedMoveFromIndex(currentMoveIndex)]} />}
+                {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]} />}
               </Flex>
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
@@ -355,7 +395,7 @@ export default () => {
           <Flex css={{flexDirection:'column', gap:5}}>
             <GameWagersView 
               winningId={winningId}
-              wagers={game.wagering} 
+              wagers={game.wagering == {} || game.wagering == undefined ? placeHolderGameWagers: game.wagering} 
               now = {now}
             />
             <GameMovesView 

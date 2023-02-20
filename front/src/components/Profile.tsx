@@ -16,10 +16,13 @@ import {Text} from "./ui/Text";
 import Date from "./ui/Date";
 import OffersList from "./OffersList";
 import ChallengesList from "./list/ChallengesList";
+import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+
 
 export default () => {
-    let { botId } = useParams()
-    const { account } = useWeb3React()
+    let { userId } = useParams()
+    console.log(userId)
+    const { account, chainId } = useWeb3React()
     const {
         id,
         name,
@@ -30,15 +33,18 @@ export default () => {
         challenges,
         bots,
         balances,
-    }: UserProfile = useProfile(botId)
+    }: UserProfile = useProfile(userId)
 
-    const activeGames = games.filter((game) => game.isEnd === false)
-    const pastGames = games.filter((game) => game.isEnd === true)
+    const activeGames = games ? games.filter((game) => game.isEnd === false): []
+    const pastGames = games ? games.filter((game) => game.isEnd === true) : []
 
     const isYou = account === id || account === name
+    
+    const balance = balances.length > 0 ? balances[0].amount : 0
+    const tokenAddress = balances.length > 0 ? balances[0].token : USDC_ADDRESS_ON_NETWORKS[chainId] 
     return (
         <div className="body">
-            <Flex css={{ alignItems: 'center', gap: 5, justifyContent: 'center' }}>
+            <Flex css={{ gap: 50, justifyContent: 'center' }}>
                 <Flex css={{ gap: 5, flexDirection:'column' }}>
                     <Address value={id} isImageBig={true} />
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
@@ -54,7 +60,7 @@ export default () => {
                     </Flex>
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         <Text faded>Balance</Text>
-                        <AssetDisplay balance={balances[0].amount} tokenAddress={balances[0].token} />
+                        <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
                     </Flex>
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         <Text faded>Total bots owned </Text>
@@ -70,7 +76,7 @@ export default () => {
                     </Flex>
 
                 </Flex>
-                <Flex css={{ gap: 5 }}>
+                <Flex css={{ gap: 5, flexDirection:'column' }}>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
                         <Text faded>active games</Text>
                         <GameList games={activeGames} />

@@ -14,6 +14,21 @@ interface BotMoveStatisticsViewProps {
 }
 
 export default ({ botMoveStat, flexDir = 'row' }: BotMoveStatisticsViewProps) => {
+    if (!botMoveStat) {
+        botMoveStat = {
+            depth: 0,
+            seldepth: 0,
+            time: 0,
+            nodes: 0,
+            pv: [''],
+            score: 0,
+            nps: 0,
+            tbhits: 0,
+            sbhits: 0,
+            cpuload: 0,
+        }
+
+    }
     const {
         depth,
         seldepth, 

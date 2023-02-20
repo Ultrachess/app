@@ -10,6 +10,7 @@ import { BotProfile } from "../../state/game/types";
 //function that converts country string to flag emoji
 //return flag emoji
 const getFlag = (country: string) => {
+    if (!country) return "🇺🇸"
     const code = country.toUpperCase();
     const emoji = code
         .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
@@ -59,15 +60,15 @@ export default ({bot, rank = 0}: {bot: BotProfile, rank: number}) => {
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>games played</Text>
-                <Text>{games.length}</Text>
+                <Text>{games?.length ?? 0}</Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>challenges</Text>
-                <Text>{challenges.length}</Text>
+                <Text>{challenges?.length ?? 0}</Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>offers</Text>
-                <Text>{offers.length}</Text>
+                <Text>{offers?.length ?? 0}</Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>owner</Text>

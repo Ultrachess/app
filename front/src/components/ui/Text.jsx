@@ -17,7 +17,13 @@ export const Text = styled('div', {
             true: { color: mauve.mauve10 },
         },
         bold: {
-            true: { fontWeight: 600 },
+            true: { fontWeight: 900 },
+        },
+        superBold: {
+            true: { 
+                fontWeight: 1000,
+                fontSpacing: 1.5,
+            },
         },
         black: {
             true: { color: blackA.blackA12 },
@@ -47,7 +53,7 @@ export const Text = styled('div', {
             3: { fontSize: 17 },
             4: { fontSize: 17 },
             5: { fontSize: 19 },
-            "max": { fontSize: 51 },
+            "max": { fontSize: 71 },
         }
     },
 });
