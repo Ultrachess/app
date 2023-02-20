@@ -18,6 +18,10 @@ export default ({game}: {game:Game}) => {
     const current = useTime(1000)
     const { account } = useWeb3React()
 
+    if (game === undefined ){
+        return <></>
+    }
+
     const id = game.id
     const p1 = game.players[0] ?? undefined
     const p2 = game.players[1] ?? undefined

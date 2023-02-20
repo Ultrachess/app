@@ -10,6 +10,9 @@ import { styled } from "@stitches/react";
 import ModalCreateBot from "./ModalCreateBot";
 import Separator from "./ui/Separator";
 import { ZoomOutIcon, StitchesLogoIcon } from "@radix-ui/react-icons";
+import { violet } from "@radix-ui/colors";
+
+
 
 export default () => {
   const bots = useAllBots()

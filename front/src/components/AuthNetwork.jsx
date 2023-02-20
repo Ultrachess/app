@@ -51,7 +51,7 @@ export default ({chainId}) => {
             <Select.Root 
                 value={current.name}
                 onValueChange={async (value) => {
-                    var { id } = Object.values(CHAINS).find((chain) => chain.name === value);
+                    var { id } = Object?.values(CHAINS).find((chain) => chain.name === value);
                     await switchEthereumChain(id);
                 }}
             >
@@ -70,7 +70,7 @@ export default ({chainId}) => {
                   <SelectViewport>
                     <Select.Group>
                       <SelectLabel>Networks</SelectLabel>
-                        {Object.values(CHAINS).map((chain) => (
+                        {Object?.values(CHAINS).map((chain) => (
                             <SelectItem value={chain.name}>{chain.name}</SelectItem>
                         ))}
                     </Select.Group>

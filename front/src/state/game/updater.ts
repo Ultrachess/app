@@ -157,12 +157,12 @@ function useNewNotifications(): Notification[] | undefined {
     const [lastNoticeIndex, setLastNoticeIndex] = useState(0)
 
     const notifications: Notification[] = notices
-        .sort((a, b) => parseInt(a.input_index) - parseInt(b.input_index))
+        ?.sort((a, b) => parseInt(a.input_index) - parseInt(b.input_index))
         .filter(n => parseInt(n.notice_index) > lastNoticeIndex)
         .map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)))
     
     useEffect(() => {
-        if (notices.length > 0) {
+        if (notices !=undefined && notices.length > 0) {
             setLastNoticeIndex(parseInt(notices[notices.length - 1].notice_index))
         }
     },[notices])
@@ -197,7 +197,7 @@ export function GameStateUpdater() {
     const notices = useNotices()
     const transactions = useAppSelector((state) => state.transactions)
     const pendingTransactions = useMemo(() => (chainId ? transactions[chainId] ?? {} : {}), [chainId, transactions])
-    const lastBlockProcessed = useMemo(() => Math.max(...notices.map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)).timeStamp)), [notices])
+    //const lastBlockProcessed = useMemo(() => Math.max(...notices.map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)).timeStamp)), [notices])
     const actionList = useActionList()
 
     const userBots = useUserBotIds(account)

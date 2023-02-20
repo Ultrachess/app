@@ -12,6 +12,8 @@ import { useWeb3React } from '@web3-react/core';
 import { useActionCreator, useUserBots } from '../state/game/hooks';
 import { TransactionType } from '../common/types';
 import Address from './Address';
+import { Select } from '@radix-ui/react-select';
+
 
 const tournamentTypes = [
     "Knockout",

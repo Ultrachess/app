@@ -1,28 +1,26 @@
-import * as React from "react";
-import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
-import { useDispatch } from "react-redux";
-import { createGame } from "../state/game/gameSlice";
-import { FaCoins } from "react-icons/fa";
 import { useActionCreator, useGame } from "../state/game/hooks";
-import { TransactionTypes } from "ethers/lib/utils";
 import { TransactionType } from "../common/types";
-import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
-import Select from "react-select"
-import { useTokenList } from "../hooks/token";
-import { getGameById } from "../state/game/gameHelper";
 import Address from "./Address";
 import { useWeb3React } from "@web3-react/core";
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/constants";
 import { useTokenPortalBalance, useTokenFromList } from "../hooks/token";
 import * as RadioGroup from '@radix-ui/react-radio-group';
 
 import AddressGame from "./AddressGame";
 import List from "./ui/List";
 import AssetDisplay from "./AssetDisplay";
+import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import { keyframes, styled } from "@stitches/react";
+import { blackA, mauve, violet, green } from "@radix-ui/colors";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import { Slider } from "@radix-ui/react-slider";
+import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 
 
 export default ({triggerElement, gameId}) => {
+  console.log(triggerElement)
+  console.log(gameId)
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
     const [winningId, setWinningId] = useState("DRAW")
@@ -36,7 +34,7 @@ export default ({triggerElement, gameId}) => {
     const bets = game?.wagering?.betsArray?.map((bet)=>{
         return (
             <div>    
-                <Address value={bet?.sender}/> 
+                <Address value={bet?.sender ?? "0x"}/> 
                 bets 
                 <AssetDisplay tokenAddress={token?.address} balance={bet?.amount}/>
                 on 
@@ -144,7 +142,6 @@ const overlayShow = keyframes({
     backgroundColor: blackA.blackA9,
     position: 'fixed',
     inset: 0,
-    animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
   });
   
   const DialogContent = styled(Dialog.Content, {
@@ -159,7 +156,7 @@ const overlayShow = keyframes({
     maxWidth: '450px',
     maxHeight: '85vh',
     padding: 25,
-    animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
+    //animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
     '&:focus': { outline: 'none' },
   });
   

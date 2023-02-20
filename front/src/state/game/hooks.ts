@@ -33,7 +33,7 @@ export function useName(id): string {
 
 export function useBalances(id): Balance[] {
     const accounts: {[address: string]:{[token:string]: Balance}} = useAppSelector(state => state.game.accounts)
-    return accounts[id] ? Object.values(accounts[id]) : []
+    return accounts[id] ? Object?.values(accounts[id]) : []
 }
 
 export function useElo(id): number {
@@ -134,53 +134,61 @@ export function useAllProfiles(rankByElo: boolean = false): BaseProfile[] {
 
 export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)
+    if (!games) return null
     return games[id]
 }
 export function useActions(): ActionList {
     const actions = useAppSelector(state => state.actions)
+    if (!actions) return []
     return actions
 }
 
 export function useUserGames(id: string): Game[] {
     const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
-    return Object.values(games).filter((game) => {
+    if (!games) return []
+    return Object?.values(games).filter((game) => {
         return game.players.includes(id)
     })
 }
 
 export function useRecievedChallenges(id: string): Challenge[] {
     const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
-    return Object.values(challenges).filter((challenge) => {
+    if (!challenges) return []
+    return Object?.values(challenges)?.filter((challenge) => {
         return challenge.recipient == id
     })
 }
 
 export function useUserSentChallenges(id: string): Challenge[] {
     const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
-    return Object.values(challenges).filter((challenge) => {
+    if (!challenges) return []
+    return Object?.values(challenges).filter((challenge) => {
         return challenge.sender == id
     })
 }
 
 export function useUserBotOffers(id: string): BotOffer[] {
     const offers: {[offerIds: string]: BotOffer} = useAppSelector(state => state.game.marketplace)
-    return Object.values(offers).filter((offer) => {
+    if (!offers) return []
+    return Object?.values(offers).filter((offer) => {
         return offer.owner == id
     })
 }
 
 export function useOffersByBotId(id: string): BotOffer[] {
     const offers: {[offerIds: string]: BotOffer} = useAppSelector(state => state.game.marketplace)
-    return Object.values(offers).filter((offer) => {
+    if (!offers) return []
+    return Object?.values(offers).filter((offer) => {
         return offer.botId == id
     })
 }
 
 export function useAllActiveAndCompletedGamesSeparated(): {activeGames: Game[], completedGames: Game[]} {
     const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    if (!games) return {activeGames: [], completedGames: []}
     const activeGames: Game[] = []
     const completedGames: Game[] = []
-    Object.values(games).forEach((game) => {
+    Object?.values(games).forEach((game) => {
         if (game.isEnd) {
             completedGames.push(game)
         } else {
@@ -192,14 +200,16 @@ export function useAllActiveAndCompletedGamesSeparated(): {activeGames: Game[], 
 
 export function useAllActiveGames(): Game[] {
     const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
-    return Object.values(games).filter((game) => {
+    if (!games) return []
+    return Object?.values(games)?.filter((game) => {
         return !game.isEnd
     })
 }
 
 export function useAllCompletedGames(): Game[] {
     const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
-    return Object.values(games).filter((game) => {
+    if (!games) return []
+    return Object?.values(games).filter((game) => {
         return game.isEnd
     })
 }
@@ -207,6 +217,7 @@ export function useAllCompletedGames(): Game[] {
 //return list of games that you are in and are not completed
 export function useUserGameIds(id: string): string[] {
     const games = useAppSelector(state => state.game.games)
+    if (!games) return []
     return Object.keys(games).filter((gameId) => {
         const game = games[gameId]
         return game.players.includes(id)
@@ -215,6 +226,7 @@ export function useUserGameIds(id: string): string[] {
 
 export function useUserCompletedGameIds(id: string): string[] {
     const games = useAppSelector(state => state.game.games)
+    if (!games) return []
     return Object.keys(games).filter((gameId) => {
         const game = games[gameId]
         return game.players.includes(id) && game.isEnd
@@ -223,6 +235,7 @@ export function useUserCompletedGameIds(id: string): string[] {
 
 export function useUserActiveGameIds(id: string): string[] {
     const games = useAppSelector(state => state.game.games)
+    if (!games) return []
     return Object.keys(games).filter((gameId) => {
         const game = games[gameId]
         return game.players.includes(id) && !game.isEnd
@@ -231,24 +244,28 @@ export function useUserActiveGameIds(id: string): string[] {
 
 export function useAllTournaments(): Tournament[] {
     const tournaments: {[tournamentIds: string]: Tournament} = useAppSelector(state => state.game.tournaments)
-    return Object.values(tournaments)
+    if (!tournaments) return []
+    return Object?.values(tournaments)
 }
 
 export function useUserBots(id: string): BotProfile[] {
     const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
-    return Object.values(bots).filter((bot) => {
+    if (!bots) return []
+    return Object?.values(bots).filter((bot) => {
         return bot.owner == id
     })
 }
 
 export function useOwner(id: string): string | undefined {
     const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
+    if (!bots) return undefined
     return bots[id] ? bots[id].owner : undefined
 }
 
 //return list of all bots you own
 export function useUserBotIds(id: string): string[] {
     const bots = useAppSelector(state => state.game.bots)
+    if (!bots) return []
     return Object.keys(bots).filter((botId) => {
         const bot = bots[botId]
         return bot.owner == id
@@ -259,7 +276,8 @@ export function useUserBotIds(id: string): string[] {
 export function useUserBotGameIds(id: string): string[] {
     const bots = useUserBotIds(id)
     const games = useAppSelector(state => state.game.games)
-
+    if (!games) return []
+    if (!bots) return []
     return Object.keys(games).filter((gameId) => {
         const game = games[gameId]
         return bots.some((botId) => game.players.includes(botId))
@@ -269,9 +287,10 @@ export function useUserBotGameIds(id: string): string[] {
 //return list of all tournaments you are in or own
 export function useUserTournamentIds(id: string): string[] {
     const tournaments = useAppSelector(state => state.game.tournaments)
+    if (!tournaments) return []
     return Object.keys(tournaments).filter((tournamentId) => {
         const tournament = tournaments[tournamentId]
-        return tournament.participants.includes(id) || tournament.owner == id
+        return tournament?.participants?.includes(id) || tournament.owner == id
     })
 }
         
@@ -279,7 +298,8 @@ export function useUserTournamentIds(id: string): string[] {
 export function useUserBotTournamentIds(id: string): string[] {
     const bots = useUserBotIds(id)
     const tournaments = useAppSelector(state => state.game.tournaments)
-
+    if (!tournaments) return []
+    if (!bots) return []
     return Object.keys(tournaments).filter((tournamentId) => {
         const tournament = tournaments[tournamentId]
         return bots.some((botId) => tournament.participants.includes(botId))
@@ -290,13 +310,13 @@ export function useUserBotTournamentIds(id: string): string[] {
 export function useGameWagers(gameId: string, playerId: string): Bet[] {
     const game = useGame(gameId)
     if (!game) return []
-    return Object.values(game.wagering.bets[playerId])
+    return Object?.values(game.wagering.bets[playerId])
 }
 
 export function useActionsNotProcessed(): Action[] {
     const actions = useActions()
     return useMemo(()=> {
-        return Object.values(actions)
+        return Object?.values(actions)
             .filter(({status}) => status != ActionStates.PROCESSED && status != ActionStates.ERROR)
     }, [actions])
 }
