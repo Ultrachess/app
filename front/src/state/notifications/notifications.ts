@@ -31,7 +31,7 @@ export enum NotificationType {
     DEPOSIT_FUNDS = 27, //when you deposit funds
     WITHDRAW_FUNDS = 28, //when you withdraw funds
     
-    ACTION = 15, //these refer to all action calls.
+    ACTION = 29, //these refer to all action calls.
 }
 
 export interface BaseNotification {
@@ -244,12 +244,13 @@ export type Notification =
     TournamentCompletedNotification | 
     TournamentMatchCreatedNotification | 
     TournamentMatchCompletedNotification | 
-    TournamentRoundCompletedNotification | 
     BotGameCreatedNotification | 
     BotGameCompletedNotification | 
     BotOfferAcceptedNotification | 
     BotOfferDeclinedNotification | 
     BotOfferCreatedNotification |
-    ActionNotification;
+    ActionNotification |
+    TournamentRoundCompletedNotification;
+
 
 

@@ -16,7 +16,7 @@ import * as CartesiTokenPolygonMainnet from "@cartesi/token/deployments/polygon_
 import * as CartesiTokenPolygonMumbai from "@cartesi/token/deployments/polygon_mumbai/CartesiToken.json";
 import * as SimpleFaucetGoerli from "@cartesi/token/deployments/goerli/SimpleFaucet.json";
 import { contracts as contractsLocalhost } from "../abis/localhost.json";
-import { contracts as ultrachessLocalhost } from "../../../export/localhost-ultrachess.json";
+//import { contracts as ultrachessLocalhost } from "../../../export/localhost-ultrachess.json";
 
 
 export const CONTRACTS = {
@@ -34,7 +34,7 @@ export const CONTRACTS = {
       InputFacet: InputFacetGoerli,
       SimpleFaucet: SimpleFaucetGoerli,
   },
-  localhost: Object.assign({}, contractsLocalhost, ultrachessLocalhost),
+  localhost: Object.assign({}, contractsLocalhost),
   mainnet: {
       CartesiToken: CartesiTokenMainnet,
   },

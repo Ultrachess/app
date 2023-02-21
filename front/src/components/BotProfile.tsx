@@ -16,9 +16,11 @@ import {Text} from "./ui/Text";
 import Date from "./ui/Date";
 import OffersList from "./OffersList";
 import ChallengesList from "./list/ChallengesList";
+import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 
 export default () => {
     let { botId } = useParams()
+    let { chainId } = useWeb3React()
     const { account } = useWeb3React()
     const {
         id,
@@ -34,7 +36,7 @@ export default () => {
         autoMaxWagerAmount,
         autoWagerTokenAddress,
         timestamp
-    }: BotProfile = useProfile(botId)
+    }: any = useProfile(botId)
 
     const activeGames = games ? games.filter((game) => game.isEnd === false) : []
     const pastGames = games ? games.filter((game) => game.isEnd === true) : []
@@ -44,6 +46,7 @@ export default () => {
     if ( offers && offers.length > 0) {
         highestOffer = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current)
     }
+    const token = USDC_ADDRESS_ON_NETWORKS[chainId]
     const isOwner = account === owner
     return (
         <div className="body">
@@ -65,7 +68,7 @@ export default () => {
                     </Flex>
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         <Text faded>Current Price</Text>
-                        {highestOffer === undefined ? <Text>0</Text> : <AssetDisplay balance={highestOffer.price} tokenAddress={highestOffer.token} isL2={true}/>}
+                        {highestOffer === undefined ? <Text>0</Text> : <AssetDisplay balance={highestOffer} tokenAddress={token} isL2={true}/>}
                     </Flex>
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         <Text faded>created at</Text>

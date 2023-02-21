@@ -33,7 +33,7 @@ export default () => {
         challenges,
         bots,
         balances,
-    }: UserProfile = useProfile(userId)
+    }: any = useProfile(userId)
 
     const activeGames = games ? games.filter((game) => game.isEnd === false): []
     const pastGames = games ? games.filter((game) => game.isEnd === true) : []

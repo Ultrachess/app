@@ -27,7 +27,7 @@ export const store = configureStore({
         auth: authSlice,
         game: gameSlice,
         transactions: transactions,
-        //actions: actions,
+        actions: actions,
         notifications: notifications,
     },
     // middleware: (getDefaultMiddleware) => 

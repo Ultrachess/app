@@ -17,7 +17,7 @@ import { BotProfile } from '../state/game/types';
 
 export default ({triggerElement, botId}) => {
     const { chainId, account } = useWeb3React()
-    const [amount, setAmount ] = useState(0)
+    const [amount, setAmount ] = useState<any>(0)
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const portalBalance = useTokenPortalBalance(token, account) 
@@ -46,7 +46,7 @@ export default ({triggerElement, botId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Create offer for <Address address={botId} /></DialogTitle>
+            <DialogTitle>Create offer for <Address value={botId} /></DialogTitle>
             <DialogDescription>
               You are offering to buy this bot for <AssetDisplay tokenAddress={token?.address} balance={amount} isL2={true}/>. 
               Make sure to deposit funds to the portal first if you have not done so.
@@ -60,7 +60,7 @@ export default ({triggerElement, botId}) => {
                 </RightSlot>
             </Fieldset>
             <Fieldset>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.value)}}>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
                 </Input>
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>

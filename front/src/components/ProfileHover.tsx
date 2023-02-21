@@ -96,7 +96,7 @@ const UserProfileCard = ({profile}: {profile: UserProfile}) => {
 }
 
 const ProfileHover = ({triggerElement, profileId}) =>{
-    const profile = useProfile(profileId);
+    const profile:any = useProfile(profileId);
     return (
 
         <HoverCard.Root 

@@ -154,7 +154,7 @@ export function useGame(id): Game {
 }
 export function useActions(): ActionList {
     const actions = useAppSelector(state => state.actions)
-    if (!actions) return []
+    if (!actions) return {}
     return actions
 }
 

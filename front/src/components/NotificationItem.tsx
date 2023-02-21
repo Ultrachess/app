@@ -85,7 +85,7 @@ export default ({ notification }: {notification: Notification}) => {
     case NotificationType.TOURNAMENT_MATCH_CREATED:
       title = 'Tournament Match Created';
       description = <>
-        A match has been created in tournament <AddressTournament id={notification.tournamentId} /> between <Address value={notification.player1Id} /> and <Address value={notification.player2Id} />
+        A match has been created in tournament <AddressTournament id={notification.tournamentId} /> between <Address value={notification.playerId1} /> and <Address value={notification.playerId2} />
       </>
       break;
     case NotificationType.TOURNAMENT_MATCH_COMPLETED:
@@ -97,7 +97,7 @@ export default ({ notification }: {notification: Notification}) => {
     case NotificationType.TOURNAMENT_ROUND_COMPLETED:
       title = 'Tournament Round Completed';
       description = <>
-        Round {notification.roundNumber} has completed in tournament <AddressTournament id={notification.tournamentId} />
+        Round {notification.tournamentId} has completed in tournament <AddressTournament id={notification.tournamentId} />
       </>
       break;
     case NotificationType.BOT_GAME_CREATED:
