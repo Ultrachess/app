@@ -1,29 +1,46 @@
 import React, { useMemo, useRef } from 'react'
-import { Text, Grid, User } from "@nextui-org/react";
-import { truncateAddress } from "../ether/utils";
+import { Grid, User } from "@nextui-org/react";
 import { createIcon } from '@download/blockies';
-import "./Address.css"
 import { Link } from 'react-router-dom';
+import { Row } from 'react-bootstrap';
+import ProfileImage from "./ProfileImage";
+import { truncateAddress } from "../ether/utils";
+import { Text } from "./ui/Text";
+import ProfileHover from './ProfileHover';
+import Flex from './ui/Flex';
+import { FaRobot } from 'react-icons/fa';
 
-export default (props) => {
-  const { value } = props
-  var dataUrlSrc = createIcon({ // All options are optional
-      seed: value, // seed used to generate icon data, default: random
-      color: '#dfe', // to manually specify the icon color, default: random
-      bgcolor: '#aaa', // choose a different background color, default: white
-      size: 10, // width/height of the icon in blocks, default: 10
-      scale: 3 // width/height of each block in pixels, default: 5
-  }).toDataURL();
-  const isBot = useMemo(()=>!value.includes("0x"))
-  return (
+export default ({value, hoverable = false, isImageBig=false}) => {
+  const isBot = useMemo(()=> value ? !value.includes("0x"): false)
+  const addressView = 
     <div className='addressView'>
       <Link to={ (isBot? "/bot/":"/users/") + value}>
-        <User
-        size='10px'
-          src={dataUrlSrc} 
-          name={ truncateAddress(value) }
-        />
+        <Flex css={{flexDirection: "row", alignItems: "center", gap:5}}>
+          <ProfileImage address={value} />
+          <Text bold>{truncateAddress(value)}</Text>
+          {isBot && <FaRobot/>}
+        </Flex>
       </Link>
     </div>
+  
+  //bigAddressView is used for the profile page
+  //It renders the ProfileImage component with a bigger size
+  //in a flex column
+  const bigAddressView =
+    <div className='addressView'>
+      <Link to={ (isBot? "/bot/":"/users/") + value}>
+        <Flex css={{flexDirection: "column", alignItems: "center"}}>
+          <ProfileImage address={value} diameter={200} />
+          <Text size={5} bold>{truncateAddress(value)}{isBot && <FaRobot/>}</Text>
+        </Flex>
+      </Link>
+    </div>
+
+  const component = isImageBig? bigAddressView: addressView;
+
+  return (
+    <>
+      {hoverable ? <ProfileHover triggerElement={component} profileId={value}/>: component}
+    </>
   );
 }

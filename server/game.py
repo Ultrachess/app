@@ -3,6 +3,7 @@ import chess.engine
 import chess.pgn
 import logging
 import traceback
+import notification
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -27,6 +28,7 @@ class Game:
         self.resigner = None
         self.scores = {}
         self.bettingDuration = duration
+        self.botMoveStats = []
         
 
     def __isInGame(self, address):
@@ -93,6 +95,42 @@ class Game:
         winningId = p1 if score1 > score2 else p2 if score2 > score1 else "DRAW"
         deps.betManager.end(self.id, winningId)
 
+        #send notification
+        if self.isBot:
+            notification.send_notification(
+                notification.BotGameCompletedNotification(
+                    game_id=self.id,
+                    player_id1=p1,
+                    player_id2=p2,
+                    score1=score1,
+                    score2=score2,
+                    pot=deps.betManager.getPot(self.id),
+                    wager=self.wagerAmount,
+                    token=self.token,
+                    timestamp=self.timestamp,
+                    winningId=winningId,
+                    winnings1=funds1,
+                    winnings2=funds2
+                )
+            )
+        else:
+            notification.send_notification(
+                notification.GameCompletedNotification(
+                    game_id=self.id,
+                    player_id1=p1,
+                    player_id2=p2,
+                    score1=score1,
+                    score2=score2,
+                    pot=deps.betManager.getPot(self.id),
+                    wager=self.wagerAmount,
+                    token=self.token,
+                    timestamp=self.timestamp,
+                    winningId=winningId,
+                    winnings1=funds1,
+                    winnings2=funds2
+                )
+            )
+
     def addPlayer(self, timestamp, player):
         try:
             canAdd = (not self.__isMaxPlayers()) and (not self.__isInGame(player))
@@ -109,6 +147,15 @@ class Game:
                 #open betting phase
                 if self.__isMinPlayers():
                     deps.betManager.open(id, timestamp, self.bettingDuration)
+                notification.send_notification(
+                    notification.GameJoinedNotification(
+                        timestamp= timestamp,
+                        player_id=player,
+                        game_id=self.id,
+                        wager = self.wagerAmount,
+                        token = self.token,
+                    )
+                )
                 return True
             return False
         except:
@@ -126,7 +173,7 @@ class Game:
         self.handleEnd()
         return True
 
-    def move(self, sender, timestamp, moveString):
+    def move(self, sender, timestamp, moveString, botMoveStat=None):
         #logger.info("isMoving now" + moveString)
         try:
             #Determine if player can move
@@ -145,6 +192,7 @@ class Game:
             if(canMove):
                 #Handle move
                 self.state = self.state.add_variation(newMove)
+                self.botMoveStats.append(botMoveStat)
                 #Send end game notice
                 isGameEnd = self.isGameEnd()
                 if isGameEnd:
@@ -188,8 +236,8 @@ class Game:
 
             #Fetch game move and run
             board = self.state.board()
-            uci = bot.run(board, timestamp)
-            self.move(botId, timestamp, uci)
+            (uci, botMoveStat) = bot.run(board, timestamp)
+            self.move(botId, timestamp, uci, botMoveStat)
 
     
     ##def runMatches(self, matchCount):
@@ -209,5 +257,6 @@ class Game:
             "resigner": self.resigner,
             "scores": self.scores,
             "bettingDuration": self.bettingDuration,
-            "wagering": deps.betManager.games[self.id] if self.id in deps.betManager.games else {}
+            "wagering": deps.betManager.games[self.id] if self.id in deps.betManager.games else {},
+            "botMoveStats": self.botMoveStats
         }

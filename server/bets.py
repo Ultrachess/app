@@ -1,6 +1,7 @@
 import deps
 import logging
 import traceback
+import notification
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -38,6 +39,11 @@ class BetManager:
 
     def open(self, id, timeStamp, duration):
         self.games[id] = CreateBetPhase(id, timeStamp, duration)
+
+    def getPot(self, gameId):
+        if not gameId in self.games:
+            return 0
+        return self.games[gameId]["totalPot"]
     
     def bet(self, sender, timeStamp, value):
         gameId = value["gameId"]
@@ -66,6 +72,18 @@ class BetManager:
             self.games[gameId]["pots"][winningId] = 0
         self.games[gameId]["pots"][winningId] += amount
         self.games[gameId]["totalPot"] += amount
+
+        #send notification
+        notification.send_notification(
+            notification.GameWagerNotification(
+                timestamp=timeStamp,
+                game_id=gameId,
+                player_id=sender,
+                expected_winner_id=winningId,
+                wager=amount,
+                token = tokenAddress
+            )
+        )
         return True
 
     def end(self, id, winningId):

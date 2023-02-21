@@ -1,13 +1,15 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile, Tournament } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
 import { useContract, useErc20Contract } from "../../hooks/contract";
 import { DAPP_ADDRESSES } from "./gameSlice";
 import { addAction, setAction, setActionTransactionHash } from "../actions/reducer";
+import { addNotification } from "../notifications/reducer";
+import { Notification, NotificationType, ActionNotification } from "../notifications/notifications";
 import { ethers } from "ethers";
 import { useAppSelector } from "../hooks";
 import { delay, filter } from "wonka";
@@ -17,19 +19,319 @@ import { ActionResolverObject } from "./updater";
 import { CONTRACTS } from '../../ether/contracts';
 import { CHAINS } from '../../ether/chains';
 
-export function useGame(id): any | undefined {
+export function useNationality(id): string {
+    return "US"
+}
+
+export function useAvatarImgUrl(id): string {
+    return id
+}
+
+export function useName(id): string {
+    return id
+}
+
+export function useBalances(id): Balance[] {
+    const accounts: {[address: string]:{[token:string]: Balance}} = useAppSelector(state => state.game.accounts)
+    return accounts[id] ? Object?.values(accounts[id]) : []
+}
+
+export function useElo(id): number {
+    const elos = useAppSelector(state => state.game.elo)
+    return elos[id] ? elos[id] : 0
+}
+
+const PLACE_HOLDER_PROFILE: Profile = {
+    type: ProfileType.HUMAN,
+    id: "",
+    name: "",
+    avatar: "",
+    elo: 0,
+    games: [],
+    nationality: "",
+    challenges: [],
+    balances: [],
+    bots: [],
+}
+
+export function useProfile(id: string): Profile | undefined{
+    const bots = useAppSelector(state => state.game.bots)
+    if(!id) return PLACE_HOLDER_PROFILE
+    const isBot = !id.includes("0x")
+
+    //common
+    const type = isBot ? ProfileType.BOT : ProfileType.HUMAN
+    const name = useName(id)
+    const avatar = useAvatarImgUrl(id)
+    const elo = useElo(id)
+    const nationality = useNationality(id)
+    const games = useUserGames(id)
+    const challenges = useRecievedChallenges(id)
+
+    //bot only
+    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress, timestamp } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: "", timestamp: 0}
+    const offers = bots[id] ? useOffersByBotId(id) : []
+
+    //human only
+    const balances = useBalances(id)
+    const userBots = useUserBots(id)
+
+    //return the correct profile type
+    const profile: Profile = isBot ? {
+        type,
+        id,
+        name,
+        avatar,
+        elo,
+        nationality,
+        games,
+        owner,
+        autoBattleEnabled,
+        autoMaxWagerAmount,
+        autoWagerTokenAddress,
+        offers,
+        challenges,
+        timestamp
+    } : {
+        type,
+        id,
+        name,
+        avatar,
+        elo,
+        nationality,
+        games,
+        balances,
+        bots:userBots,
+        challenges,
+    }
+    return profile
+
+}
+
+//get all bot profiles
+export function useAllBots(): BotProfile[] {
+    const botBaseVals: {[botIds: string]: {owner: string, autoBattleEnabled: boolean, autoMaxWagerAmount: number, autoWagerTokenAddress: string, timestamp: number}} = useAppSelector(state => state.game.bots)
+    const botIds = Object.keys(botBaseVals)
+    const profiles: BotProfile[] = []
+    botIds.forEach((id) => {
+        const profile = useProfile(id)
+        profiles.push(profile as BotProfile)
+    })
+    return profiles
+}
+
+//get all user profiles
+export function useAllUsers(): UserProfile[] {
+    const accounts: {[address: string]:{[token:string]: Balance}} = useAppSelector(state => state.game.accounts)
+    const accountIds = Object.keys(accounts)
+    const profiles: UserProfile[] = []
+    accountIds.forEach((id) => {
+        const profile = useProfile(id)
+        profiles.push(profile as UserProfile)
+    })
+    return profiles
+}
+
+export function useAllProfiles(rankByElo: boolean = false): BaseProfile[] {
+    const bots = useAllBots()
+    const users = useAllUsers()
+    const profiles = [...bots, ...users]
+    if(rankByElo) {
+        profiles.sort((a, b) => {
+            return b.elo - a.elo
+        })
+    }
+    return profiles
+}
+
+
+export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)
+    if (!games) return null
+    if (!games[id]) return null
+    if(!games[id].botMoveStats) games[id].botMoveStats = []
     return games[id]
 }
 export function useActions(): ActionList {
     const actions = useAppSelector(state => state.actions)
+    if (!actions) return []
     return actions
+}
+
+export function useUserGames(id: string): Game[] {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    if (!games) return []
+    return Object?.values(games).filter((game) => {
+        return game.players.includes(id)
+    })
+}
+
+export function useRecievedChallenges(id: string): Challenge[] {
+    const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
+    if (!challenges) return []
+    return Object?.values(challenges)?.filter((challenge) => {
+        return challenge.recipient == id
+    })
+}
+
+export function useUserSentChallenges(id: string): Challenge[] {
+    const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
+    if (!challenges) return []
+    return Object?.values(challenges).filter((challenge) => {
+        return challenge.sender == id
+    })
+}
+
+export function useUserBotOffers(id: string): BotOffer[] {
+    const offers: {[offerIds: string]: BotOffer} = useAppSelector(state => state.game.marketplace)
+    if (!offers) return []
+    return Object?.values(offers).filter((offer) => {
+        return offer.owner == id
+    })
+}
+
+export function useOffersByBotId(id: string): BotOffer[] {
+    const offers: {[offerIds: string]: BotOffer} = useAppSelector(state => state.game.marketplace)
+    if (!offers) return []
+    return Object?.values(offers).filter((offer) => {
+        return offer.botId == id
+    })
+}
+
+export function useAllActiveAndCompletedGamesSeparated(): {activeGames: Game[], completedGames: Game[]} {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    if (!games) return {activeGames: [], completedGames: []}
+    const activeGames: Game[] = []
+    const completedGames: Game[] = []
+    Object?.values(games).forEach((game) => {
+        if (game.isEnd) {
+            completedGames.push(game)
+        } else {
+            activeGames.push(game)
+        }
+    })
+    return {activeGames, completedGames}
+}
+
+export function useAllActiveGames(): Game[] {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    if (!games) return []
+    return Object?.values(games)?.filter((game) => {
+        return !game.isEnd
+    })
+}
+
+export function useAllCompletedGames(): Game[] {
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    if (!games) return []
+    return Object?.values(games).filter((game) => {
+        return game.isEnd
+    })
+}
+
+//return list of games that you are in and are not completed
+export function useUserGameIds(id: string): string[] {
+    const games = useAppSelector(state => state.game.games)
+    if (!games) return []
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players.includes(id)
+    })
+}
+
+export function useUserCompletedGameIds(id: string): string[] {
+    const games = useAppSelector(state => state.game.games)
+    if (!games) return []
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players.includes(id) && game.isEnd
+    })
+}
+
+export function useUserActiveGameIds(id: string): string[] {
+    const games = useAppSelector(state => state.game.games)
+    if (!games) return []
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players.includes(id) && !game.isEnd
+    })
+}
+
+export function useAllTournaments(): Tournament[] {
+    const tournaments: {[tournamentIds: string]: Tournament} = useAppSelector(state => state.game.tournaments)
+    if (!tournaments) return []
+    return Object?.values(tournaments)
+}
+
+export function useUserBots(id: string): BotProfile[] {
+    const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
+    if (!bots) return []
+    return Object?.values(bots).filter((bot) => {
+        return bot.owner == id
+    })
+}
+
+export function useOwner(id: string): string | undefined {
+    const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
+    if (!bots) return undefined
+    return bots[id] ? bots[id].owner : undefined
+}
+
+//return list of all bots you own
+export function useUserBotIds(id: string): string[] {
+    const bots = useAppSelector(state => state.game.bots)
+    if (!bots) return []
+    return Object.keys(bots).filter((botId) => {
+        const bot = bots[botId]
+        return bot.owner == id
+    })
+}
+
+//return list of all games your bots are in
+export function useUserBotGameIds(id: string): string[] {
+    const bots = useUserBotIds(id)
+    const games = useAppSelector(state => state.game.games)
+    if (!games) return []
+    if (!bots) return []
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return bots.some((botId) => game.players.includes(botId))
+    })
+}
+
+//return list of all tournaments you are in or own
+export function useUserTournamentIds(id: string): string[] {
+    const tournaments = useAppSelector(state => state.game.tournaments)
+    if (!tournaments) return []
+    return Object.keys(tournaments).filter((tournamentId) => {
+        const tournament = tournaments[tournamentId]
+        return tournament?.participants?.includes(id) || tournament.owner == id
+    })
+}
+        
+//return list of all tournaments your bots are in
+export function useUserBotTournamentIds(id: string): string[] {
+    const bots = useUserBotIds(id)
+    const tournaments = useAppSelector(state => state.game.tournaments)
+    if (!tournaments) return []
+    if (!bots) return []
+    return Object.keys(tournaments).filter((tournamentId) => {
+        const tournament = tournaments[tournamentId]
+        return bots.some((botId) => tournament.participants.includes(botId))
+    })
+}
+
+//return list of wagers in a game
+export function useGameWagers(gameId: string, playerId: string): Bet[] {
+    const game = useGame(gameId)
+    if (!game) return []
+    return Object?.values(game.wagering.bets[playerId])
 }
 
 export function useActionsNotProcessed(): Action[] {
     const actions = useActions()
     return useMemo(()=> {
-        return Object.values(actions)
+        return Object?.values(actions)
             .filter(({status}) => status != ActionStates.PROCESSED && status != ActionStates.ERROR)
     }, [actions])
 }
@@ -59,6 +361,16 @@ export function useAddAction(): (action: Action) => number {
 
     return useCallback((action: Action) => {
         dispatch(addAction(action))
+
+        // Add notification
+        const notification: ActionNotification = {
+            id: action.id,
+            timestamp: action.initTime,
+            type: NotificationType.ACTION,
+            actionId: action.id,
+        }
+        dispatch(addNotification(notification))
+
         console.log(action.id.toString())
         return action.id
     }, [dispatch])
@@ -88,7 +400,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
 
     //Fetch dapp address
     const dappAddress = DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost
-    
+    console.log("dappAddress: ", dappAddress)
     const dispatch = useDispatch()
     const addAction = useAddAction()
     const addTransaction = useTransactionAdder()
@@ -227,6 +539,62 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "join", 
                         "value": "${roomId1}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.CREATE_CHALLENGE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "createChallenge", 
+                        "value": {
+                            "recipient" : "${info.recipient}",
+                            "wager" : ${info.wager},
+                            "token": "${info.token}"
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.ACCEPT_CHALLENGE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "acceptChallenge", 
+                        "value": "${info.challengeId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.DECLINE_CHALLENGE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "declineChallenge", 
+                        "value": "${info.challengeId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.CREATE_OFFER:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "createBotOffer", 
+                        "value": {
+                            "recipient" : "${info.botId}",
+                            "wager" : ${info.price},
+                            "token": "${info.token}"
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.ACCEPT_OFFER:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "acceptBotOffer", 
+                        "value": "${info.offerId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.DECLINE_OFFER:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "declineBotOffer", 
+                        "value": "${info.offerId}"
                     }`)
                     input = appendNumberToUInt8Array(id, input)
                     result = await contract.addInput(input)

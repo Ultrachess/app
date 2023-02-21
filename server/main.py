@@ -26,7 +26,7 @@ logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
-rollup_address = "0xF119CC4Ed90379e5E0CC2e5Dd1c8F8750BAfC812"
+rollup_address = "0xF8C694fd58360De278d5fF2276B7130Bfdc0192A"
 #rollup_address = environ["ROLLUP_ADDRESS"]
 #rollup_address = "0xD8b2ab0d99827bB51697b976AcE3508B2Ad9Be9d"
 
@@ -97,6 +97,7 @@ def send_notice(index, sender, operation, value, success, timeStamp):
     logger.info("Adding notice")
 
 def get_state_hex():
+    #logger.info("getting hex state")
     data_set = {
         "game": matchMaker.getState(),
         "bots": botFactory.getState(), 
@@ -105,10 +106,13 @@ def get_state_hex():
         "tournaments" : tournamentManager.getStringState(),
         "lastProcessedBlock": str(lastProcessedBlock),
         "lastStepTimestamp": str(botManager.last_step_timestamp),
-        "actionList": actionManager.actionList()
+        "actionList": actionManager.actionList(),
+        "challenges": challengeManager.getState(),
+        "marketplace": botMarketPlace.getState(),
     }
+    #logger.info("Inspect element return: " + str(data_set))
     json_object = json.dumps(data_set)
-    logger.info("Inspect element return: " + json_object)
+    #logger.info("Inspect element return: " + json_object)
     hex_string = convert_to_hex(json_object)
     #logger.info("Inspect element return: "+ hex_string)
     return hex_string
@@ -287,6 +291,44 @@ def handle_advance(data):
         except Exception:
             traceback.print_exc()
             success = False
+    elif operator == "createChallenge":
+        try:
+            success = challengeManager.create(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "declineChallenge":
+        try:
+            success = challengeManager.decline(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "acceptChallenge":
+        try:
+            success = challengeManager.accept(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "createBotOffer":
+        try:
+            success = botMarketPlace.create_offer(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "acceptBotOffer":
+        try:
+            success = botMarketPlace.accept(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "declineBotOffer":
+        try:
+            success = botMarketPlace.decline(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    
+        
 
     botManager.runPendingMoves(timeStamp)
 
@@ -326,7 +368,7 @@ def handle_inspect(data):
     #logger.info("Adding report")
     try:
         content = (bytes.fromhex(data["payload"][2:]).decode("utf-8"))
-        
+        #logger.info("Recieved inspect request: "+ content)
         s_json = json.loads(content)
         fetchType = s_json["type"]
         fetchValue = s_json["value"]
@@ -339,7 +381,8 @@ def handle_inspect(data):
         response = requests.post(rollup_server + "/report", json=report)
         #logger.info(f"Received report status {response.status_code}")
         return "accept"
-    except:
+    except Exception as e:
+        #logger.info("Error in inspect request: "+ str(e))
         report = {"payload": "error"}
         response = requests.post(rollup_server + "/report", json=report)
         return "accept"

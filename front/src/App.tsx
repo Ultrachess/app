@@ -13,8 +13,8 @@ import Game from './components/Game';
 import { useDispatch } from 'react-redux';
 import { fetchGames } from './state/game/gameSlice';
 import BotManager from './components/BotManager';
-import Tournaments from './components/Tournaments'
-import Tournament from './components/Tournament';
+import Tournaments from './components/Tournaments';
+import Tournament from './components/TournamentView';
 import { TransactionUpdater } from './state/transactions/updater';
 import { GameStateUpdater } from './state/game/updater';
 import Notifications from './components/Notifications';
@@ -43,7 +43,6 @@ function App() {
         <Route path="rankings" element={<Rankings />} />
         <Route path="bots" element={<BotManager />} />
         <Route path="tournaments" element={<Tournaments />} />
-        <Route path="tournament/:tournamentId" element={<Tournament/>} />
         <Route path="/game/:gameId" element={<Game />} />
         <Route path="/users/:userId" element={<Profile/>} />
         <Route path="/bot/:botId" element={<BotProfile/>} />

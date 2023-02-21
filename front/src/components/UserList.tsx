@@ -30,7 +30,7 @@ export default ({users}) => {
         }
     ];
 
-    const rows = Object.values(users).map((user: any, index) => {
+    const rows = Object?.values(users).map((user: any, index) => {
         console.log(user)
         var id = <Address value={user}/>
         return {

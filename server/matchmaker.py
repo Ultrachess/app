@@ -1,6 +1,7 @@
 import random
 import string
 from game import *
+import notification
 
 class Matchmaker:
     def __init__(self):
@@ -73,6 +74,19 @@ class Matchmaker:
                 if botId2 != "blank":
                     self.games[str(id)].addPlayer(timestamp, botId2)
                     success = self.games[str(id)].run(timestamp)
+
+            p1 = self.games[str(id)].players[0]
+            p2 = self.games[str(id)].players[1]
+            notification.send_notification(
+                notification.BotGameCreatedNotification(
+                    creator_id=sender,
+                    game_id=id,
+                    player_id1=p1,
+                    player_id2=p2,
+                    wager = wagerAmount,
+                    token = token,
+                )
+            )
             
             return {
                 "value": str(id),
@@ -84,7 +98,21 @@ class Matchmaker:
             if(canCreate):
                 id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
                 self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp, duration=duration)
-                successfullAdd = self.games[str(id)].addPlayer(timestamp, sender)
+                if "players" in options:
+                    players = options["players"]
+                    for player in players:
+                        self.games[str(id)].addPlayer(timestamp, player)
+                    successfullAdd = True
+                else:
+                    successfullAdd = self.games[str(id)].addPlayer(timestamp, sender)
+                notification.send_notification(
+                    notification.GameCreatedNotification(
+                        creator_id=sender,
+                        game_id=id,
+                        wager = wagerAmount,
+                        token = token,
+                    )
+                )
                 return {
                     "value": str(id),
                     "success": successfullAdd

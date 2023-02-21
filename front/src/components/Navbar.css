@@ -1,5 +1,4 @@
 nav {
-    position: fixed;
     top: 0; /* Stick it to the top */
     max-height: 100px;
     width: 100vw;
@@ -7,6 +6,7 @@ nav {
     grid-template-areas: "logo nav";
     display: flex;
     justify-content: center;
+    position: sticky;
     /* Cosmetics */
 }
 
@@ -15,20 +15,25 @@ nav a {
 }
 
 nav .logo {
-  width: 60px;
-  margin-top: 10px;
+  width: 45px;
+  margin-top: 15px;
   margin-right: 20px;
 }
 
 nav .navItem {
   margin-top: 15px;
+  text-decoration: none;
+}
+
+nav .noUnderLine {
+  text-decoration: none;
 }
 
 nav .center {
     display: flex;
     justify-content: space-between;
-    min-width: 200px;
-    width: 1200px;
+    min-width: 500px;
+    width: 1450px;
 }
 
 .nav-right {
@@ -41,8 +46,30 @@ nav .center {
     margin-top: 2px;
 }
 
+.nav-item div {
+    margin-right: 20px;
+}
 
-  
+.content {
+  padding-top: 50px;
+  display: flex;
+    justify-content: center;
+    
+}
+
+  .contentHolder {
+    width: 1400px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contentHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+  }
 
   
   .Nav {

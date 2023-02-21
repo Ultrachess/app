@@ -1,46 +1,78 @@
 import * as React from "react";
-import { Text, Grid, Card, Row } from "@nextui-org/react";
-import UserList from "./UserList";
-import { useAppSelector } from "../state/hooks";
+import BotUploader from "./BotUploader";
+import { useSelector } from "react-redux";
+import BotListView from "./list/BotList";
+import BotGameCreator from "./BotGameCreator";
+import { useAllProfiles } from "../state/game/hooks";
+import Flex from "./ui/Flex";
+import { Text } from "./ui/Text";
+import { styled } from "@stitches/react";
+import ModalCreateBot from "./ModalCreateBot";
+import Separator from "./ui/Separator";
+import { ZoomOutIcon, StitchesLogoIcon } from "@radix-ui/react-icons";
+import Button from "./ui/Button";
+import { violet } from "@radix-ui/colors";
+import ProfileList from "./list/ProfileList";
 
 export default () => {
-    const [mainItems, setMainItems] = React.useState([]);
-    const allElos = useAppSelector(state => state.game.elo)
-    const rankedUsers = React.useMemo(()=>{
-        var values: number[] = Object.values(allElos)
-        var keys: string[] = Object.keys(allElos)
-        var tempValues = [...values]
-        var tempKeys = [...keys]
-        var done = false;
-        while (!done) {
-            done = true;
-            for (var i = 1; i < tempValues.length; i += 1) {
-                if (tempValues[i - 1] > tempValues[i]) {
-                    done = false;
-                    var tmp = tempValues[i - 1];
-                    var tmpKeys = tempKeys[i - 1];
-                    tempValues[i - 1] = tempValues[i];
-                    tempKeys[i - 1] = tempKeys[i]
-                    tempValues[i] = tmp;
-                    tempKeys[i] = tmpKeys
-                }
-            }
-        }
-        return tempKeys.reverse()
-    }, [allElos])
-    return (
-        <div className="body">
-            <div className="content">
-                <Text h1>Rankings</Text>
-                <Card css={{ height:"700px", width: "1000px", paddingLeft:"50px", paddingRight:"50px", paddingTop:"50px"}}>
-                    <Card.Header>
-                        <Row justify="center">
-                            
-                        </Row>
-                    </Card.Header>
-                    <UserList users={rankedUsers}/>
-                </Card>
+  const profiles: any = useAllProfiles(true)
+
+  return (
+    <div className="body">
+      <div className="header">
+        <div>
+          <Text bold black size={"max"} css={{ textAlign: "center", marginBottom: "10px" }}>
+            Rankings
+          </Text>
+        </div>
+
+      </div>
+      <div className="content">
+        <div className="contentHolder">
+          <div>
+            <div className="contentHeader">
+              <Label>Ranking list</Label>
+              <RightSlot>
+                <ModalCreateBot triggerElement={
+                  <Button>
+                    <Text>random <StitchesLogoIcon/></Text>
+                  </Button>
+                } />
+              </RightSlot>
             </div>
-        </div>    
-    );
+            <Separator />
+            <ProfileList 
+                profiles={profiles}
+                showRank={true}
+            />
+          </div>
+        </div>
+    </div>
+  </div>
+  );
 }
+
+const Label = styled('label', {
+  fontSize: 23,
+  lineHeight: 1,
+  fontWeight: 500,
+  marginBottom: 20,
+  color: violet.violet12,
+  display: 'block',
+});
+
+const LeftSlot = styled('div', {
+    marginRight: 'auto',
+    paddingRight: 0,
+    display: 'flex',
+    color: violet.violet11,
+    '[data-highlighted] > &': { color: 'white' },
+    '[data-disabled] &': { color: violet.violet4 },
+  });
+
+  const RightSlot = styled('div', {
+    marginLeft: 'auto',
+    paddingLeft: 0,
+    display: 'flex',
+    '[data-highlighted] > &': { color: 'white' },
+  });

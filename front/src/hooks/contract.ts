@@ -32,7 +32,7 @@ export function useErc20Contract(addressOrAddressMap: string, withSignerIfPossib
     return useContract<Contract>(addressOrAddressMap, ERC20_ABI, withSignerIfPossible)
 }
 
-export function useContractCallResult(contract: Contract, func: string): string | number| null | undefined {
+export function useContractCallResult(contract: Contract, func: string, ...params): string | number| null | undefined {
     const [ result, setResult ] = useState(0)
 
     useEffect(() => {

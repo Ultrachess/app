@@ -12,16 +12,46 @@ import { joinGame, sendMove } from "../state/game/gameSlice";
 import { TransactionType } from "../common/types";
 import GameMovesView from "./GameMovesView";
 import GameTimer from "./GameTimer";
-import { useActionCreator, useActionsNotProcessed, useActions } from "../state/game/hooks";
+import { useActionCreator, useActionsNotProcessed, useActions, useGame } from "../state/game/hooks";
 import { useAllTransactions } from "../state/transactions/hooks";
 import { Row, Text } from "@nextui-org/react";
 import { useToken } from "../hooks/token";
 import { ethers } from "ethers";
+import Flex from "./ui/Flex";
+import AssetDisplay from "./AssetDisplay";
+import { useTime } from "./ActionView";
+import BotMoveStatisticsView from "./BotMoveStatisticsView";
+import GameWagersView from "./GameWagersView";
+
+const placerHolderBotMoveStat = {
+  depth: 0,
+  seldepth: 0,
+  time: 0,
+  nodes: 0,
+  pv: "",
+  score: 0,
+  nps: 0,
+  tbhits: 0,
+  sbhits: 0,
+  cpuload: 0,
+}
+
+const placeHolderGameWagers = {
+  gameId: "",
+  openTime: 0,
+  duration: 0,
+  bets: {},
+  pots: {},
+  totalPot: 0,
+  betsArray: []
+}
+  
 
 export default () => {
   let { gameId } = useParams()
   //const dispatch = useDispatch()
   const addAction = useActionCreator()
+  const now = useTime(1000)
   const games = useSelector(state => state.game.games);
   const accounts = useSelector(state => state.auth.accounts);
   const inputState = useSelector(state => state.game.currentInputState)
@@ -34,6 +64,7 @@ export default () => {
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1)
+  const [isAutoPlay, setAutoPlay] = useState(false)
   const [currentFen, setCurrentFen] = useState()
   const actionsNotProcessed = useActionsNotProcessed()
   const pendingMoves = useMemo(()=>{
@@ -41,14 +72,28 @@ export default () => {
       .filter(({transactionInfo}) => transactionInfo.type == TransactionType.SEND_MOVE_INPUT)
       .map(({transactionInfo}) => transactionInfo.value)
   },[actionsNotProcessed])
-  const game = useMemo(()=> games[gameId], [games])
-  const tokenAddress = useMemo(()=>game.token, [game])
-  const token = useToken(tokenAddress)
-  const tokenName = token.symbol
-  const wagerAmount = useMemo(()=> ethers.utils.formatUnits(ethers.BigNumber.from(game.wagerAmount.toString())), [game])
-  const resigner = useMemo(() => game.resigner, [game])
-  const topAddressScore = useMemo(() => game.scores[topAddress])
-  const bottomAddressScore = useMemo(() => game.scores[bottomAddress])
+  const game = useGame(gameId)
+  const tokenAddress = game.token
+  const wagerAmount = game.wagerAmount
+  const topAddressScore = useMemo(() => game.scores[topAddress], [topAddress])
+  const bottomAddressScore = useMemo(() => game.scores[bottomAddress], [bottomAddress])
+  const completed = game.isEnd
+  const topAddressLost = topAddressScore == 0
+  const bottomAddressLost = bottomAddressScore == 0
+  const topAddressIsBot = useMemo(() => !topAddress.includes("0x"), [topAddress])
+  const bottomAddressIsBot = useMemo(() => !bottomAddress.includes("0x"), [bottomAddress])
+  const topAddressWon = topAddressScore == 1
+  const bottomAddressWon = bottomAddressScore == 1
+  const draw = topAddressScore == 0.5 && bottomAddressScore == 0.5
+  const winningId = useMemo(() => {
+    if(topAddressWon)
+      return topAddress
+    if(bottomAddressWon)
+      return bottomAddress
+    if(draw)
+      return "DRAW"
+    return null
+  }, [topAddressWon, bottomAddressWon])
   console.log("topScore " + topAddressScore)
 
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
@@ -59,9 +104,24 @@ export default () => {
   const isTurn = gameState.turn() == gameSide[0]
   const minPlayers = useMemo(()=> game.players.length > 1)
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
-
   
 
+
+  //auto play and loop useEffect.
+  //checks if autoplay is on and automatically increments the move index every second
+  //asynchronously
+  useEffect(() => {
+    if(isAutoPlay){
+      var interval = setInterval(() => {
+        if(currentMoveIndex < gameState.history().length - 1)
+          setCurrentMoveIndex(currentMoveIndex + 1)
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isAutoPlay, currentMoveIndex])
+
+
+  //updates the game state when the game changes
   useEffect(() => {
       var isAlreadyInGame = playerIsInGame(games, address, gameId),
       canJoin = canJoinGame(games, gameId),
@@ -115,6 +175,11 @@ export default () => {
       })
     }); 
   },[pendingMoves])
+
+  //initailize index to 0
+  useEffect(() => {
+    setCurrentMoveIndex(0)
+  }, [gameId])
 
   function safeGameMutate(modify) {
     if(minPlayers)
@@ -256,55 +321,107 @@ export default () => {
     setCurrentMoveIndex(currentMoveIndex + 1)
   }, [currentMoveIndex])
 
+  const autoPlay = useCallback(() => {
+    setAutoPlay(!isAutoPlay)
+  }, [isAutoPlay])
+
+  const jumpTo = useCallback((index) => {
+    setCurrentMoveIndex(index)
+  }, [])
+
+  const getLastProcessedBotMoveIndexFromCurrentIndex = (index) => {
+    const botMoveStats = game.botMoveStats
+    //get the last processed bot move that is closest to the current index and less than or equal to the current index
+    //by checking if botMoveStats[index] is undefined, we can check if the bot has processed the move at index
+    //if it is undefined, then we know the bot has not processed the move at index, so we can decrement index and check again
+    if(index < 0) return 0
+    while(botMoveStats[index] === undefined && index > 0){
+      index--
+    }
+    return index
+  }
+
   return (
-    <div className="game">
-        <div className="gameView">
-          <Row justify="space-evenly">
-            <Address value={topAddress} />
-            <Text color="primary" className="tokenValue"> {wagerAmount}  {tokenName}</Text>
-            {topAddressScore == undefined ? "" : topAddressWinAmount == 0 ? 
-              <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
-              <Text className="tokenValue" color="success">{"+"+wagerAmount}</Text>
-            }
-          </Row>
-          <Chessboard 
-            position={currentFen}
-            onPieceDrop={onDrop}
-            arePremovesAllowed={false}
-            boardOrientation={gameSide}
-            onMouseOverSquare={onMouseOverSquare}
-            onMouseOutSquare={onMouseOutSquare}
-            onSquareClick={onSquareClick}
-            onSquareRightClick={onSquareRightClick}
-            isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
-            customBoardStyle={{
-              borderRadius: '4px',
-              boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
-            }}
-            customSquareStyles={{
-              ...moveSquares,
-              ...optionSquares,
-              ...rightClickedSquares
-            }}
-          />
-          <Row justify="space-evenly">
-            <Address value={bottomAddress} />
-            <Text color="primary" className="tokenValue">{wagerAmount}  {tokenName}</Text>
-            {bottomAddressScore == undefined ? "" : bottomAddressWinAmount == 0 ? 
-              <Text className="tokenValue" color="error">{"-"+wagerAmount}  </Text> : 
-              <Text className="tokenValue" color="success">{"+"+wagerAmount}</Text>            }
-          </Row>
-        </div>
-        <div className="gameMovesView"> 
-          <GameMovesView 
-            pgn={gameState.pgn()}
-            firstMove = {firstMove}
-            lastMove = {lastMove}
-            nextMove = {nextMove}
-            prevMove = {prevMove}
-            highlightIndex = {currentMoveIndex}
-          />
-        </div>
-    </div>
+    <Flex 
+      css={{
+        flexDirection: 'row',
+        gap: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+          <Flex css={{gap: 5, flexDirection:'column', alignItems:'flex-start'}}>
+            <Flex css={{justifyContent: 'space-between', alignItems:'center'}}>
+              <Address value={topAddress} />
+              <Flex css={{gap: 1}}>
+                {completed && <Text faded>+{topAddressScore}</Text>}
+                {topAddressWon ? 
+                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                 : topAddressLost ?
+                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : draw ?
+                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                }
+              </Flex>
+            </Flex>
+            {topAddressIsBot && <BotMoveStatisticsView botMoveStat={game?.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]??placerHolderBotMoveStat} />}
+            <Chessboard 
+              position={currentFen}
+              onPieceDrop={onDrop}
+              arePremovesAllowed={false}
+              boardOrientation={gameSide}
+              onMouseOverSquare={onMouseOverSquare}
+              onMouseOutSquare={onMouseOutSquare}
+              onSquareClick={onSquareClick}
+              onSquareRightClick={onSquareRightClick}
+              isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
+              customBoardStyle={{
+                borderRadius: '4px',
+                boxShadow: '0 2px 7px rgba(0, 0, 0, 0.5)'
+              }}
+              customSquareStyles={{
+                ...moveSquares,
+                ...optionSquares,
+                ...rightClickedSquares
+              }}
+            />
+            {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]} />}
+
+            <Flex css={{width:'100%',justifyContent: 'space-between', alignItems:'center'}}>
+              <Address value={topAddress} />
+              <Flex css={{gap: 1}}>
+                {completed && <Text faded>+{topAddressScore}</Text>}
+                {bottomAddressWon ? 
+                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                 : bottomAddressLost ?
+                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : draw ?
+                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                }
+              </Flex>
+            </Flex>
+          </Flex>
+          <Flex css={{ flexDirection:'column', gap:5}}>
+            <GameWagersView
+              winningId={winningId}
+              wagers={game.wagering == {} || game.wagering == undefined ? placeHolderGameWagers: game.wagering} 
+              now = {now}
+            />
+            <GameMovesView 
+              
+              pgn={gameState.pgn()}
+              firstMove = {firstMove}
+              lastMove = {lastMove}
+              nextMove = {nextMove}
+              prevMove = {prevMove}
+              autoPlay = {autoPlay}
+              jumpTo = {jumpTo}
+              highlightIndex = {currentMoveIndex}
+              botMoveStats = {game.botMoveStats}
+            />
+          </Flex>
+    </Flex>
   );
 }

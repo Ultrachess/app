@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react"
 import { COINGECKO_LIST, fetchTokenList } from "../utils/lists"
 import { useContractCallResult, useErc20Contract } from "./contract"
 import ULTRACHESS_LIST from "../utils/lists/ultrachess.tokenlists.json"
+import { useSelector } from "react-redux"
+import { useAppSelector } from "../state/hooks"
 
 export interface Token {
     address: string,
@@ -26,14 +28,14 @@ export function useTokenList() : Token[] {
             //     }
             // )
             const _chainId = chainId ?? 31337
-            console.log("chainId: ", _chainId)
+            console.log("chainId from token: ", _chainId)
             const tokens = ULTRACHESS_LIST.filter(token => token.chainId == _chainId)
             setTokenList(tokens)
         }
 
         callFetch()
             .catch(console.error)
-    }, [])
+    }, [chainId])
 
     return tokenList
 }
@@ -59,12 +61,13 @@ export function useTokenFromList(address: string): Token {
 }
 
 export function useTokenFromNetwork(address: string | null | undefined) : Token | null | undefined {
-    const { chainId } = useWeb3React()
+    const { chainId, account } = useWeb3React()
 
     const contract = useErc20Contract(address)
     const name = useContractCallResult(contract, "name")
     const symbol = useContractCallResult(contract, "symbol")
     const decimals = useContractCallResult(contract, "decimals")
+    const balance = useContractCallResult(contract, "balanceOf", [account])
 
     return useMemo(()=>{
         return {
@@ -81,6 +84,23 @@ export function useTokenFromNetwork(address: string | null | undefined) : Token 
         symbol,
         decimals
     ])
+}
+
+export function useTokenBalance(token: Token, address: string | null | undefined) : number | string {
+    const contract = useErc20Contract(token?.address)
+    const balance = useContractCallResult(contract, "balanceOf", [address])
+
+    return balance
+}
+
+export function useTokenPortalBalance(token: Token, address: string) : number {
+    
+    const balances = {}
+    console.log("balances: ", balances)
+    const accountBalances = balances?.[address] ?? {}
+    const balance = accountBalances?.[token?.address] ?? 0.0
+
+    return balance
 }
 
 export function useToken(address?: string | null): Token | null | undefined {
