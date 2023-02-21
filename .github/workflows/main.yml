@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install nodejs npm
-          sudo apt-get -y install pm2
+          npm i pm2
         
       - name: Display Node.js version
         run: node --version
