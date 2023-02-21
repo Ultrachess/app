@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install nodejs npm
-          npm i pm2
+          npm install pm2 -g
         
       - name: Display Node.js version
         run: node --version
@@ -72,4 +72,4 @@ jobs:
       
       - name: Serve front end with pm2
         run: |
-          sudo pm2 serve ./front/dist 5173 --spa --name my-app
+          pm2 serve ./front/dist 5173 --spa --name my-app
