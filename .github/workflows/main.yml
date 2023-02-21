@@ -22,7 +22,10 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: 'current'
+        
+      - name: Display Node.js version
+        run: node --version
           
       - name: Install Docker Compose
         run: |
