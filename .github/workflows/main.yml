@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: Install Docker
         run: |
           sudo apt-get update
@@ -56,3 +59,13 @@ jobs:
           EOL"
 
           sudo service nginx restart
+      
+      - name: Start front end
+        working-directory: ./front
+        run: |
+          npm install
+          npm run build
+      
+      - name: Serve front end with pm2
+        run: |
+          sudo pm2 serve ./front/dist 5173 --spa --name my-app
