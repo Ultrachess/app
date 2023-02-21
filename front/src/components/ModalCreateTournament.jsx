@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { ChevronDownIcon,ChevronUpIcon, Cross2Icon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
 import { Text } from './ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
@@ -12,7 +12,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useActionCreator, useUserBots } from '../state/game/hooks';
 import { TransactionType } from '../common/types';
 import Address from './Address';
-import { Select } from '@radix-ui/react-select';
+import * as Select from '@radix-ui/react-select';
 
 
 const tournamentTypes = [
@@ -25,7 +25,7 @@ export default ({triggerElement}) => {
     const [tourneyType, setTourneyType] = useState(tournamentTypes[0])
     const [participants, setParticipants] = useState([])
     const [participantCount, setParticipantCount] = useState(400)
-    const [currenSelectedParticipant, setCurrentSelectedParticipant] = useState(account)
+    const [currenSelectedParticipant, setCurrentSelectedParticipant] = useState(account ?? "")
     const [roundCount, setRoundCount] = useState(1000)
     const [amountOfWinners, setAmountOfWinners] = useState(1)
 
@@ -89,7 +89,7 @@ export default ({triggerElement}) => {
                 </Flex>
                 <Flex css={{ gap: 10, flexWrap: 'wrap' }}>
                     <SelectMain 
-                        value={currentSelectedParticipant} 
+                        value={""} 
                         onValueChange={(value)=>{ setCurrentSelectedParticipant(value)}}
                         potentialParticipants = {potentialParticipants.filter((address) => !participants.includes(address))}
                         label="Select participant"
@@ -355,9 +355,11 @@ const SelectMain = ({onValueChange, value, options, label}) => {
           <SelectViewport>
             <Select.Group>
               <SelectLabel>{label}</SelectLabel>
-                {options.map((option) => (
-                    <SelectItem value={option}>{option}</SelectItem>
-                ))}
+                {options ?
+                    options.map((option) => (
+                        <SelectItem value={option}>{option}</SelectItem>
+                    )): []
+                }
             </Select.Group>
   
           </SelectViewport>

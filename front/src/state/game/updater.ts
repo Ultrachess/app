@@ -52,7 +52,6 @@ const getNotices = async (
 ): Promise<PartialNotice[]> => {
     // create GraphQL client to reader server
     const client = createClient({ url, exchanges: defaultExchanges, fetch });
-
     // query the GraphQL server for notices of our input
     // keeping trying forever (or until user kill the process)
     // console.log(
@@ -61,6 +60,7 @@ const getNotices = async (
     const { data, error } = await client
         .query(GetNoticeDocument, { query: noticeKeys })
         .toPromise();
+        console.log("notices1, ", data)
     if (data?.GetNotice) {
         return data.GetNotice.filter<PartialNotice>(isPartialNotice);
     } else {
@@ -143,7 +143,10 @@ function useNotices(): PartialNotice[] | undefined {
 
     useEffect(() => {
         const fetchNotices = async () => {
-            setNotices( await getNotices(DEFAULT_GRAPHQL_URL, {}) )
+            setNotices( await getNotices(DEFAULT_GRAPHQL_URL, {
+                epoch_index: "0",
+                input_index: "0",
+            }) )
             await delay(DEFAULT_GRAPHQL_POLL_TIME)
             await fetchNotices()
         }
@@ -156,6 +159,7 @@ function useNotices(): PartialNotice[] | undefined {
 
 function useNewNotifications(): Notification[] | undefined {
     const notices = useNotices()
+    console.log("notices: ", notices)
     const [lastNoticeIndex, setLastNoticeIndex] = useState(0)
 
     const notifications: Notification[] = notices

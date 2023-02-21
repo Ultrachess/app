@@ -27,12 +27,12 @@ export const store = configureStore({
         auth: authSlice,
         game: gameSlice,
         transactions: transactions,
-        actions: actions,
+        //actions: actions,
         notifications: notifications,
     },
-    middleware: (getDefaultMiddleware) => 
-        getDefaultMiddleware({ serializableCheck: false })
-            .concat(save({ states: PERSISTED_STATE, debounce: 100})),
+    // middleware: (getDefaultMiddleware) => 
+    //     getDefaultMiddleware({ serializableCheck: false })
+    //         .concat(save({ states: PERSISTED_STATE, debounce: 100})),
     preloadedState: load({
         states: PERSISTED_STATE,
         //disableWarnings: process.env.NODE_ENV === 'test',

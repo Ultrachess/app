@@ -43,9 +43,10 @@ export default () => {
               </RightSlot>
             </div>
             <Separator />
+            {tournaments.length > 0 &&
             <TournamentList 
                 tournaments={tournaments}
-            />
+            />}
           </div>
         </div>
     </div>

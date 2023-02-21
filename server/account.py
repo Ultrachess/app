@@ -2,8 +2,8 @@ from deps import *
 from eth_abi import encode_abi
 import logging
 import requests
-from notification import send_notification, NotificationType, WithdrawFundsNotification, DepositFundsNotification
-from times import get_current_time
+import notification
+from times import get_timestamp
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -33,9 +33,9 @@ class AccountBalanceManager:
         new = prev + value
         logger.info("prev:" + str(prev) + " new:"+str(new)+ " value:"+str(value) + " token:"+str(token))
         self.setBalance(account, new, token)
-        send_notification(
-            DepositFundsNotification(
-                timestamp = get_current_time(),
+        notification.send_notification(
+            notification.DepositFundsNotification(
+                timestamp = get_timestamp(),
                 sender = account,
                 amount = value,
                 token = token
@@ -64,8 +64,8 @@ class AccountBalanceManager:
         logger.info(f"Received voucher status {response.status_code} body {response.content}")
         #Withdraw balance
         self.withdraw(account, amount, token)
-        send_notification(
-            WithdrawFundsNotification(
+        notification.send_notification(
+            notification.WithdrawFundsNotification(
                 timestamp = get_current_time(),
                 sender = account,
                 amount = amount,

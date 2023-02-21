@@ -3,7 +3,7 @@ import random
 import string
 import logging
 import time
-from notification import send_notification, ChallengeCreatedNotification, ChallengeAcceptedNotification, ChallengeDeclinedNotification
+import notification
 
 def CreateChallenge(sender, challengeId, timestamp, recipient, wager, token):
     return {
@@ -17,7 +17,7 @@ def CreateChallenge(sender, challengeId, timestamp, recipient, wager, token):
 
 #Create challenge manager class
 class ChallengeManager:
-    def __init__(self, db):
+    def __init__(self):
         self.challenges = {}
 
     def create(self, sender, timestamp, options):
@@ -41,8 +41,8 @@ class ChallengeManager:
         challengeId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
         challenge = CreateChallenge(sender, challengeId, timestamp, recipient, wager, token)
         self.challenges[challengeId] = challenge
-        send_notification(
-            ChallengeCreatedNotification(
+        notification.send_notification(
+            notification.ChallengeCreatedNotification(
                 timestamp=timestamp,
                 challenge_id=challengeId,
                 sender=sender,
@@ -68,8 +68,8 @@ class ChallengeManager:
         #accept challenge if sender is recipient
         #then create game
         if challenge["recipient"] == sender:
-            send_notification(
-                ChallengeAcceptedNotification(
+            notification.send_notification(
+                notification.ChallengeAcceptedNotification(
                     timestamp=timestamp,
                     challenge_id=challengeId,
                     sender=challenge["sender"],
@@ -127,8 +127,8 @@ class ChallengeManager:
     def decline(self, sender, timestamp, challengeId):
         challenge = self.challenges[challengeId]
         if challenge["recipient"] == sender:
-            send_notification(
-                ChallengeDeclinedNotification(
+            notification.send_notification(
+                notification.ChallengeDeclinedNotification(
                     timestamp=timestamp,
                     challenge_id=challengeId,
                     sender=challenge["sender"],
@@ -145,5 +145,5 @@ class ChallengeManager:
         return str(self.offers)
 
     def getState(self):
-        return self.offers
+        return self.challenges
 

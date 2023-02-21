@@ -3,10 +3,12 @@ from dataclasses import dataclass, asdict
 import requests
 import json
 import logging
-from main import rollup_server
+from os import environ
+
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
+rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
 
 # This class is used to define the type of notification based on notification.ts
 class NotificationType(Enum):
@@ -216,38 +218,38 @@ class BotGameCompletedNotification(BaseNotification):
     winnings2: int
 
 
-@dataclass
-class BotJoinedTournamentNotification(BaseNotification):
-    type = NotificationType.BOT_JOINED_TOURNAMENT
-    bot_id: str
-    tournament_id: str
+# @dataclass
+# class BotJoinedTournamentNotification(BaseNotification):
+#     type = NotificationType.BOT_JOINED_TOURNAMENT
+#     bot_id: str
+#     tournament_id: str
 
-@dataclass
-class BotTournamentMatchCompletedNotification(BaseNotification):
-    type = NotificationType.BOT_TOURNAMENT_MATCH_COMPLETED
-    bot_id: str
-    tournament_id: str
-    match_id: str
-    player_id1: str
-    player_id2: str
-    score1: int
-    score2: int
-    totalScore1: int
-    totalScore2: int
+# @dataclass
+# class BotTournamentMatchCompletedNotification(BaseNotification):
+#     type = NotificationType.BOT_TOURNAMENT_MATCH_COMPLETED
+#     bot_id: str
+#     tournament_id: str
+#     match_id: str
+#     player_id1: str
+#     player_id2: str
+#     score1: int
+#     score2: int
+#     totalScore1: int
+#     totalScore2: int
 
-@dataclass
-class BotTournamentRoundCompletedNotification(BaseNotification):
-    type = NotificationType.BOT_TOURNAMENT_ROUND_COMPLETED
-    tournament_id: str
-    roundNumber: int
-    bot_id: str
+# @dataclass
+# class BotTournamentRoundCompletedNotification(BaseNotification):
+#     type = NotificationType.BOT_TOURNAMENT_ROUND_COMPLETED
+#     tournament_id: str
+#     roundNumber: int
+#     bot_id: str
 
-@dataclass
-class BotTournamentCompletedNotification(BaseNotification):
-    type = NotificationType.BOT_TOURNAMENT_COMPLETED
-    tournament_id: str
-    bot_id: str
-    score: int
+# @dataclass
+# class BotTournamentCompletedNotification(BaseNotification):
+#     type = NotificationType.BOT_TOURNAMENT_COMPLETED
+#     tournament_id: str
+#     bot_id: str
+#     score: int
 
 @dataclass
 class BotOfferCreatedNotification(BaseNotification):
@@ -296,7 +298,7 @@ class WithdrawFundsNotification(BaseNotification):
     token: str
 
 
-Notification = GameCreatedNotification | GameCompletedNotification | GameWagerNotification | GameBettingClosedNotification | ChallengeCreatedNotification | ChallengeAcceptedNotification | ChallengeDeclinedNotification | ChallengeRecievedNotification | TournamentCreatedNotification | TournamentJoinedNotification | TournamentCompletedNotification | TournamentMatchCreatedNotification | TournamentMatchCompletedNotification | TournamentRoundCompletedNotification | BotCreatedNotification | BotUpdatedNotification | BotGameCreatedNotification | BotGameCompletedNotification | BotJoinedTournamentNotification | BotTournamentMatchCompletedNotification | BotTournamentRoundCompletedNotification | BotTournamentCompletedNotification | BotOfferCreatedNotification | BotOfferAcceptedNotification | BotOfferDeclinedNotification | DepositFundsNotification | WithdrawFundsNotification
+Notification = GameCreatedNotification | GameCompletedNotification | GameWagerNotification | GameBettingClosedNotification | ChallengeCreatedNotification | ChallengeAcceptedNotification | ChallengeDeclinedNotification | ChallengeRecievedNotification | TournamentCreatedNotification | TournamentJoinedNotification | TournamentCompletedNotification | TournamentMatchCreatedNotification | TournamentMatchCompletedNotification | TournamentRoundCompletedNotification | BotCreatedNotification | BotUpdatedNotification | BotGameCreatedNotification | BotGameCompletedNotification | BotOfferCreatedNotification | BotOfferAcceptedNotification | BotOfferDeclinedNotification | DepositFundsNotification | WithdrawFundsNotification
 
 
 def convert_to_hex(s_input):

@@ -20,6 +20,7 @@ import Flex from './ui/Flex';
 export default ({triggerElement}) => {
     const [selectedFile, setSelectedFile] = useState<File>();
     const addAction = useActionCreator();
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -52,9 +53,23 @@ export default ({triggerElement}) => {
                     </DialogDescription>
                     <Fieldset>
                         <Label>Drag and drop your RISC-V executable</Label>
-                        <FileUploadBlock>
+                        <FileUploadBlock
+                            onClick={() => inputRef.current.click()}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                                    setSelectedFile(e.dataTransfer.files[0]);
+                                }
+                            }}
+                        >
                             {selectedFile ? selectedFile.name : 'Upload file'}
-                            <input style={{display: 'none'}} type="file" name="file" onChange={changeHandler}/>
+                            <input
+                                ref={inputRef}
+                                style={{display: 'none'}} 
+                                type="file" 
+                                name="file" 
+                                onChange={changeHandler}
+                            />
                         </FileUploadBlock>
                     </Fieldset>
 
@@ -162,10 +177,9 @@ const DialogOverlay = styled(Dialog.Overlay, {
     lineHeight: 1.5,
   });
 
-const FileUploadBlock = styled('input', {
+const FileUploadBlock = styled('div', {
     display: 'block',
-    border: `2px white dashed`,
-    color: 'white',
+    border: `2px black dashed`,
     borderRadius: 4,
     fontSize: 15,
     userSelect: 'none',

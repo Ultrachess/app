@@ -265,6 +265,10 @@ async function poll(dispatch) {
         "value": ""
     }`
     var response = await instance.get("/inspect/" + input) 
+    console.log("response", response.data)
+    if (response.data.reports.length <= 0)
+        return poll(dispatch);
+
     var payload = response.data.reports[0].payload
     updateGameState(dispatch, payload)
     await poll(dispatch);

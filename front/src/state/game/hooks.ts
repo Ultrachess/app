@@ -400,7 +400,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
 
     //Fetch dapp address
     const dappAddress = DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost
-    
+    console.log("dappAddress: ", dappAddress)
     const dispatch = useDispatch()
     const addAction = useAddAction()
     const addTransaction = useTransactionAdder()

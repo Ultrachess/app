@@ -11,11 +11,14 @@ import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
 import { useActionCreator } from '../state/game/hooks';
 import { TransactionType } from '../common/types';
+import { ethers } from 'ethers';
+import { useNavigate } from 'react-router-dom';
 
 
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
+    const navigate = useNavigate()
     const [ bettingDuration, setBettingDuration ] = useState(0)
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
@@ -25,15 +28,19 @@ export default ({triggerElement}) => {
     const addAction = useActionCreator()
 
     const handleCreate = async () => {
-      const [approvalActionId, wait] = await addAction({
-        type: TransactionType.CREATE_GAME_INPUT,
+      console.log("amount", amount)
+      const tx = {
+            type: TransactionType.CREATE_GAME_INPUT,
             name: "default",
             isBot: false,
-            wagerTokenAddress: token.address,
-            wagerAmount: ethers.utils.parseUnits(amount),
+            wagerTokenAddress: token? token.address: "",
+            wagerAmount: ethers.utils.parseUnits(amount.toString()),
             bettingDuration,
-      })
-      await wait()
+      }
+      console.log("tx", tx)
+      const [approvalActionId, wait] = await addAction(tx)
+      const roomId = await wait
+      if(roomId) navigate(`game/${roomId}`, { replace: true })
 
     }
 
@@ -60,7 +67,10 @@ export default ({triggerElement}) => {
                 </RightSlot>
             </Fieldset>
             <Fieldset>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.value)}}>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{
+                  console.log("event.value", event.target.value)
+                 setAmount(event.target.value)
+                 }}>
                 </Input>
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>

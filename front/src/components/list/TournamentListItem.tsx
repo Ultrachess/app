@@ -13,8 +13,9 @@ import {
     TournamentMatch, 
     TournamentRound 
 } from "../../state/game/types";
+import AddressTournament from "../AddressTournament";
 
-export default ({tournament, rank = 0, row=false}: {tournament: Tournament, rank?: number, row?: boolean}) => {
+export default ({tournament, rank = 0, row=true}: {tournament: Tournament, rank?: number, row?: boolean}) => {
     const { 
         id,
         type,
@@ -41,7 +42,7 @@ export default ({tournament, rank = 0, row=false}: {tournament: Tournament, rank
             </Flex>}
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>id</Text>
-                <Address value={id} hoverable={true} />
+                <AddressTournament id={id} />
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>type</Text>
@@ -61,7 +62,7 @@ export default ({tournament, rank = 0, row=false}: {tournament: Tournament, rank
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>participants</Text>
-                <Text>{participants.length}/{participantCount}</Text>
+                <Text>{participants ? participants.length : 0}/{participantCount}</Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>Status</Text>

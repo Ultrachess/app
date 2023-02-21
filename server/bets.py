@@ -1,7 +1,7 @@
 import deps
 import logging
 import traceback
-from notification import send_notification, GameWagerNotification
+import notification
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -74,8 +74,8 @@ class BetManager:
         self.games[gameId]["totalPot"] += amount
 
         #send notification
-        send_notification(
-            GameWagerNotification(
+        notification.send_notification(
+            notification.GameWagerNotification(
                 timestamp=timeStamp,
                 game_id=gameId,
                 player_id=sender,

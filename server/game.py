@@ -3,7 +3,7 @@ import chess.engine
 import chess.pgn
 import logging
 import traceback
-from notification import send_notification, GameJoinedNotification, GameCompletedNotification, GameMoveNotification, GameWagerNotification, GameBettingClosedNotification, BotCreatedNotification, BotGameCompletedNotification
+import notification
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -97,8 +97,8 @@ class Game:
 
         #send notification
         if self.isBot:
-            send_notification(
-                BotGameCompletedNotification(
+            notification.send_notification(
+                notification.BotGameCompletedNotification(
                     game_id=self.id,
                     player_id1=p1,
                     player_id2=p2,
@@ -114,8 +114,8 @@ class Game:
                 )
             )
         else:
-            send_notification(
-                GameCompletedNotification(
+            notification.send_notification(
+                notification.GameCompletedNotification(
                     game_id=self.id,
                     player_id1=p1,
                     player_id2=p2,
@@ -147,8 +147,8 @@ class Game:
                 #open betting phase
                 if self.__isMinPlayers():
                     deps.betManager.open(id, timestamp, self.bettingDuration)
-                send_notification(
-                    GameJoinedNotification(
+                notification.send_notification(
+                    notification.GameJoinedNotification(
                         timestamp= timestamp,
                         player_id=player,
                         game_id=self.id,

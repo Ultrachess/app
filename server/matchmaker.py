@@ -1,7 +1,7 @@
 import random
 import string
 from game import *
-from notification import send_notification, GameCreatedNotification, BotGameCreatedNotification
+import notification
 
 class Matchmaker:
     def __init__(self):
@@ -77,8 +77,8 @@ class Matchmaker:
 
             p1 = self.games[str(id)].players[0]
             p2 = self.games[str(id)].players[1]
-            send_notification(
-                BotGameCreatedNotification(
+            notification.send_notification(
+                notification.BotGameCreatedNotification(
                     creator_id=sender,
                     game_id=id,
                     player_id1=p1,
@@ -105,8 +105,8 @@ class Matchmaker:
                     successfullAdd = True
                 else:
                     successfullAdd = self.games[str(id)].addPlayer(timestamp, sender)
-                send_notification(
-                    GameCreatedNotification(
+                notification.send_notification(
+                    notification.GameCreatedNotification(
                         creator_id=sender,
                         game_id=id,
                         wager = wagerAmount,

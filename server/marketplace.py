@@ -1,8 +1,7 @@
 import deps
 import random
 import string
-from notification import send_notification, BotOfferCreatedNotification, BotOfferDeclinedNotification, BotOfferAcceptedNotification
-
+import notification
 
 def CreateBotOffer(sender, offerId, timestamp, botId, price, token):
     return {
@@ -38,8 +37,8 @@ class BotMarketPlaceManager:
         
         offerId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
         self.offers[offerId] = CreateBotOffer(sender, offerId, timestamp, botId, price, token)
-        send_notification(
-            BotOfferCreatedNotification(
+        notification.send_notification(
+            notification.BotOfferCreatedNotification(
                 timestamp=timestamp,
                 offer_id=offerId,
                 sender=sender,
@@ -80,8 +79,8 @@ class BotMarketPlaceManager:
 
         deps.botFactory.bots[botId].owner = sender
 
-        send_notification(
-            BotOfferAcceptedNotification(
+        notification.send_notification(
+            notification.BotOfferAcceptedNotification(
                 timestamp=timestamp,
                 offer_id=offerId,
                 sender=sender,
@@ -112,8 +111,8 @@ class BotMarketPlaceManager:
             return False
 
 
-        send_notification(
-            BotOfferDeclinedNotification(
+        notification.send_notification(
+            notification.BotOfferDeclinedNotification(
                 timestamp=timestamp,
                 offer_id=offerId,
                 sender=sender,

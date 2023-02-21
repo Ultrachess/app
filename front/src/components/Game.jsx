@@ -104,6 +104,7 @@ export default () => {
   const isTurn = gameState.turn() == gameSide[0]
   const minPlayers = useMemo(()=> game.players.length > 1)
   var address = Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : ""
+  
 
 
   //auto play and loop useEffect.
@@ -174,6 +175,11 @@ export default () => {
       })
     }); 
   },[pendingMoves])
+
+  //initailize index to 0
+  useEffect(() => {
+    setCurrentMoveIndex(0)
+  }, [gameId])
 
   function safeGameMutate(modify) {
     if(minPlayers)
@@ -319,6 +325,10 @@ export default () => {
     setAutoPlay(!isAutoPlay)
   }, [isAutoPlay])
 
+  const jumpTo = useCallback((index) => {
+    setCurrentMoveIndex(index)
+  }, [])
+
   const getLastProcessedBotMoveIndexFromCurrentIndex = (index) => {
     const botMoveStats = game.botMoveStats
     //get the last processed bot move that is closest to the current index and less than or equal to the current index
@@ -332,14 +342,17 @@ export default () => {
   }
 
   return (
-    <div className="game">
-        <div className="gameView">
-          <Flex css={{gap: 5, flexDirection:'column'}}>
-            <Flex css={{justifyContent: 'space-between'}}>
-              <Flex css={{gap: 1}}>
-                <Address value={topAddress} />
-                {topAddressIsBot && <BotMoveStatisticsView botMoveStat={game?.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]??placerHolderBotMoveStat} />}
-              </Flex>
+    <Flex 
+      css={{
+        flexDirection: 'row',
+        gap: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+          <Flex css={{gap: 5, flexDirection:'column', alignItems:'flex-start'}}>
+            <Flex css={{justifyContent: 'space-between', alignItems:'center'}}>
+              <Address value={topAddress} />
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
                 {topAddressWon ? 
@@ -352,6 +365,7 @@ export default () => {
                 }
               </Flex>
             </Flex>
+            {topAddressIsBot && <BotMoveStatisticsView botMoveStat={game?.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]??placerHolderBotMoveStat} />}
             <Chessboard 
               position={currentFen}
               onPieceDrop={onDrop}
@@ -364,7 +378,7 @@ export default () => {
               isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
               customBoardStyle={{
                 borderRadius: '4px',
-                boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
+                boxShadow: '0 2px 7px rgba(0, 0, 0, 0.5)'
               }}
               customSquareStyles={{
                 ...moveSquares,
@@ -372,11 +386,10 @@ export default () => {
                 ...rightClickedSquares
               }}
             />
-            <Flex css={{justifyContent: 'space-between'}}>
-              <Flex css={{gap: 1}}>
-                <Address value={topAddress} />
-                {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]} />}
-              </Flex>
+            {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]} />}
+
+            <Flex css={{width:'100%',justifyContent: 'space-between', alignItems:'center'}}>
+              <Address value={topAddress} />
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
                 {bottomAddressWon ? 
@@ -390,26 +403,25 @@ export default () => {
               </Flex>
             </Flex>
           </Flex>
-        </div>
-        <div className="gameMovesView"> 
-          <Flex css={{flexDirection:'column', gap:5}}>
-            <GameWagersView 
+          <Flex css={{ flexDirection:'column', gap:5}}>
+            <GameWagersView
               winningId={winningId}
               wagers={game.wagering == {} || game.wagering == undefined ? placeHolderGameWagers: game.wagering} 
               now = {now}
             />
             <GameMovesView 
+              
               pgn={gameState.pgn()}
               firstMove = {firstMove}
               lastMove = {lastMove}
               nextMove = {nextMove}
               prevMove = {prevMove}
               autoPlay = {autoPlay}
+              jumpTo = {jumpTo}
               highlightIndex = {currentMoveIndex}
               botMoveStats = {game.botMoveStats}
             />
           </Flex>
-        </div>
-    </div>
+    </Flex>
   );
 }

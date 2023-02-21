@@ -27,6 +27,7 @@ const SCROLLBAR_SIZE = 10;
 const ScrollAreaRoot = styled(ScrollArea.Root, {
   borderRadius: 4,
   overflow: 'hidden',
+  height: 200,
 });
 
 const ScrollAreaViewport = styled(ScrollArea.Viewport, {
@@ -88,7 +89,6 @@ const ListItem = styled('div', {
   lineHeight: '18px',
   marginTop: 10,
   borderTop: `1px solid ${mauve.mauve6}`,
-  borderBottom: `1px solid ${mauve.mauve6}`,
   padding: "20px 0px"
 });
 

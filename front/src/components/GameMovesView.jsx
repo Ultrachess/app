@@ -20,7 +20,7 @@ import {
 import GameBotMoveStatisticsHoverable from "./GameBotMoveStatisticsHoverable";
 
 export default (props) => {
-    const { pgn, firstMove, lastMove, nextMove, prevMove, highlightIndex , autoPlay, botMoveStats} = props
+    const { pgn, firstMove, lastMove, nextMove, prevMove, highlightIndex , autoPlay, botMoveStats, jumpTo} = props
     var chess = new Chess()
     chess.load_pgn(pgn)
     var moves = chess.history()
@@ -35,13 +35,20 @@ export default (props) => {
                     <GameBotMoveStatisticsHoverable
                      botMoveStat={botMoveStats[index]}
                      triggerElement={
-                        <Text underline = {highlightIndex == index} key={index}>{element}</Text>
+                        <Text 
+                            underline = {highlightIndex == index} 
+                            key={index}
+                            onClick={()=>jumpTo(index)}
+                        >{element}</Text>
                     }/>
-                    <Separator key={index+0.5} vertical={true} />
                     <GameBotMoveStatisticsHoverable
                         botMoveStat={botMoveStats[index+1]}
                         triggerElement={
-                        <Text underline = {highlightIndex == index+1} key = {index+1}>{element2}</Text>
+                        <Text 
+                            underline = {highlightIndex == index+1} 
+                            key = {index+1}
+                            onClick={()=>jumpTo(index+1)}
+                        >{element2}</Text>
                     }/>
                 </Flex>
             );

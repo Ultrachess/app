@@ -8,6 +8,8 @@ import Address from "../Address";
 import { Text } from "../ui/Text";
 import { DotIcon } from '@radix-ui/react-icons';
 import { Profile, ProfileType, UserProfile } from "../../state/game/types";
+import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+
 
 //function that converts country string to flag emoji
 //return flag emoji
@@ -19,6 +21,7 @@ const getFlag = (country: string) => {
 }
 
 export default ({profile, rank = 0}: {profile: UserProfile, rank: number}) => {
+    const { chainId } = useWeb3React()
     const type = profile.type
     const { 
         id,
@@ -31,6 +34,10 @@ export default ({profile, rank = 0}: {profile: UserProfile, rank: number}) => {
         balances,
         bots,
     } = profile
+
+    const balance = balances.length > 0 ? balances[0].amount : 0
+    const tokenAddress = balances.length > 0 ? balances[0].token : USDC_ADDRESS_ON_NETWORKS[chainId] 
+
 
     return (
         <Flex css={{gap: 5, justifyContent:'space-between'}}>
@@ -64,7 +71,7 @@ export default ({profile, rank = 0}: {profile: UserProfile, rank: number}) => {
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>Balance</Text>
-                <AssetDisplay balance={balances[0].amount} tokenAddress={balances[0].token} />
+                <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
             </Flex>
 
         </Flex>
