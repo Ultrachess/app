@@ -309,47 +309,12 @@ Notification = GameCreatedNotification | GameCompletedNotification | GameWagerNo
 #runs a elif chain to determine which type of notification it is
 #then return a json object of the notification
 def convert_to_json(notification: Notification):
-    notification_type = notification.type
-    #gen random id
-    id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))).lower()
-
-    if notification_type == NotificationType.GAME_CREATED:
-        return {
-            "id": id,
-            "type": 0,
-            "creator_id": notification.creator_id,
-            "game_id": notification.game_id,
-            "wager": notification.wager,
-            "token": notification.token,
-        }
-    # elif notification_type == NotificationType.GAME_COMPLETED:
-    #     return {
-    #         "type": 1,
-    #         "game_id": notification.game_id,
-    #         "player_id1": notification.player_id1,
-    #         "player_id2": notification.player_id2,
-    #         "score1": notification.score1,
-    #         "score2": notification.score2,
-    #         "token": notification.token,
-    #         "pot": notification.pot,
-    #         "winningId": notification.winningId,
-    #         "winningIdBettorCount": notification.winningIdBettorCount,
-    #         "winnings1": notification.winnings1,
-    #         "winnings2": notification.winnings2
-    #     }
-    # elif notification_type == NotificationType.GAME_WAGER:
-    #     return {
-    #         "type": 2,
-    #         "game_id": notification.game_id,
-    #         "player_id1": notification.player_id1,
-    #         "player_id2": notification.player_id2,
-    #         "wager": notification.wager,
-    #         "token": notification.token
-    #     }
-
-    return {
-
-    }
+    attrs = asdict(notification)
+    new_id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k=10))).lower()
+    attrs['id'] = new_id
+    attrs['type'] = notification.type.value
+    logger.info("attrs: "+ str(attrs))
+    return attrs
 
 
 
