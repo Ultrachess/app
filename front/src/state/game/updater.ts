@@ -1,6 +1,12 @@
 import { createClient, defaultExchanges } from "urql/core"
-import { GetNoticeDocument, Notice, NoticeKeys } from "../../generated-src/graphql"
-import fetch from 'cross-fetch'
+import {
+    NoticesDocument,
+    NoticesByEpochDocument,
+    NoticesByEpochAndInputDocument,
+    Notice,
+    Input,
+    NoticeDocument,
+} from "../../generated-src/graphql";import fetch from 'cross-fetch'
 import { DEFAULT_GRAPHQL_POLL_TIME, DEFAULT_GRAPHQL_URL } from "../../utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../hooks";
@@ -8,7 +14,7 @@ import { delay } from "wonka";
 import { ethers } from "ethers";
 import { useDispatch } from "react-redux";
 import { setAction } from "../actions/reducer";
-import { addNotification } from "../notifications/reducer";
+import { addNotification, setNotifications } from "../notifications/reducer";
 import { Notification, NotificationType } from "../notifications/notifications";
 import { Action, ActionList, ActionStates, ActionType } from "./types"
 import { useAllTransactions } from "../transactions/hooks";
@@ -16,7 +22,7 @@ import { useWeb3React } from "@web3-react/core";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 import { SERVER_URL } from "./gameSlice";
-import { useUserBotIds, useUserBotGameIds, useUserBotTournamentIds, useUserTournamentIds, useUserActiveGameIds } from "./hooks";
+import { useUserBotIds, useUserBotGameIds, useUserBotTournamentIds, useUserTournamentIds, useUserActiveGameIds, useGame } from "./hooks";
 
 export interface NoticeInfo {}
 
@@ -33,38 +39,88 @@ export interface ActionResolver {
 
 export const ActionResolverObject: ActionResolver | any = { }
 
-type PartialNotice = Pick<
-    Notice,
-    | "__typename"
-    | "session_id"
-    | "epoch_index"
-    | "input_index"
-    | "notice_index"
-    | "payload"
->;
+export type InputKeys = {
+    epoch_index?: number;
+    input_index?: number;
+};
 
+// define PartialNotice type only with the desired fields of the full Notice defined by the GraphQL schema
+export type PartialEpoch = Pick<Input, "index">;
+export type PartialInput = Pick<Input, "index"> & { epoch: PartialEpoch };
+export type PartialNotice = Pick<
+    Notice,
+    "__typename" | "id" | "index" | "payload"
+> & {
+    input: PartialInput;
+};
+
+// define a type predicate to filter out notices
 const isPartialNotice = (n: PartialNotice | null): n is PartialNotice =>
     n !== null;
 
 const getNotices = async (
     url: string,
-    noticeKeys: NoticeKeys
+    inputKeys: InputKeys
 ): Promise<PartialNotice[]> => {
     // create GraphQL client to reader server
     const client = createClient({ url, exchanges: defaultExchanges, fetch });
-    // query the GraphQL server for notices of our input
-    // keeping trying forever (or until user kill the process)
-    // console.log(
-    //     `querying ${url} for notices of ${JSON.stringify(noticeKeys)}...`
-    // );
-    const { data, error } = await client
-        .query(GetNoticeDocument, { query: noticeKeys })
-        .toPromise();
-        console.log("notices1, ", data)
-    if (data?.GetNotice) {
-        return data.GetNotice.filter<PartialNotice>(isPartialNotice);
+    // query the GraphQL server for notices corresponding to the input keys
+    console.log(
+        `querying ${url} for notices of ${JSON.stringify(inputKeys)}...`
+    );
+
+    if (
+        inputKeys.epoch_index !== undefined &&
+        inputKeys.input_index !== undefined
+    ) {
+        // list notices querying by epoch and input
+        const { data, error } = await client
+            .query(NoticesByEpochAndInputDocument, {
+                epoch_index: inputKeys.epoch_index,
+                input_index: inputKeys.input_index,
+            })
+            .toPromise();
+        if (data?.epoch?.input?.notices) {
+            return data.epoch.input.notices.nodes.filter<PartialNotice>(
+                isPartialNotice
+            );
+        } else {
+            return [];
+        }
+    } else if (inputKeys.epoch_index !== undefined) {
+        // list notices querying only by epoch
+        const { data, error } = await client
+            .query(NoticesByEpochDocument, {
+                epoch_index: inputKeys.epoch_index,
+            })
+            .toPromise();
+        if (data?.epoch?.inputs) {
+            // builds return notices array by concatenating each input's notices
+            let ret: PartialNotice[] = [];
+            const inputs = data.epoch.inputs.nodes;
+            for (let input of inputs) {
+                ret = ret.concat(
+                    input.notices.nodes.filter<PartialNotice>(isPartialNotice)
+                );
+            }
+            return ret;
+        } else {
+            return [];
+        }
+    } else if (inputKeys.input_index !== undefined) {
+        throw new Error(
+            "Querying only by input index is not supported. Please define epoch index as well."
+        );
     } else {
-        throw new Error(error?.message);
+        // list notices using top-level query
+        const { data, error } = await client
+            .query(NoticesDocument, {})
+            .toPromise();
+        if (data?.notices) {
+            return data.notices.nodes.filter<PartialNotice>(isPartialNotice);
+        } else {
+            return [];
+        }
     }
 };
 
@@ -77,6 +133,7 @@ function getRelevantNotifications(
         userTournaments: String[],
         userBotTournaments: String[]
     ){
+        console.log("getRelevantNotifications: ", userGames)
     return notifications ?
         notifications
         .filter(notification => {
@@ -85,9 +142,12 @@ function getRelevantNotifications(
                 type == NotificationType.GAME_MOVE ||
                 type == NotificationType.GAME_COMPLETED ||
                 type == NotificationType.GAME_WAGER ||
-                type == NotificationType.GAME_BETTING_CLOSED
+                type == NotificationType.GAME_BETTING_CLOSED ||
+                type == NotificationType.GAME_CREATED 
             ){
-                return userGames.includes(notification.gameId) || userBotGames.includes(notification.gameId)
+                console.log("is game notification", userGames)
+                console.log("is game notification", account)
+                return userGames.includes(notification.game_id) || userBotGames.includes(notification.game_d)
             }
             if (type == NotificationType.CHALLENGE_ACCEPTED){
                 return notification.sender == account
@@ -114,12 +174,12 @@ function getRelevantNotifications(
                 return userTournaments.includes(notification.tournamentId)
             }
             if (type == NotificationType.BOT_GAME_CREATED){
-                return userBotGames.includes(notification.gameId) || 
+                return userBotGames.includes(notification.game_id) || 
                     userBots.includes(notification.playerId1) ||
                     userBots.includes(notification.playerId2)
             }
             if (type == NotificationType.BOT_GAME_COMPLETED){
-                return userBotGames.includes(notification.gameId) || 
+                return userBotGames.includes(notification.game_id) || 
                     userBots.includes(notification.playerId1) ||
                     userBots.includes(notification.playerId2)
             }
@@ -140,12 +200,10 @@ function getRelevantNotifications(
 
 function useNotices(): PartialNotice[] | undefined {
     const [notices, setNotices] = useState<PartialNotice[]>(undefined)
-
     useEffect(() => {
         const fetchNotices = async () => {
             setNotices( await getNotices(DEFAULT_GRAPHQL_URL, {
-                epoch_index: "0",
-                input_index: "0",
+
             }) )
             await delay(DEFAULT_GRAPHQL_POLL_TIME)
             await fetchNotices()
@@ -157,24 +215,38 @@ function useNotices(): PartialNotice[] | undefined {
     return notices
 }
 
-function useNewNotifications(): Notification[] | undefined {
-    const notices = useNotices()
-    console.log("notices: ", notices)
-    const [lastNoticeIndex, setLastNoticeIndex] = useState(0)
-
-    const notifications: Notification[] = notices
-        ?.sort((a, b) => parseInt(a.input_index) - parseInt(b.input_index))
-        .filter(n => parseInt(n.notice_index) > lastNoticeIndex)
-        .map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)))
-    
+function useNotifications(): Notification[] | undefined {
+    const [notices, setNotices] = useState<PartialNotice[]>([]);
+    const [lastNoticeIndex, setLastNoticeIndex] = useState(0);
+    const [allNotices, setAllNotices] = useState<Notification[]>([]);
+  
     useEffect(() => {
-        if (notices !=undefined && notices.length > 0) {
-            setLastNoticeIndex(parseInt(notices[notices.length - 1].notice_index))
-        }
-    },[notices])
-
-    return notifications
-}
+      const fetchNotices = async () => {
+        const newNotices = await getNotices(DEFAULT_GRAPHQL_URL, {}) ?? [];
+  
+        //if (newNotices.length > lastNoticeIndex) {
+          setNotices(newNotices);
+          setLastNoticeIndex(newNotices.length);
+        //}
+  
+        await delay(DEFAULT_GRAPHQL_POLL_TIME);
+        await fetchNotices();
+      };
+      fetchNotices().catch(console.error);
+    }, []);
+  
+    useEffect(() => {
+      //if (notices && notices.length > 0) {
+        const notifications: Notification[] = notices
+          ?.sort((a, b) => a.index - b.index)
+          ?.map((n) => JSON.parse(ethers.utils.toUtf8String(n.payload)));
+  
+        setAllNotices(notifications);
+      //}
+    }, [notices]);
+  
+    return allNotices;
+  }
 
 const fetchActionResult = async (id: string): Promise<ActionResult> => {
     var instance = axios.create({baseURL: SERVER_URL })
@@ -200,7 +272,6 @@ function shouldCheckAction(a: Action): boolean {
 export function GameStateUpdater() {
     const { account, chainId } = useWeb3React()
     const actions: ActionList = useAppSelector(state => state.actions)
-    const notices = useNotices()
     const transactions = useAppSelector((state) => state.transactions)
     const pendingTransactions = useMemo(() => (chainId ? transactions[chainId] ?? {} : {}), [chainId, transactions])
     //const lastBlockProcessed = useMemo(() => Math.max(...notices.map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)).timeStamp)), [notices])
@@ -212,7 +283,8 @@ export function GameStateUpdater() {
     const userTournaments = useUserTournamentIds(account)
     const botTournaments = useUserBotTournamentIds(account)
 
-    const newNotifications = useNewNotifications()
+    const newNotifications = useNotifications()
+    const [lastNotificationLength, setLastNotificationLength] = useState(0)
 
     const dispatch = useDispatch()
     useEffect(() => {
@@ -264,7 +336,12 @@ export function GameStateUpdater() {
     }, [actionList, dispatch])
 
     useEffect(() => {
-        const run = async () => {
+        console.log("newNotifications: attempting ", newNotifications)
+        if(newNotifications && 
+            newNotifications.length > 0){
+            console.log("newNotifications: ", newNotifications);
+            console.log("newNotifications:", userGames)
+            // dispatch(setNotifications(newNotifications))
             getRelevantNotifications(
                 newNotifications, 
                 account,
@@ -274,12 +351,14 @@ export function GameStateUpdater() {
                 userTournaments, 
                 botTournaments
             )
-                .forEach((notification) =>
-                    dispatch(addNotification(notification))
-                )
+            .forEach((notification) => {
+                console.log("newNotification: addingn notification", notification)
+                 dispatch(addNotification(notification)) 
+            })
         }
-        run()
-    }, [newNotifications])
+        console.log("user games1", userGames)
+
+    }, [newNotifications, dispatch, account, userBots, userGames, botGames, userTournaments, botTournaments])
 
     return null
 }

@@ -4,6 +4,8 @@ import requests
 import json
 import logging
 from os import environ
+import random
+import string
 
 
 logging.basicConfig(level="INFO")
@@ -298,7 +300,60 @@ class WithdrawFundsNotification(BaseNotification):
     token: str
 
 
+
+
 Notification = GameCreatedNotification | GameCompletedNotification | GameWagerNotification | GameBettingClosedNotification | ChallengeCreatedNotification | ChallengeAcceptedNotification | ChallengeDeclinedNotification | ChallengeRecievedNotification | TournamentCreatedNotification | TournamentJoinedNotification | TournamentCompletedNotification | TournamentMatchCreatedNotification | TournamentMatchCompletedNotification | TournamentRoundCompletedNotification | BotCreatedNotification | BotUpdatedNotification | BotGameCreatedNotification | BotGameCompletedNotification | BotOfferCreatedNotification | BotOfferAcceptedNotification | BotOfferDeclinedNotification | DepositFundsNotification | WithdrawFundsNotification
+
+
+#write a function that takes in a notifcation
+#runs a elif chain to determine which type of notification it is
+#then return a json object of the notification
+def convert_to_json(notification: Notification):
+    notification_type = notification.type
+    #gen random id
+    id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))).lower()
+
+    if notification_type == NotificationType.GAME_CREATED:
+        return {
+            "id": id,
+            "type": 0,
+            "creator_id": notification.creator_id,
+            "game_id": notification.game_id,
+            "wager": notification.wager,
+            "token": notification.token,
+        }
+    # elif notification_type == NotificationType.GAME_COMPLETED:
+    #     return {
+    #         "type": 1,
+    #         "game_id": notification.game_id,
+    #         "player_id1": notification.player_id1,
+    #         "player_id2": notification.player_id2,
+    #         "score1": notification.score1,
+    #         "score2": notification.score2,
+    #         "token": notification.token,
+    #         "pot": notification.pot,
+    #         "winningId": notification.winningId,
+    #         "winningIdBettorCount": notification.winningIdBettorCount,
+    #         "winnings1": notification.winnings1,
+    #         "winnings2": notification.winnings2
+    #     }
+    # elif notification_type == NotificationType.GAME_WAGER:
+    #     return {
+    #         "type": 2,
+    #         "game_id": notification.game_id,
+    #         "player_id1": notification.player_id1,
+    #         "player_id2": notification.player_id2,
+    #         "wager": notification.wager,
+    #         "token": notification.token
+    #     }
+
+    return {
+
+    }
+
+
+
+
 
 
 def convert_to_hex(s_input):
@@ -306,10 +361,13 @@ def convert_to_hex(s_input):
 
 def send_notification(notification: Notification):
     #turn notification into json
-    data_set = asdict(notification)
+    logger.info("Attempting to send notice " + str(notification))
+    logger.info("Attempting to send notice " )
+    data_set = convert_to_json(notification)
     json_object = json.dumps(data_set)
     logger.info("Sending notice : "+ json_object)
     hex_string = convert_to_hex(json_object)
+    logger.info("rollup_server: "+ rollup_server)
     response = requests.post(rollup_server + "/notice", json={"payload": hex_string})
     logger.info(f"Received notice status {response.status_code} body {response.content}")
     #add action to ActionManager

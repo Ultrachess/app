@@ -232,6 +232,8 @@ export interface ActionNotification extends BaseNotification {
 }
 
 export type Notification = 
+    GameJoinedNotification |
+    GameCreatedNotification |
     GameJoinedNotification | 
     GameMoveNotification | 
     GameCompletedNotification | 

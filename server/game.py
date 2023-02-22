@@ -110,7 +110,8 @@ class Game:
                     timestamp=self.timestamp,
                     winningId=winningId,
                     winnings1=funds1,
-                    winnings2=funds2
+                    winnings2=funds2,
+                    type=notification.NotificationType.BOT_GAME_COMPLETED
                 )
             )
         else:
@@ -127,7 +128,8 @@ class Game:
                     timestamp=self.timestamp,
                     winningId=winningId,
                     winnings1=funds1,
-                    winnings2=funds2
+                    winnings2=funds2,
+                    type=notification.NotificationType.BOT_GAME_COMPLETED,
                 )
             )
 
@@ -154,6 +156,7 @@ class Game:
                         game_id=self.id,
                         wager = self.wagerAmount,
                         token = self.token,
+                        type=notification.NotificationType.GAME_JOINED,
                     )
                 )
                 return True

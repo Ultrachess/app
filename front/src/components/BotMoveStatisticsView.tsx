@@ -20,7 +20,7 @@ export default ({ botMoveStat, flexDir = 'row' }: BotMoveStatisticsViewProps) =>
             seldepth: 0,
             time: 0,
             nodes: 0,
-            pv: [''],
+            pv: ['0'],
             score: 0,
             nps: 0,
             tbhits: 0,
@@ -47,55 +47,47 @@ export default ({ botMoveStat, flexDir = 'row' }: BotMoveStatisticsViewProps) =>
             gap: 2,
             flexDirection: flexDir, 
             alignItems: 'center', 
-            justifyContent: 'center' 
+            justifyContent: 'space-between' ,
+            width: "100%"
         }}>
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>Depth</Text>
+                <Text bold>Depth</Text>
                 <Text>{depth}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>seldepth</Text>
+                <Text bold>Seldepth</Text>
                 <Text>{seldepth}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>time</Text>
+                <Text bold>Time</Text>
                 <Text>{time}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>nodes</Text>
+                <Text bold>Nodes</Text>
                 <Text>{nodes}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>pv</Text>
-                <Text>{pv}</Text>
+                <Text bold>Pv</Text>
+                <Text>{pv[0]}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>score</Text>
+                <Text bold>Score</Text>
                 <Text>{score}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>nps</Text>
+                <Text bold>Nps</Text>
                 <Text>{nps}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>tbhits</Text>
+                <Text bold>Tbhits</Text>
                 <Text>{tbhits}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>sbhits</Text>
+                <Text bold>Sbhits</Text>
                 <Text>{sbhits}</Text>
             </Flex>
-            <Separator dir={flexDir === 'row' ? 'vertical' : 'horizontal'} />
             <Flex css={{gap:1, flexDirection:'column'}}>
-                <Text faded>cpuload</Text>
+                <Text bold>Cpuload</Text>
                 <Text>{cpuload}</Text>
             </Flex>
         </Flex>

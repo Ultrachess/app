@@ -251,10 +251,14 @@ export function useUserCompletedGameIds(id: string): string[] {
 export function useUserActiveGameIds(id: string): string[] {
     const games = useAppSelector(state => state.game.games)
     if (!games) return []
-    return Object.keys(games).filter((gameId) => {
+    const gamesToReturn = Object.keys(games).filter((gameId) => {
         const game = games[gameId]
-        return game.players.includes(id) && !game.isEnd
+        let lower_case_players = game.players.map((player) => {
+            return player.toLowerCase()
+        })
+        return lower_case_players.includes(id.toLowerCase()) && !game.isEnd
     })
+    return gamesToReturn
 }
 
 export function useAllTournaments(): Tournament[] {

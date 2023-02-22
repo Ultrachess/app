@@ -40,6 +40,8 @@ export default ({triggerElement}) => {
       console.log("tx", tx)
       const [approvalActionId, wait] = await addAction(tx)
       const roomId = await wait
+      console.log(roomId)
+      console.log("jumping to" + roomId)
       if(roomId) navigate(`game/${roomId}`, { replace: true })
 
     }

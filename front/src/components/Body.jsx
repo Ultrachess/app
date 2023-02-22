@@ -66,7 +66,7 @@ export default () => {
                                 } />
                                 <Spacer x={1}/>
                                 <ModalNewDepositFunds triggerElement={
-                                    <Button  iconRight={<FaCoins/>}>
+                                    <Button>
                                     <Text>Deposit Funds</Text>
                                     </Button>
                                 } />

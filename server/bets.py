@@ -81,7 +81,8 @@ class BetManager:
                 player_id=sender,
                 expected_winner_id=winningId,
                 wager=amount,
-                token = tokenAddress
+                token = tokenAddress,
+                type=notification.NotificationType.GAME_WAGER
             )
         )
         return True

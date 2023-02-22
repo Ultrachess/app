@@ -15,6 +15,8 @@ import NotificationItem from './NotificationItem';
 const NotificationDropdown = () => {
   const notifications = useNotifications()
 
+  console.log("ui notifications", notifications)
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>

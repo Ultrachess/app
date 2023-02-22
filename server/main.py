@@ -54,6 +54,7 @@ def convert_to_hex(s_input):
 
 def send_notice_info(actionId, timestamp, success, value):
     data_set = {
+        "id": actionId,
         "actionId": actionId,
         "timestamp": timestamp, 
         "success": success,
@@ -220,6 +221,7 @@ def handle_advance(data):
             logger.info(temp)
             success = temp["success"]
             value = temp["value"]
+            logger.info("setting value to: " + str(value))
         except Exception:
             traceback.print_exc()
             success = False

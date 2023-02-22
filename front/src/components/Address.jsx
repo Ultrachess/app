@@ -10,7 +10,7 @@ import ProfileHover from './ProfileHover';
 import Flex from './ui/Flex';
 import { FaRobot } from 'react-icons/fa';
 
-export default ({value, hoverable = false, isImageBig=false}) => {
+export default ({value, hoverable = false, isMedium=false, isImageBig=false}) => {
   const isBot = useMemo(()=> value ? !value.includes("0x"): false)
   const addressView = 
     <div className='addressView'>
@@ -18,6 +18,17 @@ export default ({value, hoverable = false, isImageBig=false}) => {
         <Flex css={{flexDirection: "row", alignItems: "center", gap:5}}>
           <ProfileImage address={value} />
           <Text bold>{truncateAddress(value)}</Text>
+          {isBot && <FaRobot/>}
+        </Flex>
+      </Link>
+    </div>
+
+  const mediumAddressView = 
+    <div className='addressView'>
+      <Link to={ (isBot? "/bot/":"/users/") + value}>
+        <Flex css={{flexDirection: "row", alignItems: "center", gap:5}}>
+          <ProfileImage diameter={30} address={value} />
+          <Text size={2} bold blue>{truncateAddress(value)}</Text>
           {isBot && <FaRobot/>}
         </Flex>
       </Link>
@@ -36,7 +47,10 @@ export default ({value, hoverable = false, isImageBig=false}) => {
       </Link>
     </div>
 
-  const component = isImageBig? bigAddressView: addressView;
+
+
+
+  const component = isImageBig? bigAddressView: isMedium ? mediumAddressView : addressView;
 
   return (
     <>

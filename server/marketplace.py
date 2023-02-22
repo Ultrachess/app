@@ -45,7 +45,8 @@ class BotMarketPlaceManager:
                 price=price,
                 token=token,
                 owner = owner,
-                bot_id=botId
+                bot_id=botId,
+                type=notification.NotificationType.BOT_OFFER_CREATED
             )
         )
         return True
@@ -87,7 +88,8 @@ class BotMarketPlaceManager:
                 price=price,
                 token=token,
                 owner = owner,
-                bot_id=botId
+                bot_id=botId,
+                type=notification.NotificationType.BOT_OFFER_ACCEPTED
             )
         )
         del self.offers[offerId]
@@ -119,7 +121,8 @@ class BotMarketPlaceManager:
                 price=price,
                 token=token,
                 owner = owner,
-                bot_id=botId
+                bot_id=botId,
+                type=notification.NotificationType.BOT_OFFER_DECLINED
             )
         )
 

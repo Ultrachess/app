@@ -85,6 +85,8 @@ class Matchmaker:
                     player_id2=p2,
                     wager = wagerAmount,
                     token = token,
+                    type=notification.NotificationType.BOT_GAME_CREATED,
+                    timestamp=timestamp,
                 )
             )
             
@@ -94,7 +96,7 @@ class Matchmaker:
             }
 
         else:
-            canCreate = not self.isInGame(sender)
+            canCreate = True
             if(canCreate):
                 id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
                 self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp, duration=duration)
@@ -111,6 +113,8 @@ class Matchmaker:
                         game_id=id,
                         wager = wagerAmount,
                         token = token,
+                        type=notification.NotificationType.GAME_CREATED,
+                        timestamp=timestamp,
                     )
                 )
                 return {

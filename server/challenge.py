@@ -49,6 +49,7 @@ class ChallengeManager:
                 recipient=recipient,
                 wager=wager,
                 token=token,
+                type=notification.NotificationType.CHALLENGE_CREATED
             )
         )
         return True
@@ -76,6 +77,7 @@ class ChallengeManager:
                     recipient=challenge["recipient"],
                     wager=challenge["wager"],
                     token=challenge["token"],
+                    type=notification.NotificationType.CHALLENGE_ACCEPTED,
                 )
             )
             #create game
@@ -135,6 +137,7 @@ class ChallengeManager:
                     recipient=challenge["recipient"],
                     wager=challenge["wager"],
                     token=challenge["token"],
+                    type=notification.NotificationType.CHALLENGE_DECLINED
                 )
             )
             return True

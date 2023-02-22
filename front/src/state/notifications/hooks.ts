@@ -6,6 +6,7 @@ import { NOTIFICATION_TOAST_DURATION_MILLIS } from "../../utils/constants";
 //useNotifications hook is used to get total list of notifications from the store
 export function useNotifications(): Notification[] {
     const notifications = useAppSelector(state => state.notifications)
+    console.log("ui notifications", notifications)
     return Object?.values(notifications);
 }
 

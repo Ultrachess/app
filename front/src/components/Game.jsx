@@ -80,8 +80,8 @@ export default () => {
   const completed = game.isEnd
   const topAddressLost = topAddressScore == 0
   const bottomAddressLost = bottomAddressScore == 0
-  const topAddressIsBot = useMemo(() => !topAddress.includes("0x"), [topAddress])
-  const bottomAddressIsBot = useMemo(() => !bottomAddress.includes("0x"), [bottomAddress])
+  const topAddressIsBot = useMemo(() => topAddress ? !topAddress.includes("0x") && !topAddress.includes("Waiting"): false, [topAddress])
+  const bottomAddressIsBot = useMemo(() => bottomAddress ? !bottomAddress.startsWith("0x") : false, [bottomAddress])
   const topAddressWon = topAddressScore == 1
   const bottomAddressWon = bottomAddressScore == 1
   const draw = topAddressScore == 0.5 && bottomAddressScore == 0.5
@@ -94,7 +94,12 @@ export default () => {
       return "DRAW"
     return null
   }, [topAddressWon, bottomAddressWon])
-  console.log("topScore " + topAddressScore)
+  console.log("side1" + gameSide)
+  console.log("topAddress1" + topAddress)
+  console.log("bottomAddress1" + bottomAddress)
+  console.log("topScore1" + topAddressScore)
+  console.log("topAddressIsBot1" + topAddressIsBot)
+  console.log("bottomAddressIsBot1" + bottomAddressIsBot)
 
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
   console.log("topWin" + topAddressWinAmount)
@@ -345,14 +350,15 @@ export default () => {
     <Flex 
       css={{
         flexDirection: 'row',
-        gap: 50,
+        gap: 120,
         justifyContent: 'center',
         alignItems: 'center',
+        height: '100vh',
       }}
     >
-          <Flex css={{gap: 5, flexDirection:'column', alignItems:'flex-start'}}>
-            <Flex css={{justifyContent: 'space-between', alignItems:'center'}}>
-              <Address value={topAddress} />
+          <Flex css={{gap: 10, flexDirection:'column', alignItems:'flex-start'}}>
+            <Flex css={{width:"100%", justifyContent: 'space-between', alignItems:'center'}}>
+              <Address isMedium value={topAddress} />
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
                 {topAddressWon ? 
@@ -367,6 +373,7 @@ export default () => {
             </Flex>
             {topAddressIsBot && <BotMoveStatisticsView botMoveStat={game?.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]??placerHolderBotMoveStat} />}
             <Chessboard 
+              boardWidth={700}
               position={currentFen}
               onPieceDrop={onDrop}
               arePremovesAllowed={false}
@@ -389,7 +396,7 @@ export default () => {
             {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]} />}
 
             <Flex css={{width:'100%',justifyContent: 'space-between', alignItems:'center'}}>
-              <Address value={topAddress} />
+              <Address isMedium value={bottomAddress} />
               <Flex css={{gap: 1}}>
                 {completed && <Text faded>+{topAddressScore}</Text>}
                 {bottomAddressWon ? 
@@ -404,13 +411,14 @@ export default () => {
             </Flex>
           </Flex>
           <Flex css={{ flexDirection:'column', gap:5}}>
-            <GameWagersView
-              winningId={winningId}
-              wagers={game.wagering == {} || game.wagering == undefined ? placeHolderGameWagers: game.wagering} 
-              now = {now}
-            />
+            {game.bettingDuration > 0 &&
+              <GameWagersView
+                winningId={winningId}
+                wagers={game.wagering == {} || game.wagering == undefined ? placeHolderGameWagers: game.wagering} 
+                now = {now}
+              />
+            }
             <GameMovesView 
-              
               pgn={gameState.pgn()}
               firstMove = {firstMove}
               lastMove = {lastMove}

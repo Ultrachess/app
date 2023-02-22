@@ -38,7 +38,8 @@ class AccountBalanceManager:
                 timestamp = get_timestamp(),
                 sender = account,
                 amount = value,
-                token = token
+                token = token,
+                type=notification.NotificationType.DEPOSIT_FUNDS
             )
         )
         return True
@@ -66,10 +67,11 @@ class AccountBalanceManager:
         self.withdraw(account, amount, token)
         notification.send_notification(
             notification.WithdrawFundsNotification(
-                timestamp = get_current_time(),
+                timestamp = get_timestamp(),
                 sender = account,
                 amount = amount,
-                token = token
+                token = token,
+                type=notification.NotificationType.WITHDRAW_FUNDS
             )
         )
         return True

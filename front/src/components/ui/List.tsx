@@ -27,7 +27,7 @@ const SCROLLBAR_SIZE = 10;
 const ScrollAreaRoot = styled(ScrollArea.Root, {
   borderRadius: 4,
   overflow: 'hidden',
-  height: 200,
+  height: "100%",
 });
 
 const ScrollAreaViewport = styled(ScrollArea.Viewport, {
