@@ -10,9 +10,9 @@ import TokenIcon from './TokenIcon';
 
 const switchEthereumChain = async (chainId) => {
     var chain = CHAINS[chainId];
-    console.log(chain)
-    console.log(chainId)
-    console.log(toHex(chainId))
+    //console.log(chain)
+    //console.log(chainId)
+    //console.log(toHex(chainId))
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',

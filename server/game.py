@@ -129,7 +129,7 @@ class Game:
                     winningId=winningId,
                     winnings1=funds1,
                     winnings2=funds2,
-                    type=notification.NotificationType.BOT_GAME_COMPLETED,
+                    type=notification.NotificationType.GAME_COMPLETED,
                 )
             )
 

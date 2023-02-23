@@ -55,7 +55,7 @@ export const createDummyGame = () => {
 
 export const getSide = (game, address) => {
     var index = game?.players?.map(val=> val.toLowerCase()).indexOf(address.toLowerCase())
-    console.log(`address ${address}  index ${index}`)
+    //console.log(`address ${address}  index ${index}`)
     return index == 0 ? side.WHITE : side.BLACK
 }
 

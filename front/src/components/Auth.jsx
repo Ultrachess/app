@@ -120,7 +120,7 @@ export default () => {
               variant="outline"
               onClick={() => {
                 metaMask.activate()
-                console.log("metamask")
+                //console.log("metamask")
               }}
               w="100%"
             >

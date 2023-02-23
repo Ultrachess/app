@@ -1,3 +1,5 @@
+import CartesiToken from '../../../deployments/localhost/CartesiToken.json'
+
 const ETH = {
   name: 'Ether',
   symbol: 'ETH',
@@ -174,5 +176,7 @@ export const USDC_ADDRESS_ON_NETWORKS = {
   69: '0x5f98805a4e8be255a32880fdec7f6728c6568ba0',
   420: '0x5f98805a4e8be255a32880fdec7f6728c6568ba0',
   421611: '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
-
+  31337: CartesiToken.address,
 }
+
+export const DEFAULT_TOKEN_URI = "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"

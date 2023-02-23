@@ -94,17 +94,17 @@ export default () => {
       return "DRAW"
     return null
   }, [topAddressWon, bottomAddressWon])
-  console.log("side1" + gameSide)
-  console.log("topAddress1" + topAddress)
-  console.log("bottomAddress1" + bottomAddress)
-  console.log("topScore1" + topAddressScore)
-  console.log("topAddressIsBot1" + topAddressIsBot)
-  console.log("bottomAddressIsBot1" + bottomAddressIsBot)
+  //console.log("side1" + gameSide)
+  //console.log("topAddress1" + topAddress)
+  //console.log("bottomAddress1" + bottomAddress)
+  //console.log("topScore1" + topAddressScore)
+  //console.log("topAddressIsBot1" + topAddressIsBot)
+  //console.log("bottomAddressIsBot1" + bottomAddressIsBot)
 
   const topAddressWinAmount = useMemo(() => wagerAmount*topAddressScore)
-  console.log("topWin" + topAddressWinAmount)
+  //console.log("topWin" + topAddressWinAmount)
   const bottomAddressWinAmount = useMemo(() => wagerAmount*bottomAddressScore)
-  console.log("bottomWin" + bottomAddressWinAmount)
+  //console.log("bottomWin" + bottomAddressWinAmount)
 
   const isTurn = gameState.turn() == gameSide[0]
   const minPlayers = useMemo(()=> game.players.length > 1)
@@ -137,7 +137,7 @@ export default () => {
           type: TransactionType.JOIN_GAME_INPUT,
           roomId: gameId
         })
-        console.log("attempting to join game")
+        //console.log("attempting to join game")
       }
       setGameSide(getSide(game, address))
       setTopAddress(getTopAddress(getGameById(games, gameId), address, gameSide))
@@ -154,7 +154,7 @@ export default () => {
 
   useEffect(() => {
     var isAtLatestMove = currentMoveIndex >= gameState.history().length - 2 || currentMoveIndex < 0
-    console.log(`isLatestMove: ${isAtLatestMove}  currentMoveIndex: ${currentMoveIndex} length: ${gameState.history().length}`)
+    //console.log(`isLatestMove: ${isAtLatestMove}  currentMoveIndex: ${currentMoveIndex} length: ${gameState.history().length}`)
     if(isAtLatestMove) setCurrentMoveIndex(gameState.history().length - 1)
     setGameHighlights()
   }, [gameState])
@@ -170,13 +170,13 @@ export default () => {
   }, [currentMoveIndex])
   
   useEffect(()=> {
-    console.log(pendingMoves)
+    //console.log(pendingMoves)
     safeGameMutate((gameValue) => {
       let game = getGameById(games, gameId)
       gameValue.load_pgn(game.pgn);
       pendingMoves.forEach((mv) => {
         let mov = gameValue.move(mv, {sloppy: true})
-        console.log(mov)
+        //console.log(mov)
       })
     }); 
   },[pendingMoves])

@@ -20,7 +20,7 @@ const notificationSlice = createSlice({
                 state[payload.id.toString()] = payload
         },
         setNotifications(state, { payload }: { payload: Notification[] }) {
-            console.log("setting notifications", payload)
+            //console.log("setting notifications", payload)
             for (let index = 0; index < payload.length; index++) {
                 const notification = payload[index];
                 let rand_string_id = Math.random().toString(36).substring(7);

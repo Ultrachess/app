@@ -37,7 +37,7 @@ export default ({triggerElement, botId}) => {
     }
 
 
-    console.log("amount", amount)
+    //console.log("amount", amount)
     return (
         <Dialog.Root>
         <Dialog.Trigger asChild>
@@ -65,7 +65,7 @@ export default ({triggerElement, botId}) => {
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ console.log(value); setAmount(value)}} />
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>

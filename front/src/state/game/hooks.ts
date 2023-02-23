@@ -271,7 +271,8 @@ export function useUserBots(id: string): BotProfile[] {
     const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
     if (!bots) return []
     return Object?.values(bots).filter((bot) => {
-        return bot.owner == id
+        //console.log("abc account ", bot.owner, id)
+        return bot.owner.toLowerCase() == id.toLowerCase()
     })
 }
 
@@ -287,7 +288,9 @@ export function useUserBotIds(id: string): string[] {
     if (!bots) return []
     return Object.keys(bots).filter((botId) => {
         const bot = bots[botId]
-        return bot.owner == id
+        //console.log("new abc account ", bot.owner, id)
+        //console.log("new abc account bool", bot.owner.toLowerCase() == id.toLowerCase())
+        return bot.owner.toLowerCase() == id.toLowerCase()
     })
 }
 
@@ -375,7 +378,7 @@ export function useAddAction(): (action: Action) => number {
         }
         dispatch(addNotification(notification))
 
-        console.log(action.id.toString())
+        //console.log(action.id.toString())
         return action.id
     }, [dispatch])
 }
@@ -404,7 +407,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
 
     //Fetch dapp address
     const dappAddress = DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost
-    console.log("dappAddress: ", dappAddress)
+    //console.log("dappAddress: ", dappAddress)
     const dispatch = useDispatch()
     const addAction = useAddAction()
     const addTransaction = useTransactionAdder()
@@ -416,8 +419,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
         var input: Uint8Array
         var result: TransactionResponse
         var id: number = Math.floor(Math.random() * 90000);
-        console.log(`actionId: ${id}`)
-        console.log(`actionId hex ${decimalToHexString(id)}`)
+        //console.log(`actionId: ${id}`)
+        //console.log(`actionId hex ${decimalToHexString(id)}`)
         var action: Action
         addAction({
             id: id,
@@ -620,8 +623,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     break;
                 case TransactionType.DEPOSIT_ERC20:
                     let { amount } = info
-                    console.log("DEPOSITING TOKENS")
-                    console.log(erc20PortalContract.address)
+                    //console.log("DEPOSITING TOKENS")
+                    //console.log(erc20PortalContract.address)
                     var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(info.amount))
                     result = await erc20PortalContract.erc20Deposit(info.tokenAddress, erc20Amount, "0x")
                     break;
@@ -629,8 +632,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     let { spender } = info
                     var erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(info.amount))
                     const erc20Contract = getErc20Contract(info.tokenAddress, provider, account)
-                    console.log("erc20 portal contract address")
-                    console.log(erc20PortalContract.address)
+                    //console.log("erc20 portal contract address")
+                    //console.log(erc20PortalContract.address)
                     result = await erc20Contract.approve(
                         spender ?? erc20PortalContract.address,
                         erc20Amount
@@ -641,7 +644,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
             }
    
             // while (!result.hash) {
-            //     console.log("waiting for result hash")
+            //     //console.log("waiting for result hash")
             //     await result.wait()
             // }
             addTransaction(result, info)
@@ -653,7 +656,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
             //await result.wait()
         }
         catch(e){
-            console.log(e)
+            //console.log(e)
             dispatch(setAction({
                 id: id,
                 type: info.type == TransactionType.APPROVE_ERC20

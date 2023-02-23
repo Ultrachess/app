@@ -20,11 +20,11 @@ export default ({visible, closeHandler}) => {
     const tokenList = useTokenList()
     const onDepositValueChange = (event) => setDepositValue(event.target.value)
     const onTokenAddressChange = ( newValue ) => {
-        //console.log(newValue)
+        ////console.log(newValue)
         setTokenAddress(newValue.value)
     }
     const handleCreateGame = async () =>{
-        console.log(tokenAddress)
+        //console.log(tokenAddress)
         const [approvalActionId, forApproval] = await addAction({
             type: TransactionType.APPROVE_ERC20,
             tokenAddress: tokenAddress,
@@ -44,7 +44,7 @@ export default ({visible, closeHandler}) => {
             label: token.name
         }
     })
-    //console.log(tokens)
+    ////console.log(tokens)
 
     const truncatedAddress = useMemo(()=>{
         return truncateAddress(tokenAddress?? "")

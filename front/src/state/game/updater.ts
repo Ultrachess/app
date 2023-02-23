@@ -133,7 +133,7 @@ function getRelevantNotifications(
         userTournaments: String[],
         userBotTournaments: String[]
     ){
-        console.log("getRelevantNotifications: ", userGames)
+        //console.log("getRelevantNotifications: ", userGames)
     return notifications ?
         notifications
         .filter(notification => {
@@ -145,8 +145,8 @@ function getRelevantNotifications(
                 type == NotificationType.GAME_BETTING_CLOSED ||
                 type == NotificationType.GAME_CREATED 
             ){
-                console.log("is game notification", userGames)
-                console.log("is game notification", account)
+                //console.log("is game notification", userGames)
+                //console.log("is game notification", account)
                 return userGames.includes(notification.game_id) || userBotGames.includes(notification.game_d)
             }
             if (type == NotificationType.CHALLENGE_ACCEPTED){
@@ -203,7 +203,6 @@ function useNotices(): PartialNotice[] | undefined {
     useEffect(() => {
         const fetchNotices = async () => {
             setNotices( await getNotices(DEFAULT_GRAPHQL_URL, {
-
             }) )
             await delay(DEFAULT_GRAPHQL_POLL_TIME)
             await fetchNotices()
@@ -221,6 +220,7 @@ function useNotifications(): Notification[] | undefined {
     const [allNotices, setAllNotices] = useState<Notification[]>([]);
   
     useEffect(() => {
+        console.log("useNotifications: ", notices)
       const fetchNotices = async () => {
         const newNotices = await getNotices(DEFAULT_GRAPHQL_URL, {}) ?? [];
   
@@ -255,7 +255,7 @@ const fetchActionResult = async (id: string): Promise<ActionResult> => {
         "value": "${id}"
     }`
     var response = await instance.get("/inspect/" + input) 
-    console.log(response)
+    //console.log(response)
     return JSON.parse(ethers.utils.toUtf8String(response.data.reports[0].payload))
 }
 
@@ -316,7 +316,7 @@ export function GameStateUpdater() {
                             action.status = actionResult.success? ActionStates.PROCESSED : ActionStates.ERROR
                             action.result = actionResult
                             action.processedTime = new Date().getTime()
-                            console.log(actionResult)
+                            //console.log(actionResult)
                         }
                         
                         if(!shouldCheckAction(action)) 
@@ -336,11 +336,11 @@ export function GameStateUpdater() {
     }, [actionList, dispatch])
 
     useEffect(() => {
-        console.log("newNotifications: attempting ", newNotifications)
+        //console.log("newNotifications: attempting ", newNotifications)
         if(newNotifications && 
             newNotifications.length > 0){
-            console.log("newNotifications: ", newNotifications);
-            console.log("newNotifications:", userGames)
+            //console.log("newNotifications: ", newNotifications);
+            //console.log("newNotifications:", userGames)
             // dispatch(setNotifications(newNotifications))
             getRelevantNotifications(
                 newNotifications, 
@@ -352,11 +352,11 @@ export function GameStateUpdater() {
                 botTournaments
             )
             .forEach((notification) => {
-                console.log("newNotification: addingn notification", notification)
+                //console.log("newNotification: addingn notification", notification)
                  dispatch(addNotification(notification)) 
             })
         }
-        console.log("user games1", userGames)
+        //console.log("user games1", userGames)
 
     }, [newNotifications, dispatch, account, userBots, userGames, botGames, userTournaments, botTournaments])
 

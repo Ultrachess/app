@@ -28,7 +28,7 @@ export function useTokenList() : Token[] {
             //     }
             // )
             const _chainId = chainId ?? 31337
-            console.log("chainId from token: ", _chainId)
+            //console.log("chainId from token: ", _chainId)
             const tokens = ULTRACHESS_LIST.filter(token => token.chainId == _chainId)
             setTokenList(tokens)
         }
@@ -89,14 +89,14 @@ export function useTokenFromNetwork(address: string | null | undefined) : Token 
 export function useTokenBalance(token: Token, address: string | null | undefined) : number | string {
     const contract = useErc20Contract(token?.address)
     const balance = useContractCallResult(contract, "balanceOf", [address])
-
+    //console.log("balance ctsi: ", balance)
     return balance
 }
 
 export function useTokenPortalBalance(token: Token, address: string) : number {
     
     const balances = {}
-    console.log("balances: ", balances)
+    //console.log("balances: ", balances)
     const accountBalances = balances?.[address] ?? {}
     const balance = accountBalances?.[token?.address] ?? 0.0
 

@@ -38,8 +38,8 @@ export const store = configureStore({
         //disableWarnings: process.env.NODE_ENV === 'test',
     })
 })
-console.log("preloaded state")
-console.log(load({states: PERSISTED_STATE}))
+//console.log("preloaded state")
+//console.log(load({states: PERSISTED_STATE}))
 
 export type AppState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

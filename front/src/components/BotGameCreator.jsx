@@ -17,7 +17,7 @@ export default () => {
   const handler = () => setVisible(true);
 
   const handleCreateBotGame = async () => {
-    console.log("closed");
+    //console.log("closed");
     const [action, wait] = await addAction({
       type: TransactionType.CREATE_GAME_INPUT,
       name: "default",

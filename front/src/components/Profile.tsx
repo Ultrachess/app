@@ -21,7 +21,7 @@ import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 
 export default () => {
     let { userId } = useParams()
-    console.log(userId)
+    //console.log(userId)
     const { account, chainId } = useWeb3React()
     const {
         id,

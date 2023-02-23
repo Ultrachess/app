@@ -7,7 +7,7 @@ import ModalPlaceBet from "../ModalPlaceBet";
 import Button from "../ui/Button";
 import { Text } from "../ui/Text";
 import AddressGame from "../AddressGame";
-import { DotIcon } from '@radix-ui/react-icons';
+import { DotIcon, LockClosedIcon } from '@radix-ui/react-icons';
 import Flex from "../ui/Flex";
 import DateDisplay from "../ui/Date";
 import AssetDisplay from "../AssetDisplay";
@@ -30,8 +30,13 @@ export default ({game}: {game:Game}) => {
     const wager = game.wagerAmount
     const token = game.token
     const time = game.timestamp
+    const bettingOpenTime = game?.wagering?.openTime ?? -1
+    const bettingClosesAt = bettingOpenTime + game?.bettingDuration
+    const isWaitingForAPlayer = p2 === undefined || p1===undefined
 
-    const bettingIsClosed = React.useMemo(()=>time + game.bettingDuration > current,[current, time]) 
+    const bettingIsClosed = bettingOpenTime < 0 && bettingOpenTime < current && bettingClosesAt < current
+    //console.log("abc is betting closed: ", bettingIsClosed)
+
     const completed = game.isEnd
     const joinable = game?.players?.length < 2 && !game.isEnd && !game.players.includes(account)
     const draw = score1 === score2
@@ -44,7 +49,7 @@ export default ({game}: {game:Game}) => {
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text bold>created at</Text>
-                <DateDisplay current={time} />
+                <DateDisplay current={time*1000} />
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text bold>player 1</Text>
@@ -73,11 +78,11 @@ export default ({game}: {game:Game}) => {
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text bold>status</Text>
                 <Flex css={{gap: 1}}>
-                    <Text green>{completed ? "completed" : bettingIsClosed ? "playing" : "betting phase"}</Text>
+                    <Text green>{completed ? "completed" : bettingIsClosed ? isWaitingForAPlayer ? "waiting on player" : "playing" : "betting phase. Closes in"+(current-bettingClosesAt)}</Text>
                     <DotIcon color={completed ? "blue" : bettingIsClosed ? "green" : "red"} />
                 </Flex>
             </Flex>
-            <ModalPlaceBet triggerElement={<Button disabled={bettingIsClosed}>Bet <Text faded>{bettingIsClosed? "closed" : "closes"} at {time + game.bettingDuration}</Text></Button>} gameId={id}/>
+            <ModalPlaceBet triggerElement={<Button disabled={bettingIsClosed}>Bet&nbsp;&nbsp; {bettingIsClosed && <LockClosedIcon/>}</Button>} gameId={id}/>
         </Flex>
     );
 }

@@ -7,9 +7,9 @@ const List = ({items}) => (
   <ScrollAreaRoot>
     <ScrollAreaViewport>
       <Box>
-        {items.map((item, index) => (
+        {items ? items.map((item, index) => (
           <ListItem key={index}>{item}</ListItem>
-        ))}
+        )): <Text>There are no items to display</Text>}
       </Box>
     </ScrollAreaViewport>
     <ScrollAreaScrollbar orientation="vertical">

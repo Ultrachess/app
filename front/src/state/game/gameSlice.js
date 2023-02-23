@@ -19,7 +19,7 @@ export const DAPP_ADDRESSES = {
     polygon_mumbai: dappPolygonMumbai.address,
     localhost: dappLocalhost.address,
 };
-console.log(`dapp addresses ${JSON.stringify(DAPP_ADDRESSES, null, "  ")}`)
+//console.log(`dapp addresses ${JSON.stringify(DAPP_ADDRESSES, null, "  ")}`)
 
 
 export const SERVER_URL = import.meta.env.PROD ? 
@@ -89,7 +89,7 @@ export const gameSlice = createSlice({
                 !deepEqual(state.marketplace, marketplace)
             ){ 
                 state.cache.isUpToDate = !state.cache.isUpToDate
-                console.log("is not up to date, updating")
+                //console.log("is not up to date, updating")
             }
 
             state.elo = elo
@@ -122,7 +122,7 @@ export const gameSlice = createSlice({
             var latestInputIndex = state.cache.latestInputIndex
 
             if(latestInputIndex < index){    
-                //console.log(action.payload)
+                ////console.log(action.payload)
                 if(success){
                     switch (operation) {
                         case "create":
@@ -148,7 +148,7 @@ export const gameSlice = createSlice({
                                 board.move(value, {sloppy: true})
                                 board.set_comment(timestamp.toString())
                                 game.pgn = board.pgn()
-                                //console.log(board.pgn())
+                                ////console.log(board.pgn())
                                 state.games.forEach((value, index) => {
                                     if(game.id == value.id)
                                         state.games[index] == game  
@@ -251,9 +251,9 @@ function deepEqual(object1, object2) {
   }
 
 function updateGameState(dispatch, payload){
-    //console.log(ethers.utils.toUtf8String(payload))
+    ////console.log(ethers.utils.toUtf8String(payload))
     var state = JSON.parse(ethers.utils.toUtf8String(payload))
-    //console.log(state)
+    ////console.log(state)
     dispatch(setAppState(state))
 }
   
@@ -265,7 +265,7 @@ async function poll(dispatch) {
         "value": ""
     }`
     var response = await instance.get("/inspect/" + input) 
-    console.log("response", response.data)
+    //console.log("response", response.data)
     if (response.data.reports.length <= 0)
         return poll(dispatch);
 
@@ -329,10 +329,10 @@ export const sendBinary = (binary) => async dispatch => {
 
         //send transaction
         const tx = await cartesiDappContract.addInput(binary, overrides)
-        console.log("waiting for confirmation...");
+        //console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
-        console.log("1 confirmation")
-        console.log(receipt)
+        //console.log("1 confirmation")
+        //console.log(receipt)
     }
     catch(e){
         return console.error(e.message);
@@ -355,12 +355,12 @@ export const depositErc20 = (signer, tokenAddress, tokenAmount) => async dispatc
 
         const erc20Amount = ethers.BigNumber.from(ethers.utils.parseUnits(tokenAmount))
         const signerAddress = await erc20PortalContract.signer.getAddress();
-        console.log(`using account "${signerAddress}"`);
+        //console.log(`using account "${signerAddress}"`);
         const allowance = await erc20Contract.allowance(
             signerAddress,
             erc20PortalContract.address
         );
-        console.log(`current allowance ${allowance}`)
+        //console.log(`current allowance ${allowance}`)
         if (allowance.lt(erc20Amount)) {
             const allowanceApproveAmount =
                 ethers.BigNumber.from(erc20Amount).sub(allowance);
@@ -375,12 +375,12 @@ export const depositErc20 = (signer, tokenAddress, tokenAmount) => async dispatc
         }
 
         //send transaction
-        console.log(erc20PortalContract)
+        //console.log(erc20PortalContract)
         const tx = await erc20PortalContract.erc20Deposit(tokenAddress, erc20Amount, "0x");
-        console.log("waiting for confirmation...");
+        //console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
-        console.log("1 confirmation")
-        console.log(receipt)
+        //console.log("1 confirmation")
+        //console.log(receipt)
     }
     catch(e){
         return console.error(e.message);
@@ -401,13 +401,13 @@ export const sendMove = (move) => async dispatch => {
 
         //send transaction
         const message = `{"op": "move", "value": "${move}"}`
-        console.log(message)
+        //console.log(message)
         const input = ethers.utils.toUtf8Bytes(message)
         const tx = await cartesiDappContract.addInput(input)
-        console.log("waiting for confirmation...");
+        //console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
-        console.log("1 confirmation")
-        console.log(receipt)
+        //console.log("1 confirmation")
+        //console.log(receipt)
         dispatch(setInputStatus({
             type: InputType.MOVE,
             status: InputStatus.SUCCESS
@@ -449,11 +449,11 @@ export const createBotGame = (botId1, botId2, matchCount, wagerAmount) => async 
         `;
         const input = ethers.utils.toUtf8Bytes(message)
         const tx = await cartesiDappContract.addInput(input)
-        console.log(tx);
-        console.log("waiting for confirmation...");
+        //console.log(tx);
+        //console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
-        console.log("1 confirmation")
-        console.log(receipt)
+        //console.log("1 confirmation")
+        //console.log(receipt)
     }
     catch(e){
         return console.error(e.message);
@@ -473,7 +473,7 @@ export const createGame = (token, wagerAmount) => async dispatch => {
             //blockTag: 33,     
         };
 
-        console.log(`wager amount ${wagerAmount}`)
+        //console.log(`wager amount ${wagerAmount}`)
         const erc20WagerAmount = ethers.utils.parseUnits(wagerAmount)
 
         //send transaction
@@ -489,11 +489,11 @@ export const createGame = (token, wagerAmount) => async dispatch => {
         `;
         const input = ethers.utils.toUtf8Bytes(message)
         const tx = await cartesiDappContract.addInput(input)
-        console.log(tx);
-        console.log("waiting for confirmation...");
+        //console.log(tx);
+        //console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
-        console.log("1 confirmation")
-        console.log(receipt)
+        //console.log("1 confirmation")
+        //console.log(receipt)
         dispatch(setInputStatus({
             type: InputType.CREATE,
             status: InputStatus.SUCCESS
@@ -525,11 +525,11 @@ export const joinGame = (roomId) => async dispatch => {
         const message = `{"op": "join", "value": "${roomId}"}`
         const input = ethers.utils.toUtf8Bytes(message)
         const tx = await cartesiDappContract.addInput(input)
-        console.log(tx);
-        console.log("waiting for confirmation...");
+        //console.log(tx);
+        //console.log("waiting for confirmation...");
         const receipt = await tx.wait(1);
-        console.log("1 confirmation")
-        console.log(receipt)
+        //console.log("1 confirmation")
+        //console.log(receipt)
         dispatch(setInputStatus({
             type: InputType.JOIN,
             status: InputStatus.SUCCESS

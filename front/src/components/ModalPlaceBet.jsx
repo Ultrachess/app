@@ -19,8 +19,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 
 
 export default ({triggerElement, gameId}) => {
-  console.log(triggerElement)
-  console.log(gameId)
+  //console.log(triggerElement)
+  //console.log(gameId)
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
     const [winningId, setWinningId] = useState("DRAW")
@@ -74,12 +74,12 @@ export default ({triggerElement, gameId}) => {
             </Fieldset>
             <Fieldset>
                 <Label>Amount</Label>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.value)}}>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
                 </Input>
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ console.log(value); setAmount(value)}} />
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
             </Fieldset>
 
             <Fieldset>

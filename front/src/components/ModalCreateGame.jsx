@@ -41,7 +41,7 @@ export default ({visible, closeHandler}) => {
             bettingDuration: betDuration,
         })
         const roomId = await wait
-        console.log("jumping to" + roomId)
+        //console.log("jumping to" + roomId)
         if(roomId) navigate(`game/${roomId}`, { replace: true })
     }
 

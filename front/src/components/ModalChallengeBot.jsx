@@ -40,7 +40,7 @@ export default ({visible, closeHandler, botId}) => {
             wagerAmount: ethers.utils.parseUnits(wagerValue)
         })
         const roomId = await wait
-        console.log("jumping to" + roomId)
+        //console.log("jumping to" + roomId)
         navigate(`/game/${roomId}`, { replace: true })
     }
 
@@ -56,14 +56,14 @@ export default ({visible, closeHandler, botId}) => {
             .concat(Object.keys(bots))
             .filter(val => val != botId)
             .map(val => {
-                console.log(val)
+                //console.log(val)
                 if(isAddress(val)) 
                     return { value: val, label:"You" }
                 return { value: val, label: val }
             })
     },[bots, botId])
 
-    console.log(botList)
+    //console.log(botList)
 
     return (
         <Modal

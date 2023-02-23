@@ -2,23 +2,31 @@ import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, Cross2Icon, ChevronUpIcon, CheckIcon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
 import { Text } from './ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
 import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
 import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../state/game/hooks';
+import { useActionCreator, useUserBotIds } from '../state/game/hooks';
 import { TransactionType } from '../common/types';
 import Address from './Address';
+import * as Select from '@radix-ui/react-select';
+import { ethers } from 'ethers';
+
+
 
 export default ({triggerElement, playerId}) => {
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
+    const [challenger, setChallenger ] = useState(account)
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const balance = useTokenPortalBalance(token, account) 
+
+    const bots = useUserBotIds(account)
+    const potentialChallengers = [...bots, account]
 
     const addAction = useActionCreator()
 
@@ -26,13 +34,13 @@ export default ({triggerElement, playerId}) => {
       const [approvalActionId, wait] = await addAction({
         type: TransactionType.CREATE_CHALLENGE,
         recipient: playerId,
-        amount: amount,
+        wager: ethers.utils.parseUnits(amount.toString()),
         token: token.address,
       })
       await wait
     }
 
-    console.log("amount", amount)
+    //console.log("123", playerId)
     return (
         <Dialog.Root>
         <Dialog.Trigger asChild>
@@ -41,10 +49,10 @@ export default ({triggerElement, playerId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Challenge <Address address={playerId}/></DialogTitle>
+            <DialogTitle>Challenge <Address value={playerId}/></DialogTitle>
             <DialogDescription>
-              This will send a challenge request to <Address address={playerId}/> and if accepted, a game will be created.
-              This game will have a wager of {amount} USDC.
+              This will send a challenge request <Address value={challenger}/> to challenge <Address value={playerId}/> and if accepted, a game will be created.
+              This game will have a wager of {amount}
             </DialogDescription>
           
             <Fieldset>
@@ -55,12 +63,16 @@ export default ({triggerElement, playerId}) => {
                 </RightSlot>
             </Fieldset>
             <Fieldset>
+              <Label>Challenger</Label>
+              <SelectMain options={potentialChallengers} value={challenger} onValueChange={setChallenger}/>
+            </Fieldset>
+            <Fieldset>
               <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.value)}}>
                 </Input>
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ console.log(value); setAmount(value)}} />
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
@@ -295,3 +307,157 @@ const LeftSlot = styled('div', {
     '&:hover': { backgroundColor: violet.violet3 },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
   });
+
+
+
+  const SelectMain = ({onValueChange, value, options, label}) => {
+    return (
+        <Select.Root 
+        value={value}
+        onValueChange={async (value) => {
+            onValueChange(value)
+        }}
+    >
+      <SelectTrigger aria-label="Chain">
+          <Select.Value><Text>{value}</Text></Select.Value>
+        <SelectIcon>
+          <ChevronDownIcon />
+        </SelectIcon>
+      </SelectTrigger>
+      <Select.Portal>
+        <SelectContent>
+          <SelectScrollUpButton>
+            <ChevronUpIcon />
+          </SelectScrollUpButton>
+          <SelectViewport>
+            <Select.Group>
+              <SelectLabel>{label}</SelectLabel>
+                {options ?
+                    options.map((option) => (
+                        <SelectItem value={option}>{option}</SelectItem>
+                    )): []
+                }
+            </Select.Group>
+  
+          </SelectViewport>
+          <SelectScrollDownButton>
+            <ChevronDownIcon />
+          </SelectScrollDownButton>
+        </SelectContent>
+      </Select.Portal>
+    </Select.Root>
+        )
+};
+
+const SelectTrigger = styled(Select.SelectTrigger, {
+  all: 'unset',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 4,
+  padding: '0 15px',
+  fontSize: 13,
+  lineHeight: 1,
+  height: 35,
+  display: 'flex',
+  flexDirection: 'row',
+  gap: 5,
+  backgroundColor: 'white',
+  color: violet.violet11,
+  //boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  '&:hover': { backgroundColor: mauve.mauve3 },
+  //'&:focus': { boxShadow: `0 0 0 2px black` },
+  '&[data-placeholder]': { color: violet.violet9 },
+});
+
+const SelectIcon = styled(Select.SelectIcon, {
+  color: violet.violet11,
+});
+
+const SelectContent = styled(Select.Content, {
+  overflow: 'hidden',
+  backgroundColor: 'white',
+  borderRadius: 6,
+  boxShadow:
+    '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
+});
+
+const SelectViewport = styled(Select.Viewport, {
+  padding: 5,
+});
+
+const SelectItem = React.forwardRef(({ children, ...props }, forwardedRef) => {
+  return (
+    <StyledItem {...props} ref={forwardedRef}>
+      <Select.ItemText>{children}</Select.ItemText>
+      <StyledItemIndicator>
+        <CheckIcon />
+      </StyledItemIndicator>
+    </StyledItem>
+  );
+});
+
+const SelectValue = styled(Select.Value, {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row',
+});
+
+const StyledItem = styled(Select.Item, {
+  fontSize: 13,
+  lineHeight: 1,
+  color: violet.violet11,
+  borderRadius: 3,
+  display: 'flex',
+  alignItems: 'center',
+  height: 25,
+  padding: '0 35px 0 25px',
+  position: 'relative',
+  userSelect: 'none',
+
+  '&[data-disabled]': {
+    color: mauve.mauve8,
+    pointerEvents: 'none',
+  },
+
+  '&[data-highlighted]': {
+    outline: 'none',
+    backgroundColor: violet.violet9,
+    color: violet.violet1,
+  },
+});
+
+const SelectLabel = styled(Select.Label, {
+  padding: '0 25px',
+  fontSize: 12,
+  lineHeight: '25px',
+  color: mauve.mauve11,
+});
+
+const SelectSeparator = styled(Select.Separator, {
+  height: 1,
+  backgroundColor: violet.violet6,
+  margin: 5,
+});
+
+const StyledItemIndicator = styled(Select.ItemIndicator, {
+  position: 'absolute',
+  left: 0,
+  width: 25,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const scrollButtonStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 25,
+  backgroundColor: 'white',
+  color: violet.violet11,
+  cursor: 'default',
+};
+
+const SelectScrollUpButton = styled(Select.ScrollUpButton, scrollButtonStyles);
+
+const SelectScrollDownButton = styled(Select.ScrollDownButton, scrollButtonStyles);

@@ -53,11 +53,11 @@ export default ({triggerElement}) => {
             amountOfWinners,
         })
         const tournamentId = await wait
-        console.log("jumping to tournament" + tournamentId)
+        //console.log("jumping to tournament" + tournamentId)
         if(tournamentId) navigate(`tournaments/${tournamentId}`, { replace: true })
     }
 
-    console.log("amount", amount)
+    //console.log("amount", amount)
     return (
         <Dialog.Root>
         <Dialog.Trigger asChild>

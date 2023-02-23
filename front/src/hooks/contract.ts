@@ -40,7 +40,7 @@ export function useContractCallResult(contract: Contract, func: string, ...param
             const callContract = async () => {
                 if(contract){
                     const result = await contract.callStatic[func]()
-                    console.log(result)
+                    //console.log(result)
                     setResult(result)
                 }
                 

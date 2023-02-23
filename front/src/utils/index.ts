@@ -8,7 +8,7 @@ export const DEFAULT_GRAPHQL_URL = import.meta.env.PROD?
   "https://ultrachess.org/api/graphql":
   `http://localhost:4000/graphql`;
 
-export const DEFAULT_GRAPHQL_POLL_TIME = 100
+export const DEFAULT_GRAPHQL_POLL_TIME = 100000000000
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -142,10 +142,10 @@ export function decimalToHexString(number) {
   }
 
   let str: string = number.toString(16).toUpperCase();
-  console.log(str.length)
+  //console.log(str.length)
   let numToAdd = 8 - str.length
   let zerosToAdd: string = new Array(numToAdd > 0 ? numToAdd + 1 : 0).join('0')
-  console.log(zerosToAdd.length)
+  //console.log(zerosToAdd.length)
   return zerosToAdd.concat(str);
 }
 

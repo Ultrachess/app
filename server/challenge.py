@@ -26,7 +26,7 @@ class ChallengeManager:
             return False
 
         #make sure sender has enough funds
-        owner_sender = sender if "0x" not in sender else deps.botFactory.getOwner(sender)
+        owner_sender = sender if "0x" in sender else deps.botFactory.getOwner(sender)
         hasFunds = deps.accountManager.getBalance(owner_sender, options["token"]) >= options["wager"]
         if not hasFunds:
             return False
@@ -61,7 +61,7 @@ class ChallengeManager:
         
         #make sure sender has enough funds
         challenge = self.challenges[challengeId]
-        owner_sender = challenge["sender"] if "0x" not in challenge["sender"] else deps.botFactory.getOwner(sender)
+        owner_sender = challenge["sender"] if "0x" in challenge["sender"] else deps.botFactory.getOwner(sender)
         hasFunds = deps.accountManager.getBalance(owner_sender, challenge["token"]) >= challenge["wager"]
         if not hasFunds or challenge["recipient"] != sender:
             return False

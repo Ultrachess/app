@@ -12,6 +12,7 @@ import ModalCreateOffer from './ModalCreateOffer';
 
 
 const BotProfileCard = ({profile}: {profile: BotProfile}) => {
+  //console.log("123 bot profile", profile)
     return (
         <div>
             <Flex css={{ flexDirection: 'column', gap: 7 }}>
@@ -50,6 +51,7 @@ const BotProfileCard = ({profile}: {profile: BotProfile}) => {
 }
 
 const UserProfileCard = ({profile}: {profile: UserProfile}) => {
+  //console.log("123 profile", profile)
     return (
       <div>
         <Flex css={{ flexDirection: 'column', gap: 7 }}>
