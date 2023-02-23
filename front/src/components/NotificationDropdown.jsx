@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { styled, keyframes } from '@stitches/react';
 import { violet, mauve, blackA } from '@radix-ui/colors';
@@ -15,13 +15,14 @@ import NotificationItem from './NotificationItem';
 const NotificationDropdown = () => {
   const notifications = useNotifications()
 
+
   //console.log("ui notifications", notifications)
 
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <IconButton aria-label="Customise options">
-          <StyledBellIcon />
+          <StyledBellIcon  />
         </IconButton>
       </DropdownMenu.Trigger>
 

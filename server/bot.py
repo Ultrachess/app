@@ -14,6 +14,7 @@ class Bot:
         self.id = id
         self.owner = owner
         self.timestamp = timestamp
+        self.name = "bot" + id
         #create executable
         file = open(id, "wb")
         file.write(binary)
@@ -34,16 +35,17 @@ class Bot:
         botMoveStat = {}
         #get bot move statistics such as time, depth, nodes, score
         result = self.engine.play(board, chess.engine.Limit(time=time))
-        botMoveStat["depth"] = result.info["depth"]
-        botMoveStat["seldepth"] = result.info["seldepth"]
-        botMoveStat["time"] = result.info["time"]
-        botMoveStat["nodes"] = result.info["nodes"]
-        botMoveStat["pv"] = result.info["pv"]
-        botMoveStat["score"] = result.info["score"]
-        botMoveStat["nps"] = result.info["nps"]
-        botMoveStat["tbhits"] = result.info["tbhits"]
-        botMoveStat["sbhits"] = result.info["sbhits"]
-        botMoveStat["cpuload"] = result.info["cpuload"]
+        logger.info("result.info: " + str(result.info))
+        botMoveStat["depth"] = result.info["depth"] if "depth" in result.info else 0
+        botMoveStat["seldepth"] = result.info["seldepth"] if "seldepth" in result.info else 0
+        botMoveStat["time"] = result.info["time"] if "time" in result.info else 0
+        botMoveStat["nodes"] = result.info["nodes"] if "nodes" in result.info else 0
+        botMoveStat["pv"] = result.info["pv"] if "pv" in result.info else 0
+        botMoveStat["score"] = result.info["score"] if "score" in result.info else 0
+        botMoveStat["nps"] = result.info["nps"] if "nps" in result.info else 0
+        botMoveStat["tbhits"] = result.info["tbhits"] if "tbhits" in result.info else 0
+        botMoveStat["sbhits"] = result.info["sbhits"] if "sbhits" in result.info else 0
+        botMoveStat["cpuload"] = result.info["cpuload"] if "cpuload" in result.info else 0
 
         move = result.move
         return (move.uci(), botMoveStat)
@@ -51,6 +53,7 @@ class Bot:
     def getState(self):
         return {
             "id": self.id,
+            "name": self.name,
             "owner": self.owner,
             "timestamp": self.timestamp,
             "autoMaxWagerAmount": self.autoMaxWagerAmount,
@@ -122,8 +125,10 @@ class BotManager:
         return newIdList[self.last_challenged[botId]]
 
     def runPendingMoves(self, timestamp):
+        logger.info("bot: attempting running pending moves")
         #run pending bot game moves
         while len(self.pending_game_moves) > 0:
+            logger.info("bot: runing a moves")
             pending_move = self.pending_game_moves.pop()
             #get game and bot
             gameId = pending_move["gameId"]
@@ -148,6 +153,13 @@ class BotManager:
             botId2 = self.__fetchOpponent(botIds, botId, factory)
             bot1 = bots[botId]
             if botId2:
+                #create challenge
+                # deps.challengeManager.create(botId, timestamp, {
+                #     "challenger": botId,
+                #     "recipient": botId2,
+                #     "token": bot1.autoWagerTokenAddress,
+                #     "wager": bot1.autoMaxWagerAmount,
+                # })
                 matchmaker.create(sender, timestamp, {
                     "name": "auto triggered match",
                     "isBot": True,
@@ -172,12 +184,14 @@ class BotManager:
         autoMaxWagerAmount = options["autoMaxWagerAmount"] if ("autoMaxWagerAmount" in options) else 0
         autoWagerTokenAddress = options["autoWagerTokenAddress"] if ("autoWagerTokenAddress" in options) else ""
         autoBattleEnabled = options["autoBattleEnabled"] if ("autoBattleEnabled" in options) else False
-        
+        name = options["name"] if ("name" in options) else "bot"+botId
+
         bot = factory.bots[botId]
         if sender.lower() == bot.owner.lower():
             bot.autoMaxWagerAmount = autoMaxWagerAmount
             bot.autoWagerTokenAddress = autoWagerTokenAddress
             bot.autoBattleEnabled = autoBattleEnabled
+            bot.name = name
 
 
 

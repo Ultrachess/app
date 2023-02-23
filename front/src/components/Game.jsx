@@ -14,7 +14,7 @@ import GameMovesView from "./GameMovesView";
 import GameTimer from "./GameTimer";
 import { useActionCreator, useActionsNotProcessed, useActions, useGame } from "../state/game/hooks";
 import { useAllTransactions } from "../state/transactions/hooks";
-import { Row, Text } from "@nextui-org/react";
+import { Row } from "@nextui-org/react";
 import { useToken } from "../hooks/token";
 import { ethers } from "ethers";
 import Flex from "./ui/Flex";
@@ -22,6 +22,11 @@ import AssetDisplay from "./AssetDisplay";
 import { useTime } from "./ActionView";
 import BotMoveStatisticsView from "./BotMoveStatisticsView";
 import GameWagersView from "./GameWagersView";
+import Button from "./ui/Button";
+import { truncateAddress } from "../ether/utils";
+import { Text } from "./ui/Text";
+
+
 
 const placerHolderBotMoveStat = {
   depth: 0,
@@ -55,6 +60,7 @@ export default () => {
   const games = useSelector(state => state.game.games);
   const accounts = useSelector(state => state.auth.accounts);
   const inputState = useSelector(state => state.game.currentInputState)
+  const [statustText, setStatusText] = useState("")
   const isUpToDate = useSelector(state => state.game.cache.isUpToDate)
   const [gameState, setGameState] = useState(new Chess());
   const [gameSide, setGameSide] = useState(side.WHITE)
@@ -75,11 +81,11 @@ export default () => {
   const game = useGame(gameId)
   const tokenAddress = game.token
   const wagerAmount = game.wagerAmount
-  const topAddressScore = useMemo(() => game.scores[topAddress], [topAddress])
-  const bottomAddressScore = useMemo(() => game.scores[bottomAddress], [bottomAddress])
+  const topAddressScore = useMemo(() => game.scores[topAddress], [topAddress, isUpToDate])
+  const bottomAddressScore = useMemo(() => game.scores[bottomAddress], [bottomAddress,isUpToDate])
   const completed = game.isEnd
-  const topAddressLost = topAddressScore == 0
-  const bottomAddressLost = bottomAddressScore == 0
+  const topAddressLost = useMemo(() => topAddressScore == 0, [topAddressScore])
+  const bottomAddressLost = useMemo(() => bottomAddressScore == 0, [bottomAddressScore] )
   const topAddressIsBot = useMemo(() => topAddress ? !topAddress.includes("0x") && !topAddress.includes("Waiting"): false, [topAddress])
   const bottomAddressIsBot = useMemo(() => bottomAddress ? !bottomAddress.startsWith("0x") : false, [bottomAddress])
   const topAddressWon = topAddressScore == 1
@@ -94,6 +100,10 @@ export default () => {
       return "DRAW"
     return null
   }, [topAddressWon, bottomAddressWon])
+  const isWaitingWaitingForPlayerToJoin = useMemo(() => {
+    return topAddress.includes("Waiting") || bottomAddress.includes("Waiting")
+  }, [topAddress, bottomAddress])
+
   //console.log("side1" + gameSide)
   //console.log("topAddress1" + topAddress)
   //console.log("bottomAddress1" + bottomAddress)
@@ -140,9 +150,12 @@ export default () => {
         //console.log("attempting to join game")
       }
       setGameSide(getSide(game, address))
-      setTopAddress(getTopAddress(getGameById(games, gameId), address, gameSide))
-      setBottomAddress(getBottomAddress(getGameById(games, gameId), address, gameSide)) 
   },[isUpToDate])
+
+  useEffect(() => {
+    setTopAddress(getTopAddress(getGameById(games, gameId), address, gameSide))
+    setBottomAddress(getBottomAddress(getGameById(games, gameId), address, gameSide)) 
+  }, [gameSide, game, isUpToDate])
 
   useEffect(() => {
       var game = getGameById(games, gameId)
@@ -180,6 +193,25 @@ export default () => {
       })
     }); 
   },[pendingMoves])
+
+  //create an alert when the game is over
+  //only if the game is over and the user is in the game
+  //alert winnings as well
+  useEffect(() => {
+    console.log("end has just come")
+    if(completed && playerIsInGame(games, address, gameId)){
+      console.log("end has just come and you are in the game")
+      if(topAddressWon)
+        alert("You lost " + topAddressWinAmount + " " + tokenAddress + " to " + topAddress)
+      if(bottomAddressWon)
+        alert("You lost " + bottomAddressWinAmount + " " + tokenAddress + " to " + bottomAddress)
+      if(draw)
+        alert("You tied with " + topAddress + " and " + bottomAddress)
+    }
+  }, [completed, isUpToDate])
+      
+
+      
 
   //initailize index to 0
   useEffect(() => {
@@ -334,6 +366,12 @@ export default () => {
     setCurrentMoveIndex(index)
   }, [])
 
+  const tweetGame = () => {
+    const tweetText = `Hey check out this match on Ultrachess http://ultrachess.org/game/${gameId}`;
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+    window.open(tweetUrl, '_blank');
+  }
+
   const getLastProcessedBotMoveIndexFromCurrentIndex = (index) => {
     const botMoveStats = game.botMoveStats
     //get the last processed bot move that is closest to the current index and less than or equal to the current index
@@ -360,14 +398,14 @@ export default () => {
             <Flex css={{width:"100%", justifyContent: 'space-between', alignItems:'center'}}>
               <Address isMedium value={topAddress} />
               <Flex css={{gap: 1}}>
-                {completed && <Text faded>+{topAddressScore}</Text>}
+                {completed && <Text  size={"4"} faded>+{topAddressScore}</Text>}
                 {topAddressWon ? 
-                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount} />
                  : topAddressLost ?
-                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} />
                   : draw ?
-                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
-                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} />
+                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} />
                 }
               </Flex>
             </Flex>
@@ -397,20 +435,27 @@ export default () => {
 
             <Flex css={{width:'100%',justifyContent: 'space-between', alignItems:'center'}}>
               <Address isMedium value={bottomAddress} />
-              <Flex css={{gap: 1}}>
-                {completed && <Text faded>+{topAddressScore}</Text>}
+              <Flex css={{gap: 1, alignItems:'center'}}>
+                {completed && <Text size={"4"} faded>+{bottomAddressScore}</Text>}
                 {bottomAddressWon ? 
-                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                 <AssetDisplay green={true} tokenAddress={tokenAddress} balance={wagerAmount}  />
                  : bottomAddressLost ?
-                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  <AssetDisplay red={true} tokenAddress={tokenAddress} balance={wagerAmount} />
                   : draw ?
-                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
-                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} isL2={true} />
+                  <AssetDisplay grey={true} tokenAddress={tokenAddress} balance={wagerAmount} />
+                  : <AssetDisplay blue={true} tokenAddress={tokenAddress} balance={wagerAmount} />
                 }
               </Flex>
             </Flex>
           </Flex>
-          <Flex css={{ flexDirection:'column', gap:5}}>
+          <Flex css={{ flexDirection:'column', gap:10}}>
+            <Flex css={{width:"100%", flexDirection:'row', alignItems:'center', justifyContent:"right"}}>
+              <Button onClick={tweetGame}>Tweet</Button>
+            </Flex>
+            <Flex css={{justifyContent:"left", paddingBottom:"20px"}}>
+              {(completed && !draw) && <Text green>Game completed.  <span style={{textDecoration:"underline"}}>{truncateAddress(winningId)}</span> won {wagerAmount} CTSI</Text>}
+              {draw && <Text faded>Game completed. Draw</Text>}
+            </Flex>
             {game.bettingDuration > 0 &&
               <GameWagersView
                 winningId={winningId}

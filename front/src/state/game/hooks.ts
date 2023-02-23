@@ -61,7 +61,7 @@ export function useProfile(id: string): Profile | undefined{
 
     //common
     const type = isBot ? ProfileType.BOT : ProfileType.HUMAN
-    const name = useName(id)
+    let nameDefault = useName(id)
     const avatar = useAvatarImgUrl(id)
     const elo = useElo(id)
     const nationality = useNationality(id)
@@ -69,7 +69,7 @@ export function useProfile(id: string): Profile | undefined{
     const challenges = useRecievedChallenges(id)
 
     //bot only
-    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress, timestamp } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: "", timestamp: 0}
+    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress, timestamp, name } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: "", timestamp: 0, name: "" }
     const offers = bots[id] ? useOffersByBotId(id) : []
 
     //human only
@@ -95,7 +95,7 @@ export function useProfile(id: string): Profile | undefined{
     } : {
         type,
         id,
-        name,
+        name:nameDefault,
         avatar,
         elo,
         nationality,
@@ -459,9 +459,10 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "manageBot", 
                         "value": {
+                            "name" : "${info.name}",
                             "autoBattleEnabled": ${autoBattleEnabled},
                             "autoWagerTokenAddress" : "${autoWagerTokenAddress}",
-                            "autoMaxWagerAmount": ${autoMaxWagerAmount},
+                            "autoMaxWagerAmount": ${autoMaxWagerAmount ?? 0},
                             "botId": "${botId}"
                         }
                     }`)

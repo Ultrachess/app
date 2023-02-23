@@ -17,6 +17,8 @@ import Date from "./ui/Date";
 import OffersList from "./OffersList";
 import ChallengesList from "./list/ChallengesList";
 import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import ModalCreateChallenge from "./ModalCreateChallenge";
+import ModalCreateOffer from "./ModalCreateOffer";
 
 export default () => {
     let { botId } = useParams()
@@ -47,13 +49,17 @@ export default () => {
         highestOffer = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current)
     }
     const token = USDC_ADDRESS_ON_NETWORKS[chainId]
-    const isOwner = account === owner
+    const isOwner = account.toLowerCase() === owner.toLowerCase()
     return (
         <div className="body">
             <Flex css={{  gap: 50, justifyContent: 'center' }}>
                 <Flex css={{
                      gap: 5, flexDirection:'column' }}>
                     <Address value={id} isImageBig={true} />
+                    <Flex css={{ gap: 2, flexDirection:'column' }}>
+                        <Text faded>name</Text>
+                        <Text>{name}</Text>
+                    </Flex>
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         <Text faded>owner</Text>
                         {isOwner ? <Text bold>Yours</Text> : <Address value={owner} />}
@@ -94,9 +100,15 @@ export default () => {
                         <Text faded>auto max wager amount</Text>
                         <AssetDisplay balance={autoMaxWagerAmount} tokenAddress={autoWagerTokenAddress} isL2={true}/>
                     </Flex>
+                    <Flex css={{ gap: 1, flexDirection:'row' }}>
+                        {isOwner && <ModalManageBot botId={botId} triggerElement={<Button>Manage</Button>} />}
+                        {!isOwner && <ModalCreateChallenge playerId={botId} triggerElement={<Button>Challenge</Button>} />}
+                        {!isOwner && <ModalCreateOffer botId={botId} triggerElement={<Button>Offer</Button>} />}
+                    </Flex>
 
                 </Flex>
                 <Flex css={{ gap: 5, flexDirection:'column' }}>
+                    
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
                         <Text faded>active games</Text>
                         <GameList games={activeGames} />

@@ -38,10 +38,10 @@ const BotProfileCard = ({profile}: {profile: BotProfile}) => {
                           <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
                       </Flex>
                     </Flex>
-                    <Flex css={{ gap: 15 }}>
+                    {/* <Flex css={{ gap: 15 }}>
                       <ModalCreateChallenge triggerElement={<Button>Challenge</Button>} playerId={profile.id} />
                       <ModalCreateOffer triggerElement={<Button>Offer</Button>} botId={profile.id} />
-                    </Flex>
+                    </Flex> */}
                 </Flex>
                 </Flex>
     
@@ -52,6 +52,8 @@ const BotProfileCard = ({profile}: {profile: BotProfile}) => {
 
 const UserProfileCard = ({profile}: {profile: UserProfile}) => {
   //console.log("123 profile", profile)
+  const token = profile?.balances[0]?.token ?? ""
+  const balance = profile?.balances[0]?.amount ?? ""
     return (
       <div>
         <Flex css={{ flexDirection: 'column', gap: 7 }}>
@@ -66,7 +68,7 @@ const UserProfileCard = ({profile}: {profile: UserProfile}) => {
                   <Address value={profile.id} /> <Text faded>🇺🇸</Text>
               </Flex>
               <Flex css={{ gap: 5 }}>
-                  <AssetDisplay tokenAddress={profile.balances[0].token} balance={profile.balances[0].amount} isL2={true} /> <Text faded>Balance</Text>
+                  <AssetDisplay tokenAddress={token} balance={balance} isL2={true} /> <Text faded>Balance</Text>
               </Flex>
             </div>
             <Flex css={{ gap: 15 }}>
@@ -85,9 +87,9 @@ const UserProfileCard = ({profile}: {profile: UserProfile}) => {
                     ))}
                   </Flex>
             </Flex>
-            <Flex css={{ gap: 15 }}>
+            {/* <Flex css={{ gap: 15 }}>
               <ModalCreateChallenge triggerElement={<Button>Challenge</Button>} playerId={profile.id} />
-            </Flex>
+            </Flex> */}
               
           </Flex>
         </Flex>

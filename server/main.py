@@ -330,7 +330,7 @@ def handle_advance(data):
             traceback.print_exc()
             success = False
     
-        
+    logger.info("pending moves: " + str(botManager.pending_game_moves))
 
     botManager.runPendingMoves(timeStamp)
 

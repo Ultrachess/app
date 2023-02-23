@@ -22,6 +22,7 @@ class Matchmaker:
         return False
 
     def sendMove(self, sender, timeStamp, options):
+        logger.info("sender:" + str(sender) + " timeStamp:" + str(timeStamp) + " options:" + str(options))
         if "roomId" in options:
             roomId = options["roomId"]
         else: 
@@ -77,9 +78,13 @@ class Matchmaker:
 
             p1 = self.games[str(id)].players[0]
             p2 = self.games[str(id)].players[1]
+            p1IsBot = "0x" not in p1
+            p2IsBot = "0x" not in p2
+            bot_id = p1 if p1IsBot else p2
             notification.send_notification(
                 notification.BotGameCreatedNotification(
-                    creator_id=sender,
+                    #creator_id=sender,
+                    bot_id=bot_id,
                     game_id=id,
                     player_id1=p1,
                     player_id2=p2,

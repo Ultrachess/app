@@ -9,8 +9,9 @@ import { Text } from "./ui/Text";
 import ProfileHover from './ProfileHover';
 import Flex from './ui/Flex';
 import { FaRobot } from 'react-icons/fa';
+import { useProfile } from '../state/game/hooks';
 
-export default ({value, hoverable = false, isMedium=false, isImageBig=false}) => {
+export default ({value, hoverable = false, isMedium=false, isImageBig=false, showBotName=false}) => {
   const isBot = useMemo(()=> value ? !value.includes("0x"): false)
   const addressView = 
     <div className='addressView'>
@@ -30,6 +31,7 @@ export default ({value, hoverable = false, isMedium=false, isImageBig=false}) =>
           <ProfileImage diameter={30} address={value} />
           <Text size={2} bold blue>{truncateAddress(value)}</Text>
           {isBot && <FaRobot/>}
+          {(isBot && showBotName) && <Text size={2} bold>{useProfile(value).name}</Text>}
         </Flex>
       </Link>
     </div>

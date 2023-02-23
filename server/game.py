@@ -33,6 +33,13 @@ class Game:
 
     def __isInGame(self, address):
         return address in self.players
+
+    def __getCurrentTurnAddress(self):
+        turn = self.state.board().turn
+        if(turn == chess.WHITE):
+            return self.players[0]
+        else:
+            return self.players[1]
     
     def __isTurn(self, address):
         turn = self.state.board().turn
@@ -50,8 +57,10 @@ class Game:
     def __senderIsPlayer(self, sender):
         if self.player1 == None:
             return False
-        logger.info("player1:" + str(self.player1.lower()))
-        return sender.lower() == self.player1.lower()
+        
+        return "0x" in sender
+
+    
 
     def setPlayerInHumanVBot(self, playerId):
         self.player1 = playerId
@@ -148,6 +157,14 @@ class Game:
                 #open betting phase
                 if self.__isMinPlayers():
                     deps.betManager.open(id, timestamp, self.bettingDuration)
+                    currentTurn = self.__getCurrentTurnAddress()
+                    firstTurnIsBot = "0x" not in currentTurn
+                    if firstTurnIsBot:
+                        deps.botManager.pending_game_moves.append({
+                            "gameId": self.id,
+                            "botId": currentTurn,
+                        })
+
                 notification.send_notification(
                     notification.GameJoinedNotification(
                         timestamp= timestamp,
@@ -176,7 +193,8 @@ class Game:
         return True
 
     def move(self, sender, timestamp, moveString, botMoveStat=None):
-        #logger.info("isMoving now" + moveString)
+        logger.info("sender" + sender)
+        logger.info("isMoving now" + moveString)
         try:
             #Determine if player can move
             newMove = chess.Move.from_uci(moveString)
@@ -197,9 +215,11 @@ class Game:
                 self.botMoveStats.append(botMoveStat)
                 #Send end game notice
                 isGameEnd = self.isGameEnd()
+                logger.info("players: " + str(self.players))
+                logger.info("current turn address " + self.__getCurrentTurnAddress())
                 if isGameEnd:
                    self.handleEnd()
-                elif self.__senderIsPlayer(sender):
+                elif "0x" not in self.__getCurrentTurnAddress():
                     botId = ""
                     for val in self.players:
                         if not "0x" in val:

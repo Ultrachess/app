@@ -31,6 +31,7 @@ import { SelectIcon } from "@radix-ui/react-select";
 import { Text } from "./ui/Text";
 import ModalNewDepositFunds from "./ModalNewDepositFunds";
 import NotificationDropdown from "./NotificationDropdown";
+import { Link } from "react-router-dom";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -171,7 +172,9 @@ const DropdownMenuMain = ({address, chainId}) => {
         <DropdownMenuContent sideOffset={5}>
           <DropdownMenuLabel>Profile</DropdownMenuLabel>
           <DropdownMenuItem>
-            View Profile <RightSlot css={{display:"flex"}}><ProfileImage address={address} /><Text bold>{truncateAddress(address)}</Text></RightSlot>
+            <Link to={"/users/" + address}>
+              View Profile <RightSlot css={{display:"flex"}}><ProfileImage address={address} /><Text bold>{truncateAddress(address)}</Text></RightSlot>
+            </Link>
           </DropdownMenuItem>
           <ModalNewDepositFunds triggerElement={
             <ClickableDropdownMenuItem>Deposit <Text>&nbsp;(to portal)</Text> <RightSlot><AssetDisplay tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/></RightSlot></ClickableDropdownMenuItem>

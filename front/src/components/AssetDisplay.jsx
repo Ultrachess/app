@@ -16,9 +16,9 @@ import ProfileImage from "./ProfileImage";
 import TokenIcon from "./TokenIcon";
 import { SelectIcon } from "@radix-ui/react-select";
 import { USDC_ADDRESS_ON_NETWORKS, DEFAULT_TOKEN_URI } from "../ether/chains";
+import Flex from "./ui/Flex";
 
-
-export default ({tokenAddress, balance, isL2=false, green=false, blue=false, grey=false, red=false}) => {
+export default ({tokenAddress, balance, isL2=false, green=false, blue=false, grey=false, red=false, isMedium}) => {
     const {account, chainId} = useWeb3React()
     const _tokenAddress = tokenAddress ?? USDC_ADDRESS_ON_NETWORKS[chainId]
     const token = useTokenFromList(_tokenAddress)
@@ -27,15 +27,15 @@ export default ({tokenAddress, balance, isL2=false, green=false, blue=false, gre
     const accountBalances = balances?.[account] ?? undefined
     const _balance = balance ?? accountBalances?.[tokenAddress] ?? "0.0"
 
-    //console.log("tokenAddress", tokenAddress)
-    //console.log("token", token)
+    console.log("abc tokenAddress", tokenAddress)
+    console.log("abc token", token)
 
     return (
-        <Row justify="space-evenly" css={{padding:"0"}}>
-            <Text blue={blue} green={green} grey={grey} red={red}  css={{padding:"0 5px"}}>{_balance?? "0.0"}</Text>
+        <Flex css={{alignItems:'center', gap:'2'}}>
+            <Text size={"5"} blue={blue} green={green} grey={grey} red={red}  css={{padding:"0 5px"}}>{_balance?? "0.0"}</Text>
             <TokenIcon uri={token?.logoUri ?? DEFAULT_TOKEN_URI}/> 
             <Text blue={blue} green={green} grey={grey} red={red} css={{paddingLeft:"5px"}} bold>{token?.symbol}</Text>
-            {isL2 && <Text size={1} blue={blue} green={green} grey={grey} red={red} bold>L2</Text>}
-        </Row> 
+            {isL2 && <Text css={{paddingLeft:'2px'}} size={1} blue={blue} green={green} grey={grey} red={red} bold>L2</Text>}
+        </Flex> 
     );
 }

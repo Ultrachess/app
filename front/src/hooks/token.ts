@@ -46,7 +46,8 @@ export function useTokenFromList(address: string): Token {
 
     return useMemo(() => {
         try{
-            return tokenList.find((val) => val.address == address)
+            console.log("abc tokenlist", address, tokenList)
+            return tokenList.find((val) => val.address.toLowerCase() == address.toLowerCase())
         }
         catch(e){
             return {

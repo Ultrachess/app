@@ -1,107 +1,314 @@
-import * as React from "react";
-import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
-import { useDispatch, useSelector } from "react-redux";
-import { createBotGame } from "../state/game/gameSlice";
-import { FaCoins } from "react-icons/fa";
-import { useAppSelector } from "../state/hooks";
-import { useWeb3React } from "@web3-react/core";
-import { isAddress } from "../utils";
-import { useActionCreator } from "../state/game/hooks";
-import { useCallback, useEffect, useMemo } from "react";
-import Select from "react-select"
-import { TransactionType } from "../common/types";
-import { ethers } from "ethers";
-import { useNavigate } from "react-router-dom";
-import { useTokenList } from "../hooks/token";
+import React, { useEffect, useState } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { styled, keyframes } from '@stitches/react';
+import { violet, blackA, mauve, green } from '@radix-ui/colors';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import * as Slider from '@radix-ui/react-slider';
+import { Text } from './ui/Text';
+import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
+import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
+import AssetDisplay from './AssetDisplay';
+import { useWeb3React } from '@web3-react/core';
+import { useActionCreator } from '../state/game/hooks';
+import { TransactionType } from '../common/types';
+import { ethers } from 'ethers';
+import { useNavigate } from 'react-router-dom';
 
-export default ({visible, closeHandler, botId}) => {
-    const dispatch = useDispatch()
-    const [autoMaxWagerAmount, setAutoMaxWagerAmount] = React.useState(0)
-    const [autoWagerTokenAddress, setAutoWagerTokenAddress] = React.useState()
-    const [autoBattleEnabled, setAutoBattleEnabled] = React.useState()
-    const tokenList = useTokenList()
-    const bots = useSelector(state => state.game.bots)
-    const { account } = useWeb3React()
-    const addAction = useActionCreator()
+
+export default ({triggerElement, botId}) => {
+    const { chainId, account } = useWeb3React()
+    const [amount, setAmount ] = useState(0)
     const navigate = useNavigate()
+    const [ bettingDuration, setBettingDuration ] = useState(0)
+    const max = 100
+    const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+    const portalBalance = useTokenPortalBalance(token, account) 
+    const balance = useTokenBalance(token, account)
+    const [name, setName] = useState("default")
+    const [autoMaxWagerAmount, setAutoMaxWagerAmount] = useState(0)
+    const [autoBattleEnabled, setAutoBattleEnabled] = useState(false)
 
-    const onAutoMaxWagerAmountChanged = (event) => setAutoMaxWagerAmount(event.target.value)
-    const onAutoWagerTokenAddressChanged = ( newValue ) => setAutoWagerTokenAddress(newValue.value)
-    const onAutoBattleEnabledChanged = ( newValue ) => setAutoBattleEnabled(newValue.value)
-    const handleManageBot = async () => {
-        const [action, wait] = await addAction({
+    const addAction = useActionCreator()
+
+    const handleCreate = async () => {
+      //console.log("amount", amount)
+      const tx = {
             type: TransactionType.MANAGER_BOT_INPUT,
-            autoBattleEnabled,
+            name,
             autoMaxWagerAmount,
-            autoWagerTokenAddress,
-            botId
-        })
+            autoWagerTokenAddress: token? token.address: "",
+            autoBattleEnabled,
+            botId,
+      }
+      //console.log("tx", tx)
+      const [approvalActionId, wait] = await addAction(tx)
+      const roomId = await wait
+      //console.log(roomId)
+      //console.log("jumping to" + roomId)
+      //if(roomId) navigate(`game/${roomId}`, { replace: true })
+
     }
 
-    const tokens = tokenList.map((token) => {
-        return {
-            value: token.address,
-            label: token.name
-        }
-    })
-
-    const trueFalse = [
-        {
-            value: false,
-            label: "False"
-        },
-        {
-            value: true,
-            label: "True"
-        }
-    ]
-
-
+    //console.log("amount", amount)
     return (
-        <Modal
-            closeButton
-            aria-labelledby="modal-title"
-            open={visible}
-            onClose={closeHandler}
-        >
-            <Modal.Header>
-            <Text id="modal-title" size={18}>
-                Manage {botId}
-            </Text>
-            </Modal.Header>
-            <Modal.Body>
-            <Row>
-                <Input
-                    clearable
-                    bordered
-                    fullWidth
-                    color="primary"
-                    size="lg"
-                    placeholder="Auto max wager amount"
-                    contentLeft={<FaCoins/>}
-                    onChange = {onAutoMaxWagerAmountChanged}
-                />
-                <Select 
-                    options={tokens}
-                    onChange= {onAutoWagerTokenAddressChanged}
-                />
-            </Row>
-            <Row>
-                <Text>auto battle enabled?</Text>
-                <Select 
-                    options={trueFalse}
-                    onChange= {onAutoBattleEnabledChanged}
-                />
-            </Row>
-            <Row justify="space-between">
-                <Text size={14}>Need Help?</Text>
-            </Row>
-            </Modal.Body>
-            <Modal.Footer>
-            <Button auto onClick={handleManageBot}>
-                finish
-            </Button>
-            </Modal.Footer>
-        </Modal>
-    );
+        <Dialog.Root>
+        <Dialog.Trigger asChild>
+          {triggerElement}
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <DialogOverlay />
+          <DialogContent>
+            <DialogTitle>Deposit funds</DialogTitle>
+            <DialogDescription>
+              Create a new game. Invite friends to join and start playing. Or wait for random players to join.
+            </DialogDescription>
+            
+            <Fieldset>
+                <Label>Auto Wager amount</Label>
+            </Fieldset>
+            <Fieldset>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{
+                  //console.log("event.value", event.target.value)
+                 setAutoMaxWagerAmount(event.target.value)
+                 }}>
+                </Input>
+            </Fieldset>
+            <Fieldset>
+                <Label>Bot name</Label>
+            </Fieldset>
+            <Fieldset>
+              <Input id="bettingDuration" value={name} onChange={(event)=>{ setName(event.target.value)}}>
+                </Input>
+            </Fieldset>
+
+            <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
+              <Dialog.Close asChild>
+                <Button
+                  variant="green"
+                  onClick={handleCreate}
+                  >Create</Button>
+              </Dialog.Close>
+            </Flex>
+            <Dialog.Close asChild>
+              <IconButton aria-label="Close">
+                <Cross2Icon />
+              </IconButton>
+            </Dialog.Close>
+          </DialogContent>
+        </Dialog.Portal>
+      </Dialog.Root>
+  )
 }
+
+const overlayShow = keyframes({
+    '0%': { opacity: 0 },
+    '100%': { opacity: 1 },
+  });
+  
+  const contentShow = keyframes({
+    '0%': { opacity: 0, transform: 'translate(-50%, -48%) scale(.96)' },
+    '100%': { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
+  });
+  
+  const DialogOverlay = styled(Dialog.Overlay, {
+    backgroundColor: blackA.blackA9,
+    position: 'fixed',
+    inset: 0,
+    animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
+  });
+  
+  const DialogContent = styled(Dialog.Content, {
+    backgroundColor: 'white',
+    borderRadius: 6,
+    boxShadow: 'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90vw',
+    maxWidth: '450px',
+    maxHeight: '85vh',
+    padding: 25,
+    animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
+    '&:focus': { outline: 'none' },
+  });
+  
+  const DialogTitle = styled(Dialog.Title, {
+    margin: 0,
+    fontWeight: 500,
+    color: mauve.mauve12,
+    fontSize: 17,
+  });
+  
+  const DialogDescription = styled(Dialog.Description, {
+    margin: '10px 0 20px',
+    color: mauve.mauve11,
+    fontSize: 15,
+    lineHeight: 1.5,
+  });
+
+const RightSlot = styled('div', {
+  marginLeft: 'auto',
+  paddingLeft: 0,
+  display: 'flex',
+  color: violet.violet11,
+  '[data-highlighted] > &': { color: 'white' },
+  '[data-disabled] &': { color: violet.violet4 },
+});
+
+const LeftSlot = styled('div', {
+    marginRight: 'auto',
+    paddingRight: 0,
+    display: 'flex',
+    color: violet.violet11,
+    '[data-highlighted] > &': { color: 'white' },
+    '[data-disabled] &': { color: violet.violet4 },
+  });
+  
+  const Flex = styled('div', { display: 'flex' });
+  
+  const Button = styled('button', {
+    all: 'unset',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    padding: '0 15px',
+    fontSize: 15,
+    lineHeight: 1,
+    fontWeight: 500,
+    height: 35,
+  
+    variants: {
+      variant: {
+        violet: {
+          backgroundColor: 'white',
+          color: violet.violet11,
+          boxShadow: `0 2px 10px ${blackA.blackA7}`,
+          '&:hover': { backgroundColor: mauve.mauve3 },
+          '&:focus': { boxShadow: `0 0 0 2px black` },
+        },
+        green: {
+          backgroundColor: green.green4,
+          color: green.green11,
+          '&:hover': { backgroundColor: green.green5 },
+          '&:focus': { boxShadow: `0 0 0 2px ${green.green7}` },
+        },
+      },
+    },
+  
+    defaultVariants: {
+      variant: 'violet',
+    },
+  });
+  
+  const IconButton = styled('button', {
+    all: 'unset',
+    fontFamily: 'inherit',
+    borderRadius: '100%',
+    height: 25,
+    width: 25,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: violet.violet11,
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  
+    '&:hover': { backgroundColor: violet.violet4 },
+    '&:focus': { boxShadow: `0 0 0 2px ${violet.violet7}` },
+  });
+  
+  const Fieldset = styled('fieldset', {
+    all: 'unset',
+    display: 'flex',
+    gap: 20,
+    alignItems: 'center',
+    marginBottom: 15,
+  });
+
+  const Label = styled('label', {
+    fontSize: 13,
+    lineHeight: 1,
+    marginBottom: 10,
+    color: violet.violet12,
+    display: 'block',
+  });
+  
+  const Input = styled('input', {
+    all: 'unset',
+    width: '100%',
+    flex: '1',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    padding: '0 10px',
+    fontSize: 15,
+    lineHeight: 1,
+    color: violet.violet11,
+    boxShadow: `0 0 0 1px ${violet.violet7}`,
+    height: 35,
+  
+    '&:focus': { boxShadow: `0 0 0 2px ${violet.violet8}` },
+  });
+
+
+  const SliderMain = ({value, max, onChangeFunction}) => (
+    <form>
+      <SliderRoot min={0} value={[value]} max={max} step={0.1} onValueChange={(event)=>onChangeFunction(event)} aria-label="Volume">
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </SliderRoot>
+    </form>
+  );
+  
+  const SliderRoot = styled(Slider.Root, {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    userSelect: 'none',
+    touchAction: 'none',
+    width: 200,
+  
+    '&[data-orientation="horizontal"]': {
+      height: 20,
+    },
+  
+    '&[data-orientation="vertical"]': {
+      flexDirection: 'column',
+      width: 20,
+      height: 100,
+    },
+  });
+  
+  const SliderTrack = styled(Slider.Track, {
+    backgroundColor: blackA.blackA10,
+    position: 'relative',
+    flexGrow: 1,
+    borderRadius: '9999px',
+  
+    '&[data-orientation="horizontal"]': { height: 3 },
+    '&[data-orientation="vertical"]': { width: 3 },
+  });
+  
+  const SliderRange = styled(Slider.Range, {
+    position: 'absolute',
+    backgroundColor: 'white',
+    borderRadius: '9999px',
+    height: '100%',
+  });
+  
+  const SliderThumb = styled(Slider.Thumb, {
+    display: 'block',
+    width: 20,
+    height: 20,
+    backgroundColor: 'white',
+    boxShadow: `0 2px 10px ${blackA.blackA7}`,
+    borderRadius: 10,
+    '&:hover': { backgroundColor: violet.violet3 },
+    '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
+  });

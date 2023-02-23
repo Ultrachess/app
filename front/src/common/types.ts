@@ -107,6 +107,7 @@ export interface DeployBotTransactionInfo extends BaseTransactionInfo {
 
 export interface ManagerBotTransactionInfo extends BaseTransactionInfo {
     type: TransactionType.MANAGER_BOT_INPUT,
+    name: string,
     autoMaxWagerAmount: string,
     autoWagerTokenAddress: string,
     autoBattleEnabled: boolean,

@@ -5,11 +5,12 @@ import logging
 import time
 import notification
 
-def CreateChallenge(sender, challengeId, timestamp, recipient, wager, token):
+def CreateChallenge(sender, challengeId, timestamp, recipient, wager, token, challenger):
     return {
         "challengeId": challengeId,
         "timestamp": timestamp,
         "sender": sender,
+        "challenger": challenger,
         "recipient": recipient,
         "wager": wager,
         "token": token,
@@ -42,7 +43,7 @@ class ChallengeManager:
         wager = options["wager"]
         token = options["token"]
         challengeId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-        challenge = CreateChallenge(challenger, challengeId, timestamp, recipient, wager, token)
+        challenge = CreateChallenge(challenger, challengeId, timestamp, recipient, wager, token, challenger)
         self.challenges[challengeId] = challenge
         notification.send_notification(
             notification.ChallengeCreatedNotification(
@@ -65,9 +66,10 @@ class ChallengeManager:
         
         #make sure sender has enough funds
         challenge = self.challenges[challengeId]
-        owner_sender = challenge["sender"] if "0x" in challenge["sender"] else deps.botFactory.getOwner(sender)
+        acceptor = sender
+        owner_sender = acceptor if "0x" in acceptor else deps.botFactory.getOwner(acceptor)
         hasFunds = deps.accountManager.getBalance(owner_sender, challenge["token"]) >= challenge["wager"]
-        if not hasFunds or challenge["recipient"] != sender:
+        if not hasFunds or challenge["recipient"] != acceptor:
             return False
 
         #accept challenge if sender is recipient
@@ -85,7 +87,7 @@ class ChallengeManager:
                 )
             )
             #create game
-            p1 = challenge["sender"]
+            p1 = challenge["challenger"]
             p2 = challenge["recipient"]
             wager = challenge["wager"]
             token = challenge["token"]
