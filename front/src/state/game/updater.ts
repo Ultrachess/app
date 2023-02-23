@@ -126,7 +126,7 @@ const getNotices = async (
 
 function getRelevantNotifications(
         notifications: Notification[], 
-        account: String,
+        account: String = " ",
         userBots: String[],
         userGames: String[], 
         userBotGames: String[], 
@@ -147,16 +147,16 @@ function getRelevantNotifications(
             ){
                 //console.log("is game notification", userGames)
                 //console.log("is game notification", account)
-                return userGames.includes(notification.game_id) || userBotGames.includes(notification.game_d)
+                return userGames.includes(notification["game_id"].toLowerCase()) || userBotGames.includes(notification["game_id"].toLowerCase())
             }
             if (type == NotificationType.CHALLENGE_ACCEPTED){
-                return notification.sender == account
+                return notification.sender.toLowerCase() == account.toLowerCase()
             }
             if (type == NotificationType.CHALLENGE_DECLINED){
-                return notification.sender == account
+                return notification.sender.toLowerCase() == account.toLowerCase()
             }
             if (type == NotificationType.CHALLENGE_CREATED){
-                return notification.recipient == account
+                return notification.recipient.toLowerCase() == account.toLowerCase()
             }
             if (type == NotificationType.TOURNAMENT_JOINED){
                 return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
@@ -184,13 +184,13 @@ function getRelevantNotifications(
                     userBots.includes(notification.playerId2)
             }
             if (type == NotificationType.BOT_OFFER_CREATED){
-                return notification.owner == account
+                return notification.owner.toLowerCase() == account.toLowerCase()
             }
             if (type == NotificationType.BOT_OFFER_ACCEPTED){
-                return notification.sender == account
+                return notification.sender.toLowerCase() == account.toLowerCase()
             }
             if (type == NotificationType.BOT_OFFER_DECLINED){
-                return notification.sender == account
+                return notification.sender.toLowerCase() == account.toLowerCase()
             }
                 
         })

@@ -34,6 +34,7 @@ export interface BaseTransactionInfo {
 export interface CreateChallengeTransactionsInfo extends BaseTransactionInfo {
     type: TransactionType.CREATE_CHALLENGE,
     recipient: string,
+    challenger: string,
     wager: string,
     token: string,
 }

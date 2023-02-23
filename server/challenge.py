@@ -22,13 +22,16 @@ class ChallengeManager:
 
     def create(self, sender, timestamp, options):
         #make sure all options are present
-        if "recipient" not in options or "wager" not in options or "token" not in options:
+        if "recipient" not in options or "wager" not in options or "token" not in options or "challenger" not in options:
             return False
 
         #make sure sender has enough funds
-        owner_sender = sender if "0x" in sender else deps.botFactory.getOwner(sender)
-        hasFunds = deps.accountManager.getBalance(owner_sender, options["token"]) >= options["wager"]
-        if not hasFunds:
+        challenger = options["challenger"]
+        #check if challenger is a bot, if so, get owner
+        person_with_funds = challenger if "0x" in challenger else deps.botFactory.getOwner(challenger)
+        is_person_with_funds_sender = person_with_funds == sender
+        hasFunds = deps.accountManager.getBalance(person_with_funds, options["token"]) >= options["wager"]
+        if not hasFunds or not is_person_with_funds_sender:
             return False
         #make sure not challenging yourself
         if sender == options["recipient"]:
@@ -39,13 +42,14 @@ class ChallengeManager:
         wager = options["wager"]
         token = options["token"]
         challengeId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-        challenge = CreateChallenge(sender, challengeId, timestamp, recipient, wager, token)
+        challenge = CreateChallenge(challenger, challengeId, timestamp, recipient, wager, token)
         self.challenges[challengeId] = challenge
         notification.send_notification(
             notification.ChallengeCreatedNotification(
                 timestamp=timestamp,
                 challenge_id=challengeId,
                 sender=sender,
+                challenger=challenger,
                 recipient=recipient,
                 wager=wager,
                 token=token,
@@ -89,7 +93,7 @@ class ChallengeManager:
             p2IsBot = "0x" in p2
             onlyBot = p1IsBot and p2IsBot
             if onlyBot:
-                deps.matchmaker.create(sender, timestamp, {
+                deps.matchMaker.create(sender, timestamp, {
                     "name": "auto triggered match",
                     "isBot": True,
                     "botId1": p1,
@@ -98,7 +102,7 @@ class ChallengeManager:
                     "wagerAmount": wager,
                 })
             elif p1IsBot:
-                deps.matchmaker.create(sender, timestamp, {
+                deps.matchMaker.create(sender, timestamp, {
                     "name": "auto triggered match",
                     "isBot": True,
                     "botId1": p1,
@@ -107,7 +111,7 @@ class ChallengeManager:
                     "wagerAmount": wager,
                 })
             elif p2IsBot:
-                deps.matchmaker.create(sender, timestamp, {
+                deps.matchMaker.create(sender, timestamp, {
                     "name": "auto triggered match",
                     "isBot": True,
                     "botId1": p2,
@@ -116,7 +120,7 @@ class ChallengeManager:
                     "wagerAmount": wager,
                 })
             else:
-                deps.matchmaker.create(sender, timestamp, {
+                deps.matchMaker.create(sender, timestamp, {
                     "name": "auto triggered match",
                     "isBot": False,
                     "players": [p1, p2],

@@ -34,6 +34,7 @@ export default ({triggerElement, playerId}) => {
       const [approvalActionId, wait] = await addAction({
         type: TransactionType.CREATE_CHALLENGE,
         recipient: playerId,
+        challenger: challenger,
         wager: ethers.utils.parseUnits(amount.toString()),
         token: token.address,
       })

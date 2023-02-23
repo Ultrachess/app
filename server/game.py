@@ -123,7 +123,6 @@ class Game:
                     score1=score1,
                     score2=score2,
                     pot=deps.betManager.getPot(self.id),
-                    wager=self.wagerAmount,
                     token=self.token,
                     timestamp=self.timestamp,
                     winningId=winningId,

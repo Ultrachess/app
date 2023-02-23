@@ -7,7 +7,8 @@ import { NOTIFICATION_TOAST_DURATION_MILLIS } from "../../utils/constants";
 export function useNotifications(): Notification[] {
     const notifications = useAppSelector(state => state.notifications)
     //console.log("ui notifications", notifications)
-    return Object?.values(notifications);
+    //arrange notifications by timestamp
+    return Object?.values(notifications).sort((a, b) => b.timestamp - a.timestamp);
 }
 
 //useNewNotifications hook is used to get list of new notifications happened less than 5 seconds ago

@@ -251,12 +251,15 @@ export function useUserCompletedGameIds(id: string): string[] {
 export function useUserActiveGameIds(id: string): string[] {
     const games = useAppSelector(state => state.game.games)
     if (!games) return []
+    //return all as lowercase
     const gamesToReturn = Object.keys(games).filter((gameId) => {
         const game = games[gameId]
         let lower_case_players = game.players.map((player) => {
             return player.toLowerCase()
         })
         return lower_case_players.includes(id.toLowerCase()) && !game.isEnd
+    }).map((gameId) => {
+        return gameId.toLowerCase()
     })
     return gamesToReturn
 }
@@ -555,6 +558,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                         "op": "createChallenge", 
                         "value": {
                             "recipient" : "${info.recipient}",
+                            "challenger" : "${info.challenger}",
                             "wager" : ${info.wager},
                             "token": "${info.token}"
                         }

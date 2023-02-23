@@ -120,7 +120,7 @@ export default ({ notification }: {notification: Notification}) => {
       title = 'Bot Game Completed';
       description = <>
         Bot game <AddressGame id={notification["game_id"]} /> has completed with <Address value={notification["player_id1"]} /> scoring {notification.score1} and <Address value={notification["player_id2"]} /> scoring {notification.score2}
-        <Address value={notification["winning_id"]} /> has won <AssetDisplay tokenAddress={notification.token} balance={notification.pot} isL2={true}/> and a pot of <AssetDisplay tokenAddress={notification.token} balance={notification.pot} isL2={true}/> has been rewarded to {notification.winningIdBettorCount} bettors on <Address value={notification.winningId} /> 
+        <Address value={notification["winningId"]} /> has won <AssetDisplay tokenAddress={notification.token} balance={notification.pot} isL2={true}/> and a pot of <AssetDisplay tokenAddress={notification.token} balance={notification.pot} isL2={true}/> has been rewarded to {notification.winningIdBettorCount} bettors on <Address value={notification.winningId} /> 
       </>
       break;
     case NotificationType.BOT_OFFER_CREATED:

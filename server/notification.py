@@ -109,6 +109,7 @@ class ChallengeCreatedNotification(BaseNotification):
     type = NotificationType.CHALLENGE_CREATED
     challenge_id: str
     sender: str
+    challenger: str
     recipient: str
     wager: int
     token: str
