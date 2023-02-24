@@ -17,7 +17,7 @@ import { appendNumberToUInt8Array, decimalToHexString, getErc20Contract } from "
 import { createPromise } from "./gameHelper";
 import { ActionResolverObject } from "./updater";
 import { CONTRACTS } from '../../ether/contracts';
-import { CHAINS } from '../../ether/chains';
+import { CHAINS, USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
 
 export function useNationality(id): string {
     return "US"
@@ -31,10 +31,18 @@ export function useName(id): string {
     return id
 }
 
-export function useBalances(id): Balance[] {
-    const accounts: {[address: string]:{[token:string]: Balance}} = useAppSelector(state => state.game.accounts)
-    return accounts[id] ? Object?.values(accounts[id]) : []
-}
+export function useBalances(id: string): Balance[] {
+    const accounts: {[address: string]:{[token:string]: number}} = useAppSelector(state => state.game.accounts)
+    if (!id || !accounts[id]) return []
+    const tokenAddresses = Object.keys(accounts[id])
+    const amounts = Object.values(accounts[id])
+    return tokenAddresses.map((val,index)=> {
+      return {
+        token: val,
+        amount: amounts[index] / 10 ** 18 // convert balance to correct value
+      }
+    })
+  }
 
 export function useElo(id): number {
     const elos = useAppSelector(state => state.game.elo)
@@ -53,6 +61,15 @@ const PLACE_HOLDER_PROFILE: Profile = {
     balances: [],
     bots: [],
 }
+
+export function useBalance(id: string, tokenAddress:string): number {
+    const accounts: {[address: string]:{[token:string]: number}} = useAppSelector(state => state.game.accounts)
+    if(!id || !tokenAddress || !accounts) return 0
+    if(!accounts[id.toLowerCase()]) return 0
+    const balance = accounts[id.toLowerCase()][tokenAddress.toLowerCase()] ?? 0
+    return balance / 10 ** 18
+}
+
 
 export function useProfile(id: string, bots: any = []): Profile | undefined {
     const isBot = !id.includes("0x");

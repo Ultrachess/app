@@ -25,14 +25,14 @@ export default ({tokenAddress, balance, isL2=false, green=false, blue=false, gre
     //get account balance of token
     const balances = useSelector(state => state.game.balances)
     const accountBalances = balances?.[account] ?? undefined
-    const _balance = balance ?? accountBalances?.[tokenAddress] ?? "0.0"
+    const _balance = (balance ?? accountBalances?.[tokenAddress] ?? 0) / 10 ** 8
 
     //console.log("abc tokenAddress", tokenAddress)
     //console.log("abc token", token)
 
     return (
         <Flex css={{alignItems:'center', gap:'2'}}>
-            <Text size={"5"} blue={blue} green={green} grey={grey} red={red}  css={{padding:"0 5px"}}>{_balance?? "0.0"}</Text>
+            <Text size={"2"} blue={blue} green={green} grey={grey} red={red}  css={{padding:"0 5px"}}>{_balance?? "0.0"}</Text>
             <TokenIcon uri={token?.logoUri ?? DEFAULT_TOKEN_URI}/> 
             <Text blue={blue} green={green} grey={grey} red={red} css={{paddingLeft:"5px"}} bold>{token?.symbol}</Text>
             {isL2 && <Text css={{paddingLeft:'2px'}} size={1} blue={blue} green={green} grey={grey} red={red} bold>L2</Text>}

@@ -138,11 +138,11 @@ function getRelevantNotifications(
     let lUserBotGames = userBotGames.map((id) => id.toLowerCase())
     let lUserTournaments = userTournaments.map((id) => id.toLowerCase())
     let lUserBotTournaments = userBotTournaments.map((id) => id.toLowerCase())
-    console.log("checking notifications account ", account)
-    console.log("checking notifications bots ", userBots)
-    console.log("checking notifications userGames ", userGames)
-    console.log("checking notifications botGames ", userBotGames)
-    console.log("checking notifications: ", notifications.map((id)=> {return id.type}))
+    //console.log("checking notifications account ", account)
+    //console.log("checking notifications bots ", userBots)
+    //console.log("checking notifications userGames ", userGames)
+    //console.log("checking notifications botGames ", userBotGames)
+    //console.log("checking notifications: ", notifications.map((id)=> {return id.type}))
     return notifications ?
         notifications
         .filter(notification => {
@@ -233,7 +233,7 @@ export function useNotifications(): Notification[] | undefined {
     const [allNotices, setAllNotices] = useState<Notification[]>([]);
   
     useEffect(() => {
-        console.log("useNotifications: ", notices)
+        //console.log("useNotifications: ", notices)
       const fetchNotices = async () => {
         const newNotices = await getNotices(DEFAULT_GRAPHQL_URL, {}) ?? [];
   

@@ -21,8 +21,8 @@ const BotOfferListItem = ({account, offer}: {account: string, offer: BotOffer}) 
         token,
         timestamp,
     } = offer
-    console.log("offer list item: ")
-    console.log(offer)
+    //console.log("offer list item: ")
+    //console.log(offer)
 
     const isOwner = account.toLowerCase() === owner.toLowerCase()
 

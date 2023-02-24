@@ -69,8 +69,8 @@ export default () => {
     //get highest offer price
     const highestOffer = React.useMemo(()=>{
         let highestOfferTemp = 0
-        console.log("reducing offers")
-        console.log(offers)
+        //console.log("reducing offers")
+        //console.log(offers)
         if ( offers && offers.length > 0) {
             highestOfferTemp = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current).price
         }

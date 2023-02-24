@@ -23,6 +23,7 @@ export default ({triggerElement}) => {
     const addAction = useActionCreator()
 
     const handleDeposit = async () => {
+      console.log(`approving amount ${amount} tokenAddress ${token.address}`)
       const [approvalActionId, wait] = await addAction({
         type: TransactionType.APPROVE_ERC20,
         tokenAddress: token.address,
@@ -30,6 +31,7 @@ export default ({triggerElement}) => {
       })
       await wait
 
+      console.log(`depositing amount ${amount} tokenAddress ${token.address}`)
       const [depositActionId, wait2] = await addAction({
         type: TransactionType.DEPOSIT_ERC20,
         tokenAddress: token.address,
@@ -63,7 +65,7 @@ export default ({triggerElement}) => {
                 </RightSlot>
             </Fieldset>
             <Fieldset>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.value)}}>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
                 </Input>
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>

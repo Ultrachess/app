@@ -1,4 +1,4 @@
-import { CHAINS } from '../ether/chains'
+import { CHAINS, DEFAULT_NETWORK_URI, DEFAULT_TOKEN_URI } from '../ether/chains'
 import React, { useMemo } from 'react';
 import * as Select from '@radix-ui/react-select';
 import { styled } from '@stitches/react';
@@ -45,6 +45,7 @@ const switchEthereumChain = async (chainId) => {
     }
   }
 
+
 export default ({chainId}) => {
     const current = useMemo(() => CHAINS[chainId], [chainId]);
     return (
@@ -57,7 +58,7 @@ export default ({chainId}) => {
             >
               <SelectTrigger aria-label="Chain">
                   <Select.Value><Text>{current.name}</Text></Select.Value>
-                  <TokenIcon uri={current.networkImg} />
+                  <TokenIcon uri={current.networkImg ?? DEFAULT_NETWORK_URI} />
                 <SelectIcon>
                   <ChevronDownIcon />
                 </SelectIcon>

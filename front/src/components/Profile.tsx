@@ -39,7 +39,7 @@ export default () => {
     const activeGames = games ? games.filter((game) => game.isEnd === false): []
     const pastGames = games ? games.filter((game) => game.isEnd === true) : []
 
-    const isYou = account.toLowerCase() === id.toLowerCase() || account.toLowerCase() === name.toLowerCase()
+    const isYou = account?.toLowerCase() === id?.toLowerCase() || account?.toLowerCase() === name?.toLowerCase()
     
     const balance = balances.length > 0 ? balances[0].amount : 0
     const tokenAddress = balances.length > 0 ? balances[0].token : USDC_ADDRESS_ON_NETWORKS[chainId] 

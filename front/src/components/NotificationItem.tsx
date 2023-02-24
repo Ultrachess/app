@@ -19,11 +19,11 @@ export default ({ notification }: {notification: Notification}) => {
   let title = '';
   let description = <></>;
 
-  console.log("abc notification in item: ", notification.type)
+  //console.log("abc notification in item: ", notification.type)
   let newType = notification.type
   switch (newType ) {
     case NotificationType.GAME_CREATED:
-      console.log("abc game created", notification["creator_id"])
+      //console.log("abc game created", notification["creator_id"])
       title = 'Game Created';
       description = <div>
         Player <Address value={notification["creator_id"]}  /> has created a game <AddressGame id={notification["game_id"]} />

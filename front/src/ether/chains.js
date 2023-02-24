@@ -179,4 +179,5 @@ export const USDC_ADDRESS_ON_NETWORKS = {
   31337: CartesiToken.address,
 }
 
+export const DEFAULT_NETWORK_URI= CHAINS[1].networkImg
 export const DEFAULT_TOKEN_URI = "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"

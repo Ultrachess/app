@@ -32,6 +32,7 @@ import { Text } from "./ui/Text";
 import ModalNewDepositFunds from "./ModalNewDepositFunds";
 import NotificationDropdown from "./NotificationDropdown";
 import { Link } from "react-router-dom";
+import { useBalance } from "../state/game/hooks";
 
 const { useChainId, useAccounts, useError, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
@@ -151,12 +152,13 @@ const DropdownMenuMain = ({address, chainId}) => {
   const [bookmarksChecked, setBookmarksChecked] = React.useState(true);
   const [urlsChecked, setUrlsChecked] = React.useState(false);
   const [person, setPerson] = React.useState('pedro');
+  const balance = useBalance(address, USDC_ADDRESS_ON_NETWORKS[chainId])
 
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <Button>
-          <AssetDisplay tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/>
+          <AssetDisplay balance={balance} tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}/>
           <SeparatorRoot decorative orientation="vertical" css={{ margin: '0 15px' }} />
           <SelectIcon>
           <ProfileImage address={address} />

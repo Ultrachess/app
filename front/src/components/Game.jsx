@@ -198,9 +198,9 @@ export default () => {
   //only if the game is over and the user is in the game
   //alert winnings as well
   useEffect(() => {
-    console.log("end has just come")
+    //console.log("end has just come")
     if(completed && playerIsInGame(games, address, gameId)){
-      console.log("end has just come and you are in the game")
+      //console.log("end has just come and you are in the game")
       if(topAddressWon)
         alert("You lost " + topAddressWinAmount + " " + tokenAddress + " to " + topAddress)
       if(bottomAddressWon)
