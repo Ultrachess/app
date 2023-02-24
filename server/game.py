@@ -41,6 +41,13 @@ class Game:
         else:
             return self.players[1]
     
+    def __isBotVHumanGame(self):
+        p1IsBot = "0x" not in self.players[0]
+        p2IsBot = "0x" not in self.players[1]
+        onlyBot = p1IsBot and p2IsBot
+
+        return not onlyBot and (p1IsBot or p2IsBot)
+    
     def __isTurn(self, address):
         turn = self.state.board().turn
         if(turn == chess.WHITE):
@@ -114,7 +121,6 @@ class Game:
                     score1=score1,
                     score2=score2,
                     pot=deps.betManager.getPot(self.id),
-                    wager=self.wagerAmount,
                     token=self.token,
                     timestamp=self.timestamp,
                     winningId=winningId,
@@ -161,7 +167,7 @@ class Game:
                     deps.betManager.open(id, timestamp, self.bettingDuration)
                     currentTurn = self.__getCurrentTurnAddress()
                     firstTurnIsBot = "0x" not in currentTurn
-                    if firstTurnIsBot:
+                    if firstTurnIsBot and self.__isBotVHumanGame():
                         deps.botManager.pending_game_moves.append({
                             "gameId": self.id,
                             "botId": currentTurn,
@@ -219,9 +225,10 @@ class Game:
                 isGameEnd = self.isGameEnd()
                 logger.info("players: " + str(self.players))
                 logger.info("current turn address " + self.__getCurrentTurnAddress())
+                currentTurnIsBot = "0x" not in self.__getCurrentTurnAddress()
                 if isGameEnd:
                    self.handleEnd()
-                elif "0x" not in self.__getCurrentTurnAddress():
+                elif currentTurnIsBot and self.__isBotVHumanGame():
                     botId = ""
                     for val in self.players:
                         if not "0x" in val:

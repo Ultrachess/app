@@ -207,7 +207,6 @@ class BotGameCreatedNotification(BaseNotification):
 @dataclass
 class BotGameCompletedNotification(BaseNotification):
     type = NotificationType.BOT_GAME_COMPLETED
-    bot_id: str
     game_id: str
     player_id1: str
     player_id2: str

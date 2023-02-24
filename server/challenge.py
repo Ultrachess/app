@@ -83,66 +83,67 @@ class ChallengeManager:
         hasFunds = deps.accountManager.getBalance(owner_sender, challenge["token"]) >= challenge["wager"]
         acceptor_is_bot = "0x" not in acceptor
         sender_is_bot = "0x" not in challenge["sender"]
-        if not hasFunds or challenge["recipient"].lower() != acceptor.lower():
+        recipient_is_bot = "0x" not in challenge["recipient"]
+        valid_acceptor = challenge["recipient"] if not recipient_is_bot else deps.botFactory.getOwner(challenge["recipient"])
+        if not hasFunds or valid_acceptor != acceptor.lower():
             return False
 
         #accept challenge if sender is recipient
         #then create game
-        if challenge["recipient"] == sender:
-            notification.send_notification(
-                notification.ChallengeAcceptedNotification(
-                    timestamp=timestamp,
-                    challenge_id=challengeId,
-                    sender=challenge["sender"],
-                    recipient=challenge["recipient"],
-                    wager=challenge["wager"],
-                    token=challenge["token"],
-                    type=notification.NotificationType.CHALLENGE_ACCEPTED,
-                )
+        notification.send_notification(
+            notification.ChallengeAcceptedNotification(
+                timestamp=timestamp,
+                challenge_id=challengeId,
+                sender=challenge["sender"],
+                recipient=challenge["recipient"],
+                wager=challenge["wager"],
+                token=challenge["token"],
+                type=notification.NotificationType.CHALLENGE_ACCEPTED,
             )
-            #create game
-            p1 = challenge["challenger"]
-            p2 = challenge["recipient"]
-            wager = challenge["wager"]
-            token = challenge["token"]
-            p1IsBot = "0x" not in p1
-            p2IsBot = "0x" not in p2
-            onlyBot = p1IsBot and p2IsBot
-            if onlyBot:
-                deps.matchMaker.create(sender, timestamp, {
-                    "name": "auto triggered match",
-                    "isBot": True,
-                    "botId1": p1,
-                    "botId2": p2,
-                    "token": token,
-                    "wagerAmount": wager,
-                })
-            elif p1IsBot:
-                deps.matchMaker.create(sender, timestamp, {
-                    "name": "auto triggered match",
-                    "isBot": True,
-                    "botId1": p1,
-                    "playerId": p2,
-                    "token": token,
-                    "wagerAmount": wager,
-                })
-            elif p2IsBot:
-                deps.matchMaker.create(sender, timestamp, {
-                    "name": "auto triggered match",
-                    "isBot": True,
-                    "botId1": p2,
-                    "playerId": p1,
-                    "token": token,
-                    "wagerAmount": wager,
-                })
-            else:
-                deps.matchMaker.create(sender, timestamp, {
-                    "name": "auto triggered match",
-                    "isBot": False,
-                    "players": [p1, p2],
-                    "token": token,
-                    "wagerAmount": wager,
-                })
+        )
+        #create game
+        p1 = challenge["challenger"]
+        p2 = challenge["recipient"]
+        wager = challenge["wager"]
+        token = challenge["token"]
+        p1IsBot = "0x" not in p1
+        p2IsBot = "0x" not in p2
+        onlyBot = p1IsBot and p2IsBot
+        if onlyBot:
+            deps.matchMaker.create(sender, timestamp, {
+                "name": "auto triggered match",
+                "isBot": True,
+                "botId1": p1,
+                "botId2": p2,
+                "token": token,
+                "wagerAmount": wager,
+            })
+        elif p1IsBot:
+            deps.matchMaker.create(sender, timestamp, {
+                "name": "auto triggered match",
+                "isBot": True,
+                "botId1": p1,
+                "playerId": p2,
+                "token": token,
+                "wagerAmount": wager,
+            })
+        elif p2IsBot:
+            deps.matchMaker.create(sender, timestamp, {
+                "name": "auto triggered match",
+                "isBot": True,
+                "botId1": p2,
+                "playerId": p1,
+                "token": token,
+                "wagerAmount": wager,
+            })
+        else:
+            deps.matchMaker.create(sender, timestamp, {
+                "name": "auto triggered match",
+                "isBot": False,
+                "players": [p1, p2],
+                "token": token,
+                "wagerAmount": wager,
+            })
         del self.challenges[challengeId]
         return True
 
