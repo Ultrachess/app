@@ -62,11 +62,11 @@ export default ({triggerElement}) => {
             
             <Fieldset>
                 <Label>Wager amount</Label>
-                <RightSlot>
+                {/* <RightSlot>
                     You win: <AssetDisplay tokenAddress={token?.address} balance={portalBalance - amount} isL2={true}/> 
                     <Text>→</Text> 
                     You lose: <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
-                </RightSlot>
+                </RightSlot> */}
             </Fieldset>
             <Fieldset>
               <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{
@@ -89,7 +89,7 @@ export default ({triggerElement}) => {
                 <RightSlot onClick={()=>setBettingDuration(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
+                <SliderMain value={bettingDuration} max={100} onChangeFunction={([value])=>{ setBettingDuration(value)}} />
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>

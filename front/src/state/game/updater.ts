@@ -133,30 +133,43 @@ function getRelevantNotifications(
         userTournaments: String[],
         userBotTournaments: String[]
     ){
-        //console.log("getRelevantNotifications: ", userGames)
+    let lUserBots = userBots.map((id) => id.toLowerCase())
+    let lUserGames = userGames.map((id) => id.toLowerCase())
+    let lUserBotGames = userBotGames.map((id) => id.toLowerCase())
+    let lUserTournaments = userTournaments.map((id) => id.toLowerCase())
+    let lUserBotTournaments = userBotTournaments.map((id) => id.toLowerCase())
+    console.log("checking notifications account ", account)
+    console.log("checking notifications bots ", userBots)
+    console.log("checking notifications userGames ", userGames)
+    console.log("checking notifications botGames ", userBotGames)
+    console.log("checking notifications: ", notifications.map((id)=> {return id.type}))
     return notifications ?
         notifications
         .filter(notification => {
             const { type } = notification
             if(type == NotificationType.GAME_JOINED ||
                 type == NotificationType.GAME_MOVE ||
-                type == NotificationType.GAME_COMPLETED ||
                 type == NotificationType.GAME_WAGER ||
                 type == NotificationType.GAME_BETTING_CLOSED ||
                 type == NotificationType.GAME_CREATED 
             ){
                 //console.log("is game notification", userGames)
                 //console.log("is game notification", account)
-                return userGames.includes(notification["game_id"].toLowerCase()) || userBotGames.includes(notification["game_id"].toLowerCase())
+                return lUserGames.includes(notification["game_id"].toLowerCase()) || lUserBotGames.includes(notification["game_id"].toLowerCase())
+            }
+            if(type == NotificationType.GAME_COMPLETED){
+                return notification["player_id1"].toLowerCase() == account.toLowerCase() || 
+                notification["player_id2"].toLowerCase() == account.toLowerCase()
             }
             if (type == NotificationType.CHALLENGE_ACCEPTED){
                 return notification.sender.toLowerCase() == account.toLowerCase()
-            }
+            } 
             if (type == NotificationType.CHALLENGE_DECLINED){
                 return notification.sender.toLowerCase() == account.toLowerCase()
             }
             if (type == NotificationType.CHALLENGE_CREATED){
-                return notification.recipient.toLowerCase() == account.toLowerCase()
+                return notification.recipient.toLowerCase() == account.toLowerCase() ||
+                    lUserBots.includes(notification.recipient.toLowerCase())
             }
             if (type == NotificationType.TOURNAMENT_JOINED){
                 return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
@@ -174,14 +187,14 @@ function getRelevantNotifications(
                 return userTournaments.includes(notification.tournamentId)
             }
             if (type == NotificationType.BOT_GAME_CREATED){
-                return userBotGames.includes(notification.game_id) || 
-                    userBots.includes(notification.playerId1) ||
-                    userBots.includes(notification.playerId2)
+                return lUserBotGames.includes(notification["game_id"].toLowerCase()) || 
+                    lUserBots.includes(notification["player_id1"].toLowerCase()) ||
+                    lUserBots.includes(notification["player_id1"].toLowerCase())
             }
             if (type == NotificationType.BOT_GAME_COMPLETED){
-                return userBotGames.includes(notification.game_id) || 
-                    userBots.includes(notification.playerId1) ||
-                    userBots.includes(notification.playerId2)
+                return lUserBotGames.includes(notification["game_id"].toLowerCase()) || 
+                    lUserBots.includes(notification["player_id1"].toLowerCase()) ||
+                    lUserBots.includes(notification["player_id2"].toLowerCase())
             }
             if (type == NotificationType.BOT_OFFER_CREATED){
                 return notification.owner.toLowerCase() == account.toLowerCase()
@@ -214,7 +227,7 @@ function useNotices(): PartialNotice[] | undefined {
     return notices
 }
 
-function useNotifications(): Notification[] | undefined {
+export function useNotifications(): Notification[] | undefined {
     const [notices, setNotices] = useState<PartialNotice[]>([]);
     const [lastNoticeIndex, setLastNoticeIndex] = useState(0);
     const [allNotices, setAllNotices] = useState<Notification[]>([]);

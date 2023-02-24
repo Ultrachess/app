@@ -367,7 +367,7 @@ export default () => {
   }, [])
 
   const tweetGame = () => {
-    const tweetText = `Hey check out this match on Ultrachess http://ultrachess.org/game/${gameId}`;
+    const tweetText = `Hey check out this match on Ultrachess.org http://ultrachess.org/game/${gameId}`;
     const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     window.open(tweetUrl, '_blank');
   }
@@ -434,7 +434,7 @@ export default () => {
             {bottomAddressIsBot && <BotMoveStatisticsView botMoveStat={game.botMoveStats[getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)]} />}
 
             <Flex css={{width:'100%',justifyContent: 'space-between', alignItems:'center'}}>
-              <Address isMedium value={bottomAddress} />
+              <Address isMedium value={bottomAddress}/>
               <Flex css={{gap: 1, alignItems:'center'}}>
                 {completed && <Text size={"4"} faded>+{bottomAddressScore}</Text>}
                 {bottomAddressWon ? 

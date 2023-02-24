@@ -120,6 +120,7 @@ class Game:
                     winningId=winningId,
                     winnings1=funds1,
                     winnings2=funds2,
+                    winningIdBettorCount=0,
                     type=notification.NotificationType.BOT_GAME_COMPLETED
                 )
             )
@@ -137,6 +138,7 @@ class Game:
                     winningId=winningId,
                     winnings1=funds1,
                     winnings2=funds2,
+                    winningIdBettorCount=0,
                     type=notification.NotificationType.GAME_COMPLETED,
                 )
             )

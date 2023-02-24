@@ -52,8 +52,8 @@ export default () => {
     const isOwner = account.toLowerCase() === owner.toLowerCase()
     return (
         <div className="body">
-            <Flex css={{  gap: 50, justifyContent: 'center' }}>
-                <Flex css={{
+            <Flex css={{width:"100%", padding:"0 20%", gap: 50, justifyContent: 'space-between' }}>
+                <Flex css={{ width:"20%",
                      gap: 5, flexDirection:'column' }}>
                     <Address value={id} isImageBig={true} />
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
@@ -107,22 +107,22 @@ export default () => {
                     </Flex>
 
                 </Flex>
-                <Flex css={{ gap: 5, flexDirection:'column' }}>
+                <Flex css={{ width:"75%", gap: 20, flexDirection:'column' }}>
                     
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>active games</Text>
+                        <Text bold size={"4"}>Active games</Text>
                         <GameList games={activeGames} />
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>past games</Text>
+                        <Text bold size={"4"}>Past games</Text>
                         <GameList games={pastGames} />
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>challenges</Text>
+                        <Text bold size={"4"}>Challenges</Text>
                         <ChallengesList account={account} challenges={challenges} />
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>offers</Text>
+                        <Text bold size={"4"}>Offers</Text>
                         <OffersList account={account} offers={offers} />
                     </Flex>
                     

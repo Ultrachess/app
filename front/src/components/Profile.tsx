@@ -45,8 +45,8 @@ export default () => {
     const tokenAddress = balances.length > 0 ? balances[0].token : USDC_ADDRESS_ON_NETWORKS[chainId] 
     return (
         <div className="body">
-            <Flex css={{ gap: 50, justifyContent: 'center' }}>
-                <Flex css={{ gap: 5, flexDirection:'column' }}>
+            <Flex css={{width:"100%", padding:"0 20%", gap: 50, justifyContent: 'space-between' }}>
+                <Flex css={{ gap: 5, width:"20%", flexDirection:'column' }}>
                     <Address value={id} isImageBig={true} />
                     <Flex css={{ gap: 2, flexDirection:'column' }}>
                         {isYou && <Text bold>Your profile</Text>}
@@ -80,21 +80,21 @@ export default () => {
                     </Flex>
 
                 </Flex>
-                <Flex css={{ gap: 5, flexDirection:'column' }}>
+                <Flex css={{ gap: 20, width:"75%", flexDirection:'column' }}>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>active games</Text>
+                        <Text bold size={"4"}>Active games</Text>
                         <GameList games={activeGames} />
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>past games</Text>
+                        <Text bold size={"4"}>Past games</Text>
                         <GameList games={pastGames} />
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>Open Challenges</Text>
+                        <Text bold size={"4"}>Open Challenges</Text>
                         <ChallengesList account={account} challenges={challenges} />
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text faded>Owned bots</Text>
+                        <Text bold size={"4"}>Owned bots</Text>
                         <BotListView bots={bots} />
                     </Flex>
                 </Flex>

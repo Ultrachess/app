@@ -354,6 +354,8 @@ def handle_advance(data):
     logger.info("Here is the tournament state: " )
     logger.info(tournamentManager.getStringState())
     logger.info(str(tournamentManager))
+    logger.info("create: new challenge state: " + str(challengeManager.challenges))
+
 
 
 

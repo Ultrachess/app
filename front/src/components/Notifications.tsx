@@ -11,7 +11,7 @@ const Notifications = () => {
   const [open, setOpen] = React.useState(false);
   const eventDateRef = React.useRef(new Date());
   const timerRef = React.useRef(0);
-  const notifications  = useNewNotifications()
+  const notifications  = useNotifications()
 
   React.useEffect(() => {
     return () => clearTimeout(timerRef.current);
