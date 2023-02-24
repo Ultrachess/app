@@ -7,7 +7,7 @@ import logging
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
-def CreateBotOffer(sender, offerId, timestamp, botId, price, token):
+def CreateBotOffer(sender, offerId, timestamp, botId, price, token, owner):
     return {
         "offerId": offerId,
         "timestamp": timestamp,
@@ -15,6 +15,7 @@ def CreateBotOffer(sender, offerId, timestamp, botId, price, token):
         "botId": botId,
         "price": price,
         "token": token,
+        "owner": owner,
     }
 
 class BotMarketPlaceManager:
@@ -46,7 +47,7 @@ class BotMarketPlaceManager:
             return False
         
         offerId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-        self.offers[offerId] = CreateBotOffer(sender, offerId, timestamp, botId, price, token)
+        self.offers[offerId] = CreateBotOffer(sender, offerId, timestamp, botId, price, token, owner)
         notification.send_notification(
             notification.BotOfferCreatedNotification(
                 timestamp=timestamp,
@@ -68,13 +69,13 @@ class BotMarketPlaceManager:
         
         offer = self.offers[offerId]
         sender = offer["sender"]
-        owner = deps.botFactory.getOwner(sender)
         price = offer["price"]
         token = offer["token"]
         botId = offer["botId"]
+        owner = deps.botFactory.getOwner(botId)
 
         #make sure acceptor is the owner
-        if acceptor != owner:
+        if acceptor.lower() != owner.lower():
             return False
 
         #check if sender has funds to purchase
@@ -112,14 +113,14 @@ class BotMarketPlaceManager:
         
         offer = self.offers[offerId]
         sender = offer["sender"]
-        owner = deps.botFactory.getOwner(sender)
         price = offer["price"]
         token = offer["token"]
         botId = offer["botId"]
+        owner = deps.botFactory.getOwner(botId)
 
 
         #make sure acceptor is the owner
-        if decliner != owner and decliner != sender:
+        if decliner.lower() != owner.lower() and decliner.lower() != sender.lower():
             return False
 
 

@@ -7,7 +7,7 @@ import GameList from "./list/GameList";
 import ModalManageBot from "./ModalManageBot";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
-import { useProfile } from "../state/game/hooks";
+import { useAllBots, useProfile } from "../state/game/hooks";
 import { BotProfile } from "../state/game/types";
 import List from "./ui/List";
 import { useWeb3React } from "@web3-react/core";
@@ -20,10 +20,33 @@ import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import ModalCreateChallenge from "./ModalCreateChallenge";
 import ModalCreateOffer from "./ModalCreateOffer";
 
+
 export default () => {
     let { botId } = useParams()
     let { chainId } = useWeb3React()
     const { account } = useWeb3React()
+
+    const allBots = useAllBots()
+
+    const profile = React.useMemo(()=>{
+        return allBots
+            .find(val=> val.id.toLowerCase() == botId.toLowerCase()) ?? {
+                id:"",
+                name: "",
+                avatar: "",
+                elo: 0,
+                games: [],
+                nationality: "",
+                challenges: [],
+                owner: "",
+                offers: [],
+                autoBattleEnabled: true,
+                autoMaxWagerAmount: 0,
+                autoWagerTokenAddress: "",
+                timestamp: 0
+            }
+    }, [allBots])
+
     const {
         id,
         name,
@@ -38,7 +61,7 @@ export default () => {
         autoMaxWagerAmount,
         autoWagerTokenAddress,
         timestamp
-    }: any = useProfile(botId)
+    } = profile
 
     const activeGames = games ? games.filter((game) => game.isEnd === false) : []
     const pastGames = games ? games.filter((game) => game.isEnd === true) : []
@@ -49,13 +72,13 @@ export default () => {
         console.log("reducing offers")
         console.log(offers)
         if ( offers && offers.length > 0) {
-            highestOfferTemp = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current)
+            highestOfferTemp = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current).price
         }
         return highestOfferTemp
     },[offers])
     
     const token = USDC_ADDRESS_ON_NETWORKS[chainId]
-    const isOwner = account.toLowerCase() === owner.toLowerCase()
+    const isOwner = account?.toLowerCase() === owner?.toLowerCase()
     return (
         <div className="body">
             <Flex css={{width:"100%", padding:"0 20%", gap: 50, justifyContent: 'space-between' }}>
@@ -129,7 +152,7 @@ export default () => {
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
                         <Text bold size={"4"}>Offers</Text>
-                        {/* <OffersList account={account} offers={offers} /> */}
+                        <OffersList account={account} offers={offers} />
                     </Flex>
                     
                 </Flex>

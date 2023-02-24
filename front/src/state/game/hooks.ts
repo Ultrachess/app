@@ -54,70 +54,90 @@ const PLACE_HOLDER_PROFILE: Profile = {
     bots: [],
 }
 
-export function useProfile(id: string): Profile | undefined{
-    const bots = useAppSelector(state => state.game.bots)
-    if(!id) return PLACE_HOLDER_PROFILE
-    const isBot = !id.includes("0x")
-
-    //common
-    const type = isBot ? ProfileType.BOT : ProfileType.HUMAN
-    let nameDefault = useName(id)
-    const avatar = useAvatarImgUrl(id)
-    const elo = useElo(id)
-    const nationality = useNationality(id)
-    const games = useUserGames(id)
-    const challenges = useRecievedChallenges(id)
-
-    //bot only
-    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress, timestamp, name } = bots[id] ? bots[id] : {owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: "", timestamp: 0, name: "" }
-    const offers = bots[id] ? useOffersByBotId(id) : []
-
-    //human only
-    const balances = useBalances(id)
-    const userBots = useUserBots(id)
-
-    //return the correct profile type
-    const profile: Profile = isBot ? {
-        type,
-        id,
-        name,
-        avatar,
-        elo,
-        nationality,
-        games,
-        owner,
-        autoBattleEnabled,
-        autoMaxWagerAmount,
-        autoWagerTokenAddress,
-        offers,
-        challenges,
-        timestamp
-    } : {
-        type,
-        id,
-        name:nameDefault,
-        avatar,
-        elo,
-        nationality,
-        games,
-        balances,
-        bots:userBots,
-        challenges,
-    }
-    return profile
-
-}
+export function useProfile(id: string, bots: any = []): Profile | undefined {
+    const isBot = !id.includes("0x");
+    
+  
+    // common
+    const type = isBot ? ProfileType.BOT : ProfileType.HUMAN;
+    let nameDefault = useName(id);
+    const avatar = useAvatarImgUrl(id);
+    const elo = useElo(id);
+    const nationality = useNationality(id);
+    const games = useUserGames(id);
+    const challenges = useRecievedChallenges(id);
+  
+    // bot only
+    const { owner, autoBattleEnabled, autoMaxWagerAmount, autoWagerTokenAddress, timestamp, name } = bots[id] ? bots[id] : { owner: "", autoBattleEnabled: false, autoMaxWagerAmount: 0, autoWagerTokenAddress: "", timestamp: 0, name: "" };
+    const offers = bots[id] ? useOffersByBotId(id) : [];
+  
+    // human only
+    const balances = useBalances(id);
+    const userBots = useUserBots(id);
+  
+    // return the correct profile type
+    const profile: Profile = isBot
+      ? {
+          type,
+          id,
+          name,
+          avatar,
+          elo,
+          nationality,
+          games,
+          owner,
+          autoBattleEnabled,
+          autoMaxWagerAmount,
+          autoWagerTokenAddress,
+          offers,
+          challenges,
+          timestamp,
+        }
+      : {
+          type,
+          id,
+          name: nameDefault,
+          avatar,
+          elo,
+          nationality,
+          games,
+          balances,
+          bots: userBots,
+          challenges,
+        };
+    return profile;
+  }
 
 //get all bot profiles
 export function useAllBots(): BotProfile[] {
-    const botBaseVals: {[botIds: string]: {owner: string, autoBattleEnabled: boolean, autoMaxWagerAmount: number, autoWagerTokenAddress: string, timestamp: number}} = useAppSelector(state => state.game.bots)
-    const botIds = Object.keys(botBaseVals)
-    const profiles: BotProfile[] = []
-    botIds.forEach((id) => {
-        const profile = useProfile(id)
-        profiles.push(profile as BotProfile)
-    })
-    return profiles
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    const elos = useAppSelector(state => state.game.elo)
+    const botBaseVals: {[botIds: string]: {id:string, name:string, owner: string, autoBattleEnabled: boolean, autoMaxWagerAmount: number, autoWagerTokenAddress: string, timestamp: number}} = useAppSelector(state => state.game.bots)
+    const offers: {[offerIds: string]: BotOffer} = useAppSelector(state => state.game.marketplace)
+    const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
+    if (!challenges) return []
+    return Object.values(botBaseVals)
+        .map((val) => {
+            return {
+                type: ProfileType.BOT,
+                id:val.id,
+                name: val.name,
+                avatar: val.id,
+                elo: elos[val.id],
+                nationality: "US",
+                games: Object?.values(games)
+                    .filter((game) => {return game.players.includes(val.id)}),
+                owner: val.owner,
+                autoBattleEnabled: val.autoBattleEnabled,
+                autoMaxWagerAmount: val.autoMaxWagerAmount,
+                autoWagerTokenAddress: val.autoWagerTokenAddress,
+                offers: Object?.values(offers)
+                    .filter((offer) => {return offer.botId.toLowerCase() == val.id.toLowerCase()}),
+                challenges:Object?.values(challenges)
+                    ?.filter((challenge) => {return challenge.recipient.toLowerCase() == val.id.toLowerCase()}),
+                timestamp: val.timestamp
+            }
+        })
 }
 
 //get all user profiles
