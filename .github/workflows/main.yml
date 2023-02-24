@@ -1,0 +1,75 @@
+name: Install dependencies and set up Nginx
+
+on: [push, pull_request]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install docker-ce docker-ce-cli containerd.io
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install nodejs npm
+          npm install pm2 -g
+        
+      - name: Display Node.js version
+        run: node --version
+          
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          
+      - name: Install Python
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip
+          
+      - name: Install Nginx
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+
+      - name: Set up Nginx configuration
+        run: |
+          sudo bash -c "cat > /etc/nginx/sites-available/default << EOL
+          server {
+              listen 80;
+              listen [::]:80;
+              server_name localhost;
+
+              location / {
+                  proxy_pass http://localhost:5173;
+                  add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+                  add_header 'Access-Control-Allow-Credentials' 'true';
+                  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+                  add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+                  add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+              }
+          }
+          EOL"
+
+          sudo service nginx restart
+      
+      - name: Start front end
+        working-directory: ./front
+        run: |
+          npm install
+          npm run build
+      
+      - name: Serve front end with pm2
+        run: |
+          pm2 serve ./front/dist 5173 --spa --name my-app
