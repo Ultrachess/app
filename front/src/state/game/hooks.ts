@@ -587,8 +587,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "createBotOffer", 
                         "value": {
-                            "recipient" : "${info.botId}",
-                            "wager" : ${info.price},
+                            "botId" : "${info.botId}",
+                            "price" : ${info.price},
                             "token": "${info.token}"
                         }
                     }`)

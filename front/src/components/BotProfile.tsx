@@ -44,10 +44,16 @@ export default () => {
     const pastGames = games ? games.filter((game) => game.isEnd === true) : []
 
     //get highest offer price
-    let highestOffer = 0
-    if ( offers && offers.length > 0) {
-        highestOffer = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current)
-    }
+    const highestOffer = React.useMemo(()=>{
+        let highestOfferTemp = 0
+        console.log("reducing offers")
+        console.log(offers)
+        if ( offers && offers.length > 0) {
+            highestOfferTemp = offers?.reduce((prev, current) => (prev.price > current.price) ? prev : current)
+        }
+        return highestOfferTemp
+    },[offers])
+    
     const token = USDC_ADDRESS_ON_NETWORKS[chainId]
     const isOwner = account.toLowerCase() === owner.toLowerCase()
     return (
@@ -123,7 +129,7 @@ export default () => {
                     </Flex>
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
                         <Text bold size={"4"}>Offers</Text>
-                        <OffersList account={account} offers={offers} />
+                        {/* <OffersList account={account} offers={offers} /> */}
                     </Flex>
                     
                 </Flex>

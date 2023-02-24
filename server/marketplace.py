@@ -2,6 +2,10 @@ import deps
 import random
 import string
 import notification
+import logging
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger(__name__)
 
 def CreateBotOffer(sender, offerId, timestamp, botId, price, token):
     return {
@@ -18,21 +22,27 @@ class BotMarketPlaceManager:
         self.offers = {}
 
     def create_offer(self, sender, timestamp, options):
-        if "botId" not in options or "price" not in options or "token" not in options or "0x" in sender:
+        if "botId" not in options or "price" not in options or "token" not in options:
             return False
 
         botId = options["botId"]
         price = options["price"]
         token = options["token"]
-        owner = deps.botFactory.getOwner(sender)
+        owner = deps.botFactory.getOwner(botId)
 
         #make sure not sending offer to your own bot
-        if sender == owner:
+        if sender.lower() == owner.lower():
+            logger.info("failed to create offer")
+            logger.info("sender " + sender)
+            logger.info("owner "+ owner)
             return False
         #make sure is botId valid and user has funds
         #make sure owner is valid
         hasFunds = deps.accountManager.getBalance(sender, token) >= price
-        if not "0x" in botId and not hasFunds and owner != None:
+        if "0x" in botId or not hasFunds or owner == None:
+            logger.info("failed to create offer")
+            logger.info("hasFunds " + hasFunds)
+            logger.info("owner "+ owner)
             return False
         
         offerId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
