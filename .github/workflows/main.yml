@@ -67,7 +67,7 @@ jobs:
       - name: Starting hostnet
         working-directory: ./
         run: |
-          sudo docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./docker-compose-host.yml up
+          sudo docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./docker-compose-host.yml up &
           
       - name: Starting backend, host mode
         working-directory: ./server

@@ -6,6 +6,7 @@ import NotificationItem from './NotificationItem';
 import { useNewNotifications, useNotifications } from '../state/notifications/hooks';
 import { useTime } from './ActionView';
 import { NOTIFICATION_TOAST_DURATION_MILLIS } from '../utils/constants';
+import { NotificationType } from '../state/notifications/notifications';
 
 const Notifications = () => {
   const [open, setOpen] = React.useState(false);
@@ -17,18 +18,20 @@ const Notifications = () => {
     return () => clearTimeout(timerRef.current);
   }, []);
 
-  
-
   return (
     <Toast.Provider swipeDirection="right">
       {notifications.map((notification) => {
         return (
           <ToastRoot
-            key={notification.id}
-            duration={NOTIFICATION_TOAST_DURATION_MILLIS}
+            key = {notification.id}
+            duration = { 
+              notification.type != NotificationType.ACTION 
+                ? NOTIFICATION_TOAST_DURATION_MILLIS 
+                : NOTIFICATION_TOAST_DURATION_MILLIS * 10 
+              }
           >
             <NotificationItem
-              notification={notification}
+              notification = {notification}
             />
           </ToastRoot>
         );
