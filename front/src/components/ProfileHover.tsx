@@ -24,7 +24,7 @@ const BotProfileCard = ({profile}: {profile: BotProfile}) => {
                 <Flex css={{ flexDirection: 'column', gap: 15 }}>
                     <div>
                       <Flex css={{ gap: 5 }}>
-                          <Address value={profile.id} /> <Text faded>🇺🇸</Text>
+                          <Address value={profile.id} /> <Text faded>USA 🇺🇸</Text>
                       </Flex>
                       <Flex css={{ gap: 5 }}>
                           <Text faded>owner</Text><Address value={profile.owner} /> 

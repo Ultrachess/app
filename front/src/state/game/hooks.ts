@@ -469,7 +469,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                 ? ActionType.TRANSACTION : ActionType.INPUT,
             transactionInfo: info,
             status: ActionStates.INITIALIZED,
-            initTime: new Date().getTime(),
+            initTime: new Date().getTime()/1000,
         })
         try{
             switch (info.type) {
