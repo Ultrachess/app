@@ -26,7 +26,7 @@ logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
-#rollup_address = "0xF8C694fd58360De278d5fF2276B7130Bfdc0192A"
+rollup_address = "0x2ed38C41dfB4De75a56027fE8121b143DC04b0eC"
 #rollup_address = environ["ROLLUP_ADDRESS"]
 #rollup_address = "0xD8b2ab0d99827bB51697b976AcE3508B2Ad9Be9d"
 

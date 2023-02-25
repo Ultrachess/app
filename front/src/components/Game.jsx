@@ -80,7 +80,7 @@ export default () => {
   },[actionsNotProcessed])
   const game = useGame(gameId)
   const tokenAddress = game.token
-  const wagerAmount = game.wagerAmount
+  const wagerAmount = game.wagerAmount / 10 ** 18
   const topAddressScore = useMemo(() => game.scores[topAddress], [topAddress, isUpToDate])
   const bottomAddressScore = useMemo(() => game.scores[bottomAddress], [bottomAddress,isUpToDate])
   const completed = game.isEnd

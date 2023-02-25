@@ -16,17 +16,19 @@ class AccountBalanceManager:
     
     def getBalance(self, account, token):
         lowered_account = account.lower()
+        lowered_token = token.lower()
         if not lowered_account in self.accounts:
             self.accounts[lowered_account] = {}
-        if not token in self.accounts[lowered_account]:
-            self.accounts[lowered_account][token] = 0
-        return self.accounts[lowered_account][token]
+        if not lowered_token in self.accounts[lowered_account]:
+            self.accounts[lowered_account][lowered_token] = 0
+        return self.accounts[lowered_account][lowered_token]
 
     def setBalance(self, account, balance, token):
         lowered_account = account.lower()
+        lowered_token = token.lower()
         if not lowered_account in self.accounts:
             self.accounts[lowered_account] = {}
-        self.accounts[lowered_account][token] = balance
+        self.accounts[lowered_account][lowered_token] = balance
 
     def deposit(self, account, value, token):
         prev = self.getBalance(account, token)

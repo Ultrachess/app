@@ -68,7 +68,7 @@ export default ({triggerElement, playerId}) => {
               <SelectMain options={potentialChallengers} value={challenger} onValueChange={setChallenger}/>
             </Fieldset>
             <Fieldset>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.value)}}>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
                 </Input>
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>

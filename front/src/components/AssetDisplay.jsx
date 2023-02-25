@@ -25,7 +25,7 @@ export default ({tokenAddress, balance, isL2=false, green=false, blue=false, gre
     //get account balance of token
     const balances = useSelector(state => state.game.balances)
     const accountBalances = balances?.[account] ?? undefined
-    const _balance = (balance ?? accountBalances?.[tokenAddress] ?? 0) / 10 ** 8
+    const _balance = balance ?? accountBalances?.[tokenAddress] ?? "0.0"
 
     //console.log("abc tokenAddress", tokenAddress)
     //console.log("abc token", token)
