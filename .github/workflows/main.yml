@@ -63,6 +63,19 @@ jobs:
           EOL"
 
           sudo service nginx restart
+          
+      - name: Starting hostnet
+        working-directory: ./
+        run: |
+          sudo docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./docker-compose-host.yml up
+          
+      - name: Starting backend, host mode
+        working-directory: ./server
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          pip install -r requirements.txt
+          ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" python3 main.py
       
       - name: Start front end
         working-directory: ./front
