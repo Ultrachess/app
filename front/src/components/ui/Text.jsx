@@ -8,7 +8,7 @@ export const Text = styled('div', {
     fontSize: 13,
     lineHeight: 1.5,
     textAlign: 'center',
-    display: 'flex',
+    display: 'inline-flex',
     variants: {
         underline: {
             true: { textDecoration: 'underline' },

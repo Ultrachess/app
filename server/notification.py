@@ -313,6 +313,7 @@ def convert_to_json(notification: Notification):
     new_id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k=10))).lower()
     attrs['id'] = new_id
     attrs['type'] = notification.type.value[0]
+    attrs['timestamp'] = attrs['timestamp'] * 1000
     logger.info("attrs: "+ str(attrs))
     return attrs
 

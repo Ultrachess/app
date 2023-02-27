@@ -4,6 +4,7 @@ import random
 import string
 import logging
 import deps
+import notification
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -26,6 +27,16 @@ class Bot:
         self.autoMaxWagerAmount = 0
         self.autoWagerTokenAddress = ""
         self.autoBattleEnabled = False
+
+        notification.send_notification(
+            notification.BotCreatedNotification(
+                timestamp = timestamp,
+                creator_id= owner, 
+                bot_id = id,
+                type=notification.NotificationType.BOT_CREATED
+            )
+        )
+
         
 
     def run(self, board, timeStamp):

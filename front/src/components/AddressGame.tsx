@@ -7,12 +7,8 @@ import { Text } from "./ui/Text";
 
 export default ({id}: {id: String}) => {
   return (
-    <div className='addressView'>
       <Link to={"/game/" + id}>
-        <Row>
           <Text bold>{id}</Text>
-        </Row>
       </Link>
-    </div>
   );
 }

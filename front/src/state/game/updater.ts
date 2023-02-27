@@ -22,7 +22,7 @@ import { useWeb3React } from "@web3-react/core";
 import {default as axios} from "axios"
 axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
 import { SERVER_URL } from "./gameSlice";
-import { useUserBotIds, useUserBotGameIds, useUserBotTournamentIds, useUserTournamentIds, useUserActiveGameIds, useGame } from "./hooks";
+import { useUserBotIds, useUserBotGameIds, useUserBotTournamentIds, useUserTournamentIds, useUserActiveGameIds, useGame, useUserOwnedGameIds } from "./hooks";
 
 export interface NoticeInfo {}
 
@@ -131,11 +131,13 @@ function getRelevantNotifications(
         userGames: String[], 
         userBotGames: String[], 
         userTournaments: String[],
-        userBotTournaments: String[]
+        userBotTournaments: String[],
+        userOwnedGames: String[]
     ){
     let lUserBots = userBots.map((id) => id.toLowerCase())
     let lUserGames = userGames.map((id) => id.toLowerCase())
     let lUserBotGames = userBotGames.map((id) => id.toLowerCase())
+    let lUserOwnedGames = userOwnedGames.map((id) => id.toLowerCase())
     let lUserTournaments = userTournaments.map((id) => id.toLowerCase())
     let lUserBotTournaments = userBotTournaments.map((id) => id.toLowerCase())
     //console.log("checking notifications account ", account)
@@ -147,15 +149,21 @@ function getRelevantNotifications(
         notifications
         .filter(notification => {
             const { type } = notification
-            if(type == NotificationType.GAME_JOINED ||
+            if(
                 type == NotificationType.GAME_MOVE ||
                 type == NotificationType.GAME_WAGER ||
-                type == NotificationType.GAME_BETTING_CLOSED ||
-                type == NotificationType.GAME_CREATED 
+                type == NotificationType.GAME_BETTING_CLOSED //||
+                //type == NotificationType.GAME_CREATED 
             ){
-                //console.log("is game notification", userGames)
-                //console.log("is game notification", account)
-                return lUserGames.includes(notification["game_id"].toLowerCase()) || lUserBotGames.includes(notification["game_id"].toLowerCase())
+                //check if game is in user's games
+                return (lUserGames.includes(notification["game_id"].toLowerCase()) || lUserBotGames.includes(notification["game_id"].toLowerCase()))
+                    //&& !lUserOwnedGames.includes(notification["game_id"].toLowerCase())
+            }
+            if(type == NotificationType.GAME_JOINED){
+                //checkt if game is in user's games
+                //and make sure joiner is not account
+                return (lUserOwnedGames.includes(notification["game_id"].toLowerCase()) || lUserBotGames.includes(notification["game_id"].toLowerCase())) &&
+                    notification["player_id"].toLowerCase() != account.toLowerCase()
             }
             if(type == NotificationType.GAME_COMPLETED){
                 return notification["player_id1"].toLowerCase() == account.toLowerCase() || 
@@ -204,6 +212,9 @@ function getRelevantNotifications(
             }
             if (type == NotificationType.BOT_OFFER_DECLINED){
                 return notification.sender.toLowerCase() == account.toLowerCase()
+            }
+            if (type == NotificationType.BOT_CREATED){
+                return notification["creator_id"].toLowerCase() == account.toLowerCase()
             }
                 
         })
@@ -295,6 +306,7 @@ export function GameStateUpdater() {
     const botGames = useUserBotGameIds(account)
     const userTournaments = useUserTournamentIds(account)
     const botTournaments = useUserBotTournamentIds(account)
+    const userOwnedGames = useUserOwnedGameIds(account)
 
     const newNotifications = useNotifications()
     const [lastNotificationLength, setLastNotificationLength] = useState(0)
@@ -362,7 +374,8 @@ export function GameStateUpdater() {
                 userGames, 
                 botGames, 
                 userTournaments, 
-                botTournaments
+                botTournaments,
+                userOwnedGames,
             )
             .forEach((notification) => {
                 //console.log("newNotification: addingn notification", notification)
@@ -371,7 +384,7 @@ export function GameStateUpdater() {
         }
         //console.log("user games1", userGames)
 
-    }, [newNotifications, dispatch, account, userBots, userGames, botGames, userTournaments, botTournaments])
+    }, [newNotifications, dispatch, account, userBots, userGames, botGames, userTournaments, botTournaments, userOwnedGames])
 
     return null
 }

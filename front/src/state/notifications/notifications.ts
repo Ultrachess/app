@@ -252,7 +252,8 @@ export type Notification =
     BotOfferDeclinedNotification | 
     BotOfferCreatedNotification |
     ActionNotification |
-    TournamentRoundCompletedNotification;
+    TournamentRoundCompletedNotification |
+    BotCreatedNotification 
 
 
 

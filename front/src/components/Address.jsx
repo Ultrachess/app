@@ -14,7 +14,6 @@ import { useProfile } from '../state/game/hooks';
 export default ({value, hoverable = false, isMedium=false, isImageBig=false, showBotName=false}) => {
   const isBot = useMemo(()=> value ? !value.includes("0x"): false)
   const addressView = 
-    <div className='addressView'>
       <Link to={ (isBot? "/bot/":"/users/") + value}>
         <Flex css={{flexDirection: "row", alignItems: "center", gap:5}}>
           <ProfileImage address={value} />
@@ -22,10 +21,8 @@ export default ({value, hoverable = false, isMedium=false, isImageBig=false, sho
           {isBot && <FaRobot/>}
         </Flex>
       </Link>
-    </div>
 
   const mediumAddressView = 
-    <div className='addressView'>
       <Link to={ (isBot? "/bot/":"/users/") + value}>
         <Flex css={{flexDirection: "row", alignItems: "center", gap:5}}>
           <ProfileImage diameter={30} address={value} />
@@ -34,20 +31,17 @@ export default ({value, hoverable = false, isMedium=false, isImageBig=false, sho
           {(isBot && showBotName) && <Text size={2} bold>{useProfile(value).name}</Text>}
         </Flex>
       </Link>
-    </div>
   
   //bigAddressView is used for the profile page
   //It renders the ProfileImage component with a bigger size
   //in a flex column
   const bigAddressView =
-    <div className='addressView'>
       <Link to={ (isBot? "/bot/":"/users/") + value}>
         <Flex css={{flexDirection: "column", alignItems: "center"}}>
           <ProfileImage address={value} diameter={200} />
           <Text size={5} bold>{truncateAddress(value)}{isBot && <FaRobot/>}</Text>
         </Flex>
       </Link>
-    </div>
 
 
 

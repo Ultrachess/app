@@ -62,6 +62,32 @@ const PLACE_HOLDER_PROFILE: Profile = {
     bots: [],
 }
 
+const PLACE_HOLDER_GAME: Game = {
+    id: "",
+    pgn: "",
+    players: [],
+    isBot: false,
+    isEnd: false,
+    matchCount: 0,
+    wagerAmount: 0,
+    token: "",
+    timestamp: 0,
+    resigner: "",
+    scores: {},
+    bettingDuration: 0,
+    wagering: {
+        gameId: "",
+        openTime: 0,
+        duration: 0,
+        bets: {},
+        pots: {},
+        totalPot: 0,
+        betsArray: []
+    },
+    botMoveStats: []
+}
+
+
 export function useBalance(id: string, tokenAddress:string): number {
     const accounts: {[address: string]:{[token:string]: number}} = useAppSelector(state => state.game.accounts)
     if(!id || !tokenAddress || !accounts) return 0
@@ -158,15 +184,39 @@ export function useAllBots(): BotProfile[] {
 }
 
 //get all user profiles
+//similar to useAllBots
 export function useAllUsers(): UserProfile[] {
-    const accounts: {[address: string]:{[token:string]: Balance}} = useAppSelector(state => state.game.accounts)
-    const accountIds = Object.keys(accounts)
-    const profiles: UserProfile[] = []
-    accountIds.forEach((id) => {
-        const profile = useProfile(id)
-        profiles.push(profile as UserProfile)
-    })
-    return profiles
+    const games: {[gameIds: string]: Game} = useAppSelector(state => state.game.games)
+    const elos = useAppSelector(state => state.game.elo)
+    const users = useAppSelector(state => state.game.accounts)
+    const userIds = Object.keys(users)
+    const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
+    const balances = useAppSelector(state => state.game.accounts)
+    const bots: {[botIds: string]: BotProfile} = useAppSelector(state => state.game.bots)
+    if (!challenges) return []
+    return Object.keys(users)
+        .map((val) => {
+            return {
+                type: ProfileType.HUMAN,
+                id:val,
+                name: "",
+                avatar: "",
+                elo: elos[val],
+                nationality: "US",
+                games: Object?.values(games)
+                    .filter((game) => {return game.players.includes(val.toLowerCase())}),
+                balances: balances[val],
+                bots: Object?.values(bots).filter((bot) => {
+                    //console.log("abc account ", bot.owner, id)
+                    return bot.owner.toLowerCase() == val.toLowerCase()
+                }),                
+                challenges:Object?.values(challenges)
+                    ?.filter((challenge) => {return challenge.recipient.toLowerCase() == val.id.toLowerCase()}),
+            
+            }
+        })
+                        
+    
 }
 
 export function useAllProfiles(rankByElo: boolean = false): BaseProfile[] {
@@ -182,10 +232,11 @@ export function useAllProfiles(rankByElo: boolean = false): BaseProfile[] {
 }
 
 
+
 export function useGame(id): Game {
     const games = useAppSelector(state => state.game.games)
-    if (!games) return null
-    if (!games[id]) return null
+    if (!games) return PLACE_HOLDER_GAME
+    if (!games[id]) return PLACE_HOLDER_GAME
     if(!games[id].botMoveStats) games[id].botMoveStats = []
     return games[id]
 }
@@ -202,6 +253,7 @@ export function useUserGames(id: string): Game[] {
         return game.players.includes(id)
     })
 }
+
 
 export function useRecievedChallenges(id: string): Challenge[] {
     const challenges: {[challengeIds: string]: Challenge} = useAppSelector(state => state.game.challenges)
@@ -273,6 +325,15 @@ export function useUserGameIds(id: string): string[] {
     return Object.keys(games).filter((gameId) => {
         const game = games[gameId]
         return game.players.includes(id)
+    })
+}
+
+export function useUserOwnedGameIds(id: string): string[] {
+    const games = useAppSelector(state => state.game.games)
+    if (!games) return []
+    return Object.keys(games).filter((gameId) => {
+        const game = games[gameId]
+        return game.players[0].toLowerCase() == id.toLowerCase()
     })
 }
 
@@ -469,7 +530,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                 ? ActionType.TRANSACTION : ActionType.INPUT,
             transactionInfo: info,
             status: ActionStates.INITIALIZED,
-            initTime: new Date().getTime()/1000,
+            initTime: new Date().getTime(),
         })
         try{
             switch (info.type) {
@@ -685,10 +746,10 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     break;     
             }
    
-            // while (!result.hash) {
-            //     //console.log("waiting for result hash")
-            //     await result.wait()
-            // }
+            if (!result.hash) {
+                //console.log("waiting for result hash")
+                await result
+            }
             addTransaction(result, info)
             dispatch(setActionTransactionHash({
                 id: id,
@@ -698,7 +759,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
             //await result.wait()
         }
         catch(e){
-            //console.log(e)
+            console.log("bot error")
+            console.log(e)
             dispatch(setAction({
                 id: id,
                 type: info.type == TransactionType.APPROVE_ERC20

@@ -72,6 +72,7 @@ export default () => {
   const [currentMoveIndex, setCurrentMoveIndex] = useState(-1)
   const [isAutoPlay, setAutoPlay] = useState(false)
   const [currentFen, setCurrentFen] = useState()
+  const [selectedPiece, setSelectedPiece] = useState(null)
   const actionsNotProcessed = useActionsNotProcessed()
   const pendingMoves = useMemo(()=>{
     return actionsNotProcessed
@@ -215,8 +216,9 @@ export default () => {
 
   //initailize index to 0
   useEffect(() => {
-    setCurrentMoveIndex(0)
-  }, [gameId])
+    if(completed && !playerIsInGame(games, address, gameId))
+      setCurrentMoveIndex(0)
+  }, [gameId, completed])
 
   function safeGameMutate(modify) {
     if(minPlayers)
@@ -276,12 +278,14 @@ export default () => {
   }
 
   function onMouseOverSquare(square) {
-    getMoveOptions(square);
+    if( selectedPiece == null)
+      getMoveOptions(square);
   }
 
   // Only set squares to {} if not already set to {}
   function onMouseOutSquare() {
-    if (Object.keys(optionSquares).length !== 0) setOptionSquares({});
+    if (Object.keys(optionSquares).length !== 0 && selectedPiece === null)
+      setOptionSquares({});
   }
 
   function isAddressTurn(address) {
@@ -327,11 +331,38 @@ export default () => {
     setOptionSquares(newSquares);
   }
 
-  function onSquareClick() {
+  function onSquareClick(square) {
     setRightClickedSquares({});
+    getMoveOptions(square);
+    if(selectedPiece && selectedPiece != square && optionSquares[square]){
+      onDrop(selectedPiece, square)
+      setSelectedPiece(null)
+    }else{
+      //check if your piece is on this square
+      const piece = gameState.get(square)
+      if(piece && piece.color == gameSide[0])
+        setSelectedPiece(square)
+    }
   }
 
+  function onPieceClick(piece) {
+    // const square = piece.square
+    // setRightClickedSquares({});
+    // getMoveOptions(square);
+    // if(selectedPiece){
+    //   onDrop(selectedPiece, square)
+    //   setSelectedPiece(null)
+    // }else{
+    //   //check if your piece is on this square
+    //   const piece = gameState.get(square)
+    //   if(piece && piece.color == gameSide[0])
+    //     setSelectedPiece(square)
+    // }
+  }
+
+
   function onSquareRightClick(square) {
+    setSelectedPiece(null)
     const colour = 'rgba(0, 0, 255, 0.4)';
     setRightClickedSquares({
       ...rightClickedSquares,
@@ -420,6 +451,7 @@ export default () => {
               onMouseOutSquare={onMouseOutSquare}
               onSquareClick={onSquareClick}
               onSquareRightClick={onSquareRightClick}
+              onPieceClick={onPieceClick}
               isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
               customBoardStyle={{
                 borderRadius: '4px',

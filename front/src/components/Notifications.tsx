@@ -27,7 +27,7 @@ const Notifications = () => {
             duration = { 
               notification.type != NotificationType.ACTION 
                 ? NOTIFICATION_TOAST_DURATION_MILLIS 
-                : NOTIFICATION_TOAST_DURATION_MILLIS * 10 
+                : NOTIFICATION_TOAST_DURATION_MILLIS
               }
           >
             <NotificationItem
