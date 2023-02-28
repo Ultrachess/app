@@ -15,8 +15,8 @@ export default ({bots}: {bots: BotProfile[]}) => {
         [<Text key={0}>No bots found</Text>]
 
     return (
-            <List
-                items={botItems}
-            />
+        <List
+            items={botItems}
+        />
     );
 }
