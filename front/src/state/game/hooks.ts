@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile, Tournament } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile, Tournament, TournamentType } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
@@ -60,6 +60,20 @@ const PLACE_HOLDER_PROFILE: Profile = {
     challenges: [],
     balances: [],
     bots: [],
+}
+
+const PLACE_HOLDER_TOURNAMENT: Tournament = {
+    id: "",
+    type: TournamentType.KNOCKOUT,
+    rounds: 0,
+    amountOfWinners: 1,
+    participantCount: 0,
+    participants: [],
+    owner: "",
+    currentRound: 0,
+    matches: [],
+    isOver: false,
+    isRoundOver: false,
 }
 
 const PLACE_HOLDER_GAME: Game = {
@@ -360,6 +374,13 @@ export function useUserActiveGameIds(id: string): string[] {
         return gameId.toLowerCase()
     })
     return gamesToReturn
+}
+
+export function useTournament(id): Tournament {
+    const tournaments = useAppSelector(state => state.game.tournaments)
+    if (!tournaments) return PLACE_HOLDER_TOURNAMENT
+    if (!tournaments[id]) return PLACE_HOLDER_TOURNAMENT
+    return tournaments[id]
 }
 
 export function useAllTournaments(): Tournament[] {

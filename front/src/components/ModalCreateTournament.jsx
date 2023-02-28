@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { ChevronDownIcon,ChevronUpIcon, Cross2Icon } from '@radix-ui/react-icons';
+import { ChevronDownIcon,ChevronUpIcon, Cross2Icon, CheckIcon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
 import { Text } from './ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
@@ -25,12 +25,12 @@ export default ({triggerElement}) => {
     const [tourneyType, setTourneyType] = useState(tournamentTypes[0])
     const [participants, setParticipants] = useState([])
     const [participantCount, setParticipantCount] = useState(400)
-    const [currenSelectedParticipant, setCurrentSelectedParticipant] = useState(account ?? "")
+    const [currentSelectedParticipant, setCurrentSelectedParticipant] = useState(account ?? "")
     const [roundCount, setRoundCount] = useState(1000)
     const [amountOfWinners, setAmountOfWinners] = useState(1)
 
     const bots = useUserBots(account)
-    const potentialParticipants = [...bots.map((bot) => bot.address), account]
+    const potentialParticipants = [...bots.map((bot) => bot.id), account]
 
     const addAction = useActionCreator()
 
@@ -76,7 +76,7 @@ export default ({triggerElement}) => {
                 <SelectMain
                     value={tourneyType}
                     onValueChange={(value)=>{ setTourneyType(value)}}
-                    potentialParticipants = {tournamentTypes}
+                    options = {tournamentTypes}
                     label="Tournament type"
                 />
             </Fieldset>
@@ -89,9 +89,9 @@ export default ({triggerElement}) => {
                 </Flex>
                 <Flex css={{ gap: 10, flexWrap: 'wrap' }}>
                     <SelectMain 
-                        value={""} 
+                        value={currentSelectedParticipant} 
                         onValueChange={(value)=>{ setCurrentSelectedParticipant(value)}}
-                        potentialParticipants = {potentialParticipants.filter((address) => !participants.includes(address))}
+                        options = {potentialParticipants.filter((address) => !participants.includes(address))}
                         label="Select participant"
                     />
                     <Button variant="green" onClick={() => addParticipant(currentSelectedParticipant)}>Add</Button>
@@ -333,7 +333,7 @@ const LeftSlot = styled('div', {
   });
 
 
-const SelectMain = ({onValueChange, value, options, label}) => {
+  const SelectMain = ({onValueChange, value, options, label}) => {
     return (
         <Select.Root 
         value={value}

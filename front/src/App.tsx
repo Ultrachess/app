@@ -22,6 +22,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import TransitionManager from './components/TransitionManager';
 import BotProfile from './components/BotProfile';
 import Rankings from './components/Rankings';
+import TournamentView from './components/TournamentView';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -43,6 +44,7 @@ function App() {
         <Route path="rankings" element={<Rankings />} />
         <Route path="bots" element={<BotManager />} />
         <Route path="tournaments" element={<Tournaments />} />
+        <Route path="tournament/:tournamentId" element={<TournamentView />} />
         <Route path="/game/:gameId" element={<Game />} />
         <Route path="/users/:userId" element={<Profile/>} />
         <Route path="/bot/:botId" element={<BotProfile/>} />

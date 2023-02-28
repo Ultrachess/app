@@ -179,7 +179,7 @@ export interface TournamentMatch {
     leftScore: number,
     rightScore: number,
 } 
-
+''
 export interface TournamentRound {
     matches: TournamentMatch[],
 }
@@ -193,7 +193,7 @@ export interface Tournament {
     participants: string[],
     owner: string,
     currentRound: number,
-    matches: TournamentRound[],
+    matches: TournamentMatch[][],
     isOver: boolean,
     isRoundOver: boolean,
 }
