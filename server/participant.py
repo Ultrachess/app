@@ -7,3 +7,6 @@ class Participant:
 
     def get(self):
         return self.participant
+
+    def is_initialized(self):
+        return self.participant is not None

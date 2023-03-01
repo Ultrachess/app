@@ -37,6 +37,8 @@ class TournamentManager:
         return id
     
     def join(self, sender, options):
+        if "tournament_id" not in options or "participant_id" not in options:
+            return False
         is_bot = options["is_bot"] if "is_bot" in options else False
         player_to_add = options["bot_id"] if "bot_id" in options and options["bot_id"] != "blank" else sender
         if "tournament_id" not in options:
@@ -68,7 +70,15 @@ class Tournament:
         self.type = options["type"]
         self.amount_of_winners = options["amount_of_winners"]
         self.participant_count = options["participant_count"]
-        self.participants = list(map(lambda x: Participant(x), options["participants"]))
+        
+        #Initialize participants
+        self.participants = []
+        for i in range(self.participant_count):
+            initialized_participant_id = options["participants"][i] if i < len(options["participants"]) else None
+            if initialized_participant_id is not None:
+                self.participants.append(Participant(initialized_participant_id))
+            else:
+                self.participants.append(Participant())
         self.owner = owner
         self.round_count = options["round_count"]
 
@@ -123,15 +133,21 @@ class Tournament:
         return self.__current_round == self.round_count
     
     def has_all_participants(self):
-        return len(self.participants) == self.participant_count
+        for participant in self.participants:
+            if not participant.is_initialized():
+                return False
+        return True
     
     def has_not_started(self):
         return self.__current_round == 0
 
-    def join(self, participant):
+    def join(self, participant_id: str):
         if self.has_all_participants():
             return False
-        self.participants.append(participant)
+        for i in range(len(self.participants)):
+            if not self.participants[i].is_initialized():
+                self.participants[i].set(participant_id)
+                return True
         
     def run(self):
         if self.is_tourney_over:

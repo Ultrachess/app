@@ -5,7 +5,7 @@ import { Text } from "../ui/Text";
 
 export default ({matches}: {matches: TournamentMatch[]}) => {
     const matchItems = matches.length > 0 ? 
-        matches.map((bot) => <TournamentMatchListItem match={bot}  />) :
+        matches.map((match) => <TournamentMatchListItem match={match}  />) :
         [<Text key={0}>No matches established</Text>]
 
     return (

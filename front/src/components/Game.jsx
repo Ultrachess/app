@@ -482,7 +482,7 @@ export default () => {
           </Flex>
           <Flex css={{ flexDirection:'column', gap:10}}>
             <Flex css={{width:"100%", flexDirection:'row', alignItems:'center', justifyContent:"right"}}>
-              <Button onClick={tweetGame}>Tweet</Button>
+              <Button onClick={tweetGame}>Share</Button>
             </Flex>
             <Flex css={{justifyContent:"left", paddingBottom:"20px"}}>
               {(completed && !draw) && <Text green>Game completed.  <span style={{textDecoration:"underline"}}>{truncateAddress(winningId)}</span> won {wagerAmount} CTSI</Text>}

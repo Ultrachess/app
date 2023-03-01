@@ -152,8 +152,7 @@ export interface CreateTournamentTransactionInfo extends BaseTransactionInfo {
 export interface JoinTournamentTransactionInfo extends BaseTransactionInfo {
     type: TransactionType.JOIN_TOURNAMENT,
     tournamentId: string,
-    isBot?: boolean,
-    botId?: string,
+    participant_id: string,
 }
 
 export type TransactionInfo = 

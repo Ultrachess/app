@@ -64,13 +64,16 @@ export default () => {
             <div className="contentHolder">
             <div>
                 <div className="contentHeader">
-                <Label>Ranking list</Label>
+                <Label>Rounds list</Label>
                 <RightSlot>
-                    <ModalJoinTournament triggerElement = {
-                        <Button>
-                            <Text>Join tournament</Text>
-                        </Button>
-                    }/>
+                    <ModalJoinTournament 
+                        tournamentId={tournamentId}
+                        triggerElement = {
+                            <Button>
+                                <Text>Join tournament</Text>
+                            </Button>
+                        }
+                    />
                 </RightSlot>
                 </div>
                 <Separator />
