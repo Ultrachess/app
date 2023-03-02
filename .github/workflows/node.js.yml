@@ -1,0 +1,96 @@
+################################################################################
+# This workflow will do a clean install of node dependencies and build the
+# source code across different versions of node.
+#
+# For more information see:
+#
+#   https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+#
+################################################################################
+
+name: Node.js CI
+
+# Controls when the action will run. Triggers the workflow on push or pull
+# request events
+on: [push, pull_request]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in
+# parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            node-version: 14
+          - os: ubuntu-22.04
+            node-version: 18
+
+    # Steps represent a sequence of tasks that will be executed as part of the
+    # job
+    steps:
+      - name: Build environment information
+        run: 'echo "Matrix OS: ${{ matrix.os }} on $HOSTNAME with $(getconf _NPROCESSORS_ONLN) cores"'
+
+        # Check-out the repository under $GITHUB_WORKSPACE, so the job can
+        # access it
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Restore node modules
+        id: restore-node
+        uses: actions/cache@v3
+        with:
+          path: |
+            front/node_modules
+          key: node-install-${{ matrix.node-version }}-${{ hashFiles('front/package.json', 'front/package-lock.json') }}
+
+      - name: Restore dapp artifacts
+        id: restore-artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            deployments
+            export
+          key: restore-artifacts-${{ hashFiles('docker-compose-deploy.yml', 'docker-compose.override.yml') }}
+
+      - name: yarn install
+        if: steps.restore-node.outputs.cache-hit != 'true'
+        working-directory: front
+        run: yarn install
+
+      - name: yarn audit-ci
+        working-directory: front
+        run: yarn audit-ci
+
+      - name: yarn prettier
+        working-directory: front
+        run: yarn prettier
+
+      #- name: yarn eslint
+      #  working-directory: front
+      #  run: yarn eslint
+
+      # Build dapp
+      - name: Build dapp
+        if: steps.restore-artifacts.outputs.cache-hit != 'true'
+        run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
+
+      # Deploy dapp and smart contracts
+      - name: Deploy dapp
+        if: steps.restore-artifacts.outputs.cache-hit != 'true'
+        run: docker compose -f docker-compose-deploy.yml -f docker-compose.override.yml up --exit-code-from ultrachess_deployer || true
+
+      - name: yarn run build
+        working-directory: front
+        run: yarn run build
