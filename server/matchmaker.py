@@ -1,7 +1,9 @@
 import random
 import string
-from game import *
+
 import notification
+from game import *
+
 
 class Matchmaker:
     def __init__(self):
@@ -15,27 +17,34 @@ class Matchmaker:
         for key in self.games:
             game = self.games[str(key)]
             isGameOver = game.isGameEnd()
-            logger.info("game:" + str(game.players) + " isOver:"+str(isGameOver))
-            if(not isGameOver):
-                if(address in game.players):
+            logger.info("game:" + str(game.players) + " isOver:" + str(isGameOver))
+            if not isGameOver:
+                if address in game.players:
                     return game
         return False
 
     def sendMove(self, sender, timeStamp, options):
-        logger.info("sender:" + str(sender) + " timeStamp:" + str(timeStamp) + " options:" + str(options))
+        logger.info(
+            "sender:"
+            + str(sender)
+            + " timeStamp:"
+            + str(timeStamp)
+            + " options:"
+            + str(options)
+        )
         if "roomId" in options:
             roomId = options["roomId"]
-        else: 
+        else:
             return False
 
         if "move" in options:
             move = options["move"]
         else:
             return False
-            
+
         game = self.get(roomId)
         return game.move(sender, timeStamp, move)
-    
+
     def isInGame(self, sender):
         return self.getByPlayer(sender) != False
 
@@ -44,15 +53,22 @@ class Matchmaker:
         wagerAmount = options["wagerAmount"] if ("wagerAmount" in options) else 0
         token = options["token"] if ("token" in options) else DEFAULT_ERC20
         duration = options["bettingDuration"] if ("bettingDuration" in options) else 0
-        if(isBot):
+        if isBot:
             success = False
-            #Confirm basic options
+            # Confirm basic options
             if not "botId1" in options:
-                return {"value": "botId not defined", "success":False}
+                return {"value": "botId not defined", "success": False}
 
-            #Spawn new game
-            id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-            self.games[str(id)] = Game(id, isBot=True, wagerAmount=wagerAmount, token=token, timestamp=timestamp, duration=duration)
+            # Spawn new game
+            id = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            self.games[str(id)] = Game(
+                id,
+                isBot=True,
+                wagerAmount=wagerAmount,
+                token=token,
+                timestamp=timestamp,
+                duration=duration,
+            )
 
             if "playerId" in options:
                 if options["playerId"] != "blank":
@@ -60,16 +76,16 @@ class Matchmaker:
                     self.games[str(id)].addPlayer(timestamp, playerId)
                     self.games[str(id)].setPlayerInHumanVBot(playerId)
 
-            #Add bot 1
+            # Add bot 1
             botId1 = options["botId1"]
             success = self.games[str(id)].addPlayer(timestamp, botId1)
 
-            #Set matchcount defined
+            # Set matchcount defined
             if "matchCount" in options:
                 matchCount = options["matchCount"]
                 self.games[str(id)].setMatchCount(matchCount)
-            
-            #Add bot 2 if exists then run game
+
+            # Add bot 2 if exists then run game
             if "botId2" in options:
                 botId2 = options["botId2"]
                 if botId2 != "blank":
@@ -83,28 +99,33 @@ class Matchmaker:
             bot_id = p1 if p1IsBot else p2
             notification.send_notification(
                 notification.BotGameCreatedNotification(
-                    #creator_id=sender,
+                    # creator_id=sender,
                     bot_id=bot_id,
                     game_id=id,
                     player_id1=p1,
                     player_id2=p2,
-                    wager = wagerAmount,
-                    token = token,
+                    wager=wagerAmount,
+                    token=token,
                     type=notification.NotificationType.BOT_GAME_CREATED,
                     timestamp=timestamp,
                 )
             )
-            
-            return {
-                "value": str(id),
-                "success": success
-            }
+
+            return {"value": str(id), "success": success}
 
         else:
             canCreate = True
-            if(canCreate):
-                id = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-                self.games[str(id)] = Game(id, wagerAmount = wagerAmount, token=token, timestamp=timestamp, duration=duration)
+            if canCreate:
+                id = "".join(
+                    random.choices(string.ascii_uppercase + string.digits, k=10)
+                )
+                self.games[str(id)] = Game(
+                    id,
+                    wagerAmount=wagerAmount,
+                    token=token,
+                    timestamp=timestamp,
+                    duration=duration,
+                )
                 if "players" in options:
                     players = options["players"]
                     for player in players:
@@ -116,21 +137,15 @@ class Matchmaker:
                     notification.GameCreatedNotification(
                         creator_id=sender,
                         game_id=id,
-                        wager = wagerAmount,
-                        token = token,
+                        wager=wagerAmount,
+                        token=token,
                         type=notification.NotificationType.GAME_CREATED,
                         timestamp=timestamp,
                     )
                 )
-                return {
-                    "value": str(id),
-                    "success": successfullAdd
-                }
-            return {
-                "value": "",
-                "success":False
-            }
-   
+                return {"value": str(id), "success": successfullAdd}
+            return {"value": "", "success": False}
+
     def remove(self, id):
         self.games.pop(id)
         return True
@@ -157,9 +172,9 @@ class Matchmaker:
         for key in self.games:
             game = self.games[str(key)]
             gamePartial = {
-                "id":game.id,
+                "id": game.id,
                 "players": game.players,
-                "board_pgn": str(game.rootGame)
+                "board_pgn": str(game.rootGame),
             }
             newGames[key] = gamePartial
         return str(newGames)
