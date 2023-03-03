@@ -33,9 +33,14 @@ export default ({game}: {game:Game}) => {
     const bettingOpenTime = game?.wagering?.openTime ?? -1
     const bettingClosesAt = bettingOpenTime + game?.bettingDuration
     const isWaitingForAPlayer = p2 === undefined || p1===undefined
-
-    const bettingIsClosed = bettingOpenTime < 0 && bettingOpenTime < current && bettingClosesAt < current
-    //console.log("abc is betting closed: ", bettingIsClosed)
+    const isInGame = (p1?.toLowerCase() ?? "") === account.toLowerCase() || (p2?.toLowerCase() ?? "") === account.toLowerCase()
+    
+    const bettingHasStarted = bettingOpenTime > 0
+    const bettingHasStartedBeforeCurrent = bettingOpenTime < current
+    const bettingIsOpen = bettingHasStarted && bettingHasStartedBeforeCurrent && bettingClosesAt > (current/1000)
+    const bettingIsClosed = !bettingIsOpen
+    const canBet = bettingIsOpen && !isWaitingForAPlayer
+    console.log("abc is betting closed: ", bettingIsClosed)
 
     const completed = game.isEnd
     const joinable = game?.players?.length < 2 && !game.isEnd && !game.players.includes(account)
@@ -78,11 +83,11 @@ export default ({game}: {game:Game}) => {
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text bold>status</Text>
                 <Flex css={{gap: 1}}>
-                    <Text green>{completed ? "completed" : bettingIsClosed ? isWaitingForAPlayer ? "waiting on player" : "playing" : "betting phase. Closes in"+(current-bettingClosesAt)}</Text>
+                    <Text green>{completed ? "completed" : bettingIsClosed ? isWaitingForAPlayer ? "waiting on player" : "playing" : "betting phase. Closes in"+((bettingClosesAt-(current/1000))).toFixed(0)+"secs"}</Text>
                     <DotIcon color={completed ? "blue" : bettingIsClosed ? "green" : "red"} />
                 </Flex>
             </Flex>
-            <ModalPlaceBet triggerElement={<Button disabled={bettingIsClosed}>Bet&nbsp;&nbsp; {bettingIsClosed && <LockClosedIcon/>}</Button>} gameId={id}/>
+            <ModalPlaceBet triggerElement={<Button disabled={!canBet}>Bet&nbsp;&nbsp; {!canBet && <LockClosedIcon/>}</Button>} gameId={id}/>
         </Flex>
     );
 }

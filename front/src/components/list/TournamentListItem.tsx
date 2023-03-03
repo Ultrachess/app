@@ -66,7 +66,7 @@ export default ({tournament, rank = 0, row=true}: {tournament: Tournament, rank?
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>Status</Text>
-                {isOver ? 
+                {!isOver ? 
                     <Text blue>Ongoing <DotIcon color="green"/></Text> : 
                     <Text green>Complete <DotIcon color="green"/></Text>
                 }

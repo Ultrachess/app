@@ -94,6 +94,9 @@ class Matchmaker:
                     timestamp=timestamp,
                 )
             )
+
+            logger.info("game created with id: " + str(id))
+            logger.info("is success: " + str(success))
             
             return {
                 "value": str(id),

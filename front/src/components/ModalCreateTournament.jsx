@@ -24,7 +24,7 @@ export default ({triggerElement}) => {
     const [amount, setAmount ] = useState(0)
     const [tourneyType, setTourneyType] = useState(tournamentTypes[0])
     const [participants, setParticipants] = useState([])
-    const [participantCount, setParticipantCount] = useState(400)
+    const [participantCount, setParticipantCount] = useState(2)
     const [currentSelectedParticipant, setCurrentSelectedParticipant] = useState(account ?? "")
     const [roundCount, setRoundCount] = useState(1000)
     const [amountOfWinners, setAmountOfWinners] = useState(1)
@@ -80,6 +80,24 @@ export default ({triggerElement}) => {
                     label="Tournament type"
                 />
             </Fieldset>
+
+            <Fieldset>
+                <Label>Participant count</Label>
+                {/* <RightSlot>
+                    You win: <AssetDisplay tokenAddress={token?.address} balance={portalBalance - amount} isL2={true}/> 
+                    <Text>→</Text> 
+                    You lose: <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
+                </RightSlot> */}
+            </Fieldset>
+            <Fieldset>
+              <Input id="amount" value={participantCount} defaultValue={0} onChange={(event)=>{
+                  //console.log("event.value", event.target.value)
+                 setParticipantCount(event.target.value)
+                 }}>
+                </Input>
+                <RightSlot onClick={()=>setParticipantCount(50)}>MAX</RightSlot>
+            </Fieldset>
+
             <Fieldset>
                 <Label>Participants</Label>
                 <Flex>

@@ -70,7 +70,7 @@ export default ({triggerElement}) => {
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value.toString())}} />
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>

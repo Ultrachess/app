@@ -376,16 +376,23 @@ export function useUserActiveGameIds(id: string): string[] {
     return gamesToReturn
 }
 
-export function useTournament(id): Tournament {
-    const tournaments = useAppSelector(state => state.game.tournaments)
-    if (!tournaments) return PLACE_HOLDER_TOURNAMENT
-    if (!tournaments[id]) return PLACE_HOLDER_TOURNAMENT
-    return tournaments[id]
+export function useTournament(id): Tournament | undefined {
+    const tournaments: Tournament[] = useAppSelector(state => state.game.tournaments)
+    console.log("tournaments", tournaments)
+    if (!tournaments) return undefined
+    //check if tournaments is an array
+    if (!Array.isArray(tournaments)) return undefined
+    if (tournaments.length == 0) return undefined
+    const tournament = tournaments.find((tournament) => {
+        return tournament.id.toLowerCase() == id.toLowerCase()
+    })
+    return tournament
 }
 
 export function useAllTournaments(): Tournament[] {
-    const tournaments: {[tournamentIds: string]: Tournament} = useAppSelector(state => state.game.tournaments)
+    const tournaments: Tournament[] = useAppSelector(state => state.game.tournaments)
     if (!tournaments) return []
+    console.log("tournaments", tournaments)
     return Object?.values(tournaments)
 }
 
@@ -612,7 +619,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                         "value": {
                             "gameId" : "${info.gameId}",
                             "tokenAddress" : "${info.tokenAddress}",
-                            "amount" : "${info.amount}",
+                            "amount" : ${info.amount},
                             "winningId" : "${info.winningId}"
                         }
                     }`)
@@ -644,9 +651,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "joinTourney", 
                         "value": {
-                            "tournament_id": ${info.tournamentId}
-                            "is_bot" : ${info.isBot ?? false},
-                            "bot_id" : "${info.botId ?? "blank"}"
+                            "tournament_id": "${info.tournamentId}",
+                            "participant_id" : "${info.participant_id ?? false}"
                         }
                     }`)
                     input = appendNumberToUInt8Array(id, input)

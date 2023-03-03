@@ -25,6 +25,8 @@ export default ({triggerElement}) => {
     const portalBalance = useTokenPortalBalance(token, account) 
     const balance = useTokenBalance(token, account)
 
+    console.log("bettingDuration", bettingDuration)
+
     const addAction = useActionCreator()
 
     const handleCreate = async () => {
@@ -37,7 +39,7 @@ export default ({triggerElement}) => {
             wagerAmount: ethers.utils.parseUnits(amount.toString()),
             bettingDuration,
       }
-      //console.log("tx", tx)
+      console.log("bettingDuration", tx.bettingDuration)
       const [approvalActionId, wait] = await addAction(tx)
       const roomId = await wait
       //console.log(roomId)
@@ -84,12 +86,18 @@ export default ({triggerElement}) => {
                 <Label>Betting duration (in seconds)</Label>
             </Fieldset>
             <Fieldset>
-              <Input id="bettingDuration" value={bettingDuration} defaultValue={0} onChange={(event)=>{ setBettingDuration(event.value)}}>
+              <Input id="bettingDuration" value={bettingDuration} defaultValue={0} onChange={(event)=>{ 
+                  console.log("bettingDuration", event.target.value)
+                setBettingDuration(event.target.value)
+                }}>
                 </Input>
                 <RightSlot onClick={()=>setBettingDuration(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={bettingDuration} max={100} onChangeFunction={([value])=>{ setBettingDuration(value)}} />
+                <SliderMain value={bettingDuration} max={100} onChangeFunction={([value])=>{ 
+                  console.log("bettingDuration", value)
+                  setBettingDuration(value)}
+                  } />
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>

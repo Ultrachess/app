@@ -16,6 +16,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { Slider } from "@radix-ui/react-slider";
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { Text } from "./ui/Text";
 
 
 export default ({triggerElement, gameId}) => {
@@ -47,9 +48,10 @@ export default ({triggerElement, gameId}) => {
         //dispatch(createGame(tokenAddress, wagerValue))
         const [action, wait] = await addAction({
             type: TransactionType.BET_INPUT,
-            tokenAddress: tokenAddress,
-            amount: ethers.utils.parseUnits(wagerValue),
+            tokenAddress: token?.address,
+            amount: ethers.utils.parseUnits(amount.toString()),
             winningId,
+            gameId,
         })
         await wait
     }
@@ -79,7 +81,7 @@ export default ({triggerElement, gameId}) => {
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value.toString())}} />
             </Fieldset>
 
             <Fieldset>
@@ -98,10 +100,10 @@ export default ({triggerElement, gameId}) => {
                         <SelectLabel htmlFor="r2">{game?.players[1] ? <Address value={game?.players[1]}/> : "Player 2"}</SelectLabel>
                     </Flex>
                     <Flex css={{ alignItems: 'center' }}>
-                        <RadioGroupItem value="DRAW" id="r3">
+                        <RadioGroupItem value={"DRAW"} id="r3">
                         <RadioGroupIndicator />
                         </RadioGroupItem>
-                        <SelectLabel htmlFor="r3">Draw</SelectLabel>
+                        <SelectLabel htmlFor="r3"><Text>Draw</Text></SelectLabel>
                     </Flex>
                 </RadioGroupRoot>
             </Fieldset>

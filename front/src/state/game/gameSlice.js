@@ -42,7 +42,7 @@ export const gameSlice = createSlice({
         bots: {},
         elo: {},
         accounts: {},
-        tournaments: {},
+        tournaments: [],
         blockNumber: 0,
         lastProcessedBlock: 0,
         lastStepTimestamp: 0,

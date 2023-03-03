@@ -39,16 +39,12 @@ class TournamentManager:
     def join(self, sender, options):
         if "tournament_id" not in options or "participant_id" not in options:
             return False
-        is_bot = options["is_bot"] if "is_bot" in options else False
-        player_to_add = options["bot_id"] if "bot_id" in options and options["bot_id"] != "blank" else sender
         if "tournament_id" not in options:
             return False
-        is_bot = options["is_bot"]
         tournament_id = options["tournament_id"]
+        participant_id = options["participant_id"]
         
-        participant = Participant()
-        participant.set(player_to_add)
-        self.tournaments[tournament_id] = participant
+        self.tournaments[tournament_id].join(participant_id)
         return True
     
     def run(self):
@@ -92,8 +88,12 @@ class Tournament:
         logger.info("knockout Type: " + TournamentTypes.Knockout)
         if self.type == TournamentTypes.RoundRobin:
             self.__gen_round_robin_matches()
+            self.__current_round += 1
         elif self.type == TournamentTypes.Knockout:
             self.__gen_knockout_matches()
+            self.__current_round += 1
+            #set round count based on amount of total participants
+            self.round_count = len(self.participants) - 1
     
     def __gen_round_robin_matches(self):
         self.__matches = []
@@ -115,9 +115,20 @@ class Tournament:
         else:
             new_match = []
             i = 0
-            while i < len(self.participants):
+            
+            if len(self.__matches) == 1:
+                self.is_tourney_over = True
+                return
+            while i < len(self.__matches):
+                logger.info("here are the matches")
+                logger.info(self.__matches)
+                logger.info("i is " + str(i))
+                logger.info("participant count is " + str(len(self.participants)))
                 winner_left = self.__matches[i].get_winner()
                 winner_right = self.__matches[i+1].get_winner()
+                logger.info("winner left is " + str(winner_left))
+                logger.info("winner right is " + str(winner_right))
+                
                 new_match.append(Match(self.owner, winner_right, winner_left))
                 i += 2
             self.__rounds.append(self.__matches)
@@ -170,16 +181,39 @@ class Tournament:
             self.is_tourney_over = self.is_last_round()
             if not self.is_tourney_over:
                 self.__gen_matches()
+            else:
+                logger.info("tournament is over")
+                logger.info("tournament winners are: ")
+                for match in self.__matches:
+                    logger.info(match.get_winner())
+
         
         return True
 
     def getStringState(self):
         roundsFormatted = []
+        matchesFormatted = []
+        for match in self.__matches:
+            # logger.info("match state: ")
+            # logger.info(match)
+            matchesFormatted.append(match.getStringState())
+        roundsFormatted.append(matchesFormatted)
         for matches in self.__rounds:
             matchesFormatted = []
             for match in matches:
+                # logger.info("match state: ")
+                # logger.info(match)
                 matchesFormatted.append(match.getStringState())
             roundsFormatted.append(matchesFormatted)
+        
+        # logger.info("here are all rounds")
+        # logger.info(self.__rounds)
+        # logger.info("here are all matches")
+        # logger.info(self.__matches)
+
+        # logger.info("here are all rounds formatted")
+        # logger.info(roundsFormatted)
+
         
         participantsFormatted = []
         for participant in self.participants:

@@ -25,6 +25,9 @@ import GameWagersView from "./GameWagersView";
 import Button from "./ui/Button";
 import { truncateAddress } from "../ether/utils";
 import { Text } from "./ui/Text";
+import ModalPlaceBet from "./ModalPlaceBet";
+import { useWeb3React } from "@web3-react/core";
+
 
 
 
@@ -54,11 +57,13 @@ const placeHolderGameWagers = {
 
 export default () => {
   let { gameId } = useParams()
+  const current = useTime(1000)
   //const dispatch = useDispatch()
   const addAction = useActionCreator()
   const now = useTime(1000)
   const games = useSelector(state => state.game.games);
   const accounts = useSelector(state => state.auth.accounts);
+  const {account} = useWeb3React()
   const inputState = useSelector(state => state.game.currentInputState)
   const [statustText, setStatusText] = useState("")
   const isUpToDate = useSelector(state => state.game.cache.isUpToDate)
@@ -104,6 +109,18 @@ export default () => {
   const isWaitingWaitingForPlayerToJoin = useMemo(() => {
     return topAddress.includes("Waiting") || bottomAddress.includes("Waiting")
   }, [topAddress, bottomAddress])
+
+  const bettingOpenTime = game?.wagering?.openTime ?? -1
+    const bettingClosesAt = bettingOpenTime + game?.bettingDuration
+    const isWaitingForAPlayer = topAddress === undefined || bottomAddress===undefined
+    const isInGame = (topAddress?.toLowerCase() ?? "") === account?.toLowerCase() || (topAddress?.toLowerCase() ?? "") === account?.toLowerCase()
+    
+    const bettingHasStarted = bettingOpenTime > 0
+    const bettingHasStartedBeforeCurrent = bettingOpenTime < current
+    const bettingIsOpen = bettingHasStarted && bettingHasStartedBeforeCurrent && bettingClosesAt > (current/1000)
+    const bettingIsClosed = !bettingIsOpen
+    const canBet = bettingIsOpen && !isWaitingForAPlayer
+
 
   //console.log("side1" + gameSide)
   //console.log("topAddress1" + topAddress)
@@ -482,6 +499,13 @@ export default () => {
           </Flex>
           <Flex css={{ flexDirection:'column', gap:10}}>
             <Flex css={{width:"100%", flexDirection:'row', alignItems:'center', justifyContent:"right"}}>
+            {bettingIsClosed ? <Text faded>Wagering Closed</Text> : <Text faded>Wagering closes on {bettingClosesAt} /></Text>}
+                    {canBet &&<ModalPlaceBet
+                        gameId={gameId}
+                        triggerElement={
+                            <Button disabled={closed}>Place Bet</Button>
+                        } 
+                    />}
               <Button onClick={tweetGame}>Share</Button>
             </Flex>
             <Flex css={{justifyContent:"left", paddingBottom:"20px"}}>
@@ -493,6 +517,8 @@ export default () => {
                 winningId={winningId}
                 wagers={game.wagering == {} || game.wagering == undefined ? placeHolderGameWagers: game.wagering} 
                 now = {now}
+                p1={topAddress}
+                p2={bottomAddress}
               />
             }
             <GameMovesView 

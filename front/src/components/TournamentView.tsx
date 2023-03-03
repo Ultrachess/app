@@ -35,6 +35,8 @@ export default () => {
     let { tournamentId } = useParams()
     const tournament = useTournament(tournamentId)
 
+    console.log("tournament: ", tournament)
+
     const rounds = useMemo(() => {
         if (!tournament) return []
         const rounds = tournament.matches

@@ -14,9 +14,10 @@ export default ({match}: {match: TournamentMatch}) => {
         right,
         leftScore,
         rightScore,
+        
     } = match
 
-    const completed = matchCount === currentMatch
+    const completed = (leftScore + rightScore) >= matchCount
 
     return (
         <Flex css={{gap: 5, justifyContent:'space-between'}}>
