@@ -17,17 +17,21 @@ import ModalCreateTournament from "./ModalCreateTournament";
 import TournamentList from "./list/TournamentList";
 
 export default () => {
-  const tournaments = useAllTournaments()
+  const tournaments = useAllTournaments();
 
   return (
     <div className="body">
       <div className="header">
         <div>
-          <Text bold black size={"max"} css={{ textAlign: "center", marginBottom: "10px" }}>
+          <Text
+            bold
+            black
+            size={"max"}
+            css={{ textAlign: "center", marginBottom: "10px" }}
+          >
             Tournaments
           </Text>
         </div>
-
       </div>
       <div className="content">
         <div className="contentHolder">
@@ -35,46 +39,49 @@ export default () => {
             <div className="contentHeader">
               <Label>All tournaments</Label>
               <RightSlot>
-                <ModalCreateTournament triggerElement={
-                  <Button>
-                    <Text>Create Tournament <StitchesLogoIcon/></Text>
-                  </Button>
-                } />
+                <ModalCreateTournament
+                  triggerElement={
+                    <Button>
+                      <Text>
+                        Create Tournament <StitchesLogoIcon />
+                      </Text>
+                    </Button>
+                  }
+                />
               </RightSlot>
             </div>
             <Separator />
-            {tournaments.length > 0 &&
-            <TournamentList 
-                tournaments={tournaments}
-            />}
+            {tournaments.length > 0 && (
+              <TournamentList tournaments={tournaments} />
+            )}
           </div>
         </div>
+      </div>
     </div>
-  </div>
   );
-}
+};
 
-const Label = styled('label', {
+const Label = styled("label", {
   fontSize: 23,
   lineHeight: 1,
   fontWeight: 500,
   marginBottom: 20,
   color: violet.violet12,
-  display: 'block',
+  display: "block",
 });
 
-const LeftSlot = styled('div', {
-    marginRight: 'auto',
-    paddingRight: 0,
-    display: 'flex',
-    color: violet.violet11,
-    '[data-highlighted] > &': { color: 'white' },
-    '[data-disabled] &': { color: violet.violet4 },
-  });
+const LeftSlot = styled("div", {
+  marginRight: "auto",
+  paddingRight: 0,
+  display: "flex",
+  color: violet.violet11,
+  "[data-highlighted] > &": { color: "white" },
+  "[data-disabled] &": { color: violet.violet4 },
+});
 
-  const RightSlot = styled('div', {
-    marginLeft: 'auto',
-    paddingLeft: 0,
-    display: 'flex',
-    '[data-highlighted] > &': { color: 'white' },
-  });
+const RightSlot = styled("div", {
+  marginLeft: "auto",
+  paddingLeft: 0,
+  display: "flex",
+  "[data-highlighted] > &": { color: "white" },
+});

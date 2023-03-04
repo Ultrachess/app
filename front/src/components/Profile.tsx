@@ -1,104 +1,126 @@
+import { Button, Card, Col, Divider, Row } from "@nextui-org/react";
+import { useWeb3React } from "@web3-react/core";
 import * as React from "react";
-import {Divider, Card, Col, Row, Button } from "@nextui-org/react";
 import { useMatch, useParams } from "react-router-dom";
-import BotListView from "./list/BotList";
-import { useAppSelector } from "../state/hooks";
-import GameList from "./list/GameList";
-import ModalManageBot from "./ModalManageBot";
-import Address from "./Address";
-import AssetDisplay from "./AssetDisplay";
+
+import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { useProfile } from "../state/game/hooks";
 import { UserProfile } from "../state/game/types";
-import List from "./ui/List";
-import { useWeb3React } from "@web3-react/core";
-import Flex from "./ui/Flex";
-import {Text} from "./ui/Text";
-import Date from "./ui/Date";
-import OffersList from "./OffersList";
+import { useAppSelector } from "../state/hooks";
+import Address from "./Address";
+import AssetDisplay from "./AssetDisplay";
+import BotListView from "./list/BotList";
 import ChallengesList from "./list/ChallengesList";
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import GameList from "./list/GameList";
 import ModalCreateChallenge from "./ModalCreateChallenge";
-
+import ModalManageBot from "./ModalManageBot";
+import OffersList from "./OffersList";
+import Date from "./ui/Date";
+import Flex from "./ui/Flex";
+import List from "./ui/List";
+import { Text } from "./ui/Text";
 
 export default () => {
-    let { userId } = useParams()
-    //console.log(userId)
-    const { account, chainId } = useWeb3React()
-    const {
-        id,
-        name,
-        avatar,
-        elo,
-        games,
-        nationality,
-        challenges,
-        bots,
-        balances,
-    }: any = useProfile(userId)
+  const { userId } = useParams();
+  //console.log(userId)
+  const { account, chainId } = useWeb3React();
+  const {
+    id,
+    name,
+    avatar,
+    elo,
+    games,
+    nationality,
+    challenges,
+    bots,
+    balances,
+  }: any = useProfile(userId);
 
-    const activeGames = games ? games.filter((game) => game.isEnd === false): []
-    const pastGames = games ? games.filter((game) => game.isEnd === true) : []
+  const activeGames = games ? games.filter((game) => game.isEnd === false) : [];
+  const pastGames = games ? games.filter((game) => game.isEnd === true) : [];
 
-    const isYou = account?.toLowerCase() === id?.toLowerCase() || account?.toLowerCase() === name?.toLowerCase()
-    
-    const balance = balances.length > 0 ? balances[0].amount : 0
-    const tokenAddress = balances.length > 0 ? balances[0].token : USDC_ADDRESS_ON_NETWORKS[chainId] 
-    return (
-        <div className="body">
-            <Flex css={{width:"100%", padding:"0 20%", gap: 50, justifyContent: 'space-between' }}>
-                <Flex css={{ gap: 5, width:"20%", flexDirection:'column' }}>
-                    <Address value={id} isImageBig={true} />
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        {isYou && <Text bold>Your profile</Text>}
-                    </Flex>
-                    <Flex css={{ gap: 2,  flexDirection:'column'}}>
-                        <Text faded>Elo</Text>
-                        <Text>{elo}</Text>
-                    </Flex>
-                    <Flex css={{ gap: 2 , flexDirection:'column'}}>
-                        <Text faded>From</Text>
-                        <Text>🇦🇱</Text>
-                    </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>Balance</Text>
-                        <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
-                    </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>Total bots owned </Text>
-                        <Text>{bots.length}</Text>
-                    </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>Total games played</Text>
-                        <Text>{games.length}</Text>
-                    </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>Current amount of open challenges</Text>
-                        <Text>{challenges.length}</Text>
-                    </Flex>
-                    <Flex css={{ gap: 1, flexDirection:'row' }}>
-                        {!isYou && <ModalCreateChallenge playerId={id} triggerElement={<Button>Challenge</Button>} />}
-                    </Flex>
+  const isYou =
+    account?.toLowerCase() === id?.toLowerCase() ||
+    account?.toLowerCase() === name?.toLowerCase();
 
-                </Flex>
-                <Flex css={{ gap: 20, width:"75%", flexDirection:'column' }}>
-                    <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text bold size={"4"}>Active games</Text>
-                        <GameList games={activeGames} />
-                    </Flex>
-                    <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text bold size={"4"}>Past games</Text>
-                        <GameList games={pastGames} />
-                    </Flex>
-                    <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text bold size={"4"}>Open Challenges</Text>
-                        <ChallengesList account={account} challenges={challenges} />
-                    </Flex>
-                    <Flex css={{ gap: 1, flexDirection:'column' }}>
-                        <Text bold size={"4"}>Owned bots</Text>
-                        <BotListView bots={bots} />
-                    </Flex>
-                </Flex>
-            </Flex>
-        </div>
-    );
-}
+  const balance = balances.length > 0 ? balances[0].amount : 0;
+  const tokenAddress =
+    balances.length > 0 ? balances[0].token : USDC_ADDRESS_ON_NETWORKS[chainId];
+  return (
+    <div className="body">
+      <Flex
+        css={{
+          width: "100%",
+          padding: "0 20%",
+          gap: 50,
+          justifyContent: "space-between",
+        }}
+      >
+        <Flex css={{ gap: 5, width: "20%", flexDirection: "column" }}>
+          <Address value={id} isImageBig={true} />
+          <Flex css={{ gap: 2, flexDirection: "column" }}>
+            {isYou && <Text bold>Your profile</Text>}
+          </Flex>
+          <Flex css={{ gap: 2, flexDirection: "column" }}>
+            <Text faded>Elo</Text>
+            <Text>{elo}</Text>
+          </Flex>
+          <Flex css={{ gap: 2, flexDirection: "column" }}>
+            <Text faded>From</Text>
+            <Text>🇦🇱</Text>
+          </Flex>
+          <Flex css={{ gap: 2, flexDirection: "column" }}>
+            <Text faded>Balance</Text>
+            <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
+          </Flex>
+          <Flex css={{ gap: 2, flexDirection: "column" }}>
+            <Text faded>Total bots owned </Text>
+            <Text>{bots.length}</Text>
+          </Flex>
+          <Flex css={{ gap: 2, flexDirection: "column" }}>
+            <Text faded>Total games played</Text>
+            <Text>{games.length}</Text>
+          </Flex>
+          <Flex css={{ gap: 2, flexDirection: "column" }}>
+            <Text faded>Current amount of open challenges</Text>
+            <Text>{challenges.length}</Text>
+          </Flex>
+          <Flex css={{ gap: 1, flexDirection: "row" }}>
+            {!isYou && (
+              <ModalCreateChallenge
+                playerId={id}
+                triggerElement={<Button>Challenge</Button>}
+              />
+            )}
+          </Flex>
+        </Flex>
+        <Flex css={{ gap: 20, width: "75%", flexDirection: "column" }}>
+          <Flex css={{ gap: 1, flexDirection: "column" }}>
+            <Text bold size={"4"}>
+              Active games
+            </Text>
+            <GameList games={activeGames} />
+          </Flex>
+          <Flex css={{ gap: 1, flexDirection: "column" }}>
+            <Text bold size={"4"}>
+              Past games
+            </Text>
+            <GameList games={pastGames} />
+          </Flex>
+          <Flex css={{ gap: 1, flexDirection: "column" }}>
+            <Text bold size={"4"}>
+              Open Challenges
+            </Text>
+            <ChallengesList account={account} challenges={challenges} />
+          </Flex>
+          <Flex css={{ gap: 1, flexDirection: "column" }}>
+            <Text bold size={"4"}>
+              Owned bots
+            </Text>
+            <BotListView bots={bots} />
+          </Flex>
+        </Flex>
+      </Flex>
+    </div>
+  );
+};

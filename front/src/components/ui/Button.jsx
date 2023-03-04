@@ -1,57 +1,55 @@
-import React from 'react';
-import { styled } from '@stitches/react';
-import { violet, mauve, red, blackA, whiteA } from '@radix-ui/colors';
+import React from "react";
+import { styled } from "@stitches/react";
+import { violet, mauve, red, blackA, whiteA } from "@radix-ui/colors";
 
+const Button = styled("button", {
+  all: "unset",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  borderRadius: 4,
+  padding: "0 15px",
+  fontSize: 15,
+  lineHeight: 1,
+  fontWeight: 300,
+  height: 35,
 
-const Button = styled('button', {
-    all: 'unset',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 4,
-    padding: '0 15px',
-    fontSize: 15,
-    lineHeight: 1,
-    fontWeight: 300,
-    height: 35,
-  
-    variants: {
-      variant: {
-        violet: {
-          backgroundColor: 'white',
-          color: violet.violet11,
-          boxShadow: `0 2px 10px ${blackA.blackA7}`,
-          '&:hover': { backgroundColor: mauve.mauve3 },
-          //'&:focus': { boxShadow: `0 0 0 2px black` },
-        },
-        red: {
-          backgroundColor: red.red4,
-          color: red.red11,
-          '&:hover': { backgroundColor: red.red5 },
-          '&:focus': { boxShadow: `0 0 0 2px ${red.red7}` },
-        },
-        mauve: {
-          backgroundColor: mauve.mauve4,
-          color: mauve.mauve11,
-          '&:hover': { backgroundColor: mauve.mauve5 },
-          '&:focus': { boxShadow: `0 0 0 2px ${mauve.mauve7}` },
-        },
-        outline: {
-            backgroundColor: 'white',
-            //color: 'rgb(0, 0, 0)',
-            color: violet.violet11,
-            border: `1px solid ${violet.violet11}`,
-            '&:hover': { backgroundColor: mauve.mauve3 },
-            '&:focus': { backgroundColor: whiteA.whiteA8 },
-            borderRadius: 1,
-
-        },
+  variants: {
+    variant: {
+      violet: {
+        backgroundColor: "white",
+        color: violet.violet11,
+        boxShadow: `0 2px 10px ${blackA.blackA7}`,
+        "&:hover": { backgroundColor: mauve.mauve3 },
+        //'&:focus': { boxShadow: `0 0 0 2px black` },
+      },
+      red: {
+        backgroundColor: red.red4,
+        color: red.red11,
+        "&:hover": { backgroundColor: red.red5 },
+        "&:focus": { boxShadow: `0 0 0 2px ${red.red7}` },
+      },
+      mauve: {
+        backgroundColor: mauve.mauve4,
+        color: mauve.mauve11,
+        "&:hover": { backgroundColor: mauve.mauve5 },
+        "&:focus": { boxShadow: `0 0 0 2px ${mauve.mauve7}` },
+      },
+      outline: {
+        backgroundColor: "white",
+        //color: 'rgb(0, 0, 0)',
+        color: violet.violet11,
+        border: `1px solid ${violet.violet11}`,
+        "&:hover": { backgroundColor: mauve.mauve3 },
+        "&:focus": { backgroundColor: whiteA.whiteA8 },
+        borderRadius: 1,
       },
     },
-  
-    defaultVariants: {
-      variant: 'violet',
-    },
-  });
+  },
+
+  defaultVariants: {
+    variant: "violet",
+  },
+});
 
 export default Button;
