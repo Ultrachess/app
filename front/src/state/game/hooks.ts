@@ -808,7 +808,7 @@ export function useActionCreator(): (
                         "value": {
                             "botId" : "${info.botId}",
                             "price" : ${info.price},
-                            "token": "${info.token}"
+                            "token": "${info.tokenAddress}"
                         }
                     }`);
             input = appendNumberToUInt8Array(id, input);

@@ -53,7 +53,7 @@ export interface CreateBotOfferTransactionsInfo extends BaseTransactionInfo {
   type: TransactionType.CREATE_OFFER;
   botId: string;
   price: number;
-  token: string;
+  tokenAddress: string;
 }
 
 export interface AcceptBotOfferTransactionsInfo extends BaseTransactionInfo {

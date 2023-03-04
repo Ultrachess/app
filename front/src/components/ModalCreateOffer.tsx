@@ -35,7 +35,7 @@ export default ({ triggerElement, botId }) => {
     const [approvalActionId, wait] = await addAction({
       type: TransactionType.CREATE_OFFER,
       botId: botId,
-      token: token.address,
+      tokenAddress: token.address,
       price: amount,
     });
     await wait;
