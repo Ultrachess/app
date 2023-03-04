@@ -280,7 +280,7 @@ export function useAllUsers(): UserProfile[] {
         return bot.owner.toLowerCase() == val.toLowerCase();
       }),
       challenges: Object?.values(challenges)?.filter((challenge) => {
-        return challenge.recipient.toLowerCase() == val.id.toLowerCase();
+        return challenge.recipient.toLowerCase() == val.toLowerCase();
       }),
     };
   });
