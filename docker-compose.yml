@@ -187,8 +187,6 @@ services:
         "--templateHashFile",
         "/opt/cartesi/share/dapp-bin/hash",
         "--outputFile",
-        "/deployments/localhost/dapp.address",
-        "--jsonFile",
         "/deployments/localhost/dapp.json",
       ]
     volumes:
