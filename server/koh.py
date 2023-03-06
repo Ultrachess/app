@@ -76,10 +76,13 @@ class KingOfTheHillManager():
         #dictionary of all current challenges to king
         self.battles: dict[str, BattleForThrone]
 
+        self.isFirstRules = True
+
     def _setKing(self, id):
         self.king = id
+        self.isFirstRules = True
 
-    def challenger(self, sender, timestamp, options) -> bool:
+    def challenge(self, sender, timestamp, options) -> bool:
         #check if all options are defined
         if "challenger" not in options:
             return False
@@ -125,4 +128,29 @@ class KingOfTheHillManager():
                 challenger.lower()
             )
         )
+    
+    def set_rules(self, sender, options) -> bool:
+        #check if all options are defined
+        token = options["token"] if "token" in options else None
+        price = options["price"] if "price" in options else None
+
+        #make sure that the sender is the current king 
+        if not equals(sender, self.king):
+            return False
+        
+        #make sure that this is the first time setting the ruleset
+        if not self.isFirstRules:
+            return False
+        
+        #set new rules
+        if token:
+            self.token = token
+        if price:
+            self. price = price
+
+        self.isFirstRules = False
+
+
+    def run(self):
+        return True
 
