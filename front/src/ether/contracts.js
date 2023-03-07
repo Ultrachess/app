@@ -16,8 +16,8 @@ import * as CartesiTokenOptimismMainnet from "@cartesi/token/deployments/optimis
 import * as CartesiTokenPolygonMainnet from "@cartesi/token/deployments/polygon_mainnet/CartesiToken.json";
 import * as CartesiTokenPolygonMumbai from "@cartesi/token/deployments/polygon_mumbai/CartesiToken.json";
 
+import { contracts as ultrachessLocalhost } from "../../../export/localhost-ultrachess.json";
 import { contracts as contractsLocalhost } from "../abis/localhost.json";
-//import { contracts as ultrachessLocalhost } from "../../../export/localhost-ultrachess.json";
 
 export const CONTRACTS = {
   arbitrum_goerli: {
@@ -34,7 +34,7 @@ export const CONTRACTS = {
     InputFacet: InputFacetGoerli,
     SimpleFaucet: SimpleFaucetGoerli,
   },
-  localhost: Object.assign({}, contractsLocalhost),
+  localhost: Object.assign({}, contractsLocalhost, ultrachessLocalhost),
   mainnet: {
     CartesiToken: CartesiTokenMainnet,
   },

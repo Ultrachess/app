@@ -17,9 +17,9 @@ services:
     healthcheck:
       test:
         ["CMD", "test", "-f", "/opt/cartesi/share/blockchain/localhost.json"]
-      interval: 30s
+      interval: 10s
       timeout: 30s
-      retries: 5
+      retries: 15
     volumes:
       - ./deployments:/app/rollups/deployments
       - ./export:/opt/cartesi/share/blockchain
@@ -72,8 +72,6 @@ services:
     depends_on:
       hardhat:
         condition: service_healthy
-      deployer:
-        condition: service_completed_successfully
     command:
       [
         "deploy",
@@ -85,6 +83,14 @@ services:
     volumes:
       - ./deployments:/app/rollups/deployments
       - ./export:/opt/cartesi/share/blockchain
+
+  finished:
+    image: hello-world:latest # Close to scratch image
+    depends_on:
+        deployer:
+            condition: service_completed_successfully
+        ultrachess_deployer:
+            condition: service_completed_successfully
 
 volumes:
   machine: {}
