@@ -141,6 +141,15 @@ export interface Balance {
   amount: number;
 }
 
+export interface LpNftProfile {
+  address: string;
+  chainId: number;
+  tokenId: string;
+  name: string;
+  description: string;
+  imageUri: string;
+}
+
 export enum ProfileType {
   HUMAN,
   BOT,

@@ -6,11 +6,17 @@
  * See the file LICENSE for more information.
  */
 
+import { Spacer } from "@nextui-org/react";
 import BotListView from "./list/BotList";
 import { useAllBots } from "../state/game/hooks";
+import { useLpNfts } from "../state/game/hooks";
 import { Text } from "./ui/Text";
 import { styled } from "@stitches/react";
 import ModalCreateBot from "./modals/ModalCreateBot";
+import ModalMintStables from "./modals/ModalMintStables";
+import ModalMintLpNft from "./modals/ModalMintLpNft";
+import ModalDepositLpNft from "./modals/ModalDepositLpNft";
+import LpNftListView from "./list/LpNftList";
 import Separator from "./ui/Separator";
 import { StitchesLogoIcon } from "@radix-ui/react-icons";
 import { violet } from "@radix-ui/colors";
@@ -24,6 +30,7 @@ import { Spacer } from "@nextui-org/react";
 export default () => {
   const bots = useAllBots();
   const dispatch = useDispatch();
+  const lpNfts = useLpNfts();
 
   return (
     <div class="min-h-full">
@@ -75,6 +82,39 @@ export default () => {
                 Deploy bot
               </button>
             </div>
+            <Separator />
+            <BotListView bots={bots} />
+            <Separator />
+            <div className="contentHeader">
+              <Label>LP NFTs</Label>
+              <RightSlot>
+                <ModalMintStables
+                  triggerElement={
+                    <Button shadow>
+                      <Text>Mint stables</Text>
+                    </Button>
+                  }
+                />
+                <Spacer x={1} />
+                <ModalMintLpNft
+                  triggerElement={
+                    <Button shadow>
+                      <Text>Mint LP NFT</Text>
+                    </Button>
+                  }
+                />
+                <Spacer x={1} />
+                <ModalDepositLpNft
+                  triggerElement={
+                    <Button shadow>
+                      <Text>Deposit LP NFT</Text>
+                    </Button>
+                  }
+                />
+              </RightSlot>
+            </div>
+            <Separator />
+            <LpNftListView lpNfts={lpNfts} />
           </div>
         </div>
       </header>
