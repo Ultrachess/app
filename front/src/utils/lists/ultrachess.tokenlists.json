@@ -1,26 +1,18 @@
 [
   {
     "name": "Cartesi",
-    "address": "0x9d2133302B0beB040d2E86D1fbC78Da1Dea9Fa3e",
-    "symbol": "CTSI",
-    "decimals": 18,
-    "chainId": 5,
-    "logoUri": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
-  },
-  {
-    "name": "Cartesi",
-    "address": "0xf9a0fc97c0be052698e33689bbd3a9869aba01a4",
-    "symbol": "CTSI",
-    "decimals": 18,
-    "chainId": 80001,
-    "logoUri": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
-  },
-  {
-    "name": "Cartesi",
     "address": "0x491604c0fdf08347dd1fa4ee062a822a5dd06b5d",
     "symbol": "CTSI",
     "decimals": 18,
     "chainId": 1,
+    "logoUri": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
+  },
+  {
+    "name": "Cartesi",
+    "address": "0x9d2133302B0beB040d2E86D1fbC78Da1Dea9Fa3e",
+    "symbol": "CTSI",
+    "decimals": 18,
+    "chainId": 5,
     "logoUri": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
   },
   {
@@ -32,20 +24,12 @@
     "logoUri": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
   },
   {
-    "name": "USDC",
-    "address": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
-    "symbol": "USDC",
-    "decimals": 18,
-    "chainId": 5,
-    "logoUri": "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389"
-  },
-  {
-    "name": "USDC",
-    "address": "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b",
-    "symbol": "USDC",
+    "name": "Cartesi",
+    "address": "0xf9a0fc97c0be052698e33689bbd3a9869aba01a4",
+    "symbol": "CTSI",
     "decimals": 18,
     "chainId": 80001,
-    "logoUri": "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389"
+    "logoUri": "https://assets.coingecko.com/coins/images/11038/thumb/cartesi.png?1592288021"
   },
   {
     "name": "USDC",
@@ -57,10 +41,26 @@
   },
   {
     "name": "USDC",
+    "address": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+    "symbol": "USDC",
+    "decimals": 18,
+    "chainId": 5,
+    "logoUri": "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389"
+  },
+  {
+    "name": "USDC",
     "address": "0x7f8c8f5f1eefecb2bcbda3c2e183df9945e00e9d",
     "symbol": "USDC",
     "decimals": 18,
     "chainId": 31337,
+    "logoUri": "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389"
+  },
+  {
+    "name": "USDC",
+    "address": "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b",
+    "symbol": "USDC",
+    "decimals": 18,
+    "chainId": 80001,
     "logoUri": "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png?1547042389"
   }
 ]
