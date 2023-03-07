@@ -6,30 +6,32 @@
 
 // //This component takes in an array of Tournament objects and renders them within a list
 
-
-import Flex from "../ui/Flex";
-import DateDisplay from "../ui/Date";
-import AssetDisplay from "../AssetDisplay";
+import { DotIcon } from "@radix-ui/react-icons";
 import { useWeb3React } from "@web3-react/core";
-import Address from "../Address";
-import { Text } from "../ui/Text";
-import { DotIcon } from '@radix-ui/react-icons';
+
 import {
-    TournamentType,
-    Tournament,
-    TournamentMatch,
-    TournamentRound
+  Tournament,
+  TournamentMatch,
+  TournamentRound,
+  TournamentType,
 } from "../../state/game/types";
+import Address from "../Address";
+import AssetDisplay from "../AssetDisplay";
+import DateDisplay from "../ui/Date";
+import Flex from "../ui/Flex";
 import List from "../ui/List";
+import { Text } from "../ui/Text";
 import TournamentListItem from "./TournamentListItem";
 
 export default ({ tournaments }: { tournaments: Tournament[] }) => {
-    const tournamentItems = tournaments.length > 0 ?
-        tournaments.map((tournament) => 
-            <TournamentListItem tournament={tournament} />):
-        <Text>There are no tournaments</Text>
+  const tournamentItems =
+    tournaments.length > 0 ? (
+      tournaments.map((tournament) => (
+        <TournamentListItem tournament={tournament} />
+      ))
+    ) : (
+      <Text>There are no tournaments</Text>
+    );
 
-    return <List items={tournamentItems} />
-
-}
-
+  return <List items={tournamentItems} />;
+};

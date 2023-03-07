@@ -1,4 +1,4 @@
-import { CONTRACTS } from '../ether/contracts';
+import { CONTRACTS } from "../ether/contracts";
 
 export const truncateAddress = (address) => {
   if (!address) return "No Account";
@@ -8,45 +8,45 @@ export const truncateAddress = (address) => {
   if (!match) return address;
   return `${match[1]}..${match[2]}`;
 };
-  
+
 export const toHex = (num) => {
   const val = Number(num);
   return "0x" + val.toString(16);
 };
-  
+
 export function padTo2Digits(num) {
-  return num.toString().padStart(2, '0');
+  return num.toString().padStart(2, "0");
 }
 
 export function formatDate(date) {
   return (
-      [
+    [
       padTo2Digits(date.getMonth() + 1),
       padTo2Digits(date.getDate()),
       date.getFullYear(),
-      ].join('/') +
-      ' ' +
-      [
+    ].join("/") +
+    " " +
+    [
       padTo2Digits(date.getHours()),
       padTo2Digits(date.getMinutes()),
       padTo2Digits(date.getSeconds()),
-      ].join(':')
+    ].join(":")
   );
 }
 
 export function getTokenNameFromAddress(address) {
-  const lowerCaseAddress = address.toLowerCase()
-  var name = lowerCaseAddress
+  const lowerCaseAddress = address.toLowerCase();
+  var name = lowerCaseAddress;
   switch (lowerCaseAddress) {
     case CONTRACTS.localhost.CartesiToken.address.toLowerCase():
-      name = "CTSI"
+      name = "CTSI";
       break;
     case "0x326C977E6efc84E512bB9C30f76E30c160eD06FB".toLowerCase():
-      name = "LINK"
+      name = "LINK";
       break;
     default:
-      name = truncateAddress(lowerCaseAddress)
+      name = truncateAddress(lowerCaseAddress);
       break;
   }
-  return name
+  return name;
 }

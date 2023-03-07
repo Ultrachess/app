@@ -1,11 +1,13 @@
-import deps
+import logging
 import random
 import string
+
+import deps
 import notification
-import logging
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
+
 
 def CreateBotOffer(sender, offerId, timestamp, botId, price, token, owner):
     return {
@@ -17,6 +19,7 @@ def CreateBotOffer(sender, offerId, timestamp, botId, price, token, owner):
         "token": token,
         "owner": owner,
     }
+
 
 class BotMarketPlaceManager:
     def __init__(self):
@@ -31,23 +34,25 @@ class BotMarketPlaceManager:
         token = options["token"]
         owner = deps.botFactory.getOwner(botId)
 
-        #make sure not sending offer to your own bot
+        # make sure not sending offer to your own bot
         if sender.lower() == owner.lower():
             logger.info("failed to create offer")
             logger.info("sender " + sender)
-            logger.info("owner "+ owner)
+            logger.info("owner " + owner)
             return False
-        #make sure is botId valid and user has funds
-        #make sure owner is valid
+        # make sure is botId valid and user has funds
+        # make sure owner is valid
         hasFunds = deps.accountManager.getBalance(sender, token) >= price
         if "0x" in botId or not hasFunds or owner == None:
             logger.info("failed to create offer")
             logger.info("hasFunds " + hasFunds)
-            logger.info("owner "+ owner)
+            logger.info("owner " + owner)
             return False
-        
-        offerId = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
-        self.offers[offerId] = CreateBotOffer(sender, offerId, timestamp, botId, price, token, owner)
+
+        offerId = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        self.offers[offerId] = CreateBotOffer(
+            sender, offerId, timestamp, botId, price, token, owner
+        )
         notification.send_notification(
             notification.BotOfferCreatedNotification(
                 timestamp=timestamp,
@@ -55,18 +60,17 @@ class BotMarketPlaceManager:
                 sender=sender,
                 price=price,
                 token=token,
-                owner = owner,
+                owner=owner,
                 bot_id=botId,
-                type=notification.NotificationType.BOT_OFFER_CREATED
+                type=notification.NotificationType.BOT_OFFER_CREATED,
             )
         )
         return True
 
-        
     def accept(self, acceptor, timestamp, offerId):
         if not offerId in self.offers:
             return False
-        
+
         offer = self.offers[offerId]
         sender = offer["sender"]
         price = offer["price"]
@@ -74,16 +78,16 @@ class BotMarketPlaceManager:
         botId = offer["botId"]
         owner = deps.botFactory.getOwner(botId)
 
-        #make sure acceptor is the owner
+        # make sure acceptor is the owner
         if acceptor.lower() != owner.lower():
             return False
 
-        #check if sender has funds to purchase
+        # check if sender has funds to purchase
         hasFunds = deps.accountManager.getBalance(sender, token) >= price
         if not hasFunds:
             return False
-        
-        #transfer from sender to owner
+
+        # transfer from sender to owner
         if not deps.accountManager.withdraw(sender, price, token):
             return False
         if not deps.accountManager.deposit(owner, price, token):
@@ -98,19 +102,18 @@ class BotMarketPlaceManager:
                 sender=sender,
                 price=price,
                 token=token,
-                owner = owner,
+                owner=owner,
                 bot_id=botId,
-                type=notification.NotificationType.BOT_OFFER_ACCEPTED
+                type=notification.NotificationType.BOT_OFFER_ACCEPTED,
             )
         )
         del self.offers[offerId]
         return True
 
-
     def decline(self, decliner, timestamp, offerId):
         if not offerId in self.offers:
             return False
-        
+
         offer = self.offers[offerId]
         sender = offer["sender"]
         price = offer["price"]
@@ -118,11 +121,9 @@ class BotMarketPlaceManager:
         botId = offer["botId"]
         owner = deps.botFactory.getOwner(botId)
 
-
-        #make sure acceptor is the owner
+        # make sure acceptor is the owner
         if decliner.lower() != owner.lower() and decliner.lower() != sender.lower():
             return False
-
 
         notification.send_notification(
             notification.BotOfferDeclinedNotification(
@@ -131,9 +132,9 @@ class BotMarketPlaceManager:
                 sender=sender,
                 price=price,
                 token=token,
-                owner = owner,
+                owner=owner,
                 bot_id=botId,
-                type=notification.NotificationType.BOT_OFFER_DECLINED
+                type=notification.NotificationType.BOT_OFFER_DECLINED,
             )
         )
 
@@ -145,4 +146,3 @@ class BotMarketPlaceManager:
 
     def getState(self):
         return self.offers
-

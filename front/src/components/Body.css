@@ -1,31 +1,30 @@
 .body {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 100px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
 }
 
 .buttons {
-    display: flex;
-    justify-content: left;
-    align-items: left;
+  display: flex;
+  justify-content: left;
+  align-items: left;
 }
 
 .header {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-width: 500px;
-    width: 1400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 500px;
+  width: 1400px;
 }
 .header div {
-    display: flex;
-    flex-direction: row;
-    
+  display: flex;
+  flex-direction: row;
 }
 
 .content {
-    background-color: rgba(221, 221, 221, 0.164);
-    width: 100%;
+  background-color: rgba(221, 221, 221, 0.164);
+  width: 100%;
 }

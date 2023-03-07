@@ -7,12 +7,11 @@ export const networks = [
     reader: "http://localhost:4000/graphql",
   },
   {
-      chainId: 80001,
-      name: "polygon_mumbai",
-      abi: "../../contracts/export/abi/polygon_mumbai.json",
-      rpc: "https://matic-mumbai.chainstacklabs.com",
-      explorer: "https://mumbai.polygonscan.com",
-      reader: "https://echo.rollups.dev.cartesi.io/graphql",
+    chainId: 80001,
+    name: "polygon_mumbai",
+    abi: "../../contracts/export/abi/polygon_mumbai.json",
+    rpc: "https://matic-mumbai.chainstacklabs.com",
+    explorer: "https://mumbai.polygonscan.com",
+    reader: "https://echo.rollups.dev.cartesi.io/graphql",
   },
-]
-  
+];

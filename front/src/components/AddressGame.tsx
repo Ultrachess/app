@@ -1,14 +1,16 @@
-import "./Address.css"
-import { Link } from 'react-router-dom';
-import { Row } from 'react-bootstrap';
-import ProfileImage from "./ProfileImage";
+import "./Address.css";
+
+import { Row } from "react-bootstrap";
+import { Link } from "react-router-dom";
+
 import { truncateAddress } from "../ether/utils";
+import ProfileImage from "./ProfileImage";
 import { Text } from "./ui/Text";
 
-export default ({id}: {id: String}) => {
+export default ({ id }: { id: string }) => {
   return (
-      <Link to={"/game/" + id}>
-          <Text bold>{id}</Text>
-      </Link>
+    <Link to={"/game/" + id}>
+      <Text bold>{id}</Text>
+    </Link>
   );
-}
+};

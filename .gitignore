@@ -8,3 +8,5 @@ __pycache__/
 
 deploy-commands.txt
 /deployments
+
+/server/.tox

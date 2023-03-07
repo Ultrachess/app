@@ -7,22 +7,28 @@ import UserProfileListItem from "./UserProfileListItem";
 //function that converts country string to flag emoji
 //return flag emoji
 const getFlag = (country: string) => {
-    const code = country.toUpperCase();
-    const emoji = code
-        .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
-    return emoji;
-}
+  const code = country.toUpperCase();
+  const emoji = code.replace(/./g, (char) =>
+    String.fromCodePoint(char.charCodeAt(0) + 127397)
+  );
+  return emoji;
+};
 
-export default ({profile, rank = 0}: {profile: Profile|any, rank: number}) => {
-    const type = profile.type
+export default ({
+  profile,
+  rank = 0,
+}: {
+  profile: Profile | any;
+  rank: number;
+}) => {
+  const type = profile.type;
 
-    const item = type == ProfileType.BOT ? 
-        (<BotListItem bot={profile} rank={rank} />) : 
-        (<UserProfileListItem profile={profile} rank={rank} />)
+  const item =
+    type == ProfileType.BOT ? (
+      <BotListItem bot={profile} rank={rank} />
+    ) : (
+      <UserProfileListItem profile={profile} rank={rank} />
+    );
 
-    return item
-}
-
-    
-
-
+  return item;
+};

@@ -1,54 +1,60 @@
-from enum import Enum
-from dataclasses import dataclass, asdict
-import requests
 import json
 import logging
-from os import environ
 import random
 import string
+from dataclasses import asdict, dataclass
+from enum import Enum
+from os import environ
 
+import requests
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
 
+
 # This class is used to define the type of notification based on notification.ts
 class NotificationType(Enum):
-    GAME_CREATED = 0, #when you create a game
-    GAME_JOINED = 1, #when someone joins your game
-    GAME_MOVE = 2, #when someone makes a move in your game
-    GAME_COMPLETED = 3, #when a game you are in is completed
-    GAME_WAGER = 4, #when someone wagers on your game or wagers in a game you wagered on
-    GAME_BETTING_CLOSED = 14, #when betting is close on a game you are in or a game you wagered on
+    GAME_CREATED = (0,)  # when you create a game
+    GAME_JOINED = (1,)  # when someone joins your game
+    GAME_MOVE = (2,)  # when someone makes a move in your game
+    GAME_COMPLETED = (3,)  # when a game you are in is completed
+    GAME_WAGER = (
+        4,
+    )  # when someone wagers on your game or wagers in a game you wagered on
+    GAME_BETTING_CLOSED = (
+        14,
+    )  # when betting is close on a game you are in or a game you wagered on
 
-    CHALLENGE_CREATED = 5, #when you recieve a challenge or send a challenge
-    CHALLENGE_ACCEPTED = 6, #when you challenge someone and they accept
-    CHALLENGE_DECLINED = 7, #when you challenge someone and they decline
-    CHALLENGE_RECIEVED = 8, #when someone challenges you
+    CHALLENGE_CREATED = (5,)  # when you recieve a challenge or send a challenge
+    CHALLENGE_ACCEPTED = (6,)  # when you challenge someone and they accept
+    CHALLENGE_DECLINED = (7,)  # when you challenge someone and they decline
+    CHALLENGE_RECIEVED = (8,)  # when someone challenges you
 
-    TOURNAMENT_CREATED = 9, #when you create a tournament
-    TOURNAMENT_JOINED = 10, #when someone joins your tournament
-    TOURNAMENT_COMPLETED = 11, #when a tournament you are in is completed
-    TOURNAMENT_MATCH_CREATED = 12, #when a tournament you are in creates a new match
-    TOURNAMENT_MATCH_COMPLETED = 13, #when a tournament you are in completes a match
-    TOURNAMENT_ROUND_COMPLETED = 15, #when a tournament you are in completes a round
+    TOURNAMENT_CREATED = (9,)  # when you create a tournament
+    TOURNAMENT_JOINED = (10,)  # when someone joins your tournament
+    TOURNAMENT_COMPLETED = (11,)  # when a tournament you are in is completed
+    TOURNAMENT_MATCH_CREATED = (12,)  # when a tournament you are in creates a new match
+    TOURNAMENT_MATCH_COMPLETED = (13,)  # when a tournament you are in completes a match
+    TOURNAMENT_ROUND_COMPLETED = (15,)  # when a tournament you are in completes a round
 
-    BOT_CREATED = 25, #when you create a bot
-    BOT_UPDATED = 26, #when you update a bot
-    BOT_GAME_CREATED = 16, #when a bot that you own creates a game
-    BOT_GAME_COMPLETED = 17, #when a bot that you own completes a game
-    BOT_OFFER_CREATED= 22, #when a bot that you own receives an offer
-    BOT_OFFER_ACCEPTED = 23, #when a request to purchase another bot is accepted
-    BOT_OFFER_DECLINED = 24, #when a request to purchase another bot is declined
+    BOT_CREATED = (25,)  # when you create a bot
+    BOT_UPDATED = (26,)  # when you update a bot
+    BOT_GAME_CREATED = (16,)  # when a bot that you own creates a game
+    BOT_GAME_COMPLETED = (17,)  # when a bot that you own completes a game
+    BOT_OFFER_CREATED = (22,)  # when a bot that you own receives an offer
+    BOT_OFFER_ACCEPTED = (23,)  # when a request to purchase another bot is accepted
+    BOT_OFFER_DECLINED = (24,)  # when a request to purchase another bot is declined
 
-    DEPOSIT_FUNDS = 27, #when you deposit funds
-    WITHDRAW_FUNDS = 28, #when you withdraw funds
+    DEPOSIT_FUNDS = (27,)  # when you deposit funds
+    WITHDRAW_FUNDS = (28,)  # when you withdraw funds
 
 
 @dataclass
 class BaseNotification:
     type: NotificationType
     timestamp: int
+
 
 @dataclass
 class GameCreatedNotification(BaseNotification):
@@ -58,6 +64,7 @@ class GameCreatedNotification(BaseNotification):
     wager: int
     token: str
 
+
 @dataclass
 class GameJoinedNotification(BaseNotification):
     type = NotificationType.GAME_JOINED
@@ -66,12 +73,14 @@ class GameJoinedNotification(BaseNotification):
     wager: int
     token: str
 
+
 @dataclass
 class GameMoveNotification(BaseNotification):
     type = NotificationType.GAME_MOVE
     game_id: str
     player_id: str
     move: str
+
 
 @dataclass
 class GameCompletedNotification(BaseNotification):
@@ -88,6 +97,7 @@ class GameCompletedNotification(BaseNotification):
     winnings1: int
     winnings2: int
 
+
 @dataclass
 class GameWagerNotification(BaseNotification):
     type = NotificationType.GAME_WAGER
@@ -97,12 +107,14 @@ class GameWagerNotification(BaseNotification):
     wager: int
     token: str
 
+
 @dataclass
 class GameBettingClosedNotification(BaseNotification):
     type = NotificationType.GAME_BETTING_CLOSED
     game_id: str
     totalPot: int
     token: str
+
 
 @dataclass
 class ChallengeCreatedNotification(BaseNotification):
@@ -114,6 +126,7 @@ class ChallengeCreatedNotification(BaseNotification):
     wager: int
     token: str
 
+
 @dataclass
 class ChallengeAcceptedNotification(BaseNotification):
     type = NotificationType.CHALLENGE_ACCEPTED
@@ -122,6 +135,7 @@ class ChallengeAcceptedNotification(BaseNotification):
     recipient: str
     wager: int
     token: str
+
 
 @dataclass
 class ChallengeDeclinedNotification(BaseNotification):
@@ -132,6 +146,7 @@ class ChallengeDeclinedNotification(BaseNotification):
     wager: int
     token: str
 
+
 @dataclass
 class ChallengeRecievedNotification(BaseNotification):
     type = NotificationType.CHALLENGE_RECIEVED
@@ -141,11 +156,13 @@ class ChallengeRecievedNotification(BaseNotification):
     wager: int
     token: str
 
+
 @dataclass
 class TournamentCreatedNotification(BaseNotification):
     type = NotificationType.TOURNAMENT_CREATED
     tournament_id: str
     creator_id: str
+
 
 @dataclass
 class TournamentJoinedNotification(BaseNotification):
@@ -159,11 +176,13 @@ class TournamentCompletedNotification(BaseNotification):
     type = NotificationType.TOURNAMENT_COMPLETED
     tournament_id: str
 
+
 @dataclass
 class TournamentMatchCreatedNotification(BaseNotification):
     type = NotificationType.TOURNAMENT_MATCH_CREATED
     tournament_id: str
     match_id: str
+
 
 @dataclass
 class TournamentMatchCompletedNotification(BaseNotification):
@@ -182,17 +201,20 @@ class TournamentRoundCompletedNotification(BaseNotification):
     tournament_id: str
     roundNumber: int
 
+
 @dataclass
 class BotCreatedNotification(BaseNotification):
     type = NotificationType.BOT_CREATED
     bot_id: str
     creator_id: str
 
+
 @dataclass
 class BotUpdatedNotification(BaseNotification):
     type = NotificationType.BOT_UPDATED
     bot_id: str
     creator_id: str
+
 
 @dataclass
 class BotGameCreatedNotification(BaseNotification):
@@ -203,6 +225,7 @@ class BotGameCreatedNotification(BaseNotification):
     player_id2: str
     wager: int
     token: str
+
 
 @dataclass
 class BotGameCompletedNotification(BaseNotification):
@@ -253,6 +276,7 @@ class BotGameCompletedNotification(BaseNotification):
 #     bot_id: str
 #     score: int
 
+
 @dataclass
 class BotOfferCreatedNotification(BaseNotification):
     type = NotificationType.BOT_OFFER_CREATED
@@ -274,6 +298,7 @@ class BotOfferAcceptedNotification(BaseNotification):
     price: int
     token: str
 
+
 @dataclass
 class BotOfferDeclinedNotification(BaseNotification):
     type = NotificationType.BOT_OFFER_DECLINED
@@ -292,6 +317,7 @@ class DepositFundsNotification(BaseNotification):
     amount: int
     token: str
 
+
 @dataclass
 class WithdrawFundsNotification(BaseNotification):
     type = NotificationType.WITHDRAW_FUNDS
@@ -300,42 +326,65 @@ class WithdrawFundsNotification(BaseNotification):
     token: str
 
 
+Notification = (
+    GameCreatedNotification
+    | GameCompletedNotification
+    | GameWagerNotification
+    | GameBettingClosedNotification
+    | ChallengeCreatedNotification
+    | ChallengeAcceptedNotification
+    | ChallengeDeclinedNotification
+    | ChallengeRecievedNotification
+    | TournamentCreatedNotification
+    | TournamentJoinedNotification
+    | TournamentCompletedNotification
+    | TournamentMatchCreatedNotification
+    | TournamentMatchCompletedNotification
+    | TournamentRoundCompletedNotification
+    | BotCreatedNotification
+    | BotUpdatedNotification
+    | BotGameCreatedNotification
+    | BotGameCompletedNotification
+    | BotOfferCreatedNotification
+    | BotOfferAcceptedNotification
+    | BotOfferDeclinedNotification
+    | DepositFundsNotification
+    | WithdrawFundsNotification
+)
 
 
-Notification = GameCreatedNotification | GameCompletedNotification | GameWagerNotification | GameBettingClosedNotification | ChallengeCreatedNotification | ChallengeAcceptedNotification | ChallengeDeclinedNotification | ChallengeRecievedNotification | TournamentCreatedNotification | TournamentJoinedNotification | TournamentCompletedNotification | TournamentMatchCreatedNotification | TournamentMatchCompletedNotification | TournamentRoundCompletedNotification | BotCreatedNotification | BotUpdatedNotification | BotGameCreatedNotification | BotGameCompletedNotification | BotOfferCreatedNotification | BotOfferAcceptedNotification | BotOfferDeclinedNotification | DepositFundsNotification | WithdrawFundsNotification
-
-
-#write a function that takes in a notifcation
-#runs a elif chain to determine which type of notification it is
-#then return a json object of the notification
+# write a function that takes in a notifcation
+# runs a elif chain to determine which type of notification it is
+# then return a json object of the notification
 def convert_to_json(notification: Notification):
     attrs = asdict(notification)
-    new_id = str(''.join(random.choices(string.ascii_uppercase + string.digits, k=10))).lower()
-    attrs['id'] = new_id
-    attrs['type'] = notification.type.value[0]
-    attrs['timestamp'] = attrs['timestamp'] * 1000
-    logger.info("attrs: "+ str(attrs))
+    new_id = str(
+        "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    ).lower()
+    attrs["id"] = new_id
+    attrs["type"] = notification.type.value[0]
+    attrs["timestamp"] = attrs["timestamp"] * 1000
+    logger.info("attrs: " + str(attrs))
     return attrs
 
 
-
-
-
-
 def convert_to_hex(s_input):
-    return "0x"+str(s_input.encode("utf-8").hex())
+    return "0x" + str(s_input.encode("utf-8").hex())
+
 
 def send_notification(notification: Notification):
-    #turn notification into json
+    # turn notification into json
     logger.info("Attempting to send notice " + str(notification))
-    logger.info("Attempting to send notice " )
+    logger.info("Attempting to send notice ")
     data_set = convert_to_json(notification)
     json_object = json.dumps(data_set)
-    logger.info("Sending notice : "+ json_object)
+    logger.info("Sending notice : " + json_object)
     hex_string = convert_to_hex(json_object)
-    logger.info("rollup_server: "+ rollup_server)
+    logger.info("rollup_server: " + rollup_server)
     response = requests.post(rollup_server + "/notice", json={"payload": hex_string})
-    logger.info(f"Received notice status {response.status_code} body {response.content}")
-    #add action to ActionManager
-    logger.info("New PayLoad Added: "+ hex_string)
+    logger.info(
+        f"Received notice status {response.status_code} body {response.content}"
+    )
+    # add action to ActionManager
+    logger.info("New PayLoad Added: " + hex_string)
     logger.info("Adding notice")

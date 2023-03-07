@@ -64,7 +64,7 @@ RUN pip3 install crossenv
 RUN rm -rf Python-$PYTHON_VERSION_FULL*
 
 # download standard machine drives
-FROM busybox as machine-core
+FROM alpine as machine-core
 
 WORKDIR /opt/cartesi/share
 

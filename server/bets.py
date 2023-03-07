@@ -1,10 +1,12 @@
-import deps
 import logging
 import traceback
+
+import deps
 import notification
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
+
 
 def CreateBetPhase(gameId, openTime, duration):
     return {
@@ -14,8 +16,9 @@ def CreateBetPhase(gameId, openTime, duration):
         "pots": {},
         "totalPot": 0,
         "bets": {},
-        "betsArray": []
+        "betsArray": [],
     }
+
 
 def CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId):
     return {
@@ -27,10 +30,11 @@ def CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId):
         "winningId": winningId,
     }
 
+
 class BetManager:
     def __init__(self):
         self.games = {}
-    
+
     def isBettingPhaseOpen(self, gameId, currentTime):
         if not gameId in self.games:
             return False
@@ -44,7 +48,7 @@ class BetManager:
         if not gameId in self.games:
             return 0
         return self.games[gameId]["totalPot"]
-    
+
     def bet(self, sender, timeStamp, value):
         gameId = value["gameId"]
         game = self.games[gameId]
@@ -52,28 +56,32 @@ class BetManager:
         amount = value["amount"]
         winningId = value["winningId"]
 
-        #check if token matches the game token
+        # check if token matches the game token
         if tokenAddress.lower() != game.token.lower():
-            return False 
-        #return if bet is being sent by a match participant
+            return False
+        # return if bet is being sent by a match participant
         if sender in deps.matchMaker.games[gameId].players:
             return False
-        #make sure this submission is not passed the betting phase
+        # make sure this submission is not passed the betting phase
         if timeStamp > (game["openTime"] + game["duration"]):
             return False
-        
+
         if not deps.accountManager.withdraw(sender, amount, tokenAddress):
             return False
         if not self.games[gameId]["bets"][winningId]:
             self.games[gameId]["bets"][winningId] = {}
-        self.games[gameId]["bets"][winningId][sender] = CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId)
-        self.games[gameId]["betsArray"].append(CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId))
+        self.games[gameId]["bets"][winningId][sender] = CreateBet(
+            sender, timeStamp, gameId, tokenAddress, amount, winningId
+        )
+        self.games[gameId]["betsArray"].append(
+            CreateBet(sender, timeStamp, gameId, tokenAddress, amount, winningId)
+        )
         if not self.games[gameId]["pots"][winningId]:
             self.games[gameId]["pots"][winningId] = 0
         self.games[gameId]["pots"][winningId] += amount
         self.games[gameId]["totalPot"] += amount
 
-        #send notification
+        # send notification
         notification.send_notification(
             notification.GameWagerNotification(
                 timestamp=timeStamp,
@@ -81,15 +89,15 @@ class BetManager:
                 player_id=sender,
                 expected_winner_id=winningId,
                 wager=amount,
-                token = tokenAddress,
-                type=notification.NotificationType.GAME_WAGER
+                token=tokenAddress,
+                type=notification.NotificationType.GAME_WAGER,
             )
         )
         return True
 
     def end(self, id, winningId):
         if not id in self.games:
-            return False 
+            return False
         game = self.games[id]
         bets = game["bets"][winningId]
         totalPot = game["totalPot"]
@@ -101,5 +109,7 @@ class BetManager:
             tokenAddress = bet["tokenAddress"]
             percentageOfPot = amount / winningPot
             amountRecieved = totalPot * percentageOfPot
-            address = senderId if "0x" in senderId else deps.botFactory.getOwner(senderId)
+            address = (
+                senderId if "0x" in senderId else deps.botFactory.getOwner(senderId)
+            )
             deps.accountManager.deposit(address, amountRecieved, tokenAddress)
