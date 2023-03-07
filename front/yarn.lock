@@ -3188,10 +3188,10 @@
     magic-string "^0.27.0"
     react-refresh "^0.14.0"
 
-"@web3-react/core@^8.0.31-beta.0":
-  version "8.0.31-beta.0"
-  resolved "https://registry.yarnpkg.com/@web3-react/core/-/core-8.0.31-beta.0.tgz#3ade9d63bc8936df89499b2a36f78d37e1d6ba02"
-  integrity sha512-HgMIPsM3SvXSsWSAOKR8KqpBD1ZeCSXbeI9evcOnFk7ccHN2II3Rh35CnJ118PDZJPXpsDrObN08YtbKpV9/Kg==
+"@web3-react/core@^8.0.30-beta.0":
+  version "8.0.30-beta.0"
+  resolved "https://registry.yarnpkg.com/@web3-react/core/-/core-8.0.30-beta.0.tgz#744c8a47a59eb75ff8f3e407c2190a90762a9905"
+  integrity sha512-Z6PTxs1xi7kO8fh/pjz29aY1rGyM6Bvoy909sSdVl2BRBMvo+XsezF6JEsAi/XbMrmtOEqzmaTSuokU0KusePw==
   dependencies:
     "@web3-react/store" "^8.0.22-beta.0"
     "@web3-react/types" "^8.0.17-beta.0"
@@ -3199,13 +3199,13 @@
   optionalDependencies:
     "@ethersproject/providers" "^5"
 
-"@web3-react/metamask@^8.0.30-beta.0":
-  version "8.0.30-beta.0"
-  resolved "https://registry.yarnpkg.com/@web3-react/metamask/-/metamask-8.0.30-beta.0.tgz#afab5d7cf556e3ec77836ff2b4753f6f301cfbeb"
-  integrity sha512-SzL8/RUmLHEQCdd6KNjEIHXwuYiQrKX5e1Bgipvtm8MKBRk1ty17Aj7MKWNRcl/Qt06pLSxbcEJeT9kPIrc0mg==
+"@web3-react/metamask@^8.0.24-beta.0":
+  version "8.0.24-beta.0"
+  resolved "https://registry.yarnpkg.com/@web3-react/metamask/-/metamask-8.0.24-beta.0.tgz#047bfe321f4064bd3dd0443c06d2497373e6d511"
+  integrity sha512-kCzWkGiha/7dn73DKB6LkSAsp+j6SdVnBg7Dp9EyInes2npwcIVl7PABQMop0g+7Drv4bpiJBwMIetcVHkr9sQ==
   dependencies:
     "@metamask/detect-provider" "^1.2.0"
-    "@web3-react/types" "^8.0.20-beta.0"
+    "@web3-react/types" "^8.0.17-beta.0"
 
 "@web3-react/store@^8.0.22-beta.0":
   version "8.0.22-beta.0"
@@ -3220,13 +3220,6 @@
   version "8.0.17-beta.0"
   resolved "https://registry.yarnpkg.com/@web3-react/types/-/types-8.0.17-beta.0.tgz#a7a2898065a67a0e574572f49a73d39879e75676"
   integrity sha512-5zh+BrykylyN29P18/rNPFVVOI4Go/jYLwl5a/55eb5X1wgCfPU62ZBiVeKIOWBCwJ558uie31p909xJjeE2ig==
-  dependencies:
-    zustand "^4.0.0-rc.0"
-
-"@web3-react/types@^8.0.20-beta.0":
-  version "8.0.20-beta.0"
-  resolved "https://registry.yarnpkg.com/@web3-react/types/-/types-8.0.20-beta.0.tgz#6b4509bef8c5c7eb866e49295880c865c20fb565"
-  integrity sha512-qOZYMyUmsm3Um6t6Pg3OgnE86ufhWZpB5/VxsooB8cdpXc/C/f8KMyYSeM63GoKSMScOKwfqV6yODFL7g/Qc8g==
   dependencies:
     zustand "^4.0.0-rc.0"
 
