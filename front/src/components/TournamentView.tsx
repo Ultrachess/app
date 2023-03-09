@@ -10,7 +10,7 @@ import { TournamentMatch } from "../state/game/types"
 import Flex from "./ui/Flex"
 import Separator from "./ui/Separator";
 import TournamentRoundView from "./list/TournamentRoundView"
-import ModalJoinTournament from "./ModalJoinTournament"
+import ModalJoinTournament from "./modals/ModalJoinTournament"
 
 // interface ParticipantTypeForRendering {
 //     id: string

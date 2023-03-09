@@ -1,18 +1,18 @@
 import * as React from "react";
 import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
-import { createBotGame } from "../state/game/gameSlice";
+import { createBotGame } from "../../state/game/gameSlice";
 import { FaCoins } from "react-icons/fa";
-import { useAppSelector } from "../state/hooks";
+import { useAppSelector } from "../../state/hooks";
 import { useWeb3React } from "@web3-react/core";
-import { isAddress } from "../utils";
-import { useActionCreator } from "../state/game/hooks";
+import { isAddress } from "../../utils";
+import { useActionCreator } from "../../state/game/hooks";
 import { useCallback, useEffect, useMemo } from "react";
 import Select from "react-select"
-import { TransactionType } from "../common/types";
+import { TransactionType } from "../../common/types";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
-import { useTokenList } from "../hooks/token";
+import { useTokenList } from "../../hooks/token";
 
 export default ({visible, closeHandler, botId}) => {
     const dispatch = useDispatch()

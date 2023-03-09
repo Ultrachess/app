@@ -197,3 +197,22 @@ export interface Tournament {
     isOver: boolean,
     isRoundOver: boolean,
 }
+
+export interface ThroneBattle {
+    timestamp: number,
+    challenger: string,
+    wins: number,
+    completed_games: number,
+    games: string[],
+    end: boolean
+}
+
+export interface Throne {
+    king: string,
+    winnings: number,
+    battles: { [challenger: string]: ThroneBattle },
+    price: number,
+    token: string,
+    gamesToWin: number,
+    maxTrys: number,
+}

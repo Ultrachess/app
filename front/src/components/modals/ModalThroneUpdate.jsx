@@ -6,36 +6,45 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
 import { Text } from './ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
+import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
 import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
 import { useActionCreator } from '../state/game/hooks';
-import { TransactionType } from '../common/types';
-import Address from './Address';
-import { useProfile } from '../state/game/hooks';
-import { BotProfile } from '../state/game/types';
+import { TransactionType } from '../../common/types';
+import { ethers } from 'ethers';
+import { useNavigate } from 'react-router-dom';
+import { useThrone } from '../../state/game/hooks';
 
-export default ({triggerElement, botId}) => {
+
+export default ({triggerElement}) => {
+    const {
+        king,
+        numberOfTrys,
+        numberOfWins,
+        price
+    } = useThrone()
+
     const { chainId, account } = useWeb3React()
-    const [amount, setAmount ] = useState<any>(0)
-    const max = 100
+    const [updatedNumberOfTrys, setUpdatedNumberOfTrys ] = useState(numberOfTrys)
+    const [updatedNumberOfWins, setUpdatedNumberOfWins ] = useState(numberOfWins)
+    const [updatedPrice, setUpdatedPrice ] = useState(price)
+
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
-    const portalBalance = useTokenPortalBalance(token, account) 
 
     const addAction = useActionCreator()
 
-    //const bot: BotProfile = useProfile(botId)
-
-    const handleOffer = async () => {
-      const [approvalActionId, wait] = await addAction({
-        type: TransactionType.CREATE_OFFER,
-        botId: botId,
-        token: token.address,
-        price: amount,
-      })
-      await wait
+    const handleUpdated = async () => {
+      //console.log("amount", amount)
+      const tx = {
+            type: TransactionType.KING_THRONE_UPDATE,
+            numberOfTrys: updatedNumberOfTrys,
+            numberOfWins: updatedNumberOfWins,
+            price: updatedPrice,
+      }
+      await addAction(tx)
     }
 
+    const isKing = king.toLowerCase() === account.toLowerCase()
 
     //console.log("amount", amount)
     return (
@@ -45,44 +54,39 @@ export default ({triggerElement, botId}) => {
         </Dialog.Trigger>
         <Dialog.Portal>
           <DialogOverlay />
-          <DialogContent>
-            <DialogTitle>Create offer for <Address value={botId} /></DialogTitle>
-            <DialogDescription>
-              You are offering to buy this bot for <AssetDisplay tokenAddress={token?.address} balance={amount} isL2={true}/>. 
-              Make sure to deposit funds to the portal first if you have not done so.
-            </DialogDescription>
-            
-            <Fieldset>
-                <Label>Price</Label>
-                <RightSlot>
-                  <Text>Balance if offer accepted:</Text>
-                  <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
-                </RightSlot>
-            </Fieldset>
-            <Fieldset>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
-                </Input>
-                <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
-            </Fieldset>
-            <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
-            </Fieldset>
-            <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
-              <Dialog.Close asChild>
-                <Button 
-                  variant="green"
-                  onClick={handleOffer}
-                >
-                  Make offer
-                </Button>
-              </Dialog.Close>
-            </Flex>
-            <Dialog.Close asChild>
-              <IconButton aria-label="Close">
-                <Cross2Icon />
-              </IconButton>
-            </Dialog.Close>
-          </DialogContent>
+            {isKing &&
+                <DialogContent>
+                    <DialogTitle></DialogTitle>
+                    <DialogDescription>
+                        Update your throne.
+                        Set the price it takes to challenge you.
+                        Set the number of wins and tries a challenger has to beat you.
+                    </DialogDescription>
+                    
+                    <Fieldset><Label>Price to challenge in {token?.symbol ?? 'USDC'}</Label></Fieldset>
+                    <Fieldset><Input id="amount" value={updatedPrice} defaultValue={0} onChange={(event)=>{setUpdatedPrice(event.target.value)}}></Input></Fieldset>
+                    
+                    <Fieldset><Label>Number of wins</Label></Fieldset>
+                    <Fieldset><Input id="bettingDuration" value={updatedNumberOfWins} onChange={(event)=>{ setUpdatedNumberOfWins(event.target.value)}}></Input></Fieldset>
+
+                    <Fieldset><Label>Number of tries</Label></Fieldset>
+                    <Fieldset><Input id="bettingDuration" value={updatedNumberOfTrys} onChange={(event)=>{ setUpdatedNumberOfTrys(event.target.value)}}></Input></Fieldset>
+                    
+                    <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
+                    <Dialog.Close asChild>
+                        <Button
+                            variant="green"
+                            onClick={handleUpdated}
+                        >Updated</Button>
+                    </Dialog.Close>
+                    </Flex>
+                    <Dialog.Close asChild>
+                    <IconButton aria-label="Close">
+                        <Cross2Icon />
+                    </IconButton>
+                    </Dialog.Close>
+                </DialogContent>
+            }
         </Dialog.Portal>
       </Dialog.Root>
   )

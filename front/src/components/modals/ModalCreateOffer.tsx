@@ -4,41 +4,36 @@ import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
-import { Text } from './ui/Text';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
-import AssetDisplay from './AssetDisplay';
+import { Text } from '../ui/Text';
+import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
+import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
+import AssetDisplay from '../AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../state/game/hooks';
-import { TransactionType } from '../common/types';
+import { useActionCreator } from '../../state/game/hooks';
+import { TransactionType } from '../../common/types';
+import Address from '../Address';
 
-export default ({triggerElement}) => {
+export default ({triggerElement, botId}) => {
     const { chainId, account } = useWeb3React()
-    const [amount, setAmount ] = useState(0)
+    const [amount, setAmount ] = useState<any>(0)
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const portalBalance = useTokenPortalBalance(token, account) 
-    const balance = useTokenBalance(token, account)
 
     const addAction = useActionCreator()
 
-    const handleDeposit = async () => {
-      console.log(`approving amount ${amount} tokenAddress ${token.address}`)
+    //const bot: BotProfile = useProfile(botId)
+
+    const handleOffer = async () => {
       const [approvalActionId, wait] = await addAction({
-        type: TransactionType.APPROVE_ERC20,
-        tokenAddress: token.address,
-        amount: amount,
+        type: TransactionType.CREATE_OFFER,
+        botId: botId,
+        token: token.address,
+        price: amount,
       })
       await wait
-
-      console.log(`depositing amount ${amount} tokenAddress ${token.address}`)
-      const [depositActionId, wait2] = await addAction({
-        type: TransactionType.DEPOSIT_ERC20,
-        tokenAddress: token.address,
-        amount: amount,
-      })
-      await wait2
     }
+
 
     //console.log("amount", amount)
     return (
@@ -49,19 +44,17 @@ export default ({triggerElement}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Deposit funds</DialogTitle>
+            <DialogTitle>Create offer for <Address value={botId} /></DialogTitle>
             <DialogDescription>
-              Deposit funds to Cartesi's ERC-20 portal. 
-              This will give the Ultrachess dApp access to your funds, allowing you to interact with the dApp as intended.
-              You can withdraw your funds at any time.
+              You are offering to buy this bot for <AssetDisplay tokenAddress={token?.address} balance={amount} isL2={true}/>. 
+              Make sure to deposit funds to the portal first if you have not done so.
             </DialogDescription>
             
             <Fieldset>
-                <Label>Amount</Label>
+                <Label>Price</Label>
                 <RightSlot>
-                    <AssetDisplay tokenAddress={token?.address} balance={balance - amount}/> 
-                    <Text>→</Text> 
-                    <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
+                  <Text>Balance if offer accepted:</Text>
+                  <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
                 </RightSlot>
             </Fieldset>
             <Fieldset>
@@ -70,15 +63,15 @@ export default ({triggerElement}) => {
                 <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value.toString())}} />
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
                 <Button 
                   variant="green"
-                  onClick={handleDeposit}
+                  onClick={handleOffer}
                 >
-                  Deposit
+                  Make offer
                 </Button>
               </Dialog.Close>
             </Flex>

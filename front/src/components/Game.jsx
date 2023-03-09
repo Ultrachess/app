@@ -25,7 +25,7 @@ import GameWagersView from "./GameWagersView";
 import Button from "./ui/Button";
 import { truncateAddress } from "../ether/utils";
 import { Text } from "./ui/Text";
-import ModalPlaceBet from "./ModalPlaceBet";
+import ModalPlaceBet from "./modals/ModalPlaceBet";
 import { useWeb3React } from "@web3-react/core";
 
 

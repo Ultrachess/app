@@ -8,6 +8,8 @@ class BattleForThrone:
     games: list[str] = []
     score: float = 0
     end: bool = False
+    wins: int = 0
+    completed_games: int = 0
 
 def equals(s1: str, s2: str) -> bool:
     return s1.lower() == s2.lower()
@@ -68,19 +70,34 @@ def is_bot(id: str) -> bool:
 
 class KingOfTheHillManager():
     def __init__(self) -> None:
+
         #buy in price and  token to battle for thron
         self.price = 0
         self.token = ""
+
         #id related to current king
         self.king = None
+
+        #current kings winnings
+        self.winnings = 0
+
         #dictionary of all current challenges to king
         self.battles: dict[str, BattleForThrone]
 
-        self.isFirstRules = True
+        #if this is the first time rules are being checked
+        self.canUpdateRules = True
+
+        #minimum number of games to win to be king
+        self.gamesToWin = 4
+
+        #max number of games can be played against king
+        self.maxTrys = 5
+
 
     def _setKing(self, id):
         self.king = id
-        self.isFirstRules = True
+        self.canUpdateRules = True
+        self.winnings = 0
 
     def challenge(self, sender, timestamp, options) -> bool:
         #check if all options are defined
@@ -108,6 +125,7 @@ class KingOfTheHillManager():
         #pay for entry fee
         if not deps.accountManager.withdraw(sender, self.price, self.token):
             return False
+        deps.accountManager.deposit(king, self.price, self.token)
 
         #check if the king is defined 
         #if not, set challenger to new king
@@ -129,7 +147,7 @@ class KingOfTheHillManager():
             )
         )
     
-    def set_rules(self, sender, options) -> bool:
+    def set_rules(self, sender, timestamp, options) -> bool:
         #check if all options are defined
         token = options["token"] if "token" in options else None
         price = options["price"] if "price" in options else None
@@ -139,7 +157,7 @@ class KingOfTheHillManager():
             return False
         
         #make sure that this is the first time setting the ruleset
-        if not self.isFirstRules:
+        if not self.canUpdateRules:
             return False
         
         #set new rules
@@ -148,9 +166,65 @@ class KingOfTheHillManager():
         if price:
             self. price = price
 
-        self.isFirstRules = False
+        self.canUpdateRules = False
 
 
     def run(self):
+        #check through all battles
+        for battle in self.battles.values():
+            #check throuh all games in battle
+            if not battle.end:
+                for gameId in battle.games:
+                    #get game
+                    game = deps.gameManager.games[gameId]
+                    #check if game is over
+                    #if so, update completed games and wins
+                    #if wins is greater than games to win, set challenger to king and end battle
+                    #if completed games is greater than max trys, set battle to end
+                    #else create new game
+                    if game.isGameEnd():
+                        if game.isWinner(battle.challenger):
+                            battle.wins += 1
+                        battle.completed_games += 1
+
+                        if battle.wins >= self.gamesToWin:
+                            self._setKing(battle.challenger)
+                            battle.end = True
+                        elif battle.completed_games >= self.maxTrys:
+                            battle.end = True
+                        else:
+                            battle.games.append(
+                                gen_match(
+                                    battle.challenger, 
+                                    game.timestamp, 
+                                    self.king, 
+                                    battle.challenger
+                                )
+                            )
+                    
         return True
+
+    def getStringState(self):
+        battlesFormatted = {}
+        for battleId in self.battles.values():
+            battle = self.battles[battleId]
+            formattedBattle = {
+                "challenger": battle.challenger,
+                "wins": battle.wins,
+                "completed_games": battle.completed_games,
+                "games": battle.games,
+                "end": battle.end
+            }
+            battlesFormatted[battle.id] = formattedBattle
+
+        return {
+            "king": self.king,
+            "winnings": self.winnings,
+            "battles": battlesFormatted,
+            "price": self.price,
+            "token": self.token,
+            "gamesToWin": self.gamesToWin,
+            "maxTrys": self.maxTrys,
+            "canUpdatedRules": self.canUpdateRules
+        }
 

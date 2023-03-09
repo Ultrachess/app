@@ -4,7 +4,7 @@ import { GameWagers } from '../state/game/types';
 import { Text } from './ui/Text';
 import Button from './ui/Button';
 import Address from './Address';
-import ModalPlaceBet from './ModalPlaceBet';
+import ModalPlaceBet from './modals/ModalPlaceBet';
 import List from './ui/List';
 import Flex from './ui/Flex';
 import Date from './ui/Date';

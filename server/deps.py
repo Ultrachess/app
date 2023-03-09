@@ -7,11 +7,13 @@ from bets import BetManager
 from tournament import TournamentManager
 from challenge import ChallengeManager
 from marketplace import BotMarketPlaceManager
+from koh import KingOfTheHillManager
 import chess.engine
 import chess.pgn
 import random
 
 
+kohManager = KingOfTheHillManager()
 challengeManager = ChallengeManager()
 botMarketPlace = BotMarketPlaceManager()
 tournamentManager = TournamentManager()

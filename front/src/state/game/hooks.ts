@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile, Tournament, TournamentType } from "./types";
+import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile, Tournament, TournamentType, Throne } from "./types";
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback, useMemo } from "react";
@@ -164,6 +164,11 @@ export function useProfile(id: string, bots: any = []): Profile | undefined {
         };
     return profile;
   }
+
+export function useThrone(): Throne {
+    const throne = useAppSelector(state => state.game.throne)
+    return throne
+}
 
 //get all bot profiles
 export function useAllBots(): BotProfile[] {
@@ -732,6 +737,29 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "declineBotOffer", 
                         "value": "${info.offerId}"
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.KING_THRONE_CHALLENGE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "kingThroneChallenge",
+                        "value": {
+                            "challenger" : "${info.challenger}"
+                        }
+                    }`)
+                    input = appendNumberToUInt8Array(id, input)
+                    result = await contract.addInput(input)
+                    break;
+                case TransactionType.KING_THRONE_UPDATE:
+                    input = ethers.utils.toUtf8Bytes(`{
+                        "op": "kingThroneUpdate",
+                        "value": {
+                            numberOfTrys: ${info.numberOfTrys},
+                            numberOfWins: ${info.numberOfWins},
+                            "price" : ${info.price},
+                            "token": "${info.token}"
+                        }
                     }`)
                     input = appendNumberToUInt8Array(id, input)
                     result = await contract.addInput(input)

@@ -5,17 +5,10 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import * as Slider from '@radix-ui/react-slider';
-import { Text } from './ui/Text';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
-import AssetDisplay from './AssetDisplay';
-import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../state/game/hooks';
-import { TransactionType } from '../common/types';
-import Address from './Address';
-import Button from './ui/Button';
-import Flex from './ui/Flex';
+import { useActionCreator } from '../../state/game/hooks';
+import { TransactionType } from '../../common/types';
+import Button from '../ui/Button';
+import Flex from '../ui/Flex';
 
 export default ({triggerElement}) => {
     const [selectedFile, setSelectedFile] = useState<File>();

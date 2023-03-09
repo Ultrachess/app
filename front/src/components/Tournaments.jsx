@@ -7,13 +7,13 @@ import { useAllTournaments } from "../state/game/hooks";
 import Flex from "./ui/Flex";
 import { Text } from "./ui/Text";
 import { styled } from "@stitches/react";
-import ModalCreateBot from "./ModalCreateBot";
+import ModalCreateBot from "./modals/ModalCreateBot";
 import Separator from "./ui/Separator";
 import { ZoomOutIcon, StitchesLogoIcon } from "@radix-ui/react-icons";
 import Button from "./ui/Button";
 import { violet } from "@radix-ui/colors";
 import ProfileList from "./list/ProfileList";
-import ModalCreateTournament from "./ModalCreateTournament";
+import ModalCreateTournament from "./modals/ModalCreateTournament";
 import TournamentList from "./list/TournamentList";
 
 export default () => {

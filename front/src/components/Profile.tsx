@@ -4,7 +4,7 @@ import { useMatch, useParams } from "react-router-dom";
 import BotListView from "./list/BotList";
 import { useAppSelector } from "../state/hooks";
 import GameList from "./list/GameList";
-import ModalManageBot from "./ModalManageBot";
+import ModalManageBot from "./modals/ModalManageBot";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
 import { useProfile } from "../state/game/hooks";
@@ -17,7 +17,7 @@ import Date from "./ui/Date";
 import OffersList from "./OffersList";
 import ChallengesList from "./list/ChallengesList";
 import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
-import ModalCreateChallenge from "./ModalCreateChallenge";
+import ModalCreateChallenge from "./modals/ModalCreateChallenge";
 
 
 export default () => {

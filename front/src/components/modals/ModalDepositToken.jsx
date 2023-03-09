@@ -1,15 +1,15 @@
 import * as React from "react";
 import { Text, Grid, Modal, Input, Row, Button, Dropdown } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
-import { hooks, metaMask } from '../ether/connectors/metaMask'
+import { hooks, metaMask } from '../../ether/connectors/metaMask'
 const { useProvider } = hooks
 import { FaCoins } from "react-icons/fa";
-import { TransactionType } from "../common/types";
-import { useActionCreator } from "../state/game/hooks";
-import { truncateAddress } from "../ether/utils";
+import { TransactionType } from "../../common/types";
+import { useActionCreator } from "../../state/game/hooks";
+import { truncateAddress } from "../../ether/utils";
 import { useEffect, useMemo, useState } from 'react'
 import Select from "react-select"
-import { useTokenList } from "../hooks/token";
+import { useTokenList } from "../../hooks/token";
 
 export default ({visible, closeHandler}) => {
     const dispatch = useDispatch()

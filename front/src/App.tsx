@@ -23,6 +23,7 @@ import TransitionManager from './components/TransitionManager';
 import BotProfile from './components/BotProfile';
 import Rankings from './components/Rankings';
 import TournamentView from './components/TournamentView';
+import PageKingOfTheHill from './components/PageKingOfTheHill';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -48,6 +49,7 @@ function App() {
         <Route path="/game/:gameId" element={<Game />} />
         <Route path="/users/:userId" element={<Profile/>} />
         <Route path="/bot/:botId" element={<BotProfile/>} />
+        <Route path='/koh' element={<PageKingOfTheHill/>}/>
       </Routes>
     </div>
   )

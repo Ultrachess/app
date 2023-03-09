@@ -18,6 +18,8 @@ export enum TransactionType {
     CREATE_OFFER,
     ACCEPT_OFFER,
     DECLINE_OFFER,
+    KING_THRONE_CHALLENGE,
+    KING_THRONE_UPDATE,
 }
 
 export enum TourneyType {
@@ -155,6 +157,19 @@ export interface JoinTournamentTransactionInfo extends BaseTransactionInfo {
     participant_id: string,
 }
 
+export interface KingThroneChallengeTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.KING_THRONE_CHALLENGE,
+    challenger: string,
+}
+
+export interface KingThroneUpdateTransactionInfo extends BaseTransactionInfo {
+    type: TransactionType.KING_THRONE_UPDATE,
+    numberOfTrys: number,
+    numberOfWins: number,
+    price: number,
+    token: string,
+}
+
 export type TransactionInfo = 
     | SendMoveTransactionInfo
     | CreateGameTransactionInfo
@@ -175,4 +190,6 @@ export type TransactionInfo =
     | CreateBotOfferTransactionsInfo
     | AcceptBotOfferTransactionsInfo
     | DeclineBotOfferTransactionsInfo
+    | KingThroneChallengeTransactionInfo
+    | KingThroneUpdateTransactionInfo
 

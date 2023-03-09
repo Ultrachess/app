@@ -89,6 +89,16 @@ class Game:
                 return int(winner == chess.BLACK)
         else: return DRAW_POINTS
 
+    def getWinnerAddress(self):
+        outcome = self.state.board().outcome()
+        winner = outcome.winner
+        if winner == chess.WHITE:
+            return self.players[0]
+        elif winner == chess.BLACK:
+            return self.players[1]
+        else:
+            return None
+
     def handleEnd(self):
         #calculate elo and scores
         p1, p2 = self.players[0], self.players[1]

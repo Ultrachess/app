@@ -1,62 +1,55 @@
-import { useActionCreator, useGame } from "../state/game/hooks";
-import { TransactionType } from "../common/types";
-import { ethers } from "ethers";
-import Address from "./Address";
-import { useWeb3React } from "@web3-react/core";
-import { useTokenPortalBalance, useTokenFromList } from "../hooks/token";
-import * as RadioGroup from '@radix-ui/react-radio-group';
-
-import AddressGame from "./AddressGame";
-import List from "./ui/List";
-import AssetDisplay from "./AssetDisplay";
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
-import { keyframes, styled } from "@stitches/react";
-import { blackA, mauve, violet, green } from "@radix-ui/colors";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { Slider } from "@radix-ui/react-slider";
-import { useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Text } from "./ui/Text";
+import React, { useEffect, useState } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { styled, keyframes } from '@stitches/react';
+import { violet, blackA, mauve, green } from '@radix-ui/colors';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import * as Slider from '@radix-ui/react-slider';
+import { Text } from './ui/Text';
+import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
+import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
+import AssetDisplay from './AssetDisplay';
+import { useWeb3React } from '@web3-react/core';
+import { useActionCreator } from '../../state/game/hooks';
+import { TransactionType } from '../../common/types';
+import { ethers } from 'ethers';
+import { useNavigate } from 'react-router-dom';
 
 
-export default ({triggerElement, gameId}) => {
-  //console.log(triggerElement)
-  //console.log(gameId)
+export default ({triggerElement, botId}) => {
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
-    const [winningId, setWinningId] = useState("DRAW")
+    const navigate = useNavigate()
+    const [ bettingDuration, setBettingDuration ] = useState(0)
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const portalBalance = useTokenPortalBalance(token, account) 
-    const game = useGame(gameId)
+    const balance = useTokenBalance(token, account)
+    const [name, setName] = useState("default")
+    const [autoMaxWagerAmount, setAutoMaxWagerAmount] = useState(0)
+    const [autoBattleEnabled, setAutoBattleEnabled] = useState(false)
 
     const addAction = useActionCreator()
-    
-    const bets = game?.wagering?.betsArray?.map((bet)=>{
-        return (
-            <div>    
-                <Address value={bet?.sender ?? "0x"}/> 
-                bets 
-                <AssetDisplay tokenAddress={token?.address} balance={bet?.amount}/>
-                on 
-                {bet?.winningId == "DRAW" ? "DRAW" : <Address value={bet?.winningId}/>}
-            </div>
-        )
-    })
 
-    const handlePlaceBet = async () => {
-        //dispatch(createGame(tokenAddress, wagerValue))
-        const [action, wait] = await addAction({
-            type: TransactionType.BET_INPUT,
-            tokenAddress: token?.address,
-            amount: ethers.utils.parseUnits(amount.toString()),
-            winningId,
-            gameId,
-        })
-        await wait
+    const handleCreate = async () => {
+      //console.log("amount", amount)
+      const tx = {
+            type: TransactionType.MANAGER_BOT_INPUT,
+            name,
+            autoMaxWagerAmount,
+            autoWagerTokenAddress: token? token.address: "",
+            autoBattleEnabled,
+            botId,
+      }
+      //console.log("tx", tx)
+      const [approvalActionId, wait] = await addAction(tx)
+      const roomId = await wait
+      //console.log(roomId)
+      //console.log("jumping to" + roomId)
+      //if(roomId) navigate(`game/${roomId}`, { replace: true })
+
     }
 
-
+    //console.log("amount", amount)
     return (
         <Dialog.Root>
         <Dialog.Trigger asChild>
@@ -65,57 +58,35 @@ export default ({triggerElement, gameId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Place bet on <AddressGame id={gameId}/> </DialogTitle>
+            <DialogTitle>Deposit funds</DialogTitle>
             <DialogDescription>
-                You are betting <AssetDisplay tokenAddress={token?.address} balance={amount} isL2={true}/> that <Address value={winningId}/> will win.
-                Make sure to deposit funds to the portal first if you have not done so.
+              Create a new game. Invite friends to join and start playing. Or wait for random players to join.
             </DialogDescription>
+            
             <Fieldset>
-                <Label>Existing bets</Label>
-                <List items={bets}/>
+                <Label>Auto Wager amount</Label>
             </Fieldset>
             <Fieldset>
-                <Label>Amount</Label>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{
+                  //console.log("event.value", event.target.value)
+                 setAutoMaxWagerAmount(event.target.value)
+                 }}>
                 </Input>
-                <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value.toString())}} />
+                <Label>Bot name</Label>
             </Fieldset>
-
             <Fieldset>
-                <Label>Who is going to win?</Label>
-                <RadioGroupRoot defaultValue="DRAW" aria-label="View density" onValueChange={(value)=>{setWinningId(value)}}>
-                    <Flex css={{ alignItems: 'center' }}>
-                        <RadioGroupItem value={game?.players[0]} id="r1">
-                        <RadioGroupIndicator />
-                        </RadioGroupItem>
-                        <SelectLabel htmlFor="r1">{game?.players[0] ? <Address value={game?.players[0]}/> : "Player 1"}</SelectLabel>
-                    </Flex>
-                    <Flex css={{ alignItems: 'center' }}>
-                        <RadioGroupItem value={game?.players[1]} id="r2">
-                        <RadioGroupIndicator />
-                        </RadioGroupItem>
-                        <SelectLabel htmlFor="r2">{game?.players[1] ? <Address value={game?.players[1]}/> : "Player 2"}</SelectLabel>
-                    </Flex>
-                    <Flex css={{ alignItems: 'center' }}>
-                        <RadioGroupItem value={"DRAW"} id="r3">
-                        <RadioGroupIndicator />
-                        </RadioGroupItem>
-                        <SelectLabel htmlFor="r3"><Text>Draw</Text></SelectLabel>
-                    </Flex>
-                </RadioGroupRoot>
+              <Input id="bettingDuration" value={name} onChange={(event)=>{ setName(event.target.value)}}>
+                </Input>
             </Fieldset>
 
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
-                <Button 
+                <Button
                   variant="green"
-                  onClick={handlePlaceBet}
-                >
-                  Place bet
-                </Button>
+                  onClick={handleCreate}
+                  >Create</Button>
               </Dialog.Close>
             </Flex>
             <Dialog.Close asChild>
@@ -126,9 +97,8 @@ export default ({triggerElement, gameId}) => {
           </DialogContent>
         </Dialog.Portal>
       </Dialog.Root>
-    )
+  )
 }
-
 
 const overlayShow = keyframes({
     '0%': { opacity: 0 },
@@ -144,6 +114,7 @@ const overlayShow = keyframes({
     backgroundColor: blackA.blackA9,
     position: 'fixed',
     inset: 0,
+    animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
   });
   
   const DialogContent = styled(Dialog.Content, {
@@ -158,7 +129,7 @@ const overlayShow = keyframes({
     maxWidth: '450px',
     maxHeight: '85vh',
     padding: 25,
-    //animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
+    animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
     '&:focus': { outline: 'none' },
   });
   
@@ -264,13 +235,6 @@ const LeftSlot = styled('div', {
     color: violet.violet12,
     display: 'block',
   });
-
-const SelectLabel = styled('label', {
-  color: 'white',
-  fontSize: 15,
-  lineHeight: 1,
-  paddingLeft: 15,
-});
   
   const Input = styled('input', {
     all: 'unset',
@@ -348,37 +312,3 @@ const SelectLabel = styled('label', {
     '&:hover': { backgroundColor: violet.violet3 },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
   });
-
-const RadioGroupRoot = styled(RadioGroup.Root, {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-});
-
-const RadioGroupItem = styled(RadioGroup.Item, {
-  all: 'unset',
-  backgroundColor: 'white',
-  width: 25,
-  height: 25,
-  borderRadius: '100%',
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
-  '&:hover': { backgroundColor: violet.violet3 },
-  '&:focus': { boxShadow: `0 0 0 2px black` },
-});
-
-const RadioGroupIndicator = styled(RadioGroup.Indicator, {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '100%',
-  height: '100%',
-  position: 'relative',
-  '&::after': {
-    content: '""',
-    display: 'block',
-    width: 11,
-    height: 11,
-    borderRadius: '50%',
-    backgroundColor: violet.violet11,
-  },
-});

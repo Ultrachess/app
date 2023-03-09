@@ -15,7 +15,7 @@ import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
 
 
-export default ({triggerElement, botId}) => {
+export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
     const navigate = useNavigate()
@@ -24,28 +24,27 @@ export default ({triggerElement, botId}) => {
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const portalBalance = useTokenPortalBalance(token, account) 
     const balance = useTokenBalance(token, account)
-    const [name, setName] = useState("default")
-    const [autoMaxWagerAmount, setAutoMaxWagerAmount] = useState(0)
-    const [autoBattleEnabled, setAutoBattleEnabled] = useState(false)
+
+    console.log("bettingDuration", bettingDuration)
 
     const addAction = useActionCreator()
 
     const handleCreate = async () => {
       //console.log("amount", amount)
       const tx = {
-            type: TransactionType.MANAGER_BOT_INPUT,
-            name,
-            autoMaxWagerAmount,
-            autoWagerTokenAddress: token? token.address: "",
-            autoBattleEnabled,
-            botId,
+            type: TransactionType.CREATE_GAME_INPUT,
+            name: "default",
+            isBot: false,
+            wagerTokenAddress: token? token.address: "",
+            wagerAmount: ethers.utils.parseUnits(amount.toString()),
+            bettingDuration,
       }
-      //console.log("tx", tx)
+      console.log("bettingDuration", tx.bettingDuration)
       const [approvalActionId, wait] = await addAction(tx)
       const roomId = await wait
       //console.log(roomId)
       //console.log("jumping to" + roomId)
-      //if(roomId) navigate(`game/${roomId}`, { replace: true })
+      if(roomId) navigate(`game/${roomId}`, { replace: true })
 
     }
 
@@ -58,29 +57,48 @@ export default ({triggerElement, botId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Deposit funds</DialogTitle>
+            <DialogTitle>Create Game</DialogTitle>
             <DialogDescription>
               Create a new game. Invite friends to join and start playing. Or wait for random players to join.
             </DialogDescription>
             
             <Fieldset>
-                <Label>Auto Wager amount</Label>
+                <Label>Wager amount</Label>
+                {/* <RightSlot>
+                    You win: <AssetDisplay tokenAddress={token?.address} balance={portalBalance - amount} isL2={true}/> 
+                    <Text>→</Text> 
+                    You lose: <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
+                </RightSlot> */}
             </Fieldset>
             <Fieldset>
               <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{
                   //console.log("event.value", event.target.value)
-                 setAutoMaxWagerAmount(event.target.value)
+                 setAmount(event.target.value)
                  }}>
                 </Input>
+                <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
             </Fieldset>
             <Fieldset>
-                <Label>Bot name</Label>
-            </Fieldset>
-            <Fieldset>
-              <Input id="bettingDuration" value={name} onChange={(event)=>{ setName(event.target.value)}}>
-                </Input>
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
             </Fieldset>
 
+            <Fieldset>
+                <Label>Betting duration (in seconds)</Label>
+            </Fieldset>
+            <Fieldset>
+              <Input id="bettingDuration" value={bettingDuration} defaultValue={0} onChange={(event)=>{ 
+                  console.log("bettingDuration", event.target.value)
+                setBettingDuration(event.target.value)
+                }}>
+                </Input>
+                <RightSlot onClick={()=>setBettingDuration(max)}>MAX</RightSlot>
+            </Fieldset>
+            <Fieldset>
+                <SliderMain value={bettingDuration} max={100} onChangeFunction={([value])=>{ 
+                  console.log("bettingDuration", value)
+                  setBettingDuration(value)}
+                  } />
+            </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
                 <Button

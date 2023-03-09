@@ -329,7 +329,18 @@ def handle_advance(data):
         except Exception:
             traceback.print_exc()
             success = False
-    
+    elif operator == "kingThroneChallenge":
+        try:
+            success = kohManager.challenge(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "kingThroneUpdate":
+        try:
+            success = kohManager.set_rules(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
     logger.info("pending moves: " + str(botManager.pending_game_moves))
 
     botManager.runPendingMoves(timeStamp)

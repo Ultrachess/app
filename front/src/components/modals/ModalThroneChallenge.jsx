@@ -2,62 +2,48 @@ import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { ChevronDownIcon,ChevronUpIcon, Cross2Icon, CheckIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, Cross2Icon, ChevronUpIcon, CheckIcon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
 import { Text } from './ui/Text';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
+import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
+import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
 import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
-import { useActionCreator, useUserBots } from '../state/game/hooks';
-import { TransactionType } from '../common/types';
-import Address from './Address';
+import { useActionCreator, useUserBotIds, useThrone } from '../../state/game/hooks';
+import { TransactionType } from '../../common/types';
+import Address from '../Address';
 import * as Select from '@radix-ui/react-select';
+import { ethers } from 'ethers';
 
 
-const tournamentTypes = [
-    "Knockout",
-]
 
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
-    const [amount, setAmount ] = useState(0)
-    const [tourneyType, setTourneyType] = useState(tournamentTypes[0])
-    const [participants, setParticipants] = useState([])
-    const [participantCount, setParticipantCount] = useState(2)
-    const [currentSelectedParticipant, setCurrentSelectedParticipant] = useState(account ?? "")
-    const [roundCount, setRoundCount] = useState(1000)
-    const [amountOfWinners, setAmountOfWinners] = useState(1)
-
-    const bots = useUserBots(account)
-    const potentialParticipants = [...bots.map((bot) => bot.id), account]
+    const [challenger, setChallenger ] = useState(account)
+    const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+    const bots = useUserBotIds(account)
+    const potentialChallengers = [...bots, account]
 
     const addAction = useActionCreator()
 
-    const addParticipant = (address) => {
-        setParticipants([...participants, address])
+    const { 
+      king,
+      winnings,
+      battles,
+      price,
+      gamesToWin,
+      maxTrys
+    } = useThrone()
+
+    const handleChallenge = async () => {
+      const [approvalActionId, wait] = await addAction({
+        type: TransactionType.KING_THRONE_CHALLENGE,
+        challenger: challenger,
+      })
+      await wait
     }
 
-    const removeParticipant = (address) => {
-        setParticipants(participants.filter((p) => p !== address))
-    }
-
-    const handleTournamentCreate = async () => {
-        //dispatch(createGame(tokenAddress, wagerValue))
-        const [action, wait] = await addAction({
-            type: TransactionType.CREATE_TOURNAMENT,
-            tourneyType,
-            participants,
-            participantCount,
-            roundCount,
-            amountOfWinners,
-        })
-        const tournamentId = await wait
-        //console.log("jumping to tournament" + tournamentId)
-        if(tournamentId) navigate(`tournaments/${tournamentId}`, { replace: true })
-    }
-
-    //console.log("amount", amount)
+    //console.log("123", playerId)
     return (
         <Dialog.Root>
         <Dialog.Trigger asChild>
@@ -66,63 +52,26 @@ export default ({triggerElement}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Create </DialogTitle>
+            <DialogTitle>Challenge King <Address value={king}/></DialogTitle>
             <DialogDescription>
-              Create your tournament. You dont need to initialize the participants, they can join later.
+              <Text>
+                Challenge the king to a duel. If you win, you will take the throne. and all users must pay a fee to challenge you.
+                Current price to challenge the king is <AssetDisplay value={price} token={token} />
+                You must win {gamesToWin} games to take the throne.
+                You have {maxTrys} tries to win the games.
+              </Text>
             </DialogDescription>
-            
             <Fieldset>
-                <Label>Type</Label>
-                <SelectMain
-                    value={tourneyType}
-                    onValueChange={(value)=>{ setTourneyType(value)}}
-                    options = {tournamentTypes}
-                    label="Tournament type"
-                />
-            </Fieldset>
-
-            <Fieldset>
-                <Label>Participant count</Label>
-                {/* <RightSlot>
-                    You win: <AssetDisplay tokenAddress={token?.address} balance={portalBalance - amount} isL2={true}/> 
-                    <Text>→</Text> 
-                    You lose: <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
-                </RightSlot> */}
-            </Fieldset>
-            <Fieldset>
-              <Input id="amount" value={participantCount} defaultValue={0} onChange={(event)=>{
-                  //console.log("event.value", event.target.value)
-                 setParticipantCount(event.target.value)
-                 }}>
-                </Input>
-                <RightSlot onClick={()=>setParticipantCount(50)}>MAX</RightSlot>
-            </Fieldset>
-
-            <Fieldset>
-                <Label>Participants</Label>
-                <Flex>
-                    {participants.map((address) => (
-                        <Button variant="green" onClick={() => removeParticipant(address)}><Address value={address} /></Button>
-                    ))}
-                </Flex>
-                <Flex css={{ gap: 10, flexWrap: 'wrap' }}>
-                    <SelectMain 
-                        value={currentSelectedParticipant} 
-                        onValueChange={(value)=>{ setCurrentSelectedParticipant(value)}}
-                        options = {potentialParticipants.filter((address) => !participants.includes(address))}
-                        label="Select participant"
-                    />
-                    <Button variant="green" onClick={() => addParticipant(currentSelectedParticipant)}>Add</Button>
-                </Flex>
-                    
+              <Label>Challenger</Label>
+              <SelectMain options={potentialChallengers} value={challenger} onValueChange={setChallenger}/>
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
                 <Button 
                   variant="green"
-                  onClick={handleTournamentCreate}
+                  onClick={handleChallenge}
                 >
-                  Create
+                  Challenge
                 </Button>
               </Dialog.Close>
             </Flex>
@@ -349,6 +298,7 @@ const LeftSlot = styled('div', {
     '&:hover': { backgroundColor: violet.violet3 },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
   });
+
 
 
   const SelectMain = ({onValueChange, value, options, label}) => {

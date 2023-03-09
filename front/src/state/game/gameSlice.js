@@ -49,6 +49,15 @@ export const gameSlice = createSlice({
         actionList: [],
         challenges: {},
         marketplace: {},
+        throne: {
+            king: "",
+            winnings: 0,
+            battles: {},
+            price: 0,
+            token: "",
+            gamesToWin: 0,
+            maxTrys: 0,
+        },
     },
     reducers: {
         setLastProcessedBlock: (state, action) => {

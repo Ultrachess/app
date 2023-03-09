@@ -29,7 +29,7 @@ import ProfileImage from "./ProfileImage";
 import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { SelectIcon } from "@radix-ui/react-select";
 import { Text } from "./ui/Text";
-import ModalNewDepositFunds from "./ModalNewDepositFunds";
+import ModalNewDepositFunds from "./modals/ModalNewDepositFunds";
 import NotificationDropdown from "./NotificationDropdown";
 import { Link } from "react-router-dom";
 import { useBalance } from "../state/game/hooks";

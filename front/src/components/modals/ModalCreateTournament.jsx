@@ -2,50 +2,59 @@ import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { ChevronDownIcon,ChevronUpIcon, Cross2Icon, CheckIcon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
-import { Text } from './ui/Text';
+import { Text } from '../ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
 import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
 import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../state/game/hooks';
-import { TransactionType } from '../common/types';
-import { ethers } from 'ethers';
-import { useNavigate } from 'react-router-dom';
+import { useActionCreator, useUserBots } from '../../state/game/hooks';
+import { TransactionType } from '../../common/types';
+import Address from './Address';
+import * as Select from '@radix-ui/react-select';
 
+
+const tournamentTypes = [
+    "Knockout",
+]
 
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
-    const navigate = useNavigate()
-    const [ bettingDuration, setBettingDuration ] = useState(0)
-    const max = 100
-    const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
-    const portalBalance = useTokenPortalBalance(token, account) 
-    const balance = useTokenBalance(token, account)
+    const [tourneyType, setTourneyType] = useState(tournamentTypes[0])
+    const [participants, setParticipants] = useState([])
+    const [participantCount, setParticipantCount] = useState(2)
+    const [currentSelectedParticipant, setCurrentSelectedParticipant] = useState(account ?? "")
+    const [roundCount, setRoundCount] = useState(1000)
+    const [amountOfWinners, setAmountOfWinners] = useState(1)
 
-    console.log("bettingDuration", bettingDuration)
+    const bots = useUserBots(account)
+    const potentialParticipants = [...bots.map((bot) => bot.id), account]
 
     const addAction = useActionCreator()
 
-    const handleCreate = async () => {
-      //console.log("amount", amount)
-      const tx = {
-            type: TransactionType.CREATE_GAME_INPUT,
-            name: "default",
-            isBot: false,
-            wagerTokenAddress: token? token.address: "",
-            wagerAmount: ethers.utils.parseUnits(amount.toString()),
-            bettingDuration,
-      }
-      console.log("bettingDuration", tx.bettingDuration)
-      const [approvalActionId, wait] = await addAction(tx)
-      const roomId = await wait
-      //console.log(roomId)
-      //console.log("jumping to" + roomId)
-      if(roomId) navigate(`game/${roomId}`, { replace: true })
+    const addParticipant = (address) => {
+        setParticipants([...participants, address])
+    }
 
+    const removeParticipant = (address) => {
+        setParticipants(participants.filter((p) => p !== address))
+    }
+
+    const handleTournamentCreate = async () => {
+        //dispatch(createGame(tokenAddress, wagerValue))
+        const [action, wait] = await addAction({
+            type: TransactionType.CREATE_TOURNAMENT,
+            tourneyType,
+            participants,
+            participantCount,
+            roundCount,
+            amountOfWinners,
+        })
+        const tournamentId = await wait
+        //console.log("jumping to tournament" + tournamentId)
+        if(tournamentId) navigate(`tournaments/${tournamentId}`, { replace: true })
     }
 
     //console.log("amount", amount)
@@ -57,13 +66,23 @@ export default ({triggerElement}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Deposit funds</DialogTitle>
+            <DialogTitle>Create </DialogTitle>
             <DialogDescription>
-              Create a new game. Invite friends to join and start playing. Or wait for random players to join.
+              Create your tournament. You dont need to initialize the participants, they can join later.
             </DialogDescription>
             
             <Fieldset>
-                <Label>Wager amount</Label>
+                <Label>Type</Label>
+                <SelectMain
+                    value={tourneyType}
+                    onValueChange={(value)=>{ setTourneyType(value)}}
+                    options = {tournamentTypes}
+                    label="Tournament type"
+                />
+            </Fieldset>
+
+            <Fieldset>
+                <Label>Participant count</Label>
                 {/* <RightSlot>
                     You win: <AssetDisplay tokenAddress={token?.address} balance={portalBalance - amount} isL2={true}/> 
                     <Text>→</Text> 
@@ -71,40 +90,40 @@ export default ({triggerElement}) => {
                 </RightSlot> */}
             </Fieldset>
             <Fieldset>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{
+              <Input id="amount" value={participantCount} defaultValue={0} onChange={(event)=>{
                   //console.log("event.value", event.target.value)
-                 setAmount(event.target.value)
+                 setParticipantCount(event.target.value)
                  }}>
                 </Input>
-                <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
-            </Fieldset>
-            <Fieldset>
-                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value)}} />
+                <RightSlot onClick={()=>setParticipantCount(50)}>MAX</RightSlot>
             </Fieldset>
 
             <Fieldset>
-                <Label>Betting duration (in seconds)</Label>
-            </Fieldset>
-            <Fieldset>
-              <Input id="bettingDuration" value={bettingDuration} defaultValue={0} onChange={(event)=>{ 
-                  console.log("bettingDuration", event.target.value)
-                setBettingDuration(event.target.value)
-                }}>
-                </Input>
-                <RightSlot onClick={()=>setBettingDuration(max)}>MAX</RightSlot>
-            </Fieldset>
-            <Fieldset>
-                <SliderMain value={bettingDuration} max={100} onChangeFunction={([value])=>{ 
-                  console.log("bettingDuration", value)
-                  setBettingDuration(value)}
-                  } />
+                <Label>Participants</Label>
+                <Flex>
+                    {participants.map((address) => (
+                        <Button variant="green" onClick={() => removeParticipant(address)}><Address value={address} /></Button>
+                    ))}
+                </Flex>
+                <Flex css={{ gap: 10, flexWrap: 'wrap' }}>
+                    <SelectMain 
+                        value={currentSelectedParticipant} 
+                        onValueChange={(value)=>{ setCurrentSelectedParticipant(value)}}
+                        options = {potentialParticipants.filter((address) => !participants.includes(address))}
+                        label="Select participant"
+                    />
+                    <Button variant="green" onClick={() => addParticipant(currentSelectedParticipant)}>Add</Button>
+                </Flex>
+                    
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
-                <Button
+                <Button 
                   variant="green"
-                  onClick={handleCreate}
-                  >Create</Button>
+                  onClick={handleTournamentCreate}
+                >
+                  Create
+                </Button>
               </Dialog.Close>
             </Flex>
             <Dialog.Close asChild>
@@ -330,3 +349,156 @@ const LeftSlot = styled('div', {
     '&:hover': { backgroundColor: violet.violet3 },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
   });
+
+
+  const SelectMain = ({onValueChange, value, options, label}) => {
+    return (
+        <Select.Root 
+        value={value}
+        onValueChange={async (value) => {
+            onValueChange(value)
+        }}
+    >
+      <SelectTrigger aria-label="Chain">
+          <Select.Value><Text>{value}</Text></Select.Value>
+        <SelectIcon>
+          <ChevronDownIcon />
+        </SelectIcon>
+      </SelectTrigger>
+      <Select.Portal>
+        <SelectContent>
+          <SelectScrollUpButton>
+            <ChevronUpIcon />
+          </SelectScrollUpButton>
+          <SelectViewport>
+            <Select.Group>
+              <SelectLabel>{label}</SelectLabel>
+                {options ?
+                    options.map((option) => (
+                        <SelectItem value={option}>{option}</SelectItem>
+                    )): []
+                }
+            </Select.Group>
+  
+          </SelectViewport>
+          <SelectScrollDownButton>
+            <ChevronDownIcon />
+          </SelectScrollDownButton>
+        </SelectContent>
+      </Select.Portal>
+    </Select.Root>
+        )
+};
+
+const SelectTrigger = styled(Select.SelectTrigger, {
+  all: 'unset',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 4,
+  padding: '0 15px',
+  fontSize: 13,
+  lineHeight: 1,
+  height: 35,
+  display: 'flex',
+  flexDirection: 'row',
+  gap: 5,
+  backgroundColor: 'white',
+  color: violet.violet11,
+  //boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  '&:hover': { backgroundColor: mauve.mauve3 },
+  //'&:focus': { boxShadow: `0 0 0 2px black` },
+  '&[data-placeholder]': { color: violet.violet9 },
+});
+
+const SelectIcon = styled(Select.SelectIcon, {
+  color: violet.violet11,
+});
+
+const SelectContent = styled(Select.Content, {
+  overflow: 'hidden',
+  backgroundColor: 'white',
+  borderRadius: 6,
+  boxShadow:
+    '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
+});
+
+const SelectViewport = styled(Select.Viewport, {
+  padding: 5,
+});
+
+const SelectItem = React.forwardRef(({ children, ...props }, forwardedRef) => {
+  return (
+    <StyledItem {...props} ref={forwardedRef}>
+      <Select.ItemText>{children}</Select.ItemText>
+      <StyledItemIndicator>
+        <CheckIcon />
+      </StyledItemIndicator>
+    </StyledItem>
+  );
+});
+
+const SelectValue = styled(Select.Value, {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row',
+});
+
+const StyledItem = styled(Select.Item, {
+  fontSize: 13,
+  lineHeight: 1,
+  color: violet.violet11,
+  borderRadius: 3,
+  display: 'flex',
+  alignItems: 'center',
+  height: 25,
+  padding: '0 35px 0 25px',
+  position: 'relative',
+  userSelect: 'none',
+
+  '&[data-disabled]': {
+    color: mauve.mauve8,
+    pointerEvents: 'none',
+  },
+
+  '&[data-highlighted]': {
+    outline: 'none',
+    backgroundColor: violet.violet9,
+    color: violet.violet1,
+  },
+});
+
+const SelectLabel = styled(Select.Label, {
+  padding: '0 25px',
+  fontSize: 12,
+  lineHeight: '25px',
+  color: mauve.mauve11,
+});
+
+const SelectSeparator = styled(Select.Separator, {
+  height: 1,
+  backgroundColor: violet.violet6,
+  margin: 5,
+});
+
+const StyledItemIndicator = styled(Select.ItemIndicator, {
+  position: 'absolute',
+  left: 0,
+  width: 25,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const scrollButtonStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 25,
+  backgroundColor: 'white',
+  color: violet.violet11,
+  cursor: 'default',
+};
+
+const SelectScrollUpButton = styled(Select.ScrollUpButton, scrollButtonStyles);
+
+const SelectScrollDownButton = styled(Select.ScrollDownButton, scrollButtonStyles);

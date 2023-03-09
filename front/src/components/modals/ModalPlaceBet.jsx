@@ -1,45 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { styled, keyframes } from '@stitches/react';
-import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { ChevronDownIcon, Cross2Icon, ChevronUpIcon, CheckIcon } from '@radix-ui/react-icons';
-import * as Slider from '@radix-ui/react-slider';
-import { Text } from './ui/Text';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
-import AssetDisplay from './AssetDisplay';
-import { useWeb3React } from '@web3-react/core';
-import { useActionCreator, useUserBotIds } from '../state/game/hooks';
-import { TransactionType } from '../common/types';
-import Address from './Address';
-import * as Select from '@radix-ui/react-select';
-import { ethers } from 'ethers';
+import { useActionCreator, useGame } from "../../state/game/hooks";
+import { TransactionType } from "../../common/types";
+import { ethers } from "ethers";
+import Address from "../Address";
+import { useWeb3React } from "@web3-react/core";
+import { useTokenPortalBalance, useTokenFromList } from "../../hooks/token";
+import * as RadioGroup from '@radix-ui/react-radio-group';
+
+import AddressGame from "../AddressGame";
+import List from "../ui/List";
+import AssetDisplay from "../AssetDisplay";
+import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { keyframes, styled } from "@stitches/react";
+import { blackA, mauve, violet, green } from "@radix-ui/colors";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import { Slider } from "@radix-ui/react-slider";
+import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Text } from "../ui/Text";
 
 
-
-export default ({triggerElement, tournamentId}) => {
+export default ({triggerElement, gameId}) => {
+  //console.log(triggerElement)
+  //console.log(gameId)
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
-    const [challenger, setChallenger ] = useState(account)
+    const [winningId, setWinningId] = useState("DRAW")
     const max = 100
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
-    const balance = useTokenPortalBalance(token, account) 
-
-    const bots = useUserBotIds(account)
-    const potentialChallengers = [...bots, account]
+    const portalBalance = useTokenPortalBalance(token, account) 
+    const game = useGame(gameId)
 
     const addAction = useActionCreator()
+    
+    const bets = game?.wagering?.betsArray?.map((bet)=>{
+        return (
+            <div>    
+                <Address value={bet?.sender ?? "0x"}/> 
+                bets 
+                <AssetDisplay tokenAddress={token?.address} balance={bet?.amount}/>
+                on 
+                {bet?.winningId == "DRAW" ? "DRAW" : <Address value={bet?.winningId}/>}
+            </div>
+        )
+    })
 
-    const handleChallenge = async () => {
-      const [approvalActionId, wait] = await addAction({
-        type: TransactionType.JOIN_TOURNAMENT,
-        tournamentId: tournamentId,
-        participant_id: challenger,
-      })
-      await wait
+    const handlePlaceBet = async () => {
+        //dispatch(createGame(tokenAddress, wagerValue))
+        const [action, wait] = await addAction({
+            type: TransactionType.BET_INPUT,
+            tokenAddress: token?.address,
+            amount: ethers.utils.parseUnits(amount.toString()),
+            winningId,
+            gameId,
+        })
+        await wait
     }
 
-    //console.log("123", playerId)
+
     return (
         <Dialog.Root>
         <Dialog.Trigger asChild>
@@ -48,21 +65,56 @@ export default ({triggerElement, tournamentId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Join Tournament #<Address value={tournamentId}/></DialogTitle>
+            <DialogTitle>Place bet on <AddressGame id={gameId}/> </DialogTitle>
             <DialogDescription>
-              Choose the participant you want to join the tournament with. Could be you or one of your bots.
+                You are betting <AssetDisplay tokenAddress={token?.address} balance={amount} isL2={true}/> that <Address value={winningId}/> will win.
+                Make sure to deposit funds to the portal first if you have not done so.
             </DialogDescription>
             <Fieldset>
-              <Label>Participant</Label>
-              <SelectMain label={"participants"} options={potentialChallengers} value={challenger} onValueChange={setChallenger}/>
+                <Label>Existing bets</Label>
+                <List items={bets}/>
             </Fieldset>
+            <Fieldset>
+                <Label>Amount</Label>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
+                </Input>
+                <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
+            </Fieldset>
+            <Fieldset>
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value.toString())}} />
+            </Fieldset>
+
+            <Fieldset>
+                <Label>Who is going to win?</Label>
+                <RadioGroupRoot defaultValue="DRAW" aria-label="View density" onValueChange={(value)=>{setWinningId(value)}}>
+                    <Flex css={{ alignItems: 'center' }}>
+                        <RadioGroupItem value={game?.players[0]} id="r1">
+                        <RadioGroupIndicator />
+                        </RadioGroupItem>
+                        <SelectLabel htmlFor="r1">{game?.players[0] ? <Address value={game?.players[0]}/> : "Player 1"}</SelectLabel>
+                    </Flex>
+                    <Flex css={{ alignItems: 'center' }}>
+                        <RadioGroupItem value={game?.players[1]} id="r2">
+                        <RadioGroupIndicator />
+                        </RadioGroupItem>
+                        <SelectLabel htmlFor="r2">{game?.players[1] ? <Address value={game?.players[1]}/> : "Player 2"}</SelectLabel>
+                    </Flex>
+                    <Flex css={{ alignItems: 'center' }}>
+                        <RadioGroupItem value={"DRAW"} id="r3">
+                        <RadioGroupIndicator />
+                        </RadioGroupItem>
+                        <SelectLabel htmlFor="r3"><Text>Draw</Text></SelectLabel>
+                    </Flex>
+                </RadioGroupRoot>
+            </Fieldset>
+
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
               <Dialog.Close asChild>
                 <Button 
                   variant="green"
-                  onClick={handleChallenge}
+                  onClick={handlePlaceBet}
                 >
-                  Join
+                  Place bet
                 </Button>
               </Dialog.Close>
             </Flex>
@@ -74,8 +126,9 @@ export default ({triggerElement, tournamentId}) => {
           </DialogContent>
         </Dialog.Portal>
       </Dialog.Root>
-  )
+    )
 }
+
 
 const overlayShow = keyframes({
     '0%': { opacity: 0 },
@@ -91,7 +144,6 @@ const overlayShow = keyframes({
     backgroundColor: blackA.blackA9,
     position: 'fixed',
     inset: 0,
-    animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
   });
   
   const DialogContent = styled(Dialog.Content, {
@@ -106,7 +158,7 @@ const overlayShow = keyframes({
     maxWidth: '450px',
     maxHeight: '85vh',
     padding: 25,
-    animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
+    //animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
     '&:focus': { outline: 'none' },
   });
   
@@ -212,6 +264,13 @@ const LeftSlot = styled('div', {
     color: violet.violet12,
     display: 'block',
   });
+
+const SelectLabel = styled('label', {
+  color: 'white',
+  fontSize: 15,
+  lineHeight: 1,
+  paddingLeft: 15,
+});
   
   const Input = styled('input', {
     all: 'unset',
@@ -290,156 +349,36 @@ const LeftSlot = styled('div', {
     '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
   });
 
+const RadioGroupRoot = styled(RadioGroup.Root, {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 10,
+});
 
-
-  const SelectMain = ({onValueChange, value, options, label}) => {
-    return (
-        <Select.Root 
-        value={value}
-        onValueChange={async (value) => {
-            onValueChange(value)
-        }}
-    >
-      <SelectTrigger aria-label="Chain">
-          <Select.Value><Text>{value}</Text></Select.Value>
-        <SelectIcon>
-          <ChevronDownIcon />
-        </SelectIcon>
-      </SelectTrigger>
-      <Select.Portal>
-        <SelectContent>
-          <SelectScrollUpButton>
-            <ChevronUpIcon />
-          </SelectScrollUpButton>
-          <SelectViewport>
-            <Select.Group>
-              <SelectLabel>{label}</SelectLabel>
-                {options ?
-                    options.map((option) => (
-                        <SelectItem value={option}>{option}</SelectItem>
-                    )): []
-                }
-            </Select.Group>
-  
-          </SelectViewport>
-          <SelectScrollDownButton>
-            <ChevronDownIcon />
-          </SelectScrollDownButton>
-        </SelectContent>
-      </Select.Portal>
-    </Select.Root>
-        )
-};
-
-const SelectTrigger = styled(Select.SelectTrigger, {
+const RadioGroupItem = styled(RadioGroup.Item, {
   all: 'unset',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: 4,
-  padding: '0 15px',
-  fontSize: 13,
-  lineHeight: 1,
-  height: 35,
-  display: 'flex',
-  flexDirection: 'row',
-  gap: 5,
   backgroundColor: 'white',
-  color: violet.violet11,
-  //boxShadow: `0 2px 10px ${blackA.blackA7}`,
-  '&:hover': { backgroundColor: mauve.mauve3 },
-  //'&:focus': { boxShadow: `0 0 0 2px black` },
-  '&[data-placeholder]': { color: violet.violet9 },
-});
-
-const SelectIcon = styled(Select.SelectIcon, {
-  color: violet.violet11,
-});
-
-const SelectContent = styled(Select.Content, {
-  overflow: 'hidden',
-  backgroundColor: 'white',
-  borderRadius: 6,
-  boxShadow:
-    '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
-});
-
-const SelectViewport = styled(Select.Viewport, {
-  padding: 5,
-});
-
-const SelectItem = React.forwardRef(({ children, ...props }, forwardedRef) => {
-  return (
-    <StyledItem {...props} ref={forwardedRef}>
-      <Select.ItemText>{children}</Select.ItemText>
-      <StyledItemIndicator>
-        <CheckIcon />
-      </StyledItemIndicator>
-    </StyledItem>
-  );
-});
-
-const SelectValue = styled(Select.Value, {
-  display: 'flex',
-  alignItems: 'center',
-  flexDirection: 'row',
-});
-
-const StyledItem = styled(Select.Item, {
-  fontSize: 13,
-  lineHeight: 1,
-  color: violet.violet11,
-  borderRadius: 3,
-  display: 'flex',
-  alignItems: 'center',
-  height: 25,
-  padding: '0 35px 0 25px',
-  position: 'relative',
-  userSelect: 'none',
-
-  '&[data-disabled]': {
-    color: mauve.mauve8,
-    pointerEvents: 'none',
-  },
-
-  '&[data-highlighted]': {
-    outline: 'none',
-    backgroundColor: violet.violet9,
-    color: violet.violet1,
-  },
-});
-
-const SelectLabel = styled(Select.Label, {
-  padding: '0 25px',
-  fontSize: 12,
-  lineHeight: '25px',
-  color: mauve.mauve11,
-});
-
-const SelectSeparator = styled(Select.Separator, {
-  height: 1,
-  backgroundColor: violet.violet6,
-  margin: 5,
-});
-
-const StyledItemIndicator = styled(Select.ItemIndicator, {
-  position: 'absolute',
-  left: 0,
   width: 25,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  height: 25,
+  borderRadius: '100%',
+  boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  '&:hover': { backgroundColor: violet.violet3 },
+  '&:focus': { boxShadow: `0 0 0 2px black` },
 });
 
-const scrollButtonStyles = {
+const RadioGroupIndicator = styled(RadioGroup.Indicator, {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  height: 25,
-  backgroundColor: 'white',
-  color: violet.violet11,
-  cursor: 'default',
-};
-
-const SelectScrollUpButton = styled(Select.ScrollUpButton, scrollButtonStyles);
-
-const SelectScrollDownButton = styled(Select.ScrollDownButton, scrollButtonStyles);
+  width: '100%',
+  height: '100%',
+  position: 'relative',
+  '&::after': {
+    content: '""',
+    display: 'block',
+    width: 11,
+    height: 11,
+    borderRadius: '50%',
+    backgroundColor: violet.violet11,
+  },
+});

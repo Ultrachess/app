@@ -1,7 +1,7 @@
 import * as React from "react";
 import { truncateAddress, formatDate } from "../../ether/utils";
 import Address from "../Address";
-import ModalChallengeBot from "../ModalChallengeBot";
+import ModalChallengeBot from "../modals/ModalChallengeBot";
 import ModalManageBot from "../ModalManageBot";
 import { useWeb3React } from "@web3-react/core";
 import List from "../ui/List";

@@ -18,8 +18,7 @@ export default () => {
           <Button className="navItem" light color="default" auto><Link className="noUnderLine" to="/rankings"><Text link>Rankings</Text></Link></Button>
           <Button className="navItem" light color="default" auto><Link className="noUnderLine" to="/bots"><Text link>Bots</Text></Link></Button>
           <Button className="navItem" light color="default" auto><Link className="noUnderLine" to="/tournaments"><Text link>Tournaments</Text></Link></Button>
-          <Button className="navItem" light color="default" auto><Link className="noUnderLine" to="/tournaments"><Text link>Github</Text></Link></Button>
-
+          <Button className="navItem" light color="default" auto><Link className="noUnderLine" to="/tournaments"><Text link>KOH</Text></Link></Button>
         </div>
         <div className="nav-right">
           <Auth/>

@@ -7,7 +7,7 @@ import { useAllBots } from "../state/game/hooks";
 import Flex from "./ui/Flex";
 import { Text } from "./ui/Text";
 import { styled } from "@stitches/react";
-import ModalCreateBot from "./ModalCreateBot";
+import ModalCreateBot from "./modals/ModalCreateBot";
 import Separator from "./ui/Separator";
 import { ZoomOutIcon, StitchesLogoIcon } from "@radix-ui/react-icons";
 import { violet } from "@radix-ui/colors";
