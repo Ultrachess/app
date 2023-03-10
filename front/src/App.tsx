@@ -49,7 +49,7 @@ function App() {
         <Route path="/game/:gameId" element={<Game />} />
         <Route path="/users/:userId" element={<Profile/>} />
         <Route path="/bot/:botId" element={<BotProfile/>} />
-        <Route path='/koh' element={<PageKingOfTheHill/>}/>
+        <Route path='koh' element={<PageKingOfTheHill/>}/>
       </Routes>
     </div>
   )

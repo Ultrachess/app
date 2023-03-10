@@ -6,12 +6,11 @@ import { ChevronDownIcon, Cross2Icon, ChevronUpIcon, CheckIcon } from '@radix-ui
 import * as Slider from '@radix-ui/react-slider';
 import { Text } from '../ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../ether/chains';
-import AssetDisplay from './AssetDisplay';
+import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
 import { useWeb3React } from '@web3-react/core';
 import { useActionCreator, useUserBotIds } from '../../state/game/hooks';
 import { TransactionType } from '../../common/types';
-import Address from './Address';
+import Address from '../Address';
 import * as Select from '@radix-ui/react-select';
 import { ethers } from 'ethers';
 

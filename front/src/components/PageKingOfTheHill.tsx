@@ -25,12 +25,13 @@ import AssetDisplay from "./AssetDisplay";
 import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
 import List from "./ui/List";
+import { truncateAddress } from "../ether/utils";
     
 
 
 const battleListItem = (maxTrys: number, gamesToWin:number, battle: ThroneBattle) => {
     return (
-        <Flex css={{ justifyContent: "space-between"}}>
+        <Flex css={{ justifyContent: "space-evenly", width: '800px'}}>
             <Flex css={{ flexDirection: "column", gap: 5 }}>
                 <Text bold>challenger</Text>
                 <Address value={battle.challenger} />
@@ -42,6 +43,14 @@ const battleListItem = (maxTrys: number, gamesToWin:number, battle: ThroneBattle
             <Flex css={{ flexDirection: "column", gap: 5 }}>
                 <Text bold>Trys left</Text>
                 <Text black>{maxTrys - battle.completed_games}</Text>
+            </Flex>
+            <Flex css={{ flexDirection: "column", gap: 5 }}>
+                <Text bold>Games</Text>
+                <Flex css={{ gap: 5, flexDirection: "column" }}>
+                    {battle.games.map((game) => (
+                        <AddressGame id={game} />
+                    ))}
+                </Flex>
             </Flex>
             <Flex css={{ flexDirection: "column", gap: 5 }}>
                 <Text bold>Status </Text>
@@ -64,27 +73,33 @@ export default () => {
         price
     } = useThrone()
 
-    const isKing = account.toLowerCase() === king.toLowerCase()
+    const isKing = account?.toLowerCase() === king?.toLowerCase()
 
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
 
-    const battleItems = Object.values(battles)
-        .map((battle) => battleListItem(maxTrys, gamesToWin, battle))
-        
+    const battleItems = 
+        Object.values(battles).length > 0 ?
+        Object.values(battles).map((battle) => battleListItem(maxTrys, gamesToWin, battle)) :
+        [<Text black size={2} css={{width:"800px", textAlign:"left", lineHeight:"30px", marginBottom:"-80px"}}>
+            No challenges yet
+        </Text>]
+
+    
 
     return (
         <div className="body">
         <div className="header">
             <div>
             <Text bold black size={"max"} css={{ textAlign: "center", marginBottom: "10px" }}>
-                King of the
+                King of the Hill
             </Text>
+            </div>
             <Text black size={2} css={{width:"100%", textAlign:"left", lineHeight:"30px", marginBottom:"-80px"}}>
                 This is the king of the hill mode. For a price, opponents of any kind can challenge the king to claim the throne.
                 The king can set the price and the number of games to win. The king can also set the number of tries an opponent has to win.
+                Current king: {truncateAddress(king)}  has {Object.keys(battles).length} open challenges
+                and has won {winnings} {token?.symbol} in total.
             </Text>
-            </div>
-
         </div>
         <div className="content">
             <div className="contentHolder">
@@ -104,9 +119,8 @@ export default () => {
                         } />}
                     </RightSlot>
                 </div>
-                <Separator />
                 
-                <Flex css={{ flexDirection: "row", gap: 5 }}>
+                <Flex css={{ flexDirection: "row", gap: 5, justifyContent:"space-between" }}>
                     <Flex css={{ flexDirection: "column", gap: 5 }}>
                         <Address value={king} isImageBig={true} />
                         <Flex css={{ flexDirection: "row", gap: 5 }}>
@@ -130,7 +144,10 @@ export default () => {
                             <AssetDisplay balance={price} tokenAddress = {USDC_ADDRESS_ON_NETWORKS[chainId]} />
                         </Flex>
                     </Flex>
-                    <List items={battleItems} />
+                    <Flex css={{ flexDirection: "column", gap: 5 }}>
+                        <Text bold>Open Challenges</Text>
+                        <List items={battleItems} />
+                    </Flex>
                 </Flex>        
             </div>
             </div>

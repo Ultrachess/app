@@ -1,17 +1,23 @@
 import deps
 from dataclasses import dataclass
+import logging
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger(__name__)
 
 @dataclass
 class BattleForThrone:
     id: str
     challenger: str
-    games: list[str] = []
+    games: list[str]
     score: float = 0
     end: bool = False
     wins: int = 0
     completed_games: int = 0
 
 def equals(s1: str, s2: str) -> bool:
+    if s1 is None or s2 is None:
+        return False
     return s1.lower() == s2.lower()
 
 def gen_match(sender, timestamp, p1, p2) -> bool:
@@ -82,7 +88,7 @@ class KingOfTheHillManager():
         self.winnings = 0
 
         #dictionary of all current challenges to king
-        self.battles: dict[str, BattleForThrone]
+        self.battles: dict[str, BattleForThrone] = {}
 
         #if this is the first time rules are being checked
         self.canUpdateRules = True
@@ -98,6 +104,7 @@ class KingOfTheHillManager():
         self.king = id
         self.canUpdateRules = True
         self.winnings = 0
+        self.battles = {}
 
     def challenge(self, sender, timestamp, options) -> bool:
         #check if all options are defined
@@ -105,6 +112,12 @@ class KingOfTheHillManager():
             return False
         king = self.king
         challenger = options["challenger"]
+
+        #check if the king is defined 
+        #if not, set challenger to new king
+        if not self.king:
+            self._setKing(challenger)
+            return True
 
         #make sure challenger and sender is not the current king
         if equals(king, challenger) or equals(king, sender):
@@ -127,16 +140,11 @@ class KingOfTheHillManager():
             return False
         deps.accountManager.deposit(king, self.price, self.token)
 
-        #check if the king is defined 
-        #if not, set challenger to new king
-        if not self.king:
-            self._setKing(challenger)
-            return True
-
         #create challenge
         self.battles[challenger.lower()] = BattleForThrone(
             id=challenger.lower(),
-            challenger= challenger.lower(),   
+            challenger= challenger.lower(),
+            games=[] 
         )
         self.battles[challenger.lower()].games.append(
             gen_match(
@@ -174,39 +182,44 @@ class KingOfTheHillManager():
         for battle in self.battles.values():
             #check throuh all games in battle
             if not battle.end:
-                for gameId in battle.games:
-                    #get game
-                    game = deps.gameManager.games[gameId]
-                    #check if game is over
-                    #if so, update completed games and wins
-                    #if wins is greater than games to win, set challenger to king and end battle
-                    #if completed games is greater than max trys, set battle to end
-                    #else create new game
-                    if game.isGameEnd():
-                        if game.isWinner(battle.challenger):
-                            battle.wins += 1
-                        battle.completed_games += 1
+                #get last game
+                gameId = battle.games[-1]
+                #get game
+                game = deps.matchMaker.games[gameId]
+                #check if game is over
+                #if so, update completed games and wins
+                #if wins is greater than games to win, set challenger to king and end battle
+                #if completed games is greater than max trys, set battle to end
+                #else create new game
+                logger.info("is game end")
+                logger.info(game.isGameEnd())
+                logger.info("battle")
+                logger.info(battle)
+                if game.isGameEnd():
+                    if game.getWinnerAddress().lower() == battle.challenger.lower():
+                        battle.wins += 1
+                    battle.completed_games += 1
 
-                        if battle.wins >= self.gamesToWin:
-                            self._setKing(battle.challenger)
-                            battle.end = True
-                        elif battle.completed_games >= self.maxTrys:
-                            battle.end = True
-                        else:
-                            battle.games.append(
-                                gen_match(
-                                    battle.challenger, 
-                                    game.timestamp, 
-                                    self.king, 
-                                    battle.challenger
-                                )
+                    if battle.wins >= self.gamesToWin:
+                        self._setKing(battle.challenger)
+                        battle.end = True
+                    elif battle.completed_games >= self.maxTrys:
+                        battle.end = True
+                    else:
+                        battle.games.append(
+                            gen_match(
+                                battle.challenger, 
+                                game.timestamp, 
+                                self.king, 
+                                battle.challenger
                             )
+                        )
                     
         return True
 
     def getStringState(self):
         battlesFormatted = {}
-        for battleId in self.battles.values():
+        for battleId in self.battles:
             battle = self.battles[battleId]
             formattedBattle = {
                 "challenger": battle.challenger,

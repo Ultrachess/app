@@ -87,7 +87,7 @@ export const gameSlice = createSlice({
             state.bots = action.payload
         },
         setAppState: (state, action) => {
-            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp, tournaments, challenges, marketplace} = action.payload
+            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp, tournaments, challenges, marketplace, throne} = action.payload
             if(
                 !deepEqual(state.elo, elo) ||
                 !deepEqual(state.games, game) ||
@@ -95,7 +95,8 @@ export const gameSlice = createSlice({
                 !deepEqual(state.accounts, accounts) ||
                 !deepEqual(state.tournaments, tournaments) ||
                 !deepEqual(state.challenges, challenges) ||
-                !deepEqual(state.marketplace, marketplace)
+                !deepEqual(state.marketplace, marketplace) ||
+                !deepEqual(state.throne, throne)
             ){ 
                 state.cache.isUpToDate = !state.cache.isUpToDate
                 //console.log("is not up to date, updating")
@@ -111,6 +112,7 @@ export const gameSlice = createSlice({
             state.actionList = actionList
             state.challenges = challenges
             state.marketplace = marketplace
+            state.throne = throne
         },
         updateGame: (state, action) => {
             var {id, game} = action.payload
@@ -262,7 +264,7 @@ function deepEqual(object1, object2) {
 function updateGameState(dispatch, payload){
     ////console.log(ethers.utils.toUtf8String(payload))
     var state = JSON.parse(ethers.utils.toUtf8String(payload))
-    ////console.log(state)
+    console.log(state)
     dispatch(setAppState(state))
 }
   

@@ -4,12 +4,10 @@ import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
-import { Text } from './ui/Text';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../hooks/token';
+import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
 import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
-import AssetDisplay from './AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../state/game/hooks';
+import { useActionCreator } from '../../state/game/hooks';
 import { TransactionType } from '../../common/types';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +31,8 @@ export default ({triggerElement}) => {
 
     const addAction = useActionCreator()
 
+    console.log("token", token)
+
     const handleUpdated = async () => {
       //console.log("amount", amount)
       const tx = {
@@ -40,6 +40,7 @@ export default ({triggerElement}) => {
             numberOfTrys: updatedNumberOfTrys,
             numberOfWins: updatedNumberOfWins,
             price: updatedPrice,
+            token: token? token.address: "",
       }
       await addAction(tx)
     }

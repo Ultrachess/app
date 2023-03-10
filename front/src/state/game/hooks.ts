@@ -101,6 +101,18 @@ const PLACE_HOLDER_GAME: Game = {
     botMoveStats: []
 }
 
+const PLACE_HOLDER_THRONE: Throne = {
+    king: "",
+    winnings: 0,
+    battles: {},
+    price: 0,
+    token: "",
+    gamesToWin: 0,
+    maxTrys: 0,
+}
+
+    
+
 
 export function useBalance(id: string, tokenAddress:string): number {
     const accounts: {[address: string]:{[token:string]: number}} = useAppSelector(state => state.game.accounts)
@@ -167,6 +179,8 @@ export function useProfile(id: string, bots: any = []): Profile | undefined {
 
 export function useThrone(): Throne {
     const throne = useAppSelector(state => state.game.throne)
+    console.log("throne", throne)
+    if (!throne) return PLACE_HOLDER_THRONE
     return throne
 }
 
@@ -755,8 +769,8 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "kingThroneUpdate",
                         "value": {
-                            numberOfTrys: ${info.numberOfTrys},
-                            numberOfWins: ${info.numberOfWins},
+                            "numberOfTrys": ${info.numberOfTrys},
+                            "numberOfWins": ${info.numberOfWins},
                             "price" : ${info.price},
                             "token": "${info.token}"
                         }

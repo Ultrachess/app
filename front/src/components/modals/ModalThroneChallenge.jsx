@@ -4,10 +4,10 @@ import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
 import { ChevronDownIcon, Cross2Icon, ChevronUpIcon, CheckIcon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
-import { Text } from './ui/Text';
+import { Text } from '../ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
 import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
-import AssetDisplay from './AssetDisplay';
+import AssetDisplay from '../AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
 import { useActionCreator, useUserBotIds, useThrone } from '../../state/game/hooks';
 import { TransactionType } from '../../common/types';
@@ -19,10 +19,11 @@ import { ethers } from 'ethers';
 
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
-    const [challenger, setChallenger ] = useState(account)
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
     const bots = useUserBotIds(account)
     const potentialChallengers = [...bots, account]
+    const [challenger, setChallenger ] = useState(potentialChallengers[0])
+
 
     const addAction = useActionCreator()
 

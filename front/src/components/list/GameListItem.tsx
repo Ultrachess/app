@@ -3,7 +3,7 @@ import { Game } from "../../state/game/types";
 import { useTime } from "../ActionView";
 import { useWeb3React } from "@web3-react/core";
 import Address from "../Address";
-import ModalPlaceBet from "../ModalPlaceBet";
+import ModalPlaceBet from "../modals/ModalPlaceBet";
 import Button from "../ui/Button";
 import { Text } from "../ui/Text";
 import AddressGame from "../AddressGame";
