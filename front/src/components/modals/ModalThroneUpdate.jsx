@@ -25,7 +25,7 @@ export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
     const [updatedNumberOfTrys, setUpdatedNumberOfTrys ] = useState(numberOfTrys)
     const [updatedNumberOfWins, setUpdatedNumberOfWins ] = useState(numberOfWins)
-    const [updatedPrice, setUpdatedPrice ] = useState(price)
+    const [updatedPrice, setUpdatedPrice ] = useState(price/ 10 ** 18)
 
     const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
 
@@ -37,9 +37,9 @@ export default ({triggerElement}) => {
       //console.log("amount", amount)
       const tx = {
             type: TransactionType.KING_THRONE_UPDATE,
-            numberOfTrys: updatedNumberOfTrys,
-            numberOfWins: updatedNumberOfWins,
-            price: updatedPrice,
+            numberOfTrys: 0,
+            numberOfWins: 0,
+            price: updatedPrice * 10 ** token.decimals,
             token: token? token.address: "",
       }
       await addAction(tx)
@@ -67,12 +67,12 @@ export default ({triggerElement}) => {
                     <Fieldset><Label>Price to challenge in {token?.symbol ?? 'USDC'}</Label></Fieldset>
                     <Fieldset><Input id="amount" value={updatedPrice} defaultValue={0} onChange={(event)=>{setUpdatedPrice(event.target.value)}}></Input></Fieldset>
                     
-                    <Fieldset><Label>Number of wins</Label></Fieldset>
+                    {/* <Fieldset><Label>Number of wins</Label></Fieldset>
                     <Fieldset><Input id="bettingDuration" value={updatedNumberOfWins} onChange={(event)=>{ setUpdatedNumberOfWins(event.target.value)}}></Input></Fieldset>
 
                     <Fieldset><Label>Number of tries</Label></Fieldset>
                     <Fieldset><Input id="bettingDuration" value={updatedNumberOfTrys} onChange={(event)=>{ setUpdatedNumberOfTrys(event.target.value)}}></Input></Fieldset>
-                    
+                     */}
                     <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
                     <Dialog.Close asChild>
                         <Button

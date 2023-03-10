@@ -141,7 +141,7 @@ export default () => {
                         </Flex>
                         <Flex css={{ flexDirection: "row", gap: 5 }}>
                             <Text bold>Price to challenge</Text>
-                            <AssetDisplay balance={price} tokenAddress = {USDC_ADDRESS_ON_NETWORKS[chainId]} />
+                            <AssetDisplay balance={price / 10 ** 18} tokenAddress = {USDC_ADDRESS_ON_NETWORKS[chainId]} />
                         </Flex>
                     </Flex>
                     <Flex css={{ flexDirection: "column", gap: 5 }}>
