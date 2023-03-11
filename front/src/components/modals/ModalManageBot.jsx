@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { styled, keyframes } from '@stitches/react';
 import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, Cross2Icon, ChevronUpIcon, CheckIcon } from '@radix-ui/react-icons';
 import * as Slider from '@radix-ui/react-slider';
 import { Text } from '../ui/Text';
 import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
 import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
 import AssetDisplay from '../AssetDisplay';
 import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../../state/game/hooks';
+import { useActionCreator, useProfile } from '../../state/game/hooks';
 import { TransactionType } from '../../common/types';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
+import * as Select from '@radix-ui/react-select';
+
+
 
 
 export default ({triggerElement, botId}) => {
@@ -26,7 +29,7 @@ export default ({triggerElement, botId}) => {
     const balance = useTokenBalance(token, account)
     const [name, setName] = useState("default")
     const [autoMaxWagerAmount, setAutoMaxWagerAmount] = useState(0)
-    const [autoBattleEnabled, setAutoBattleEnabled] = useState(false)
+    const [autoBattleEnabled, setAutoBattleEnabled] = useState("False")
 
     const addAction = useActionCreator()
 
@@ -35,9 +38,9 @@ export default ({triggerElement, botId}) => {
       const tx = {
             type: TransactionType.MANAGER_BOT_INPUT,
             name,
-            autoMaxWagerAmount,
+            autoMaxWagerAmount: autoMaxWagerAmount * 10 ** token.decimals,
             autoWagerTokenAddress: token? token.address: "",
-            autoBattleEnabled,
+            autoBattleEnabled: autoBattleEnabled === "True",
             botId,
       }
       //console.log("tx", tx)
@@ -62,12 +65,17 @@ export default ({triggerElement, botId}) => {
             <DialogDescription>
               Create a new game. Invite friends to join and start playing. Or wait for random players to join.
             </DialogDescription>
+
+            <Fieldset>
+                <Label>Auto battle Enable?</Label>
+                <SelectMain options={["True", "False"]} value={autoBattleEnabled} onValueChange={setAutoBattleEnabled}/>
+            </Fieldset>
             
             <Fieldset>
                 <Label>Auto Wager amount</Label>
             </Fieldset>
             <Fieldset>
-              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{
+              <Input id="amount" value={autoMaxWagerAmount} defaultValue={0} onChange={(event)=>{
                   //console.log("event.value", event.target.value)
                  setAutoMaxWagerAmount(event.target.value)
                  }}>
@@ -312,3 +320,155 @@ const LeftSlot = styled('div', {
     '&:hover': { backgroundColor: violet.violet3 },
     '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
   });
+
+  const SelectMain = ({onValueChange, value, options, label}) => {
+    return (
+        <Select.Root 
+        value={value}
+        onValueChange={async (value) => {
+            onValueChange(value)
+        }}
+    >
+      <SelectTrigger aria-label="Chain">
+          <Select.Value><Text>{value}</Text></Select.Value>
+        <SelectIcon>
+          <ChevronDownIcon />
+        </SelectIcon>
+      </SelectTrigger>
+      <Select.Portal>
+        <SelectContent>
+          <SelectScrollUpButton>
+            <ChevronUpIcon />
+          </SelectScrollUpButton>
+          <SelectViewport>
+            <Select.Group>
+              <SelectLabel>{label}</SelectLabel>
+                {options ?
+                    options.map((option) => (
+                        <SelectItem value={option}>{option}</SelectItem>
+                    )): []
+                }
+            </Select.Group>
+  
+          </SelectViewport>
+          <SelectScrollDownButton>
+            <ChevronDownIcon />
+          </SelectScrollDownButton>
+        </SelectContent>
+      </Select.Portal>
+    </Select.Root>
+        )
+};
+
+const SelectTrigger = styled(Select.SelectTrigger, {
+  all: 'unset',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 4,
+  padding: '0 15px',
+  fontSize: 13,
+  lineHeight: 1,
+  height: 35,
+  display: 'flex',
+  flexDirection: 'row',
+  gap: 5,
+  backgroundColor: 'white',
+  color: violet.violet11,
+  //boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  '&:hover': { backgroundColor: mauve.mauve3 },
+  //'&:focus': { boxShadow: `0 0 0 2px black` },
+  '&[data-placeholder]': { color: violet.violet9 },
+});
+
+const SelectIcon = styled(Select.SelectIcon, {
+  color: violet.violet11,
+});
+
+const SelectContent = styled(Select.Content, {
+  overflow: 'hidden',
+  backgroundColor: 'white',
+  borderRadius: 6,
+  boxShadow:
+    '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
+});
+
+const SelectViewport = styled(Select.Viewport, {
+  padding: 5,
+});
+
+const SelectItem = React.forwardRef(({ children, ...props }, forwardedRef) => {
+  return (
+    <StyledItem {...props} ref={forwardedRef}>
+      <Select.ItemText>{children}</Select.ItemText>
+      <StyledItemIndicator>
+        <CheckIcon />
+      </StyledItemIndicator>
+    </StyledItem>
+  );
+});
+
+const SelectValue = styled(Select.Value, {
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'row',
+});
+
+const StyledItem = styled(Select.Item, {
+  fontSize: 13,
+  lineHeight: 1,
+  color: violet.violet11,
+  borderRadius: 3,
+  display: 'flex',
+  alignItems: 'center',
+  height: 25,
+  padding: '0 35px 0 25px',
+  position: 'relative',
+  userSelect: 'none',
+
+  '&[data-disabled]': {
+    color: mauve.mauve8,
+    pointerEvents: 'none',
+  },
+
+  '&[data-highlighted]': {
+    outline: 'none',
+    backgroundColor: violet.violet9,
+    color: violet.violet1,
+  },
+});
+
+const SelectLabel = styled(Select.Label, {
+  padding: '0 25px',
+  fontSize: 12,
+  lineHeight: '25px',
+  color: mauve.mauve11,
+});
+
+const SelectSeparator = styled(Select.Separator, {
+  height: 1,
+  backgroundColor: violet.violet6,
+  margin: 5,
+});
+
+const StyledItemIndicator = styled(Select.ItemIndicator, {
+  position: 'absolute',
+  left: 0,
+  width: 25,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const scrollButtonStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 25,
+  backgroundColor: 'white',
+  color: violet.violet11,
+  cursor: 'default',
+};
+
+const SelectScrollUpButton = styled(Select.ScrollUpButton, scrollButtonStyles);
+
+const SelectScrollDownButton = styled(Select.ScrollDownButton, scrollButtonStyles);
