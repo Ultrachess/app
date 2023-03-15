@@ -61,7 +61,7 @@ export default ({triggerElement, botId}) => {
         <Dialog.Portal>
           <DialogOverlay />
           <DialogContent>
-            <DialogTitle>Deposit funds</DialogTitle>
+            <DialogTitle>Update Bot</DialogTitle>
             <DialogDescription>
               Create a new game. Invite friends to join and start playing. Or wait for random players to join.
             </DialogDescription>

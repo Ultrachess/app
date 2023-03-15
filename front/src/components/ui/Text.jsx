@@ -7,10 +7,14 @@ export const Text = styled('div', {
     color: mauve.mauve11,
     fontSize: 13,
     lineHeight: 1.5,
-    textAlign: 'center',
+    textAlign: 'left',
     variants: {
         underline: {
-            true: { textDecoration: 'underline' },
+            true: { 
+                textDecoration: 'underline',
+                //get the mouse pointer to change to a hand when hovering over the text
+                cursor: 'pointer',
+            },
         },
         faded: {
             true: { color: mauve.mauve10 },

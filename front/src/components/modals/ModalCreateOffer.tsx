@@ -12,6 +12,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useActionCreator } from '../../state/game/hooks';
 import { TransactionType } from '../../common/types';
 import Address from '../Address';
+import { ethers } from 'ethers';
 
 export default ({triggerElement, botId}) => {
     const { chainId, account } = useWeb3React()
@@ -25,11 +26,13 @@ export default ({triggerElement, botId}) => {
     //const bot: BotProfile = useProfile(botId)
 
     const handleOffer = async () => {
+
+      console.log("amountMain", amount)
       const [approvalActionId, wait] = await addAction({
         type: TransactionType.CREATE_OFFER,
         botId: botId,
         token: token.address,
-        price: amount,
+        price: amount * 10 ** token.decimals,
       })
       await wait
     }

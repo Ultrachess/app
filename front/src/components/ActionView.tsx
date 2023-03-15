@@ -110,7 +110,7 @@ export default ({action}: {action: Action}) => {
             description = <Text>Declining challenge</Text>
             break;
         case TransactionType.CREATE_OFFER:
-            description = <Text>Offering to buy bot <Address value={action.transactionInfo.botId}/> for <AssetDisplay balance={action.transactionInfo.price} tokenAddress={action.transactionInfo.tokenAddress}/> </Text>
+            description = <Text>Offering to buy bot <Address value={action.transactionInfo.botId}/> </Text>
             resultLambda = (result) =>
                 <Text>Offer created</Text>
             break;

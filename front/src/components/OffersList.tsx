@@ -27,10 +27,10 @@ const BotOfferListItem = ({account, offer}: {account: string, offer: BotOffer}) 
     const isOwner = account.toLowerCase() === owner.toLowerCase()
 
     return (
-        <Text>
-            <Address value={sender} hoverable={true} /> offered <AssetDisplay balance={price} tokenAddress={token} /> for bot <Address value={botId} hoverable={true} /> at <Date current={timestamp} />
+        <Text css={{display:"flex", gap:'10px', alignItems:'end'}}>
+            <span><Address value={sender} hoverable={true} /></span> offered <AssetDisplay balance={price/10**18} tokenAddress={token} /> for bot <Address value={botId} hoverable={true} /> at <Date current={timestamp} />
             {isOwner ? 
-                <div>
+                <div style={{display:"flex", gap:"10px", alignItems:"end"}}>
                     <HandleOffer offerId={offerId} accept={true} /> or <HandleOffer offerId={offerId} accept={false} /> 
                 </div>
                 : null

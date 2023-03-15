@@ -366,6 +366,7 @@ export function useUserOwnedGameIds(id: string): string[] {
     if (!games) return []
     return Object.keys(games).filter((gameId) => {
         const game = games[gameId]
+        if(game.players.length == 0) return false
         return game.players[0].toLowerCase() == id.toLowerCase()
     })
 }
@@ -728,6 +729,7 @@ export function useActionCreator(): (info: TransactionInfo) => Promise<[Action, 
                     result = await contract.addInput(input)
                     break;
                 case TransactionType.CREATE_OFFER:
+                    console.log("create offer")
                     input = ethers.utils.toUtf8Bytes(`{
                         "op": "createBotOffer", 
                         "value": {

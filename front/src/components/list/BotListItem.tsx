@@ -80,7 +80,7 @@ export default ({bot, rank = 0}: {bot: BotProfile, rank: number}) => {
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>auto max wager</Text>
-                <Text><AssetDisplay balance={autoMaxWagerAmount} tokenAddress={autoWagerTokenAddress} isL2={true}/></Text>
+                <Text><AssetDisplay balance={autoMaxWagerAmount/ 10 ** 18} tokenAddress={autoWagerTokenAddress} isL2={true}/></Text>
             </Flex>
             <Flex css={{ flexDirection: 'column', gap: 2 }}>
                 <Text faded>created at</Text>

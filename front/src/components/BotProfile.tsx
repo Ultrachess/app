@@ -83,61 +83,61 @@ export default () => {
         <div className="body">
             <Flex css={{width:"100%", padding:"0 20%", gap: 50, justifyContent: 'space-between' }}>
                 <Flex css={{ width:"20%",
-                     gap: 5, flexDirection:'column' }}>
+                     gap: 10, flexDirection:'column' }}>
                     <Address value={id} isImageBig={true} />
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>name</Text>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Name</Text>
                         <Text>{name}</Text>
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>owner</Text>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Owner</Text>
                         {isOwner ? <Text bold>Yours</Text> : <Address value={owner} />}
                     </Flex>
-                    <Flex css={{ gap: 2,  flexDirection:'column'}}>
-                        <Text faded>elo</Text>
+                    <Flex css={{ gap: 2,  flexDirection:'column', alignItems:'start'}}>
+                        <Text bold>Elo</Text>
                         <Text>{elo}</Text>
                     </Flex>
-                    <Flex css={{ gap: 2 , flexDirection:'column'}}>
-                        <Text faded>From</Text>
-                        <Text>🇦🇱</Text>
+                    <Flex css={{ gap: 2 , flexDirection:'column', alignItems:'start'}}>
+                        <Text bold>From</Text>
+                        <Text>🇺🇸 USA</Text>
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>Current Price</Text>
-                        {highestOffer === undefined ? <Text>0</Text> : <AssetDisplay balance={highestOffer} tokenAddress={token} isL2={true}/>}
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Current Price</Text>
+                        {highestOffer === undefined ? <Text>0</Text> : <AssetDisplay balance={highestOffer/10**18} tokenAddress={token} isL2={true}/>}
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>created at</Text>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Created at</Text>
                         <Date current={timestamp} />
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>total games played</Text>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Games played</Text>
                         <Text>{games.length}</Text>
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>total challenges recieved</Text>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Challenges recieved</Text>
                         <Text>{challenges.length}</Text>
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>total offers recieved</Text>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Offers recieved</Text>
                         <Text>{offers.length}</Text>
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>auto battle enabled</Text>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Auto battle enabled</Text>
                         <Text>{autoBattleEnabled ? 'yes' : 'no'}</Text>
                     </Flex>
-                    <Flex css={{ gap: 2, flexDirection:'column' }}>
-                        <Text faded>auto max wager amount</Text>
-                        <AssetDisplay balance={autoMaxWagerAmount} tokenAddress={autoWagerTokenAddress} isL2={true}/>
+                    <Flex css={{ gap: 2, flexDirection:'column' , alignItems:'start'}}>
+                        <Text bold>Auto max wager amount</Text>
+                        <AssetDisplay balance={autoMaxWagerAmount/ 10 ** 18} tokenAddress={autoWagerTokenAddress} isL2={true}/>
                     </Flex>
-                    <Flex css={{ gap: 1, flexDirection:'row' }}>
+                    
+
+                </Flex>
+                <Flex css={{ width:"75%", gap: 20, flexDirection:'column' }}>
+                    <Flex css={{ gap: 5, flexDirection:'row', justifyContent:"right" }}>
                         {isOwner && <ModalManageBot botId={botId} triggerElement={<Button>Manage</Button>} />}
                         {!isOwner && <ModalCreateChallenge playerId={botId} triggerElement={<Button>Challenge</Button>} />}
                         {!isOwner && <ModalCreateOffer botId={botId} triggerElement={<Button>Offer</Button>} />}
                     </Flex>
-
-                </Flex>
-                <Flex css={{ width:"75%", gap: 20, flexDirection:'column' }}>
-                    
                     <Flex css={{ gap: 1, flexDirection:'column' }}>
                         <Text bold size={"4"}>Active games</Text>
                         <GameList games={activeGames} />

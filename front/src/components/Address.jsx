@@ -37,7 +37,7 @@ export default ({value, hoverable = false, isMedium=false, isImageBig=false, sho
   //in a flex column
   const bigAddressView =
       <Link to={ (isBot? "/bot/":"/users/") + value}>
-        <Flex css={{flexDirection: "column", alignItems: "center"}}>
+        <Flex css={{flexDirection: "column", alignItems: "start", gap:15}}>
           <ProfileImage address={value} diameter={200} />
           <Text size={5} bold>{truncateAddress(value)}{isBot && <FaRobot/>}</Text>
         </Flex>

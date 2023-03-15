@@ -159,6 +159,9 @@ function getRelevantNotifications(
                 return (lUserGames.includes(notification["game_id"].toLowerCase()) || lUserBotGames.includes(notification["game_id"].toLowerCase()))
                     //&& !lUserOwnedGames.includes(notification["game_id"].toLowerCase())
             }
+            if (type == NotificationType.GAME_CREATED){
+                return lUserOwnedGames.includes(notification["game_id"].toLowerCase())
+            }
             if(type == NotificationType.GAME_JOINED){
                 //checkt if game is in user's games
                 //and make sure joiner is not account

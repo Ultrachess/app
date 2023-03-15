@@ -57,7 +57,6 @@ export default ({triggerElement}) => {
             <DialogDescription>
               <Text>
                 Challenge the king to a duel. If you win, you will take the throne. and all users must pay a fee to challenge you.
-                Current price to challenge the king is <AssetDisplay value={price} token={token} />
                 You must win {gamesToWin} games to take the throne.
                 You have {maxTrys} tries to win the games.
               </Text>

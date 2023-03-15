@@ -28,15 +28,15 @@ export default ({ notification }: {notification: Notification}) => {
       //console.log("abc game created", notification["creator_id"])
       title = 'Game Created';
       description = <Text>
-        Player <Address value={notification["creator_id"]}  /> has created a game <AddressGame id={notification["game_id"]} />
+        Player <span><Address value={notification["creator_id"]}  /></span> has created a game <span><AddressGame id={notification["game_id"]} /></span>
       </Text>
       break;
-    case NotificationType.GAME_JOINED:
-      title = `Someone joined your game`
-      description = <Text>
-        Player <Address value={notification["player_id"]}  /> has joined your game <AddressGame id={notification["game_id"]} />
-      </Text>;
-      break;
+    // case NotificationType.GAME_JOINED:
+    //   title = `Someone joined your game`
+    //   description = <Text>
+    //     Player <span><Address value={notification["player_id"]}  /></span> has joined your game <span><AddressGame id={notification["game_id"]} /></span>
+    //   </Text>;
+    //   break;
     case NotificationType.GAME_MOVE:
       title = 'Someone made a move';
       description = <Text>
@@ -79,7 +79,7 @@ export default ({ notification }: {notification: Notification}) => {
     case NotificationType.CHALLENGE_CREATED:
       title = 'Challenge Recieved';
       description = <Text>
-        Player <Address value={notification["challenger"]} /> has challenged you to a game wagering <AssetDisplay tokenAddress={notification["token"]} balance={notification["wager"]} isL2={true}/> <ChallengeAction challengeId={notification["challenge_id"]} accept={true} /> or <ChallengeAction challengeId={notification["challenge_id"]} accept={false} />
+        Player <Address value={notification["challenger"]} /> has challenged you to a game wagering <AssetDisplay tokenAddress={notification["token"]} balance={notification["wager"]/ 10**18} isL2={true}/> <ChallengeAction challengeId={notification["challenge_id"]} accept={true} /> or <ChallengeAction challengeId={notification["challenge_id"]} accept={false} />
       </Text>
       break;
     case NotificationType.TOURNAMENT_JOINED:
@@ -112,12 +112,12 @@ export default ({ notification }: {notification: Notification}) => {
         Round {notification["tournament_id"]} has completed in tournament <AddressTournament id={notification["tournament_id"]} />
       </Text>
       break;
-    case NotificationType.BOT_GAME_CREATED:
-      title = 'Bot Game Created';
-      description = <Text>
-        Bot <Address value={notification["player_id1"]}/> is playing against bot <Address value={notification["player_id2"]}/> in game <AddressGame id={notification["game_id"]} /> for <AssetDisplay tokenAddress={notification["token"]} balance={notification["wager"]} isL2={true}/>
-      </Text>
-      break;
+    // case NotificationType.BOT_GAME_CREATED:
+    //   title = 'Bot Game Created';
+    //   description = <Text>
+    //     Bot <Address value={notification["player_id1"]}/> is playing against bot <Address value={notification["player_id2"]}/> in game <AddressGame id={notification["game_id"]} /> for <AssetDisplay tokenAddress={notification["token"]} balance={notification["wager"]} isL2={true}/>
+    //   </Text>
+    //   break;
     case NotificationType.BOT_GAME_COMPLETED:
       title = 'Bot Game Completed';
       description = <Text>
@@ -128,7 +128,7 @@ export default ({ notification }: {notification: Notification}) => {
     case NotificationType.BOT_OFFER_CREATED:
       title = 'Bot Offer Received';
       description = <Text>
-        Player <Address value={notification["sender"]} /> has offered to purchase your bot <Address value={notification["botId"]} /> for <AssetDisplay tokenAddress={notification["token"]} balance={notification["price"]} isL2={true}/>
+        Player <Address value={notification["sender"]} /> has offered to purchase your bot <Address value={notification["botId"]} /> for <AssetDisplay tokenAddress={notification["token"]} balance={notification["price"] / 10 **18} isL2={true}/>
       </Text>
       break;
     case NotificationType.BOT_OFFER_ACCEPTED:

@@ -498,12 +498,12 @@ export default () => {
             </Flex>
           </Flex>
           <Flex css={{ flexDirection:'column', gap:10}}>
-            <Flex css={{width:"100%", flexDirection:'row', alignItems:'center', justifyContent:"right"}}>
-            {bettingIsClosed ? <Text faded>Wagering Closed</Text> : <Text faded>Wagering closes on {bettingClosesAt} /></Text>}
+            <Flex css={{ gap:'10px',width:"100%", flexDirection:'row', alignItems:'center', justifyContent:"right"}}>
+            {bettingIsClosed ? <Text blue>Wagering Closed</Text> : <Text faded>Wagering closes on {bettingClosesAt} /></Text>}
                     {canBet &&<ModalPlaceBet
                         gameId={gameId}
                         triggerElement={
-                            <Button disabled={closed}>Place Bet</Button>
+                            <Button blue disabled={closed}>Place Bet</Button>
                         } 
                     />}
               <Button onClick={tweetGame}>Share</Button>

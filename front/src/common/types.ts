@@ -54,7 +54,7 @@ export interface DeclineChallengeTransactionsInfo extends BaseTransactionInfo {
 export interface CreateBotOfferTransactionsInfo extends BaseTransactionInfo {
     type: TransactionType.CREATE_OFFER,
     botId: string,
-    price: number,
+    price: any,
     token: string,
 }
 

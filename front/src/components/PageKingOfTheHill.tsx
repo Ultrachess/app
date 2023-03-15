@@ -107,13 +107,13 @@ export default () => {
                 <div className="contentHeader">
                     <Label>Info</Label>
                     <RightSlot>
-                        <ModalThroneChallenge triggerElement={
-                            <Button>
+                        { !isKing && <ModalThroneChallenge triggerElement={
+                            <Button red>
                                 <Text>Challenge King</Text>
                             </Button>
-                        } />
+                        } />}
                         {isKing && <ModalThroneUpdate triggerElement={
-                            <Button>
+                            <Button red>
                                 <Text>Update Throne</Text>
                             </Button>
                         } />}
