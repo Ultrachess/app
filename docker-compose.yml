@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   hardhat:
-    image: juztamau5/rollups-hardhat:devel
+    image: juztamau5/rollups-hardhat:0.8.2
     command:
       [
         "node",
@@ -33,7 +33,7 @@ services:
       - ./export:/opt/cartesi/share/blockchain
 
   ultrachess_deployer:
-    image: juztamau5/ultrachess-deployer:devel
+    image: juztamau5/ultrachess-deployer:1.0.0
     restart: on-failure
     depends_on:
       hardhat:
@@ -168,7 +168,7 @@ services:
       - REMOTE_CARTESI_MACHINE_LOG_LEVEL=info
 
   deployer:
-    image: juztamau5/rollups-cli:devel
+    image: juztamau5/rollups-cli:0.8.2
     restart: on-failure
     depends_on:
       hardhat:

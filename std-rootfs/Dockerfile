@@ -1,8 +1,8 @@
 # syntax=docker.io/docker/dockerfile:1.4
 # layers for caching and versioning
-FROM cartesi/toolchain:0.12.0 as toolchain
-FROM cartesi/rootfs:0.15.0 as rootfs
-FROM cartesi/server-manager:0.5.0 as server-manager
+FROM cartesi/toolchain:0.13.0 as toolchain
+FROM cartesi/rootfs:0.16.0 as rootfs
+FROM cartesi/server-manager:0.6.0 as server-manager
 
 FROM rootfs as toolchain-python
 
@@ -20,7 +20,7 @@ RUN apt update \
     libssl-dev
 
 ENV PYTHON_VERSION=3.10
-ENV PYTHON_VERSION_FULL=3.10.10
+ENV PYTHON_VERSION_FULL=3.10.1
 ENV BUILD_PYTHON_PREFIX=/opt/build-python
 ENV HOST_PYTHON_PREFIX=/mnt/python-dapp
 
@@ -64,19 +64,19 @@ RUN pip3 install crossenv
 RUN rm -rf Python-$PYTHON_VERSION_FULL*
 
 # download standard machine drives
-FROM alpine as machine-core
+FROM busybox as machine-core
 
 WORKDIR /opt/cartesi/share
 
 # download dependencies
 COPY dependencies .
 COPY shasumfile .
-RUN cat dependencies | xargs wget
+RUN while read DEP; do wget -O $DEP; done < dependencies
 RUN sha1sum -c shasumfile
 
 
 # stage to build the dapp ext2 filesystem
-FROM toolchain as dapp-fs-build
+FROM toolchain as fs-stage
 
 # install jq
 RUN <<EOF
@@ -86,7 +86,7 @@ rm -rf /var/lib/apt/lists/*
 EOF
 
 WORKDIR /opt/cartesi/dapp
-COPY --from=dapp-build /opt/cartesi/dapp .
+COPY --from=dapp /opt/cartesi/dapp .
 COPY build-dapp-fs.sh /usr/local/bin
 COPY default.json /opt/cartesi/
 
@@ -94,14 +94,14 @@ RUN build-dapp-fs.sh /opt/cartesi/default.json dapp.json dapp.ext2
 
 
 # stage to build the initial cartesi machine
-FROM server-manager as machine-server
+FROM server-manager as server-stage
 
 WORKDIR /opt/cartesi/dapp
 
-# copy dapp ext2 from dapp stage
-COPY --from=dapp-fs-build /opt/cartesi/dapp/dapp.ext2 .
+# copy dapp ext2 from fs stage
+COPY --from=fs-stage /opt/cartesi/dapp/dapp.ext2 .
 
-# copy rootfs, linux, rom
+# copy machine dependencies (rom, linux kernel, rootfs)
 COPY --from=machine-core /opt/cartesi/share/* .
 
 # build machine
@@ -113,14 +113,14 @@ WORKDIR /opt/cartesi/bin
 
 
 # stage to run machine shell
-FROM server-manager as machine-console
+FROM server-manager as console-stage
 
 WORKDIR /opt/cartesi/dapp
 
-# copy dapp ext2 from stage 1
-COPY --from=dapp-fs-build /opt/cartesi/dapp/dapp.ext2 .
+# copy dapp ext2 from fs stage
+COPY --from=fs-stage /opt/cartesi/dapp/dapp.ext2 .
 
-# copy rootfs, kernel, rom
+# copy machine dependencies (rom, linux kernel, rootfs)
 COPY --from=machine-core /opt/cartesi/share/* .
 
 COPY run-machine-console.sh /usr/local/bin
@@ -128,9 +128,9 @@ CMD ["run-machine-console.sh"]
 
 
 # stage to copy the stored machine
-FROM busybox as machine-standalone
+FROM busybox as machine-stage
 
 WORKDIR /opt/cartesi/share/dapp-bin
-COPY --from=machine-server /opt/cartesi/share/dapp-bin .
+COPY --from=server-stage /opt/cartesi/share/dapp-bin .
 
 CMD ["xxd", "-c", "256", "-p", "hash"]

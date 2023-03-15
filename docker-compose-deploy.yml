@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   hardhat:
-    image: juztamau5/rollups-hardhat:devel
+    image: juztamau5/rollups-hardhat:0.8.2
     command:
       [
         "node",
@@ -40,7 +40,7 @@ services:
       - REMOTE_CARTESI_MACHINE_LOG_LEVEL=info
 
   deployer:
-    image: juztamau5/rollups-cli:devel
+    image: juztamau5/rollups-cli:0.8.2
     restart: on-failure
     depends_on:
       hardhat:

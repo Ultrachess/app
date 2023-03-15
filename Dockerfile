@@ -1,5 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1.4
-FROM cartesi/toolchain:0.12.0 as go-build
+FROM cartesi/toolchain:0.13.0 as go-build
 
 # Install Go build dependencies
 RUN <<EOF

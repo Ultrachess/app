@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   rollups_dispatcher:
-    image: juztamau5/rollups-dispatcher:devel
+    image: juztamau5/rollups-dispatcher:0.8.2
     command:
       [
         "--rd-dapp-contract-address-file",
