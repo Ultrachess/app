@@ -193,7 +193,9 @@ class Game:
                 logger.info("isMinPlayer: " + str(self.__isMinPlayers()))
                 # open betting phase
                 if self.__isMinPlayers():
-                    deps.betManager.open(self.id, timestamp, self.bettingDuration, self.token)
+                    deps.betManager.open(
+                        self.id, timestamp, self.bettingDuration, self.token
+                    )
                     currentTurn = self.__getCurrentTurnAddress()
                     firstTurnIsBot = "0x" not in currentTurn
                     if firstTurnIsBot and self.__isBotVHumanGame():

@@ -49,9 +49,9 @@ class NotificationType(Enum):
     DEPOSIT_FUNDS = (27,)  # when you deposit funds
     WITHDRAW_FUNDS = (28,)  # when you withdraw funds
 
-    KING_THRONED = 18, #when you become king
-    KING_CHALLENGED = 19, #when you are challenged to be king
-    KING_CHALLENGE_COMPLETE = 20, #when a challenge to be king ends
+    KING_THRONED = (18,)  # when you become king
+    KING_CHALLENGED = (19,)  # when you are challenged to be king
+    KING_CHALLENGE_COMPLETE = (20,)  # when a challenge to be king ends
 
 
 @dataclass
@@ -246,11 +246,13 @@ class BotGameCompletedNotification(BaseNotification):
     winnings1: int
     winnings2: int
 
+
 @dataclass
 class KingThronedNotification(BaseNotification):
     type = NotificationType.KING_THRONED
     prev: str
     current: str
+
 
 @dataclass
 class KingThroneChallengedNotification(BaseNotification):
@@ -258,6 +260,7 @@ class KingThroneChallengedNotification(BaseNotification):
     player: str
     price: int
     token: str
+
 
 @dataclass
 class KingThroneChallengeComplete(BaseNotification):

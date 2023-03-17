@@ -92,12 +92,11 @@ class Matchmaker:
                     self.games[str(id)].addPlayer(timestamp, botId2)
                     success = self.games[str(id)].run(timestamp)
 
-            #check if any players were added
-            #if not return error and delete game
+            # check if any players were added
+            # if not return error and delete game
             if len(self.games[str(id)].players) == 0:
                 self.games.pop(str(id))
-                return {"value": "no players added", "success":False}
-
+                return {"value": "no players added", "success": False}
 
             p1 = self.games[str(id)].players[0]
             p2 = self.games[str(id)].players[1]
@@ -120,11 +119,8 @@ class Matchmaker:
 
             logger.info("game created with id: " + str(id))
             logger.info("is success: " + str(success))
-            
-            return {
-                "value": str(id),
-                "success": success
-            }
+
+            return {"value": str(id), "success": success}
 
         else:
             canCreate = True
