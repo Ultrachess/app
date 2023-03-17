@@ -1,19 +1,16 @@
 import { violet } from "@radix-ui/colors";
 import { StitchesLogoIcon, ZoomOutIcon } from "@radix-ui/react-icons";
-import { styled } from "@stitches/react";
 import * as React from "react";
 import { useSelector } from "react-redux";
 
 import { useAllProfiles } from "../state/game/hooks";
-import BotGameCreator from "./BotGameCreator";
-import BotUploader from "./BotUploader";
-import BotListView from "./list/BotList";
-import ProfileList from "./list/ProfileList";
-import ModalCreateBot from "./ModalCreateBot";
-import Button from "./ui/Button";
 import Flex from "./ui/Flex";
+import { styled } from "@stitches/react";
+import ModalCreateBot from "./modals/ModalCreateBot";
 import Separator from "./ui/Separator";
 import { Text } from "./ui/Text";
+import ProfileList from "./list/ProfileList";
+import Button from "./ui/Button";
 
 export default () => {
   const profiles: any = useAllProfiles(true);

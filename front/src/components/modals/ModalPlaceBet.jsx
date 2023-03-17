@@ -1,21 +1,22 @@
-import { useActionCreator, useGame } from "../state/game/hooks";
-import { TransactionType } from "../common/types";
+import { useActionCreator, useGame } from "../../state/game/hooks";
+import { TransactionType } from "../../common/types";
 import { ethers } from "ethers";
-import Address from "./Address";
+import Address from "../Address";
 import { useWeb3React } from "@web3-react/core";
-import { useTokenPortalBalance, useTokenFromList } from "../hooks/token";
-import * as RadioGroup from "@radix-ui/react-radio-group";
+import { useTokenPortalBalance, useTokenFromList } from "../../hooks/token";
+import * as RadioGroup from '@radix-ui/react-radio-group';
 
-import AddressGame from "./AddressGame";
-import List from "./ui/List";
-import AssetDisplay from "./AssetDisplay";
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import AddressGame from "../AddressGame";
+import List from "../ui/List";
+import AssetDisplay from "../AssetDisplay";
+import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { keyframes, styled } from "@stitches/react";
 import { blackA, mauve, violet, green } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Slider } from "@radix-ui/react-slider";
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { Text } from "../ui/Text";
 
 export default ({ triggerElement, gameId }) => {
   //console.log(triggerElement)
@@ -42,103 +43,69 @@ export default ({ triggerElement, gameId }) => {
     );
   });
 
-  const handlePlaceBet = async () => {
-    //dispatch(createGame(tokenAddress, wagerValue))
-    const [action, wait] = await addAction({
-      type: TransactionType.BET_INPUT,
-      tokenAddress: tokenAddress,
-      amount: ethers.utils.parseUnits(wagerValue),
-      winningId,
-    });
-    await wait;
-  };
+    const handlePlaceBet = async () => {
+        //dispatch(createGame(tokenAddress, wagerValue))
+        const [action, wait] = await addAction({
+            type: TransactionType.BET_INPUT,
+            tokenAddress: token?.address,
+            amount: ethers.utils.parseUnits(amount.toString()),
+            winningId,
+            gameId,
+        })
+        await wait
+    }
 
-  return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
-      <Dialog.Portal>
-        <DialogOverlay />
-        <DialogContent>
-          <DialogTitle>
-            Place bet on <AddressGame id={gameId} />{" "}
-          </DialogTitle>
-          <DialogDescription>
-            You are betting{" "}
-            <AssetDisplay
-              tokenAddress={token?.address}
-              balance={amount}
-              isL2={true}
-            />{" "}
-            that <Address value={winningId} /> will win. Make sure to deposit
-            funds to the portal first if you have not done so.
-          </DialogDescription>
-          <Fieldset>
-            <Label>Existing bets</Label>
-            <List items={bets} />
-          </Fieldset>
-          <Fieldset>
-            <Label>Amount</Label>
-            <Input
-              id="amount"
-              value={amount}
-              defaultValue={0}
-              onChange={(event) => {
-                setAmount(event.target.value);
-              }}
-            ></Input>
-            <RightSlot onClick={() => setAmount(max)}>MAX</RightSlot>
-          </Fieldset>
-          <Fieldset>
-            <SliderMain
-              value={amount}
-              max={100}
-              onChangeFunction={([value]) => {
-                setAmount(value);
-              }}
-            />
-          </Fieldset>
 
-          <Fieldset>
-            <Label>Who is going to win?</Label>
-            <RadioGroupRoot
-              defaultValue="DRAW"
-              aria-label="View density"
-              onValueChange={(value) => {
-                setWinningId(value);
-              }}
-            >
-              <Flex css={{ alignItems: "center" }}>
-                <RadioGroupItem value={game?.players[0]} id="r1">
-                  <RadioGroupIndicator />
-                </RadioGroupItem>
-                <SelectLabel htmlFor="r1">
-                  {game?.players[0] ? (
-                    <Address value={game?.players[0]} />
-                  ) : (
-                    "Player 1"
-                  )}
-                </SelectLabel>
-              </Flex>
-              <Flex css={{ alignItems: "center" }}>
-                <RadioGroupItem value={game?.players[1]} id="r2">
-                  <RadioGroupIndicator />
-                </RadioGroupItem>
-                <SelectLabel htmlFor="r2">
-                  {game?.players[1] ? (
-                    <Address value={game?.players[1]} />
-                  ) : (
-                    "Player 2"
-                  )}
-                </SelectLabel>
-              </Flex>
-              <Flex css={{ alignItems: "center" }}>
-                <RadioGroupItem value="DRAW" id="r3">
-                  <RadioGroupIndicator />
-                </RadioGroupItem>
-                <SelectLabel htmlFor="r3">Draw</SelectLabel>
-              </Flex>
-            </RadioGroupRoot>
-          </Fieldset>
+    return (
+        <Dialog.Root>
+        <Dialog.Trigger asChild>
+          {triggerElement}
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <DialogOverlay />
+          <DialogContent>
+            <DialogTitle>Place bet on <AddressGame id={gameId}/> </DialogTitle>
+            <DialogDescription>
+                You are betting <AssetDisplay tokenAddress={token?.address} balance={amount} isL2={true}/> that <Address value={winningId}/> will win.
+                Make sure to deposit funds to the portal first if you have not done so.
+            </DialogDescription>
+            <Fieldset>
+                <Label>Existing bets</Label>
+                <List items={bets}/>
+            </Fieldset>
+            <Fieldset>
+                <Label>Amount</Label>
+              <Input id="amount" value={amount} defaultValue={0} onChange={(event)=>{ setAmount(event.target.value)}}>
+                </Input>
+                <RightSlot onClick={()=>setAmount(max)}>MAX</RightSlot>
+            </Fieldset>
+            <Fieldset>
+                <SliderMain value={amount} max={100} onChangeFunction={([value])=>{ setAmount(value.toString())}} />
+            </Fieldset>
+
+            <Fieldset>
+                <Label>Who is going to win?</Label>
+                <RadioGroupRoot defaultValue="DRAW" aria-label="View density" onValueChange={(value)=>{setWinningId(value)}}>
+                    <Flex css={{ alignItems: 'center' }}>
+                        <RadioGroupItem value={game?.players[0]} id="r1">
+                        <RadioGroupIndicator />
+                        </RadioGroupItem>
+                        <SelectLabel htmlFor="r1">{game?.players[0] ? <Address value={game?.players[0]}/> : "Player 1"}</SelectLabel>
+                    </Flex>
+                    <Flex css={{ alignItems: 'center' }}>
+                        <RadioGroupItem value={game?.players[1]} id="r2">
+                        <RadioGroupIndicator />
+                        </RadioGroupItem>
+                        <SelectLabel htmlFor="r2">{game?.players[1] ? <Address value={game?.players[1]}/> : "Player 2"}</SelectLabel>
+                    </Flex>
+                    <Flex css={{ alignItems: 'center' }}>
+                        <RadioGroupItem value={"DRAW"} id="r3">
+                        <RadioGroupIndicator />
+                        </RadioGroupItem>
+                        <SelectLabel htmlFor="r3"><Text>Draw</Text></SelectLabel>
+                    </Flex>
+                </RadioGroupRoot>
+            </Fieldset>
 
           <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
             <Dialog.Close asChild>

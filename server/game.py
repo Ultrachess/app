@@ -99,6 +99,16 @@ class Game:
         else:
             return DRAW_POINTS
 
+    def getWinnerAddress(self):
+        outcome = self.state.board().outcome()
+        winner = outcome.winner
+        if winner == chess.WHITE:
+            return self.players[0]
+        elif winner == chess.BLACK:
+            return self.players[1]
+        else:
+            return None
+
     def handleEnd(self):
         # calculate elo and scores
         p1, p2 = self.players[0], self.players[1]
@@ -183,7 +193,7 @@ class Game:
                 logger.info("isMinPlayer: " + str(self.__isMinPlayers()))
                 # open betting phase
                 if self.__isMinPlayers():
-                    deps.betManager.open(id, timestamp, self.bettingDuration)
+                    deps.betManager.open(self.id, timestamp, self.bettingDuration, self.token)
                     currentTurn = self.__getCurrentTurnAddress()
                     firstTurnIsBot = "0x" not in currentTurn
                     if firstTurnIsBot and self.__isBotVHumanGame():
@@ -296,6 +306,7 @@ class Game:
             board = self.state.board()
             (uci, botMoveStat) = bot.run(board, timestamp)
             self.move(botId, timestamp, uci, botMoveStat)
+        return True
 
     ##def runMatches(self, matchCount):
     ##    for i in range(matchCount):

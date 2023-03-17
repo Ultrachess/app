@@ -1,15 +1,15 @@
 import * as React from "react";
 import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
-import { createGame } from "../state/game/gameSlice";
+import { createGame } from "../../state/game/gameSlice";
 import { FaCoins } from "react-icons/fa";
-import { useActionCreator } from "../state/game/hooks";
+import { useActionCreator } from "../../state/game/hooks";
 import { TransactionTypes } from "ethers/lib/utils";
-import { TransactionType } from "../common/types";
+import { TransactionType } from "../../common/types";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import Select from "react-select";
-import { useTokenList } from "../hooks/token";
+import { useTokenList } from "../../hooks/token";
 
 export default ({ visible, closeHandler }) => {
   const dispatch = useDispatch();

@@ -169,29 +169,48 @@ export enum TournamentType {
 }
 
 export interface TournamentMatch {
-  games: string[];
-  matchCount: number;
-  currentMatch: number;
-  left: string;
-  right: string;
-  leftScore: number;
-  rightScore: number;
-}
+    games: string[],
+    matchCount: number,
+    currentMatch: number,
+    left: string,
+    right: string,
+    leftScore: number,
+    rightScore: number,
+} 
 
 export interface TournamentRound {
   matches: TournamentMatch[];
 }
 
 export interface Tournament {
-  id: string;
-  type: TournamentType;
-  rounds: number;
-  amountOfWinners: number;
-  participantCount: number;
-  participants: string[];
-  owner: string;
-  currentRound: number;
-  matches: TournamentRound[];
-  isOver: boolean;
-  isRoundOver: boolean;
+    id: string,
+    type: TournamentType,
+    rounds: number,
+    amountOfWinners: number,
+    participantCount: number,
+    participants: string[],
+    owner: string,
+    currentRound: number,
+    matches: TournamentMatch[][],
+    isOver: boolean,
+    isRoundOver: boolean,
+}
+
+export interface ThroneBattle {
+    timestamp: number,
+    challenger: string,
+    wins: number,
+    completed_games: number,
+    games: string[],
+    end: boolean
+}
+
+export interface Throne {
+    king: string,
+    winnings: number,
+    battles: { [challenger: string]: ThroneBattle },
+    price: number,
+    token: string,
+    gamesToWin: number,
+    maxTrys: number,
 }

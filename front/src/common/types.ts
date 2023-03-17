@@ -18,6 +18,8 @@ export enum TransactionType {
   CREATE_OFFER,
   ACCEPT_OFFER,
   DECLINE_OFFER,
+  KING_THRONE_CHALLENGE,
+  KING_THRONE_UPDATE,
 }
 
 export enum TourneyType {
@@ -52,7 +54,7 @@ export interface DeclineChallengeTransactionsInfo extends BaseTransactionInfo {
 export interface CreateBotOfferTransactionsInfo extends BaseTransactionInfo {
   type: TransactionType.CREATE_OFFER;
   botId: string;
-  price: number;
+  price: any;
   tokenAddress: string;
 }
 
@@ -150,10 +152,22 @@ export interface CreateTournamentTransactionInfo extends BaseTransactionInfo {
 }
 
 export interface JoinTournamentTransactionInfo extends BaseTransactionInfo {
-  type: TransactionType.JOIN_TOURNAMENT;
-  tournamentId: string;
-  isBot?: boolean;
-  botId?: string;
+  type: TransactionType.JOIN_TOURNAMENT,
+  tournamentId: string,
+  participant_id: string,
+}
+
+export interface KingThroneChallengeTransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.KING_THRONE_CHALLENGE,
+  challenger: string,
+}
+
+export interface KingThroneUpdateTransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.KING_THRONE_UPDATE,
+  numberOfTrys: number,
+  numberOfWins: number,
+  price: number,
+  token: string,
 }
 
 export type TransactionInfo =
@@ -175,4 +189,7 @@ export type TransactionInfo =
   | DeclineChallengeTransactionsInfo
   | CreateBotOfferTransactionsInfo
   | AcceptBotOfferTransactionsInfo
-  | DeclineBotOfferTransactionsInfo;
+  | DeclineBotOfferTransactionsInfo    
+  | KingThroneChallengeTransactionInfo
+  | KingThroneUpdateTransactionInfo;
+

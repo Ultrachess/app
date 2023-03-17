@@ -4,8 +4,7 @@ import * as React from "react";
 import { formatDate, truncateAddress } from "../../ether/utils";
 import { BotProfile } from "../../state/game/types";
 import Address from "../Address";
-import ModalChallengeBot from "../ModalChallengeBot";
-import ModalManageBot from "../ModalManageBot";
+import ModalChallengeBot from "../modals/ModalChallengeBot";
 import List from "../ui/List";
 import { Text } from "../ui/Text";
 import BotListItem from "./BotListItem";
@@ -16,5 +15,9 @@ export default ({ bots }: { bots: BotProfile[] }) => {
       ? bots.map((bot) => <BotListItem bot={bot} rank={0} />)
       : [<Text key={0}>No bots found</Text>];
 
-  return <List items={botItems} />;
-};
+    return (
+        <List
+            items={botItems}
+        />
+    );
+}

@@ -4,17 +4,17 @@ import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
-import { Text } from "./ui/Text";
+import { Text } from "../ui/Text";
 import {
   useTokenFromList,
   useTokenPortalBalance,
   useTokenBalance,
-} from "../hooks/token";
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
-import AssetDisplay from "./AssetDisplay";
+} from "../../hooks/token";
+import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import AssetDisplay from "../AssetDisplay";
 import { useWeb3React } from "@web3-react/core";
-import { useActionCreator } from "../state/game/hooks";
-import { TransactionType } from "../common/types";
+import { useActionCreator } from "../../state/game/hooks";
+import { TransactionType } from "../../common/types";
 
 export default ({ triggerElement }) => {
   const { chainId, account } = useWeb3React();
@@ -89,7 +89,7 @@ export default ({ triggerElement }) => {
               value={amount}
               max={100}
               onChangeFunction={([value]) => {
-                setAmount(value);
+                setAmount(value.toString());
               }}
             />
           </Fieldset>

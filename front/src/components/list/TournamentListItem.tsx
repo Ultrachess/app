@@ -83,7 +83,7 @@ export default ({
       </Flex>
       <Flex css={{ flexDirection: "column", gap: 2 }}>
         <Text faded>Status</Text>
-        {isOver ? (
+        {!isOver ? (
           <Text blue>
             Ongoing <DotIcon color="green" />
           </Text>

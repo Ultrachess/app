@@ -83,7 +83,7 @@ export default ({ bot, rank = 0 }: { bot: BotProfile; rank: number }) => {
         <Text faded>auto max wager</Text>
         <Text>
           <AssetDisplay
-            balance={autoMaxWagerAmount}
+            balance={autoMaxWagerAmount/ 10 ** 18}
             tokenAddress={autoWagerTokenAddress}
             isL2={true}
           />

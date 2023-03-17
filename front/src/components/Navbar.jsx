@@ -35,11 +35,11 @@ export default () => {
             </Link>
           </Button>
           <Button className="navItem" light color="default" auto>
-            <Link className="noUnderLine" to="/tournaments">
-              <Text link>Github</Text>
+            <Link className="noUnderLine" to="/koh">
+              <Text link>KOH</Text>
             </Link>
           </Button>
-        </div>
+       </div>
         <div className="nav-right">
           <Auth />
         </div>

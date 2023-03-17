@@ -1,87 +1,74 @@
-import { mauve } from "@radix-ui/colors";
-import * as HoverCard from "@radix-ui/react-hover-card";
-import { keyframes, styled } from "@stitches/react";
-import React from "react";
-
-import { useProfile } from "../state/game/hooks";
-import {
-  BotProfile,
-  Profile,
-  ProfileType,
-  UserProfile,
-} from "../state/game/types";
-import Address from "./Address";
-import AssetDisplay from "./AssetDisplay";
-import ModalCreateChallenge from "./ModalCreateChallenge";
-import ModalCreateOffer from "./ModalCreateOffer";
-import Button from "./ui/Button";
+import React from 'react';
+import * as HoverCard from '@radix-ui/react-hover-card';
+import { styled, keyframes } from '@stitches/react';
+import { mauve } from '@radix-ui/colors';
+import { useProfile } from '../state/game/hooks';
+import { Profile, ProfileType, BotProfile, UserProfile } from '../state/game/types';
+import Address from './Address';
+import AssetDisplay from './AssetDisplay';
+import ModalCreateChallenge from './modals/ModalCreateChallenge';
+import Button from './ui/Button';
+import ModalCreateOffer from './modals/ModalCreateOffer';
 
 const BotProfileCard = ({ profile }: { profile: BotProfile }) => {
   //console.log("123 bot profile", profile)
-  return (
-    <div>
-      <Flex css={{ flexDirection: "column", gap: 7 }}>
-        <Img size="large" src={profile.avatar} alt="Radix UI" />
-        <Flex css={{ flexDirection: "column", gap: 15 }}>
-          <div>
-            <Flex css={{ gap: 5 }}>
-              <Address value={profile.id} /> <Text faded>USA 🇺🇸</Text>
-            </Flex>
-            <Flex css={{ gap: 5 }}>
-              <Text faded>owner</Text>
-              <Address value={profile.owner} />
-            </Flex>
-          </div>
-          <Flex css={{ gap: 15 }}>
-            <Flex css={{ gap: 5 }}>
-              <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
-            </Flex>
-            <Flex css={{ gap: 5 }}>
-              <Text bold>{profile.games.length}</Text>{" "}
-              <Text faded>Games played</Text>
-            </Flex>
-          </Flex>
-          {/* <Flex css={{ gap: 15 }}>
-                      <ModalCreateChallenge triggerElement={<Button>Challenge</Button>} playerId={profile.id} />
-                      <ModalCreateOffer triggerElement={<Button>Offer</Button>} botId={profile.id} />
-                    </Flex> */}
-        </Flex>
-      </Flex>
-
-      <HoverCardArrow />
-    </div>
-  );
-};
+    return (
+        <div>
+            <Flex css={{ flexDirection: 'column', gap: 7 }}>
+                <Flex css={{ flexDirection: 'column', gap: 15 }}>
+                  <Address value={profile.id} />
+                  <div>
+                    <Flex css={{ gap: 5 }}>
+                          <Text faded>USA 🇺🇸</Text>
+                    </Flex>
+                    <Flex css={{ gap: 5 }}>
+                        <Text faded>owner</Text><Address value={profile.owner} /> 
+                    </Flex>
+                  </div>
+                  <Flex css={{ gap: 15 }}>
+                    <Flex css={{ gap: 5 }}>
+                        <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
+                    </Flex>
+                    <Flex css={{ gap: 5 }}>
+                        <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
+                    </Flex>
+                  </Flex>
+                  {/* <Flex css={{ gap: 15 }}>
+                    <ModalCreateChallenge triggerElement={<Button>Challenge</Button>} playerId={profile.id} />
+                    <ModalCreateOffer triggerElement={<Button>Offer</Button>} botId={profile.id} />
+                  </Flex> */}
+                </Flex>
+                </Flex>
+    
+                <HoverCardArrow />
+        </div>
+    )
+}
 
 const UserProfileCard = ({ profile }: { profile: UserProfile }) => {
   //console.log("123 profile", profile)
-  const token = profile?.balances[0]?.token ?? "";
-  const balance = profile?.balances[0]?.amount ?? "";
-  return (
-    <div>
-      <Flex css={{ flexDirection: "column", gap: 7 }}>
-        <Img size="large" src={profile.avatar} alt="Radix UI" />
-        <Flex css={{ flexDirection: "column", gap: 15 }}>
-          <div>
-            <Flex css={{ gap: 5 }}>
-              <Address value={profile.id} /> <Text faded>🇺🇸</Text>
-            </Flex>
-            <Flex css={{ gap: 5 }}>
-              <AssetDisplay
-                tokenAddress={token}
-                balance={balance}
-                isL2={true}
-              />{" "}
-              <Text faded>Balance</Text>
-            </Flex>
-          </div>
-          <Flex css={{ gap: 15 }}>
-            <Flex css={{ gap: 5 }}>
-              <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
-            </Flex>
-            <Flex css={{ gap: 5 }}>
-              <Text bold>{profile.games.length}</Text>{" "}
-              <Text faded>Games played</Text>
+  const token = profile?.balances[0]?.token ?? ""
+  const balance = profile?.balances[0]?.amount ?? ""
+    return (
+      <div>
+        <Flex css={{ flexDirection: 'column', gap: 7 }}>
+          <Flex css={{ flexDirection: 'column', gap: 15 }}>
+            <Address value={profile.id} />
+            <div>
+              <Flex css={{ gap: 5 }}>
+                  <Text faded>🇺🇸</Text>
+              </Flex>
+              <Flex css={{ gap: 5 }}>
+                  <AssetDisplay tokenAddress={token} balance={balance} isL2={true} /> <Text faded>Balance</Text>
+              </Flex>
+            </div>
+            <Flex css={{ gap: 15 }}>
+              <Flex css={{ gap: 5 }}>
+                  <Text bold>{profile.elo}</Text> <Text faded>Elo</Text>
+              </Flex>
+              <Flex css={{ gap: 5 }}>
+                  <Text bold>{profile.games.length}</Text> <Text faded>Games played</Text>
+              </Flex>
             </Flex>
           </Flex>
           <Flex css={{ gap: 5, flexDirection: "column" }}>
@@ -98,7 +85,6 @@ const UserProfileCard = ({ profile }: { profile: UserProfile }) => {
               <ModalCreateChallenge triggerElement={<Button>Challenge</Button>} playerId={profile.id} />
             </Flex> */}
         </Flex>
-      </Flex>
 
       <HoverCardArrow />
     </div>

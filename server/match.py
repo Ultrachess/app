@@ -8,7 +8,8 @@ class Match:
         # Left and Right participants
         self.__left = left
         self.__right = right
-
+        self.__winner = Participant()
+        
         self.left_scores = []
         self.right_scores = []
 
@@ -20,16 +21,18 @@ class Match:
         self.games = []
         self.owner = owner
 
+        #check if both participants are initialized
+        if self.can_start():
+            self.run()
+
     def set_winner(self, winner):
         if winner == self.__left.get():
             self.__winner.set(winner)
-            self.__loser.set(self.__right.get())
         elif winner == self.__right.get():
             self.__winner.set(winner)
-            self.__loser.set(self.__left.get())
         else:
-            raise Exception("invalid competitor")
-
+            self.__winner.set(self.__right.get())
+    
     def get_winner(self):
         return self.__winner
 
@@ -47,9 +50,9 @@ class Match:
     def is_finished(self):
         if not self.is_last_match():
             return False
-
-        game = self.games[self.current_match - 1]
-        return game.isGameEnd()
+        
+        gameId = self.games[self.current_match - 1]
+        return deps.matchMaker.games[gameId].isGameEnd()
 
     def create_game(self):
         # check if participants have joined, and no winner is declared
@@ -62,36 +65,54 @@ class Match:
 
         p1 = self.__left.get()
         p2 = self.__right.get()
-        p1_is_bot = "0x" not in p1 and p1.lower() in deps.botFactory.bots
-        p2_is_bot = "0x" not in p2 and p2.lower() in deps.botFactory.bots
-        is_bot = p1_is_bot or p2_is_bot
-        is_only_bot = p1_is_bot and p2_is_bot
+        p1IsBot = "0x" not in p1 
+        p2IsBot = "0x" not in p2
+        onlyBot = p1IsBot and p2IsBot
 
-        botId1 = (
-            p1 if is_only_bot else p1 if p1_is_bot else p2 if p1_is_bot else "blank"
-        )
-        botId2 = p2 if is_only_bot else "blank"
-        playerId = p1 if p1_is_bot else p2 if p2_is_bot else "blank"
+        obj = {
+            "success": False,
+        }
 
-        obj = deps.matchMaker.create(
-            self.owner,
-            get_timestamp(),
-            {
-                "name": "tournament match",
-                "isBot": is_bot,
-                "botId1": botId1,
-                "botId2": botId2,
-                "playerId": playerId,
+        if onlyBot:
+            obj = deps.matchMaker.create("0xsender", get_timestamp(), {
+                "name": "auto triggered match",
+                "isBot": True,
+                "botId1": p1,
+                "botId2": p2,
                 "token": "0x",
-                "wagerAmount": 0,
-                "bettingDuration": 0,
-            },
-        )
-
+                "wagerAmount": 0
+            })
+        elif p1IsBot:
+            obj = deps.matchMaker.create("0xsender", get_timestamp(), {
+                "name": "auto triggered match",
+                "isBot": True,
+                "botId1": p1,
+                "playerId": p2,
+                "token": "0x",
+                "wagerAmount": 0
+            })
+        elif p2IsBot:
+            obj = deps.matchMaker.create("0xsender", get_timestamp(), {
+                "name": "auto triggered match",
+                "isBot": True,
+                "botId1": p2,
+                "playerId": p1,
+                "token": "0x",
+                "wagerAmount": 0
+            })
+        else:
+            obj = deps.matchMaker.create("0xsender", get_timestamp(), {
+                "name": "auto triggered match",
+                "isBot": False,
+                "players": [p1, p2],
+                "token": "0x",
+                "wagerAmount": 0
+            })
+        
         if not obj["success"]:
-            return False
-
-        gameId = obj["id"]
+            return False 
+        
+        gameId = obj["value"]
         self.games.append(gameId)
         self.current_match += 1
 
@@ -103,22 +124,31 @@ class Match:
             # create first match
             self.create_game()
             return True
-        # create second game if first is over
-        p1 = self.__left.get()
-        p2 = self.__right.get()
-        game = self.games[self.current_match - 1]
+        #create second game if first is over
+        p1 = self.__left.get().lower()
+        p2 = self.__right.get().lower()
+        gameId = self.games[self.current_match - 1]
+        game = deps.matchMaker.games[gameId]
         if game.isGameEnd():
-            # add points
-            self.left_score.append(game.scores[p1])
-            self.right_score.append(game.scores[p2])
+            #add points
+            self.left_scores.append(game.scores[p1])
+            self.right_scores.append(game.scores[p2])
             self.left_score_final += game.scores[p1]
             self.right_score_final += game.scores[p2]
             # create new game
             self.create_game()
-
+            #set winner
+            if self.left_score_final > self.right_score_final:
+                self.set_winner(self.__left.get())
+            elif self.left_score_final < self.right_score_final:
+                self.set_winner(self.__right.get())
+            else:
+                self.set_winner(None)
+        
         return True
 
     def getStringState(self):
+        
         return {
             "games": self.games,
             "matchCount": self.match_count,

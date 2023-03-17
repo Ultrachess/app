@@ -7,7 +7,7 @@ import { useTime } from "../ActionView";
 import Address from "../Address";
 import AddressGame from "../AddressGame";
 import AssetDisplay from "../AssetDisplay";
-import ModalPlaceBet from "../ModalPlaceBet";
+import ModalPlaceBet from "../modals/ModalPlaceBet";
 import Button from "../ui/Button";
 import DateDisplay from "../ui/Date";
 import Flex from "../ui/Flex";
@@ -32,12 +32,17 @@ export default ({ game }: { game: Game }) => {
   const bettingOpenTime = game?.wagering?.openTime ?? -1;
   const bettingClosesAt = bettingOpenTime + game?.bettingDuration;
   const isWaitingForAPlayer = p2 === undefined || p1 === undefined;
-
-  const bettingIsClosed =
-    bettingOpenTime < 0 &&
-    bettingOpenTime < current &&
-    bettingClosesAt < current;
-  //console.log("abc is betting closed: ", bettingIsClosed)
+    const isInGame = (p1?.toLowerCase() ?? "") === account.toLowerCase() || (p2?.toLowerCase() ?? "") === account.toLowerCase()
+    
+  const bettingHasStarted =
+    bettingOpenTime > 0
+    const bettingHasStartedBeforeCurrent =
+    bettingOpenTime < current
+    const bettingIsOpen = bettingHasStarted &&
+    bettingHasStartedBeforeCurrent && bettingClosesAt > (current/1000);
+  const bettingIsClosed = !bettingIsOpen
+    const canBet = bettingIsOpen && !isWaitingForAPlayer
+    console.log("abc is betting closed: ", bettingIsClosed)
 
   const completed = game.isEnd;
   const joinable =

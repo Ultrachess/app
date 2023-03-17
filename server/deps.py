@@ -12,7 +12,13 @@ from elo import EloManager
 from marketplace import BotMarketPlaceManager
 from matchmaker import Matchmaker
 from tournament import TournamentManager
+from koh import KingOfTheHillManager
+import chess.engine
+import chess.pgn
+import random
 
+
+kohManager = KingOfTheHillManager()
 challengeManager = ChallengeManager()
 botMarketPlace = BotMarketPlaceManager()
 tournamentManager = TournamentManager()

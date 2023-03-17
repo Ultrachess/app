@@ -6,8 +6,8 @@ import { BotOffer } from "../state/game/types";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
 import HandleOffer from "./HandleOffer";
-import ModalChallengeBot from "./ModalChallengeBot";
-import ModalManageBot from "./ModalManageBot";
+import ModalChallengeBot from "./modals/ModalChallengeBot";
+import ModalManageBot from "./modals/ModalManageBot";
 import Date from "./ui/Date";
 import List from "./ui/List";
 import { Text } from "./ui/Text";
@@ -26,12 +26,12 @@ const BotOfferListItem = ({
   const isOwner = account.toLowerCase() === owner.toLowerCase();
 
   return (
-    <Text>
-      <Address value={sender} hoverable={true} /> offered{" "}
-      <AssetDisplay balance={price} tokenAddress={token} /> for bot{" "}
+    <Text css={{display:"flex", gap:'10px', alignItems:'end'}}>
+      <span><Address value={sender} hoverable={true} /></span> offered{" "}
+      <AssetDisplay balance={price/10**18} tokenAddress={token} /> for bot{" "}
       <Address value={botId} hoverable={true} /> at <Date current={timestamp} />
       {isOwner ? (
-        <div>
+        <div style={{display:"flex", gap:"10px", alignItems:"end"}}>
           <HandleOffer offerId={offerId} accept={true} /> or{" "}
           <HandleOffer offerId={offerId} accept={false} />
         </div>
