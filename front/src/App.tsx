@@ -11,17 +11,17 @@ import BotProfile from "./components/BotProfile";
 import Game from "./components/Game";
 import Navbar from "./components/Navbar";
 import Notifications from "./components/Notifications";
+import PageKingOfTheHill from "./components/PageKingOfTheHill";
 import Profile from "./components/Profile";
 import Rankings from "./components/Rankings";
 import Tournaments from "./components/Tournaments";
 import Tournament from "./components/TournamentView";
+import TournamentView from "./components/TournamentView";
 import TransitionManager from "./components/TransitionManager";
-import TournamentView from './components/TournamentView';
 import logo from "./logo.svg";
 import { fetchGames } from "./state/game/gameSlice";
 import { GameStateUpdater } from "./state/game/updater";
 import { TransactionUpdater } from "./state/transactions/updater";
-import PageKingOfTheHill from './components/PageKingOfTheHill';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -44,9 +44,9 @@ function App() {
         <Route path="tournaments" element={<Tournaments />} />
         <Route path="tournament/:tournamentId" element={<TournamentView />} />
         <Route path="/game/:gameId" element={<Game />} />
-        <Route path="/users/:userId" element={<Profile/>} />
-        <Route path="/bot/:botId" element={<BotProfile/>} />
-        <Route path='koh' element={<PageKingOfTheHill/>}/>
+        <Route path="/users/:userId" element={<Profile />} />
+        <Route path="/bot/:botId" element={<BotProfile />} />
+        <Route path="koh" element={<PageKingOfTheHill />} />
       </Routes>
     </div>
   );

@@ -1,16 +1,17 @@
-import * as React from "react";
-import { truncateAddress, formatDate } from "../../ether/utils";
-import Address from "../Address";
-import ModalChallengeBot from "../modals/ModalChallengeBot";
-import ModalManageBot from "../ModalManageBot";
 import { useWeb3React } from "@web3-react/core";
-import List from "../ui/List";
-import { Challenge } from "../../state/game/types";
-import { Text } from "../ui/Text";
-import AssetDisplay from "../AssetDisplay";
-import Date from "../ui/Date";
-import ChallengeAction from "../HandleChallenge";
+import * as React from "react";
+
+import { formatDate,truncateAddress } from "../../ether/utils";
 import { useOwner } from "../../state/game/hooks";
+import { Challenge } from "../../state/game/types";
+import Address from "../Address";
+import AssetDisplay from "../AssetDisplay";
+import ChallengeAction from "../HandleChallenge";
+import ModalManageBot from "../ModalManageBot";
+import ModalChallengeBot from "../modals/ModalChallengeBot";
+import Date from "../ui/Date";
+import List from "../ui/List";
+import { Text } from "../ui/Text";
 
 const ChallengeListItem = ({
   account,

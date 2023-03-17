@@ -131,7 +131,7 @@ export default ({ notification }: { notification: Notification }) => {
           you to a game wagering{" "}
           <AssetDisplay
             tokenAddress={notification["token"]}
-            balance={notification["wager"]/ 10**18}
+            balance={notification["wager"] / 10 ** 18}
             isL2={true}
           />{" "}
           <ChallengeAction

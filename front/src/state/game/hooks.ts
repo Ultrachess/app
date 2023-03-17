@@ -3,8 +3,7 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { useTransactionAdder } from "../transactions/hooks";
-import { Action, ActionType, ActionStates, ActionList, Game, Bet, Profile, BotProfile, UserProfile, ProfileType, Balance, Country, BotOffer, Challenge, BaseProfile, Tournament, TournamentType, Throne } from "./types";
+
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { CHAINS, USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { CONTRACTS } from "../../ether/contracts";
@@ -27,8 +26,29 @@ import {
 } from "../notifications/notifications";
 import { addNotification } from "../notifications/reducer";
 import { useTransactionAdder } from "../transactions/hooks";
+import { useTransactionAdder } from "../transactions/hooks";
 import { createPromise } from "./gameHelper";
 import { DAPP_ADDRESSES } from "./gameSlice";
+import {
+  Action,
+  ActionList,
+  ActionStates,
+  ActionType,
+  Balance,
+  BaseProfile,
+  Bet,
+  BotOffer,
+  BotProfile,
+  Challenge,
+  Country,
+  Game,
+  Profile,
+  ProfileType,
+  Throne,
+  Tournament,
+  TournamentType,
+  UserProfile,
+} from "./types";
 import {
   Action,
   ActionList,
@@ -81,68 +101,66 @@ export function useElo(id): number {
 }
 
 const PLACE_HOLDER_PROFILE: Profile = {
-    type: ProfileType.HUMAN,
-    id: "",
-    name: "",
-    avatar: "",
-    elo: 0,
-    games: [],
-    nationality: "",
-    challenges: [],
-    balances: [],
-    bots: [],
-}
+  type: ProfileType.HUMAN,
+  id: "",
+  name: "",
+  avatar: "",
+  elo: 0,
+  games: [],
+  nationality: "",
+  challenges: [],
+  balances: [],
+  bots: [],
+};
 
 const PLACE_HOLDER_TOURNAMENT: Tournament = {
-    id: "",
-    type: TournamentType.KNOCKOUT,
-    rounds: 0,
-    amountOfWinners: 1,
-    participantCount: 0,
-    participants: [],
-    owner: "",
-    currentRound: 0,
-    matches: [],
-    isOver: false,
-    isRoundOver: false,
-}
+  id: "",
+  type: TournamentType.KNOCKOUT,
+  rounds: 0,
+  amountOfWinners: 1,
+  participantCount: 0,
+  participants: [],
+  owner: "",
+  currentRound: 0,
+  matches: [],
+  isOver: false,
+  isRoundOver: false,
+};
 
 const PLACE_HOLDER_GAME: Game = {
-    id: "",
-    pgn: "",
-    players: [],
-    isBot: false,
-    isEnd: false,
-    matchCount: 0,
-    wagerAmount: 0,
-    token: "",
-    timestamp: 0,
-    resigner: "",
-    scores: {},
-    bettingDuration: 0,
-    wagering: {
-        gameId: "",
-        openTime: 0,
-        duration: 0,
-        bets: {},
-        pots: {},
-        totalPot: 0,
-        betsArray: []
-    },
-    botMoveStats: []
-}
+  id: "",
+  pgn: "",
+  players: [],
+  isBot: false,
+  isEnd: false,
+  matchCount: 0,
+  wagerAmount: 0,
+  token: "",
+  timestamp: 0,
+  resigner: "",
+  scores: {},
+  bettingDuration: 0,
+  wagering: {
+    gameId: "",
+    openTime: 0,
+    duration: 0,
+    bets: {},
+    pots: {},
+    totalPot: 0,
+    betsArray: [],
+  },
+  botMoveStats: [],
+};
 
 const PLACE_HOLDER_THRONE: Throne = {
-    king: "",
-    winnings: 0,
-    battles: {},
-    price: 0,
-    token: "",
-    gamesToWin: 0,
-    maxTrys: 0,
-}
-    
-
+  king: "",
+  winnings: 0,
+  battles: {},
+  price: 0,
+  token: "",
+  gamesToWin: 0,
+  maxTrys: 0,
+};
 
 export function useBalance(id: string, tokenAddress: string): number {
   const accounts: { [address: string]: { [token: string]: number } } =
@@ -223,10 +241,10 @@ export function useProfile(id: string, bots: any = []): Profile | undefined {
 }
 
 export function useThrone(): Throne {
-    const throne = useAppSelector(state => state.game.throne)
-    console.log("throne", throne)
-    if (!throne) return PLACE_HOLDER_THRONE
-    return throne
+  const throne = useAppSelector((state) => state.game.throne);
+  console.log("throne", throne);
+  if (!throne) return PLACE_HOLDER_THRONE;
+  return throne;
 }
 
 //get all bot profiles
@@ -445,13 +463,13 @@ export function useUserGameIds(id: string): string[] {
 }
 
 export function useUserOwnedGameIds(id: string): string[] {
-    const games = useAppSelector(state => state.game.games)
-    if (!games) return []
-    return Object.keys(games).filter((gameId) => {
-        const game = games[gameId]
-        if(game.players.length == 0) return false
-        return game.players[0].toLowerCase() == id.toLowerCase()
-    })
+  const games = useAppSelector((state) => state.game.games);
+  if (!games) return [];
+  return Object.keys(games).filter((gameId) => {
+    const game = games[gameId];
+    if (game.players.length == 0) return false;
+    return game.players[0].toLowerCase() == id.toLowerCase();
+  });
 }
 
 export function useUserCompletedGameIds(id: string): string[] {
@@ -464,39 +482,45 @@ export function useUserCompletedGameIds(id: string): string[] {
 }
 
 export function useUserActiveGameIds(id: string): string[] {
-    const games = useAppSelector(state => state.game.games)
-    if (!games) return []
-    //return all as lowercase
-    const gamesToReturn = Object.keys(games).filter((gameId) => {
-        const game = games[gameId]
-        let lower_case_players = game.players.map((player) => {
-            return player.toLowerCase()
-        })
-        return lower_case_players.includes(id.toLowerCase()) && !game.isEnd
-    }).map((gameId) => {
-        return gameId.toLowerCase()
+  const games = useAppSelector((state) => state.game.games);
+  if (!games) return [];
+  //return all as lowercase
+  const gamesToReturn = Object.keys(games)
+    .filter((gameId) => {
+      const game = games[gameId];
+      const lower_case_players = game.players.map((player) => {
+        return player.toLowerCase();
+      });
+      return lower_case_players.includes(id.toLowerCase()) && !game.isEnd;
     })
-    return gamesToReturn
+    .map((gameId) => {
+      return gameId.toLowerCase();
+    });
+  return gamesToReturn;
 }
 
 export function useTournament(id): Tournament | undefined {
-    const tournaments: Tournament[] = useAppSelector(state => state.game.tournaments)
-    console.log("tournaments", tournaments)
-    if (!tournaments) return undefined
-    //check if tournaments is an array
-    if (!Array.isArray(tournaments)) return undefined
-    if (tournaments.length == 0) return undefined
-    const tournament = tournaments.find((tournament) => {
-        return tournament.id.toLowerCase() == id.toLowerCase()
-    })
-    return tournament
+  const tournaments: Tournament[] = useAppSelector(
+    (state) => state.game.tournaments
+  );
+  console.log("tournaments", tournaments);
+  if (!tournaments) return undefined;
+  //check if tournaments is an array
+  if (!Array.isArray(tournaments)) return undefined;
+  if (tournaments.length == 0) return undefined;
+  const tournament = tournaments.find((tournament) => {
+    return tournament.id.toLowerCase() == id.toLowerCase();
+  });
+  return tournament;
 }
 
 export function useAllTournaments(): Tournament[] {
-    const tournaments: Tournament[] = useAppSelector(state => state.game.tournaments)
-    if (!tournaments) return []
-    console.log("tournaments", tournaments)
-    return Object?.values(tournaments)
+  const tournaments: Tournament[] = useAppSelector(
+    (state) => state.game.tournaments
+  );
+  if (!tournaments) return [];
+  console.log("tournaments", tournaments);
+  return Object?.values(tournaments);
 }
 
 export function useUserBots(id: string): BotProfile[] {
@@ -841,13 +865,13 @@ export function useActionCreator(): (
             input = ethers.utils.toUtf8Bytes(`{
                         "op": "declineChallenge", 
                         "value": "${info.challengeId}"
-                    }`)
-                    input = appendNumberToUInt8Array(id, input)
-                    result = await contract.addInput(input)
-                    break;
-                case TransactionType.CREATE_OFFER:
-                    console.log("create offer")
-                    input = ethers.utils.toUtf8Bytes(`{
+                    }`);
+            input = appendNumberToUInt8Array(id, input);
+            result = await contract.addInput(input);
+            break;
+          case TransactionType.CREATE_OFFER:
+            console.log("create offer");
+            input = ethers.utils.toUtf8Bytes(`{
                         "op": "createBotOffer", 
                         "value": {
                             "botId" : "${info.botId}",
@@ -870,22 +894,22 @@ export function useActionCreator(): (
             input = ethers.utils.toUtf8Bytes(`{
                         "op": "declineBotOffer", 
                         "value": "${info.offerId}"
-                    }`)
-                    input = appendNumberToUInt8Array(id, input)
-                    result = await contract.addInput(input)
-                    break;
-                case TransactionType.KING_THRONE_CHALLENGE:
-                    input = ethers.utils.toUtf8Bytes(`{
+                    }`);
+            input = appendNumberToUInt8Array(id, input);
+            result = await contract.addInput(input);
+            break;
+          case TransactionType.KING_THRONE_CHALLENGE:
+            input = ethers.utils.toUtf8Bytes(`{
                         "op": "kingThroneChallenge",
                         "value": {
                             "challenger" : "${info.challenger}"
                         }
-                    }`)
-                    input = appendNumberToUInt8Array(id, input)
-                    result = await contract.addInput(input)
-                    break;
-                case TransactionType.KING_THRONE_UPDATE:
-                    input = ethers.utils.toUtf8Bytes(`{
+                    }`);
+            input = appendNumberToUInt8Array(id, input);
+            result = await contract.addInput(input);
+            break;
+          case TransactionType.KING_THRONE_UPDATE:
+            input = ethers.utils.toUtf8Bytes(`{
                         "op": "kingThroneUpdate",
                         "value": {
                             "numberOfTrys": ${info.numberOfTrys},
@@ -893,13 +917,13 @@ export function useActionCreator(): (
                             "price" : ${info.price},
                             "token": "${info.token}"
                         }
-                    }`)
-                    input = appendNumberToUInt8Array(id, input)
-                    result = await contract.addInput(input)
-                    break;
-                case TransactionType.RESIGN_GAME_INPUT:
-                    roomId = info.roomId
-                    input = ethers.utils.toUtf8Bytes(`{
+                    }`);
+            input = appendNumberToUInt8Array(id, input);
+            result = await contract.addInput(input);
+            break;
+          case TransactionType.RESIGN_GAME_INPUT:
+            roomId = info.roomId;
+            input = ethers.utils.toUtf8Bytes(`{
                         "op": "resign", 
                         "value": "${roomId}"
                     }`);

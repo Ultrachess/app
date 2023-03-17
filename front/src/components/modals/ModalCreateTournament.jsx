@@ -5,7 +5,8 @@ import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
-  Cross2Icon, CheckIcon,
+  Cross2Icon,
+  CheckIcon,
 } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { Text } from "../ui/Text";
@@ -24,21 +25,22 @@ import * as Select from "@radix-ui/react-select";
 
 const tournamentTypes = ["Knockout"];
 
+export default ({ triggerElement }) => {
+  const { chainId, account } = useWeb3React();
+  const [amount, setAmount] = useState(0);
+  const [tourneyType, setTourneyType] = useState(tournamentTypes[0]);
+  const [participants, setParticipants] = useState([]);
+  const [participantCount, setParticipantCount] = useState(2);
+  const [currentSelectedParticipant, setCurrentSelectedParticipant] = useState(
+    account ?? ""
+  );
+  const [roundCount, setRoundCount] = useState(1000);
+  const [amountOfWinners, setAmountOfWinners] = useState(1);
 
-export default ({triggerElement}) => {
-    const { chainId, account } = useWeb3React()
-    const [amount, setAmount ] = useState(0)
-    const [tourneyType, setTourneyType] = useState(tournamentTypes[0])
-    const [participants, setParticipants] = useState([])
-    const [participantCount, setParticipantCount] = useState(2)
-    const [currentSelectedParticipant, setCurrentSelectedParticipant] = useState(account ?? "")
-    const [roundCount, setRoundCount] = useState(1000)
-    const [amountOfWinners, setAmountOfWinners] = useState(1)
+  const bots = useUserBots(account);
+  const potentialParticipants = [...bots.map((bot) => bot.id), account];
 
-    const bots = useUserBots(account)
-    const potentialParticipants = [...bots.map((bot) => bot.id), account]
-
-    const addAction = useActionCreator()
+  const addAction = useActionCreator();
 
   const addParticipant = (address) => {
     setParticipants([...participants, address]);
@@ -64,73 +66,71 @@ export default ({triggerElement}) => {
       navigate(`tournaments/${tournamentId}`, { replace: true });
   };
 
-    //console.log("amount", amount)
+  //console.log("amount", amount)
   return (
     <Dialog.Root>
-        <Dialog.Trigger asChild>
-          {triggerElement}
-        </Dialog.Trigger>
-        <Dialog.Portal>
-          <DialogOverlay />
-          <DialogContent>
-            <DialogTitle>Create </DialogTitle>
-            <DialogDescription>
-              Create your tournament. You dont need to initialize the participants, they can join later.
-            </DialogDescription>
-            
-            <Fieldset>
-                <Label>Type</Label>
-                <SelectMain
-                    value={tourneyType}
-                    onValueChange={(value)=>{ setTourneyType(value)}}
-                    options = {tournamentTypes}
-                    label="Tournament type"
-                />
-            </Fieldset>
+      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
+      <Dialog.Portal>
+        <DialogOverlay />
+        <DialogContent>
+          <DialogTitle>Create </DialogTitle>
+          <DialogDescription>
+            Create your tournament. You dont need to initialize the
+            participants, they can join later.
+          </DialogDescription>
 
-            <Fieldset>
-                <Label>Participant count</Label>
-                {/* <RightSlot>
+          <Fieldset>
+            <Label>Type</Label>
+            <SelectMain
+              value={tourneyType}
+              onValueChange={(value) => {
+                setTourneyType(value);
+              }}
+              options={tournamentTypes}
+              label="Tournament type"
+            />
+          </Fieldset>
+
+          <Fieldset>
+            <Label>Participant count</Label>
+            {/* <RightSlot>
                     You win: <AssetDisplay tokenAddress={token?.address} balance={portalBalance - amount} isL2={true}/> 
                     <Text>→</Text> 
                     You lose: <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
                 </RightSlot> */}
-            </Fieldset>
-            <Fieldset>
-              <Input id="amount" value={participantCount} defaultValue={0} onChange={(event)=>{
-                  //console.log("event.value", event.target.value)
-                 setParticipantCount(event.target.value)
-                 }}>
-                </Input>
-                <RightSlot onClick={()=>setParticipantCount(50)}>MAX</RightSlot>
-            </Fieldset>
+          </Fieldset>
+          <Fieldset>
+            <Input
+              id="amount"
+              value={participantCount}
+              defaultValue={0}
+              onChange={(event) => {
+                //console.log("event.value", event.target.value)
+                setParticipantCount(event.target.value);
+              }}
+            ></Input>
+            <RightSlot onClick={() => setParticipantCount(50)}>MAX</RightSlot>
+          </Fieldset>
 
-            <Fieldset>
-                <Label>Participants</Label>
-                <Flex>
-                    {participants.map((address) => (
-                        <Button variant="green" onClick={() => removeParticipant(address)}><Address value={address} /></Button>
-                    ))}
-                </Flex>
-                <Flex css={{ gap: 10, flexWrap: 'wrap' }}>
-                    <SelectMain 
-                        value={currentSelectedParticipant} 
-                        onValueChange={(value)=>{ setCurrentSelectedParticipant(value)}}
-                        options = {potentialParticipants.filter((address) => !participants.includes(address))}
-                        label="Select participant"
-                    />
-                    <Button variant="green" onClick={() => addParticipant(currentSelectedParticipant)}>Add</Button>
-                </Flex>
-                    
-            </Fieldset>
-
+          <Fieldset>
+            <Label>Participants</Label>
+            <Flex>
+              {participants.map((address) => (
+                <Button
+                  variant="green"
+                  onClick={() => removeParticipant(address)}
+                >
+                  <Address value={address} />
+                </Button>
+              ))}
+            </Flex>
             <Flex css={{ gap: 10, flexWrap: "wrap" }}>
               <SelectMain
-                value={""}
+                value={currentSelectedParticipant}
                 onValueChange={(value) => {
                   setCurrentSelectedParticipant(value);
                 }}
-                potentialParticipants={potentialParticipants.filter(
+                options={potentialParticipants.filter(
                   (address) => !participants.includes(address)
                 )}
                 label="Select participant"
@@ -142,6 +142,26 @@ export default ({triggerElement}) => {
                 Add
               </Button>
             </Flex>
+          </Fieldset>
+
+          <Flex css={{ gap: 10, flexWrap: "wrap" }}>
+            <SelectMain
+              value={""}
+              onValueChange={(value) => {
+                setCurrentSelectedParticipant(value);
+              }}
+              potentialParticipants={potentialParticipants.filter(
+                (address) => !participants.includes(address)
+              )}
+              label="Select participant"
+            />
+            <Button
+              variant="green"
+              onClick={() => addParticipant(currentSelectedParticipant)}
+            >
+              Add
+            </Button>
+          </Flex>
           <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
             <Dialog.Close asChild>
               <Button variant="green" onClick={handleTournamentCreate}>
@@ -380,14 +400,13 @@ const SliderThumb = styled(Slider.Thumb, {
   "&:focus": { outline: "none", boxShadow: `0 0 0 5px ${blackA.blackA8}` },
 });
 
-
-  const SelectMain = ({onValueChange, value, options, label}) => {
-    return (
-        <Select.Root 
-        value={value}
-        onValueChange={async (value) => {
-            onValueChange(value)
-        }}
+const SelectMain = ({ onValueChange, value, options, label }) => {
+  return (
+    <Select.Root
+      value={value}
+      onValueChange={async (value) => {
+        onValueChange(value);
+      }}
     >
       <SelectTrigger aria-label="Chain">
         <Select.Value>

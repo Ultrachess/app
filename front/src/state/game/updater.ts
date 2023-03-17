@@ -132,103 +132,131 @@ const getNotices = async (
 };
 
 function getRelevantNotifications(
-        notifications: Notification[], 
-        account: String = " ",
-        userBots: String[],
-        userGames: String[], 
-        userBotGames: String[], 
-        userTournaments: String[],
-        userBotTournaments: String[],
-        userOwnedGames: String[]
-    ){
-    let lUserBots = userBots.map((id) => id.toLowerCase())
-    let lUserGames = userGames.map((id) => id.toLowerCase())
-    let lUserBotGames = userBotGames.map((id) => id.toLowerCase())
-    let lUserOwnedGames = userOwnedGames.map((id) => id.toLowerCase())
-    let lUserTournaments = userTournaments.map((id) => id.toLowerCase())
-    let lUserBotTournaments = userBotTournaments.map((id) => id.toLowerCase())
-    //console.log("checking notifications account ", account)
-    //console.log("checking notifications bots ", userBots)
-    //console.log("checking notifications userGames ", userGames)
-    //console.log("checking notifications botGames ", userBotGames)
-    //console.log("checking notifications: ", notifications.map((id)=> {return id.type}))
-    return notifications ?
-        notifications
-        .filter(notification => {
-            const { type } = notification
-            if(
-                type == NotificationType.GAME_MOVE ||
-                type == NotificationType.GAME_WAGER ||
-                type == NotificationType.GAME_BETTING_CLOSED //||
-                //type == NotificationType.GAME_CREATED 
-            ){
-                //check if game is in user's games
-                return (lUserGames.includes(notification["game_id"].toLowerCase()) || lUserBotGames.includes(notification["game_id"].toLowerCase()))
-                    //&& !lUserOwnedGames.includes(notification["game_id"].toLowerCase())
-            }
-            if (type == NotificationType.GAME_CREATED){
-                return lUserOwnedGames.includes(notification["game_id"].toLowerCase())
-            }
-            if(type == NotificationType.GAME_JOINED){
-                //checkt if game is in user's games
-                //and make sure joiner is not account
-                return (lUserOwnedGames.includes(notification["game_id"].toLowerCase()) || lUserBotGames.includes(notification["game_id"].toLowerCase())) &&
-                    notification["player_id"].toLowerCase() != account.toLowerCase()
-            }
-            if(type == NotificationType.GAME_COMPLETED){
-                return notification["player_id1"].toLowerCase() == account.toLowerCase() || 
-                notification["player_id2"].toLowerCase() == account.toLowerCase()
-            }
-            if (type == NotificationType.CHALLENGE_ACCEPTED){
-                return notification.sender.toLowerCase() == account.toLowerCase()
-            } 
-            if (type == NotificationType.CHALLENGE_DECLINED){
-                return notification.sender.toLowerCase() == account.toLowerCase()
-            }
-            if (type == NotificationType.CHALLENGE_CREATED){
-                return notification.recipient.toLowerCase() == account.toLowerCase() ||
-                    lUserBots.includes(notification.recipient.toLowerCase())
-            }
-            if (type == NotificationType.TOURNAMENT_JOINED){
-                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.TOURNAMENT_COMPLETED){
-                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.TOURNAMENT_MATCH_CREATED){
-                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.TOURNAMENT_MATCH_COMPLETED){
-                return userTournaments.includes(notification.tournamentId) || userBotTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.TOURNAMENT_ROUND_COMPLETED){
-                return userTournaments.includes(notification.tournamentId)
-            }
-            if (type == NotificationType.BOT_GAME_CREATED){
-                return lUserBotGames.includes(notification["game_id"].toLowerCase()) || 
-                    lUserBots.includes(notification["player_id1"].toLowerCase()) ||
-                    lUserBots.includes(notification["player_id1"].toLowerCase())
-            }
-            if (type == NotificationType.BOT_GAME_COMPLETED){
-                return lUserBotGames.includes(notification["game_id"].toLowerCase()) || 
-                    lUserBots.includes(notification["player_id1"].toLowerCase()) ||
-                    lUserBots.includes(notification["player_id2"].toLowerCase())
-            }
-            if (type == NotificationType.BOT_OFFER_CREATED){
-                return notification.owner.toLowerCase() == account.toLowerCase()
-            }
-            if (type == NotificationType.BOT_OFFER_ACCEPTED){
-                return notification.sender.toLowerCase() == account.toLowerCase()
-            }
-            if (type == NotificationType.BOT_OFFER_DECLINED){
-                return notification.sender.toLowerCase() == account.toLowerCase()
-            }
-            if (type == NotificationType.BOT_CREATED){
-                return notification["creator_id"].toLowerCase() == account.toLowerCase()
-            }
-                
-        })
-        : []
+  notifications: Notification[],
+  account = " ",
+  userBots: string[],
+  userGames: string[],
+  userBotGames: string[],
+  userTournaments: string[],
+  userBotTournaments: string[],
+  userOwnedGames: string[]
+) {
+  const lUserBots = userBots.map((id) => id.toLowerCase());
+  const lUserGames = userGames.map((id) => id.toLowerCase());
+  const lUserBotGames = userBotGames.map((id) => id.toLowerCase());
+  const lUserOwnedGames = userOwnedGames.map((id) => id.toLowerCase());
+  const lUserTournaments = userTournaments.map((id) => id.toLowerCase());
+  const lUserBotTournaments = userBotTournaments.map((id) => id.toLowerCase());
+  //console.log("checking notifications account ", account)
+  //console.log("checking notifications bots ", userBots)
+  //console.log("checking notifications userGames ", userGames)
+  //console.log("checking notifications botGames ", userBotGames)
+  //console.log("checking notifications: ", notifications.map((id)=> {return id.type}))
+  return notifications
+    ? notifications.filter((notification) => {
+        const { type } = notification;
+        if (
+          type == NotificationType.GAME_MOVE ||
+          type == NotificationType.GAME_WAGER ||
+          type == NotificationType.GAME_BETTING_CLOSED //||
+          //type == NotificationType.GAME_CREATED
+        ) {
+          //check if game is in user's games
+          return (
+            lUserGames.includes(notification["game_id"].toLowerCase()) ||
+            lUserBotGames.includes(notification["game_id"].toLowerCase())
+          );
+          //&& !lUserOwnedGames.includes(notification["game_id"].toLowerCase())
+        }
+        if (type == NotificationType.GAME_CREATED) {
+          return lUserOwnedGames.includes(
+            notification["game_id"].toLowerCase()
+          );
+        }
+        if (type == NotificationType.GAME_JOINED) {
+          //checkt if game is in user's games
+          //and make sure joiner is not account
+          return (
+            (lUserOwnedGames.includes(notification["game_id"].toLowerCase()) ||
+              lUserBotGames.includes(notification["game_id"].toLowerCase())) &&
+            notification["player_id"].toLowerCase() != account.toLowerCase()
+          );
+        }
+        if (type == NotificationType.GAME_COMPLETED) {
+          return (
+            notification["player_id1"].toLowerCase() == account.toLowerCase() ||
+            notification["player_id2"].toLowerCase() == account.toLowerCase()
+          );
+        }
+        if (type == NotificationType.CHALLENGE_ACCEPTED) {
+          return notification.sender.toLowerCase() == account.toLowerCase();
+        }
+        if (type == NotificationType.CHALLENGE_DECLINED) {
+          return notification.sender.toLowerCase() == account.toLowerCase();
+        }
+        if (type == NotificationType.CHALLENGE_CREATED) {
+          return (
+            notification.recipient.toLowerCase() == account.toLowerCase() ||
+            lUserBots.includes(notification.recipient.toLowerCase())
+          );
+        }
+        if (type == NotificationType.TOURNAMENT_JOINED) {
+          return (
+            userTournaments.includes(notification.tournamentId) ||
+            userBotTournaments.includes(notification.tournamentId)
+          );
+        }
+        if (type == NotificationType.TOURNAMENT_COMPLETED) {
+          return (
+            userTournaments.includes(notification.tournamentId) ||
+            userBotTournaments.includes(notification.tournamentId)
+          );
+        }
+        if (type == NotificationType.TOURNAMENT_MATCH_CREATED) {
+          return (
+            userTournaments.includes(notification.tournamentId) ||
+            userBotTournaments.includes(notification.tournamentId)
+          );
+        }
+        if (type == NotificationType.TOURNAMENT_MATCH_COMPLETED) {
+          return (
+            userTournaments.includes(notification.tournamentId) ||
+            userBotTournaments.includes(notification.tournamentId)
+          );
+        }
+        if (type == NotificationType.TOURNAMENT_ROUND_COMPLETED) {
+          return userTournaments.includes(notification.tournamentId);
+        }
+        if (type == NotificationType.BOT_GAME_CREATED) {
+          return (
+            lUserBotGames.includes(notification["game_id"].toLowerCase()) ||
+            lUserBots.includes(notification["player_id1"].toLowerCase()) ||
+            lUserBots.includes(notification["player_id1"].toLowerCase())
+          );
+        }
+        if (type == NotificationType.BOT_GAME_COMPLETED) {
+          return (
+            lUserBotGames.includes(notification["game_id"].toLowerCase()) ||
+            lUserBots.includes(notification["player_id1"].toLowerCase()) ||
+            lUserBots.includes(notification["player_id2"].toLowerCase())
+          );
+        }
+        if (type == NotificationType.BOT_OFFER_CREATED) {
+          return notification.owner.toLowerCase() == account.toLowerCase();
+        }
+        if (type == NotificationType.BOT_OFFER_ACCEPTED) {
+          return notification.sender.toLowerCase() == account.toLowerCase();
+        }
+        if (type == NotificationType.BOT_OFFER_DECLINED) {
+          return notification.sender.toLowerCase() == account.toLowerCase();
+        }
+        if (type == NotificationType.BOT_CREATED) {
+          return (
+            notification["creator_id"].toLowerCase() == account.toLowerCase()
+          );
+        }
+      })
+    : [];
 }
 
 function useNotices(): PartialNotice[] | undefined {

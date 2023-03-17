@@ -1,97 +1,102 @@
-import React, { useEffect, useState } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { styled, keyframes } from '@stitches/react';
-import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import * as Slider from '@radix-ui/react-slider';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
-import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../../state/game/hooks';
-import { TransactionType } from '../../common/types';
-import { ethers } from 'ethers';
-import { useNavigate } from 'react-router-dom';
-import { useThrone } from '../../state/game/hooks';
+import React, { useEffect, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { styled, keyframes } from "@stitches/react";
+import { violet, blackA, mauve, green } from "@radix-ui/colors";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import * as Slider from "@radix-ui/react-slider";
+import {
+  useTokenFromList,
+  useTokenPortalBalance,
+  useTokenBalance,
+} from "../../hooks/token";
+import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { useWeb3React } from "@web3-react/core";
+import { useActionCreator } from "../../state/game/hooks";
+import { TransactionType } from "../../common/types";
+import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom";
+import { useThrone } from "../../state/game/hooks";
 
+export default ({ triggerElement }) => {
+  const { king, numberOfTrys, numberOfWins, price } = useThrone();
 
-export default ({triggerElement}) => {
-    const {
-        king,
-        numberOfTrys,
-        numberOfWins,
-        price
-    } = useThrone()
+  const { chainId, account } = useWeb3React();
+  const [updatedNumberOfTrys, setUpdatedNumberOfTrys] = useState(numberOfTrys);
+  const [updatedNumberOfWins, setUpdatedNumberOfWins] = useState(numberOfWins);
+  const [updatedPrice, setUpdatedPrice] = useState(price / 10 ** 18);
 
-    const { chainId, account } = useWeb3React()
-    const [updatedNumberOfTrys, setUpdatedNumberOfTrys ] = useState(numberOfTrys)
-    const [updatedNumberOfWins, setUpdatedNumberOfWins ] = useState(numberOfWins)
-    const [updatedPrice, setUpdatedPrice ] = useState(price/ 10 ** 18)
-
-    const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
 
   const addAction = useActionCreator();
 
-    console.log("token", token)
+  console.log("token", token);
 
-    const handleUpdated = async () => {
-      //console.log("amount", amount)
-      const tx = {
-            type: TransactionType.KING_THRONE_UPDATE,
-            numberOfTrys: 0,
-            numberOfWins: 0,
-            price: updatedPrice * 10 ** token.decimals,
-            token: token? token.address: "",
-      }
-      await addAction(tx)
-    }
-
-    const isKing = king.toLowerCase() === account.toLowerCase()
-
+  const handleUpdated = async () => {
     //console.log("amount", amount)
-    return (
-        <Dialog.Root>
-        <Dialog.Trigger asChild>
-          {triggerElement}
-        </Dialog.Trigger>
-        <Dialog.Portal>
-          <DialogOverlay />
-            {isKing &&
-                <DialogContent>
-                    <DialogTitle></DialogTitle>
-                    <DialogDescription>
-                        Update your throne.
-                        Set the price it takes to challenge you.
-                        Set the number of wins and tries a challenger has to beat you.
-                    </DialogDescription>
-                    
-                    <Fieldset><Label>Price to challenge in {token?.symbol ?? 'USDC'}</Label></Fieldset>
-                    <Fieldset><Input id="amount" value={updatedPrice} defaultValue={0} onChange={(event)=>{setUpdatedPrice(event.target.value)}}></Input></Fieldset>
-                    
-                    {/* <Fieldset><Label>Number of wins</Label></Fieldset>
+    const tx = {
+      type: TransactionType.KING_THRONE_UPDATE,
+      numberOfTrys: 0,
+      numberOfWins: 0,
+      price: updatedPrice * 10 ** token.decimals,
+      token: token ? token.address : "",
+    };
+    await addAction(tx);
+  };
+
+  const isKing = king.toLowerCase() === account.toLowerCase();
+
+  //console.log("amount", amount)
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
+      <Dialog.Portal>
+        <DialogOverlay />
+        {isKing && (
+          <DialogContent>
+            <DialogTitle></DialogTitle>
+            <DialogDescription>
+              Update your throne. Set the price it takes to challenge you. Set
+              the number of wins and tries a challenger has to beat you.
+            </DialogDescription>
+
+            <Fieldset>
+              <Label>Price to challenge in {token?.symbol ?? "USDC"}</Label>
+            </Fieldset>
+            <Fieldset>
+              <Input
+                id="amount"
+                value={updatedPrice}
+                defaultValue={0}
+                onChange={(event) => {
+                  setUpdatedPrice(event.target.value);
+                }}
+              ></Input>
+            </Fieldset>
+
+            {/* <Fieldset><Label>Number of wins</Label></Fieldset>
                     <Fieldset><Input id="bettingDuration" value={updatedNumberOfWins} onChange={(event)=>{ setUpdatedNumberOfWins(event.target.value)}}></Input></Fieldset>
 
                     <Fieldset><Label>Number of tries</Label></Fieldset>
                     <Fieldset><Input id="bettingDuration" value={updatedNumberOfTrys} onChange={(event)=>{ setUpdatedNumberOfTrys(event.target.value)}}></Input></Fieldset>
                      */}
-                    <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
-                    <Dialog.Close asChild>
-                        <Button
-                            variant="green"
-                            onClick={handleUpdated}
-                        >Updated</Button>
-                    </Dialog.Close>
-                    </Flex>
-                    <Dialog.Close asChild>
-                    <IconButton aria-label="Close">
-                        <Cross2Icon />
-                    </IconButton>
-                    </Dialog.Close>
-                </DialogContent>
-            }
-        </Dialog.Portal>
-      </Dialog.Root>
-  )
-}
+            <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
+              <Dialog.Close asChild>
+                <Button variant="green" onClick={handleUpdated}>
+                  Updated
+                </Button>
+              </Dialog.Close>
+            </Flex>
+            <Dialog.Close asChild>
+              <IconButton aria-label="Close">
+                <Cross2Icon />
+              </IconButton>
+            </Dialog.Close>
+          </DialogContent>
+        )}
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
 
 const overlayShow = keyframes({
   "0%": { opacity: 0 },
