@@ -1,13 +1,13 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import * as React from "react";
-import {
-  Text,
-  Table,
-  User,
-  Button,
-  Modal,
-  Input,
-  Row,
-} from "@nextui-org/react";
+import { Text, Button, Modal, Input, Row } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { FaRobot } from "react-icons/fa";
 import { TransactionType } from "../common/types";

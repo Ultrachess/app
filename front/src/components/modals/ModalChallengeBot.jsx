@@ -1,13 +1,18 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import * as React from "react";
-import { Text, Grid, Modal, Input, Row, Button } from "@nextui-org/react";
+import { Text, Modal, Input, Row, Button } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
-import { createBotGame } from "../../state/game/gameSlice";
 import { FaCoins } from "react-icons/fa";
-import { useAppSelector } from "../../state/hooks";
 import { useWeb3React } from "@web3-react/core";
 import { isAddress } from "../../utils";
 import { useActionCreator } from "../../state/game/hooks";
-import { useCallback, useEffect, useMemo } from "react";
 import Select from "react-select";
 import { TransactionType } from "../../common/types";
 import { ethers } from "ethers";

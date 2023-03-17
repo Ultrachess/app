@@ -1,35 +1,28 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { violet } from "@radix-ui/colors";
-import { StitchesLogoIcon, ZoomOutIcon } from "@radix-ui/react-icons";
 import { styled } from "@stitches/react";
 import { useWeb3React } from "@web3-react/core";
-import * as React from "react";
-import { useSelector } from "react-redux";
 
 import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { truncateAddress } from "../ether/utils";
-import {
-  useTokenBalance,
-  useTokenFromList,
-  useTokenPortalBalance,
-} from "../hooks/token";
-import { useAllTournaments, useThrone } from "../state/game/hooks";
+import { useTokenFromList } from "../hooks/token";
+import { useThrone } from "../state/game/hooks";
 import { ThroneBattle } from "../state/game/types";
 import Address from "./Address";
 import AddressGame from "./AddressGame";
 import AssetDisplay from "./AssetDisplay";
-import BotGameCreator from "./BotGameCreator";
-import BotUploader from "./BotUploader";
-import BotListView from "./list/BotList";
-import ProfileList from "./list/ProfileList";
-import TournamentList from "./list/TournamentList";
-import ModalCreateBot from "./modals/ModalCreateBot";
-import ModalCreateTournament from "./modals/ModalCreateTournament";
 import ModalThroneChallenge from "./modals/ModalThroneChallenge";
 import ModalThroneUpdate from "./modals/ModalThroneUpdate";
 import Button from "./ui/Button";
 import Flex from "./ui/Flex";
 import List from "./ui/List";
-import Separator from "./ui/Separator";
 import { Text } from "./ui/Text";
 
 const battleListItem = (

@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { useState } from "react";
 
 import {
   AcceptBotOfferTransactionsInfo,
-  AcceptChallengeTransactionsInfo,
   DeclineBotOfferTransactionsInfo,
-  DeclineChallengeTransactionsInfo,
   TransactionType,
 } from "../common/types";
 import { useActionCreator } from "../state/game/hooks";

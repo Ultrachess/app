@@ -1,6 +1,13 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { DotIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useWeb3React } from "@web3-react/core";
-import * as React from "react";
 
 import { Game } from "../../state/game/types";
 import { useTime } from "../ActionView";

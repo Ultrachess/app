@@ -1,5 +1,12 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import Address from "./Address";
-import React, { useMemo } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 
@@ -14,25 +21,16 @@ import {
   getBottomAddress,
   getTopAddress,
   side,
-  InputStatus,
-  InputType,
 } from "../state/game/gameHelper";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState, useCallback } from "react";
-import { joinGame, sendMove } from "../state/game/gameSlice";
 import { TransactionType } from "../common/types";
 import GameMovesView from "./GameMovesView";
-import GameTimer from "./GameTimer";
 import {
   useActionCreator,
   useActionsNotProcessed,
-  useActions,
   useGame,
 } from "../state/game/hooks";
-import { useAllTransactions } from "../state/transactions/hooks";
-import { Row } from "@nextui-org/react";
-import { useToken } from "../hooks/token";
-import { ethers } from "ethers";
 import Flex from "./ui/Flex";
 import AssetDisplay from "./AssetDisplay";
 import { useTime } from "./ActionView";

@@ -1,9 +1,15 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { createSlice } from "@reduxjs/toolkit";
-import { createClient, defaultExchanges } from "@urql/core";
 import { default as axios } from "axios";
 import { Chess } from "chess.js";
 import { ethers } from "ethers";
-import { pipe, subscribe } from "wonka";
 
 import dappGoerli from "../../../../deployments/goerli/chessAppNew.json";
 import dappLocalhost from "../../../../deployments/localhost/dapp.json";
@@ -13,7 +19,6 @@ import { CONTRACTS } from "../../ether/contracts";
 import {
   createDummyGames,
   createGameHelper,
-  getGameById,
   getGameByPlayer,
   InputStatus,
   InputType,

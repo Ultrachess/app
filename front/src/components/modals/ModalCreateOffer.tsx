@@ -1,19 +1,22 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { blackA, green, mauve, violet } from "@radix-ui/colors";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { keyframes, styled } from "@stitches/react";
 import { useWeb3React } from "@web3-react/core";
-import { ethers } from "ethers";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { TransactionType } from "../../common/types";
 import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
-import {
-  useTokenBalance,
-  useTokenFromList,
-  useTokenPortalBalance,
-} from "../../hooks/token";
+import { useTokenFromList, useTokenPortalBalance } from "../../hooks/token";
 import { useActionCreator } from "../../state/game/hooks";
 import Address from "../Address";
 import AssetDisplay from "../AssetDisplay";

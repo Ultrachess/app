@@ -1,15 +1,21 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useModal, Modal, Row } from "@nextui-org/react";
 import { FaUser } from "react-icons/fa";
-import { toHex, truncateAddress } from "../ether/utils";
+import { truncateAddress } from "../ether/utils";
 import {
   setChainId,
   setAccounts,
-  setError,
   setIsActivating,
   setIsActive,
-  setProvider,
 } from "../state/auth/authSlice";
 import { useEffect } from "react";
 import { hooks, metaMask } from "../ether/connectors/metaMask";
@@ -20,13 +26,10 @@ import { useTime } from "./ActionView";
 import "./Auth.css";
 import AuthNetwork from "./AuthNetwork";
 import * as Separator from "@radix-ui/react-separator";
-import * as Popover from "@radix-ui/react-popover";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { styled, keyframes } from "@stitches/react";
 import { violet, mauve, blackA, red } from "@radix-ui/colors";
 import {
-  HamburgerMenuIcon,
-  DotFilledIcon,
   CheckIcon,
   ChevronRightIcon,
   ChevronDownIcon,

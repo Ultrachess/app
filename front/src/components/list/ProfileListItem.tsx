@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 //React component that takes in BotProfile and renders it with multiple Flex components
 
 import { Profile, ProfileType, UserProfile } from "../../state/game/types";

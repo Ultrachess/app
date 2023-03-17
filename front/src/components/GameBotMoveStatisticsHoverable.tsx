@@ -1,22 +1,17 @@
-import { mauve } from "@radix-ui/colors";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { keyframes, styled } from "@stitches/react";
 import React from "react";
 
-import { useProfile } from "../state/game/hooks";
-import {
-  BotProfile,
-  Profile,
-  ProfileType,
-  UserProfile,
-} from "../state/game/types";
 import { BotMoveStats } from "../state/game/types";
-import Address from "./Address";
-import AssetDisplay from "./AssetDisplay";
 import BotMoveStatisticsView from "./BotMoveStatisticsView";
-import ModalCreateChallenge from "./modals/ModalCreateChallenge";
-import ModalCreateOffer from "./modals/ModalCreateOffer";
-import Button from "./ui/Button";
 import Flex from "./ui/Flex";
 import { Text } from "./ui/Text";
 

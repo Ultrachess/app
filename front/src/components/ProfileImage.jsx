@@ -1,9 +1,14 @@
-import React, { useMemo, useRef } from "react";
-import { Text, Grid, User } from "@nextui-org/react";
-import { truncateAddress } from "../ether/utils";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { useMemo } from "react";
 import { createIcon } from "@download/blockies";
 import "./Address.css";
-import { Link } from "react-router-dom";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { styled } from "@stitches/react";
 import { violet, blackA } from "@radix-ui/colors";

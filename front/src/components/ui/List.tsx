@@ -1,7 +1,14 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { blackA, mauve, violet } from "@radix-ui/colors";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { styled } from "@stitches/react";
-import React from "react";
 
 const List = ({ items }) => (
   <ScrollAreaRoot>

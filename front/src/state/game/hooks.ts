@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { TransactionResponse } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
@@ -5,14 +13,10 @@ import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 
 import { TransactionInfo, TransactionType } from "../../common/types";
-import { CHAINS, USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { CHAINS } from "../../ether/chains";
 import { CONTRACTS } from "../../ether/contracts";
-import { useContract, useErc20Contract } from "../../hooks/contract";
-import {
-  appendNumberToUInt8Array,
-  decimalToHexString,
-  getErc20Contract,
-} from "../../utils";
+import { useContract } from "../../hooks/contract";
+import { appendNumberToUInt8Array, getErc20Contract } from "../../utils";
 import {
   addAction,
   setAction,
@@ -21,11 +25,9 @@ import {
 import { useAppSelector } from "../hooks";
 import {
   ActionNotification,
-  Notification,
   NotificationType,
 } from "../notifications/notifications";
 import { addNotification } from "../notifications/reducer";
-import { useTransactionAdder } from "../transactions/hooks";
 import { useTransactionAdder } from "../transactions/hooks";
 import { createPromise } from "./gameHelper";
 import { DAPP_ADDRESSES } from "./gameSlice";
@@ -40,31 +42,12 @@ import {
   BotOffer,
   BotProfile,
   Challenge,
-  Country,
   Game,
   Profile,
   ProfileType,
   Throne,
   Tournament,
   TournamentType,
-  UserProfile,
-} from "./types";
-import {
-  Action,
-  ActionList,
-  ActionStates,
-  ActionType,
-  Balance,
-  BaseProfile,
-  Bet,
-  BotOffer,
-  BotProfile,
-  Challenge,
-  Country,
-  Game,
-  Profile,
-  ProfileType,
-  Tournament,
   UserProfile,
 } from "./types";
 import { ActionResolverObject } from "./updater";

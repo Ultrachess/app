@@ -1,15 +1,17 @@
-import {
-  Match,
-  SingleEliminationBracket,
-  SVGViewer,
-} from "@g-loot/react-tournament-brackets";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { violet } from "@radix-ui/colors";
 import { styled } from "@stitches/react";
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import { useTournament } from "../state/game/hooks";
-import { TournamentMatch } from "../state/game/types";
 import TournamentRoundView from "./list/TournamentRoundView";
 import ModalJoinTournament from "./modals/ModalJoinTournament";
 import Button from "./ui/Button";

@@ -1,12 +1,17 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 //Takes in GameWagers interface type and renders a list of wagers use List component
 //
 import { truncateAddress } from "../ether/utils";
 import { GameWagers } from "../state/game/types";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
-import ModalPlaceBet from "./modals/ModalPlaceBet";
-import Button from "./ui/Button";
-import Date from "./ui/Date";
 import Flex from "./ui/Flex";
 import List from "./ui/List";
 import { Text } from "./ui/Text";

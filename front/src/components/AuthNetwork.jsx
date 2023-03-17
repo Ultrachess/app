@@ -1,12 +1,16 @@
-import {
-  CHAINS,
-  DEFAULT_NETWORK_URI,
-  DEFAULT_TOKEN_URI,
-} from "../ether/chains";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { CHAINS, DEFAULT_NETWORK_URI } from "../ether/chains";
 import React, { useMemo } from "react";
 import * as Select from "@radix-ui/react-select";
 import { styled } from "@stitches/react";
-import { violet, mauve, blackA } from "@radix-ui/colors";
+import { violet, mauve } from "@radix-ui/colors";
 import {
   CheckIcon,
   ChevronDownIcon,

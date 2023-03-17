@@ -1,18 +1,18 @@
-import * as React from "react";
-import BotUploader from "./BotUploader";
-import { useSelector } from "react-redux";
-import BotListView from "./list/BotList";
-import BotGameCreator from "./BotGameCreator";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { useAllTournaments } from "../state/game/hooks";
-import Flex from "./ui/Flex";
 import { Text } from "./ui/Text";
 import { styled } from "@stitches/react";
-import ModalCreateBot from "./modals/ModalCreateBot";
 import Separator from "./ui/Separator";
-import { ZoomOutIcon, StitchesLogoIcon } from "@radix-ui/react-icons";
+import { StitchesLogoIcon } from "@radix-ui/react-icons";
 import Button from "./ui/Button";
 import { violet } from "@radix-ui/colors";
-import ProfileList from "./list/ProfileList";
 import ModalCreateTournament from "./modals/ModalCreateTournament";
 import TournamentList from "./list/TournamentList";
 
