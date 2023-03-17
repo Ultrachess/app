@@ -1,6 +1,6 @@
 import { mauve } from "@radix-ui/colors";
 import * as HoverCard from "@radix-ui/react-hover-card";
-import { keyframes,styled } from "@stitches/react";
+import { keyframes, styled } from "@stitches/react";
 import React from "react";
 
 import { useProfile } from "../state/game/hooks";

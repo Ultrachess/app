@@ -1,5 +1,5 @@
 import { violet } from "@radix-ui/colors";
-import { StitchesLogoIcon,ZoomOutIcon } from "@radix-ui/react-icons";
+import { StitchesLogoIcon, ZoomOutIcon } from "@radix-ui/react-icons";
 import { styled } from "@stitches/react";
 import { useWeb3React } from "@web3-react/core";
 import * as React from "react";

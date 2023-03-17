@@ -1,9 +1,9 @@
 //create a modal that takes in a trigger element and renders a modal with a form to create a bot
 //then makes a CREATE_BOT action to the backend
-import { blackA, green,mauve, violet } from "@radix-ui/colors";
+import { blackA, green, mauve, violet } from "@radix-ui/colors";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { keyframes,styled } from "@stitches/react";
+import { keyframes, styled } from "@stitches/react";
 import React, { useEffect, useState } from "react";
 
 import { TransactionType } from "../../common/types";
