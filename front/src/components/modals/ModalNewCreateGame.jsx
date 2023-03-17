@@ -14,16 +14,6 @@ import { TransactionType } from '../../common/types';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
 
-export default ({ triggerElement }) => {
-  const { chainId, account } = useWeb3React();
-  const [amount, setAmount] = useState(0);
-  const navigate = useNavigate();
-  const [bettingDuration, setBettingDuration] = useState(0);
-  const max = 100;
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
-  const portalBalance = useTokenPortalBalance(token, account);
-  const balance = useTokenBalance(token, account);
-
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
     const [amount, setAmount ] = useState(0)
@@ -357,5 +347,7 @@ const SliderThumb = styled(Slider.Thumb, {
   boxShadow: `0 2px 10px ${blackA.blackA7}`,
   borderRadius: 10,
   "&:hover": { backgroundColor: violet.violet3 },
-  "&:focus": { outline: "none", boxShadow: `0 0 0 5px ${blackA.blackA8}` },
+  "&:focus": { outline: "none", boxShadow: `0 0 0 5px ${blackA.blackA8}` }
+
+
 });

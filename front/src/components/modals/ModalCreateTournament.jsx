@@ -24,17 +24,6 @@ import * as Select from "@radix-ui/react-select";
 
 const tournamentTypes = ["Knockout"];
 
-export default ({ triggerElement }) => {
-  const { chainId, account } = useWeb3React();
-  const [amount, setAmount] = useState(0);
-  const [tourneyType, setTourneyType] = useState(tournamentTypes[0]);
-  const [participants, setParticipants] = useState([]);
-  const [participantCount, setParticipantCount] = useState(400);
-  const [currenSelectedParticipant, setCurrentSelectedParticipant] = useState(
-    account ?? ""
-  );
-  const [roundCount, setRoundCount] = useState(1000);
-  const [amountOfWinners, setAmountOfWinners] = useState(1);
 
 export default ({triggerElement}) => {
     const { chainId, account } = useWeb3React()
@@ -76,8 +65,8 @@ export default ({triggerElement}) => {
   };
 
     //console.log("amount", amount)
-    return (
-        <Dialog.Root>
+  return (
+    <Dialog.Root>
         <Dialog.Trigger asChild>
           {triggerElement}
         </Dialog.Trigger>
@@ -135,14 +124,13 @@ export default ({triggerElement}) => {
                     
             </Fieldset>
             <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
-              <Dialog.Close asChild>
                 <Button 
                   variant="green"
                   onClick={() => removeParticipant(address)}
                 >
                   <Address value={address} />
                 </Button>
-              ))}
+                
             </Flex>
             <Flex css={{ gap: 10, flexWrap: "wrap" }}>
               <SelectMain
@@ -162,7 +150,6 @@ export default ({triggerElement}) => {
                 Add
               </Button>
             </Flex>
-          </Fieldset>
           <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
             <Dialog.Close asChild>
               <Button variant="green" onClick={handleTournamentCreate}>
