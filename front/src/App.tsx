@@ -1,9 +1,17 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import Body from "./components/Body";
 import BotManager from "./components/BotManager";
@@ -15,11 +23,8 @@ import PageKingOfTheHill from "./components/PageKingOfTheHill";
 import Profile from "./components/Profile";
 import Rankings from "./components/Rankings";
 import Tournaments from "./components/Tournaments";
-import Tournament from "./components/TournamentView";
 import TournamentView from "./components/TournamentView";
 import TransitionManager from "./components/TransitionManager";
-import logo from "./logo.svg";
-import { fetchGames } from "./state/game/gameSlice";
 import { GameStateUpdater } from "./state/game/updater";
 import { TransactionUpdater } from "./state/transactions/updater";
 

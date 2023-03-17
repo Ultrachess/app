@@ -1,15 +1,19 @@
-import { blackA, green, mauve, slate, violet } from "@radix-ui/colors";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { blackA, green, mauve, violet } from "@radix-ui/colors";
 import * as Toast from "@radix-ui/react-toast";
 import { keyframes, styled } from "@stitches/react";
 import * as React from "react";
 
-import {
-  useNewNotifications,
-  useNotifications,
-} from "../state/notifications/hooks";
+import { useNotifications } from "../state/notifications/hooks";
 import { NotificationType } from "../state/notifications/notifications";
 import { NOTIFICATION_TOAST_DURATION_MILLIS } from "../utils/constants";
-import { useTime } from "./ActionView";
 import NotificationItem from "./NotificationItem";
 
 const Notifications = () => {

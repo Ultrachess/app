@@ -1,4 +1,12 @@
-import React, { useEffect, useState } from "react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import React, { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
@@ -16,11 +24,9 @@ import {
   useTokenBalance,
 } from "../../hooks/token";
 import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
-import AssetDisplay from "../AssetDisplay";
 import { useWeb3React } from "@web3-react/core";
-import { useActionCreator, useProfile } from "../../state/game/hooks";
+import { useActionCreator } from "../../state/game/hooks";
 import { TransactionType } from "../../common/types";
-import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
 import * as Select from "@radix-ui/react-select";
 

@@ -1,13 +1,15 @@
-import { useWeb3React } from "@web3-react/core";
-import * as React from "react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
 
-import { formatDate, truncateAddress } from "../ether/utils";
 import { BotOffer } from "../state/game/types";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
 import HandleOffer from "./HandleOffer";
-import ModalChallengeBot from "./modals/ModalChallengeBot";
-import ModalManageBot from "./modals/ModalManageBot";
 import Date from "./ui/Date";
 import List from "./ui/List";
 import { Text } from "./ui/Text";

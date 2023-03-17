@@ -1,18 +1,19 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 //This component takes in a Tournament object and renders it with multiple Flex components
 //
 import { DotIcon } from "@radix-ui/react-icons";
 import { useWeb3React } from "@web3-react/core";
 
-import {
-  Tournament,
-  TournamentMatch,
-  TournamentRound,
-  TournamentType,
-} from "../../state/game/types";
+import { Tournament } from "../../state/game/types";
 import Address from "../Address";
 import AddressTournament from "../AddressTournament";
-import AssetDisplay from "../AssetDisplay";
-import DateDisplay from "../ui/Date";
 import Flex from "../ui/Flex";
 import { Text } from "../ui/Text";
 

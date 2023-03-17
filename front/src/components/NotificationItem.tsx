@@ -1,10 +1,16 @@
-import { blackA, green, mauve, slate, violet } from "@radix-ui/colors";
-import * as Toast from "@radix-ui/react-toast";
-import { keyframes, styled } from "@stitches/react";
-import { useWeb3React } from "@web3-react/core";
-import * as React from "react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
 
-import { useUserBotIds } from "../state/game/hooks";
+import { slate } from "@radix-ui/colors";
+import * as Toast from "@radix-ui/react-toast";
+import { styled } from "@stitches/react";
+import { useWeb3React } from "@web3-react/core";
+
 import {
   Notification,
   NotificationType,

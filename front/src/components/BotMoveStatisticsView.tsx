@@ -1,11 +1,16 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 //create a react component that will display the statistics of the bot moves
 //takes in BotMoveStats interface as a prop
 
-import React from "react";
-
 import { BotMoveStats } from "../state/game/types";
 import Flex from "./ui/Flex";
-import Separator from "./ui/Separator";
 import { Text } from "./ui/Text";
 
 interface BotMoveStatisticsViewProps {

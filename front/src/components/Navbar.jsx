@@ -1,7 +1,14 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import * as React from "react";
 import Auth from "./Auth";
-import Title from "./Title";
-import { Spacer, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import "./Navbar.css";
 import { Link } from "react-router-dom";
 import logo from "../assets/horse.png";

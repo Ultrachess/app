@@ -1,29 +1,20 @@
-import * as React from "react";
-import {
-  Row,
-  Grid,
-  Spacer,
-  Card,
-  Pagination,
-  Divider,
-  Table,
-} from "@nextui-org/react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { Spacer } from "@nextui-org/react";
 import "./Body.css";
-import { FaArrowDown, FaCoins, FaPlay } from "react-icons/fa";
 import GameList from "./list/GameList";
-import { createGame } from "../state/game/gameSlice";
-import { useDispatch } from "react-redux";
-import FileUploader from "./BotUploader";
-import ModalCreateGame from "./modals/ModalCreateGame";
-import ModalDepositToken from "./modals/ModalDepositToken";
-import { useAppSelector } from "../state/hooks";
 import Button from "./ui/Button";
 import { Text } from "./ui/Text";
 import ModalNewDepositFunds from "./modals/ModalNewDepositFunds";
 import { styled } from "@stitches/react";
 import { violet } from "@radix-ui/colors";
 import ModalNewCreateGame from "./modals/ModalNewCreateGame";
-import Separator from "./ui/Separator";
 import { useAllActiveAndCompletedGamesSeparated } from "../state/game/hooks";
 
 export default () => {

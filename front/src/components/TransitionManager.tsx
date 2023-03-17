@@ -1,11 +1,18 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import "./TransitionManager.css";
 
-import { Grid, Loading, Text } from "@nextui-org/react";
-import React, { useMemo } from "react";
+import { Loading, Text } from "@nextui-org/react";
+import { useMemo } from "react";
 
 import { TransactionType } from "../common/types";
 import { useActionsNotProcessed } from "../state/game/hooks";
-import { useAllTransactions } from "../state/transactions/hooks";
 
 export default () => {
   const actionsNotProcessed = useActionsNotProcessed();

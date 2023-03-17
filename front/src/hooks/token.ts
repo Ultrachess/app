@@ -1,9 +1,14 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { useWeb3React } from "@web3-react/core";
 import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 
-import { useAppSelector } from "../state/hooks";
-import { COINGECKO_LIST, fetchTokenList } from "../utils/lists";
 import ULTRACHESS_LIST from "../utils/lists/ultrachess.tokenlists.json";
 import { useContractCallResult, useErc20Contract } from "./contract";
 

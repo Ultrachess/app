@@ -1,13 +1,19 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 //React component that takes in BotProfile and renders it with multiple Flex components
 
-import { DotIcon } from "@radix-ui/react-icons";
 import { useWeb3React } from "@web3-react/core";
 
 import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
-import { Profile, ProfileType, UserProfile } from "../../state/game/types";
+import { UserProfile } from "../../state/game/types";
 import Address from "../Address";
 import AssetDisplay from "../AssetDisplay";
-import DateDisplay from "../ui/Date";
 import Flex from "../ui/Flex";
 import { Text } from "../ui/Text";
 

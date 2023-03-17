@@ -1,20 +1,19 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { mauve } from "@radix-ui/colors";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { keyframes, styled } from "@stitches/react";
-import React from "react";
 
 import { useProfile } from "../state/game/hooks";
-import {
-  BotProfile,
-  Profile,
-  ProfileType,
-  UserProfile,
-} from "../state/game/types";
+import { BotProfile, ProfileType, UserProfile } from "../state/game/types";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
-import ModalCreateChallenge from "./modals/ModalCreateChallenge";
-import ModalCreateOffer from "./modals/ModalCreateOffer";
-import Button from "./ui/Button";
 
 const BotProfileCard = ({ profile }: { profile: BotProfile }) => {
   //console.log("123 bot profile", profile)

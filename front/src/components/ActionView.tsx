@@ -1,11 +1,16 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { useEffect, useState } from "react";
-import Col from "react-bootstrap/Col";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import Row from "react-bootstrap/Row";
 import Toast from "react-bootstrap/Toast";
 
 import { TransactionType } from "../common/types";
-import { useAction } from "../state/game/hooks";
 import { Action, ActionStates } from "../state/game/types";
 import { useTransaction } from "../state/transactions/hooks";
 import Address from "./Address";

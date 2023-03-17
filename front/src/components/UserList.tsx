@@ -1,14 +1,12 @@
-import {
-  Button,
-  Card,
-  Divider,
-  Grid,
-  Pagination,
-  Row,
-  Spacer,
-  Table,
-  Text,
-} from "@nextui-org/react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { Table, Text } from "@nextui-org/react";
 
 import { useAppSelector } from "../state/hooks";
 import Address from "./Address";

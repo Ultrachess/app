@@ -1,8 +1,16 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { useWeb3React } from "@web3-react/core";
 import { default as axios } from "axios";
 import fetch from "cross-fetch";
 import { ethers } from "ethers";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { createClient, defaultExchanges } from "urql/core";
 import { delay } from "wonka";
@@ -10,7 +18,6 @@ import { delay } from "wonka";
 import {
   Input,
   Notice,
-  NoticeDocument,
   NoticesByEpochAndInputDocument,
   NoticesByEpochDocument,
   NoticesDocument,
@@ -19,14 +26,12 @@ import { DEFAULT_GRAPHQL_POLL_TIME, DEFAULT_GRAPHQL_URL } from "../../utils";
 import { setAction } from "../actions/reducer";
 import { useAppSelector } from "../hooks";
 import { Notification, NotificationType } from "../notifications/notifications";
-import { addNotification, setNotifications } from "../notifications/reducer";
-import { useAllTransactions } from "../transactions/hooks";
+import { addNotification } from "../notifications/reducer";
 import { Action, ActionList, ActionStates, ActionType } from "./types";
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
 import { SERVER_URL } from "./gameSlice";
 import {
-  useGame,
   useUserActiveGameIds,
   useUserBotGameIds,
   useUserBotIds,

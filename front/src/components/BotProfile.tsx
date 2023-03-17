@@ -1,15 +1,20 @@
-import { Button, Card, Col, Divider, Row } from "@nextui-org/react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { Button } from "@nextui-org/react";
 import { useWeb3React } from "@web3-react/core";
 import * as React from "react";
-import { useMatch, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
-import { useAllBots, useProfile } from "../state/game/hooks";
-import { BotProfile } from "../state/game/types";
-import { useAppSelector } from "../state/hooks";
+import { useAllBots } from "../state/game/hooks";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
-import BotListView from "./list/BotList";
 import ChallengesList from "./list/ChallengesList";
 import GameList from "./list/GameList";
 import ModalCreateChallenge from "./modals/ModalCreateChallenge";
@@ -18,7 +23,6 @@ import ModalManageBot from "./modals/ModalManageBot";
 import OffersList from "./OffersList";
 import Date from "./ui/Date";
 import Flex from "./ui/Flex";
-import List from "./ui/List";
 import { Text } from "./ui/Text";
 
 export default () => {

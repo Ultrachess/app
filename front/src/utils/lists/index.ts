@@ -1,5 +1,14 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import { Token } from "../../hooks/token";
 import { parseENSAddress, uriToHttp } from "..";
+
 export const UNI_LIST = "https://tokens.uniswap.org";
 export const UNI_EXTENDED_LIST =
   "https://gateway.pinata.cloud/ipfs/QmaQvV3pWKKaWJcHvSBuvQMrpckV3KKtGJ6p3HZjakwFtX";

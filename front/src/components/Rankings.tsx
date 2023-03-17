@@ -1,14 +1,21 @@
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import "./Address.css";
+
 import { violet } from "@radix-ui/colors";
-import { StitchesLogoIcon, ZoomOutIcon } from "@radix-ui/react-icons";
+import { StitchesLogoIcon } from "@radix-ui/react-icons";
 import { styled } from "@stitches/react";
-import * as React from "react";
-import { useSelector } from "react-redux";
 
 import { useAllProfiles } from "../state/game/hooks";
 import ProfileList from "./list/ProfileList";
 import ModalCreateBot from "./modals/ModalCreateBot";
 import Button from "./ui/Button";
-import Flex from "./ui/Flex";
 import Separator from "./ui/Separator";
 import { Text } from "./ui/Text";
 

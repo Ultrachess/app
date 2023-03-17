@@ -1,20 +1,16 @@
-import * as React from "react";
-import { Grid, Row, Button } from "@nextui-org/react";
-import { CONTRACTS } from "../ether/contracts";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
 
-import { getTokenNameFromAddress, truncateAddress } from "../ether/utils";
-import { FaCoins } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { ethers } from "ethers";
-import { useTokenFromList, useTokenFromNetwork } from "../hooks/token";
-import { useActionCreator } from "../state/game/hooks";
-import { TransactionType } from "../common/types";
+import { useTokenFromList } from "../hooks/token";
 import { useWeb3React } from "@web3-react/core";
 import { Text } from "./ui/Text";
-import Profile from "./Profile";
-import ProfileImage from "./ProfileImage";
 import TokenIcon from "./TokenIcon";
-import { SelectIcon } from "@radix-ui/react-select";
 import { USDC_ADDRESS_ON_NETWORKS, DEFAULT_TOKEN_URI } from "../ether/chains";
 import Flex from "./ui/Flex";
 

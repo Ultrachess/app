@@ -1,4 +1,11 @@
-import React from "react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import Flex from "./ui/Flex";
 import { Text } from "./ui/Text";
 import { useLatestTimestampAndBlockNumber } from "../state/transactions/hooks";

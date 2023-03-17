@@ -1,15 +1,17 @@
-import {
-  applyMiddleware,
-  configureStore,
-  getDefaultMiddleware,
-  Middleware,
-} from "@reduxjs/toolkit";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
+import { configureStore } from "@reduxjs/toolkit";
 import { load, save } from "redux-localstorage-simple";
 
 import actions from "./actions/reducer";
 import authSlice from "./auth/authSlice";
 import gameSlice from "./game/gameSlice";
-import { ActionList } from "./game/types";
 import notifications from "./notifications/reducer";
 import transactions from "./transactions/reducer";
 

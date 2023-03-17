@@ -1,14 +1,15 @@
-import React, { useEffect } from "react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
+
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { styled, keyframes } from "@stitches/react";
 import { violet, mauve, blackA } from "@radix-ui/colors";
-import {
-  HamburgerMenuIcon,
-  DotFilledIcon,
-  CheckIcon,
-  ChevronRightIcon,
-  BellIcon,
-} from "@radix-ui/react-icons";
+import { BellIcon } from "@radix-ui/react-icons";
 import { useNotifications } from "../state/notifications/hooks";
 import NotificationItem from "./NotificationItem";
 

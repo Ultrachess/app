@@ -1,7 +1,11 @@
-import { useWeb3React } from "@web3-react/core";
-import * as React from "react";
+/*
+ * Copyright (C) 2022-2023 Ultrachess team
+ * This file is part of Ultrachess - https://github.com/Ultrachess/app
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See the file LICENSE for more information.
+ */
 
-import { formatDate, truncateAddress } from "../../ether/utils";
 import { useOwner } from "../../state/game/hooks";
 import { Challenge } from "../../state/game/types";
 import Address from "../Address";
