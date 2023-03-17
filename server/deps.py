@@ -9,14 +9,10 @@ from bets import BetManager
 from bot import BotFactory, BotManager
 from challenge import ChallengeManager
 from elo import EloManager
+from koh import KingOfTheHillManager
 from marketplace import BotMarketPlaceManager
 from matchmaker import Matchmaker
 from tournament import TournamentManager
-from koh import KingOfTheHillManager
-import chess.engine
-import chess.pgn
-import random
-
 
 kohManager = KingOfTheHillManager()
 challengeManager = ChallengeManager()

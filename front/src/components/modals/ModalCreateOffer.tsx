@@ -1,8 +1,8 @@
-import { blackA, green,mauve, violet } from "@radix-ui/colors";
+import { blackA, green, mauve, violet } from "@radix-ui/colors";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
-import { keyframes,styled } from "@stitches/react";
+import { keyframes, styled } from "@stitches/react";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";

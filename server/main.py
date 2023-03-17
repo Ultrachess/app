@@ -373,8 +373,8 @@ def handle_advance(data):
     logger.info("Running tournament manager from main")
     tournamentManager.run()
     kohManager.run()
-    
-    #Send notice on state change
+
+    # Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)
 
     # Set new state
@@ -421,7 +421,7 @@ def handle_inspect(data):
         # logger.info(f"Received report status {response.status_code}")
         return "accept"
     except Exception as e:
-        logger.info("Error in inspect request: "+ str(e))
+        logger.info("Error in inspect request: " + str(e))
         report = {"payload": "error"}
         response = requests.post(rollup_server + "/report", json=report)
         return "accept"

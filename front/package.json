@@ -9,7 +9,7 @@
     "clean": "rimraf node_modules",
     "dev": "vite",
     "eslint": "eslint .",
-    "format": "prettier --write . && eslint --fix .",
+    "format": "eslint --fix .; prettier --write .",
     "lint": "run-s prettier eslint",
     "prettier": "prettier --check .",
     "preview": "vite preview"
