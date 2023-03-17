@@ -123,15 +123,7 @@ export default ({triggerElement}) => {
                 </Flex>
                     
             </Fieldset>
-            <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
-                <Button 
-                  variant="green"
-                  onClick={() => removeParticipant(address)}
-                >
-                  <Address value={address} />
-                </Button>
-                
-            </Flex>
+
             <Flex css={{ gap: 10, flexWrap: "wrap" }}>
               <SelectMain
                 value={""}
