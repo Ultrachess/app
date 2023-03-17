@@ -15,9 +15,5 @@ export default ({ bots }: { bots: BotProfile[] }) => {
       ? bots.map((bot) => <BotListItem bot={bot} rank={0} />)
       : [<Text key={0}>No bots found</Text>];
 
-    return (
-        <List
-            items={botItems}
-        />
-    );
-}
+  return <List items={botItems} />;
+};

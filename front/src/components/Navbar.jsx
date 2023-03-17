@@ -39,7 +39,7 @@ export default () => {
               <Text link>KOH</Text>
             </Link>
           </Button>
-       </div>
+        </div>
         <div className="nav-right">
           <Auth />
         </div>

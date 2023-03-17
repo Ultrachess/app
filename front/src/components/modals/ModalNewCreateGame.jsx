@@ -1,67 +1,69 @@
-import React, { useEffect, useState } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { styled, keyframes } from '@stitches/react';
-import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import * as Slider from '@radix-ui/react-slider';
-import { Text } from '../ui/Text';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
-import AssetDisplay from '../AssetDisplay';
-import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../../state/game/hooks';
-import { TransactionType } from '../../common/types';
-import { ethers } from 'ethers';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { styled, keyframes } from "@stitches/react";
+import { violet, blackA, mauve, green } from "@radix-ui/colors";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import * as Slider from "@radix-ui/react-slider";
+import { Text } from "../ui/Text";
+import {
+  useTokenFromList,
+  useTokenPortalBalance,
+  useTokenBalance,
+} from "../../hooks/token";
+import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import AssetDisplay from "../AssetDisplay";
+import { useWeb3React } from "@web3-react/core";
+import { useActionCreator } from "../../state/game/hooks";
+import { TransactionType } from "../../common/types";
+import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom";
 
-export default ({triggerElement}) => {
-    const { chainId, account } = useWeb3React()
-    const [amount, setAmount ] = useState(0)
-    const navigate = useNavigate()
-    const [ bettingDuration, setBettingDuration ] = useState(0)
-    const max = 100
-    const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
-    const portalBalance = useTokenPortalBalance(token, account) 
-    const balance = useTokenBalance(token, account)
+export default ({ triggerElement }) => {
+  const { chainId, account } = useWeb3React();
+  const [amount, setAmount] = useState(0);
+  const navigate = useNavigate();
+  const [bettingDuration, setBettingDuration] = useState(0);
+  const max = 100;
+  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const portalBalance = useTokenPortalBalance(token, account);
+  const balance = useTokenBalance(token, account);
 
-    console.log("bettingDuration", bettingDuration)
+  console.log("bettingDuration", bettingDuration);
 
-    const addAction = useActionCreator()
+  const addAction = useActionCreator();
 
-    const handleCreate = async () => {
-      //console.log("amount", amount)
-      const tx = {
-            type: TransactionType.CREATE_GAME_INPUT,
-            name: "default",
-            isBot: false,
-            wagerTokenAddress: token? token.address: "",
-            wagerAmount: ethers.utils.parseUnits(amount.toString()),
-            bettingDuration,
-      }
-      console.log("bettingDuration", tx.bettingDuration)
-      const [approvalActionId, wait] = await addAction(tx)
-      const roomId = await wait
-      //console.log(roomId)
-      //console.log("jumping to" + roomId)
-      if(roomId) navigate(`game/${roomId}`, { replace: true })
+  const handleCreate = async () => {
+    //console.log("amount", amount)
+    const tx = {
+      type: TransactionType.CREATE_GAME_INPUT,
+      name: "default",
+      isBot: false,
+      wagerTokenAddress: token ? token.address : "",
+      wagerAmount: ethers.utils.parseUnits(amount.toString()),
+      bettingDuration,
+    };
+    console.log("bettingDuration", tx.bettingDuration);
+    const [approvalActionId, wait] = await addAction(tx);
+    const roomId = await wait;
+    //console.log(roomId)
+    //console.log("jumping to" + roomId)
+    if (roomId) navigate(`game/${roomId}`, { replace: true });
+  };
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
+      <Dialog.Portal>
+        <DialogOverlay />
+        <DialogContent>
+          <DialogTitle>Create Game</DialogTitle>
+          <DialogDescription>
+            Create a new game. Invite friends to join and start playing. Or wait
+            for random players to join.
+          </DialogDescription>
 
-    }
-    return (
-        <Dialog.Root>
-        <Dialog.Trigger asChild>
-          {triggerElement}
-        </Dialog.Trigger>
-        <Dialog.Portal>
-          <DialogOverlay />
-          <DialogContent>
-            <DialogTitle>Create Game</DialogTitle>
-            <DialogDescription>
-              Create a new game. Invite friends to join and start playing. Or wait for random players to join.
-            </DialogDescription>
-            
-            <Fieldset>
-                <Label>Wager amount</Label>
-                {/* <RightSlot>
+          <Fieldset>
+            <Label>Wager amount</Label>
+            {/* <RightSlot>
                     You win: <AssetDisplay tokenAddress={token?.address} balance={portalBalance - amount} isL2={true}/> 
                     <Text>→</Text> 
                     You lose: <AssetDisplay tokenAddress={token?.address} balance={portalBalance + amount} isL2={true}/>
@@ -89,36 +91,43 @@ export default ({triggerElement}) => {
             />
           </Fieldset>
 
-            <Fieldset>
-                <Label>Betting duration (in seconds)</Label>
-            </Fieldset>
-            <Fieldset>
-              <Input id="bettingDuration" value={bettingDuration} defaultValue={0} onChange={(event)=>{ 
-                  console.log("bettingDuration", event.target.value)
-                setBettingDuration(event.target.value)
-                }}>
-                </Input>
-                <RightSlot onClick={()=>setBettingDuration(max)}>MAX</RightSlot>
-            </Fieldset>
-            <Fieldset>
-                <SliderMain value={bettingDuration} max={100} onChangeFunction={([value])=>{ 
-                  console.log("bettingDuration", value)
-                  setBettingDuration(value)}
-                  } />
-            </Fieldset>
-            <Flex css={{ marginTop: 25, justifyContent: 'flex-end' }}>
-              <Dialog.Close asChild>
-                <Button
-                  variant="green"
-                  onClick={handleCreate}
-                  >Create</Button>
-              </Dialog.Close>
-            </Flex>
+          <Fieldset>
+            <Label>Betting duration (in seconds)</Label>
+          </Fieldset>
+          <Fieldset>
+            <Input
+              id="bettingDuration"
+              value={bettingDuration}
+              defaultValue={0}
+              onChange={(event) => {
+                console.log("bettingDuration", event.target.value);
+                setBettingDuration(event.target.value);
+              }}
+            ></Input>
+            <RightSlot onClick={() => setBettingDuration(max)}>MAX</RightSlot>
+          </Fieldset>
+          <Fieldset>
+            <SliderMain
+              value={bettingDuration}
+              max={100}
+              onChangeFunction={([value]) => {
+                console.log("bettingDuration", value);
+                setBettingDuration(value);
+              }}
+            />
+          </Fieldset>
+          <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
             <Dialog.Close asChild>
               <Button variant="green" onClick={handleCreate}>
                 Create
               </Button>
             </Dialog.Close>
+          </Flex>
+          <Dialog.Close asChild>
+            <Button variant="green" onClick={handleCreate}>
+              Create
+            </Button>
+          </Dialog.Close>
           <Dialog.Close asChild>
             <IconButton aria-label="Close">
               <Cross2Icon />
@@ -347,7 +356,5 @@ const SliderThumb = styled(Slider.Thumb, {
   boxShadow: `0 2px 10px ${blackA.blackA7}`,
   borderRadius: 10,
   "&:hover": { backgroundColor: violet.violet3 },
-  "&:focus": { outline: "none", boxShadow: `0 0 0 5px ${blackA.blackA8}` }
-
-
+  "&:focus": { outline: "none", boxShadow: `0 0 0 5px ${blackA.blackA8}` },
 });

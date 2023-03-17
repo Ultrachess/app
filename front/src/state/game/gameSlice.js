@@ -88,109 +88,114 @@ const GetNoticeDocument = {
   ],
 };
 export const gameSlice = createSlice({
-    name: "game",
-    initialState: {
-        cache:{
-            latestInputIndex: 0,
-            isUpToDate: false
-        },
-        currentInputState:{
-            status: undefined,
-            type: undefined,
-        },
-        games: {},
-        bots: {},
-        elo: {},
-        accounts: {},
-        tournaments: [],
-        blockNumber: 0,
-        lastProcessedBlock: 0,
-        lastStepTimestamp: 0,
-        actionList: [],
-        challenges: {},
-        marketplace: {},
-        throne: {
-            king: "",
-            winnings: 0,
-            battles: {},
-            price: 0,
-            token: "",
-            gamesToWin: 0,
-            maxTrys: 0,
-        },
+  name: "game",
+  initialState: {
+    cache: {
+      latestInputIndex: 0,
+      isUpToDate: false,
     },
-    reducers: {
-        setLastProcessedBlock: (state, action) => {
-            state.lastProcessedBlock = action.payload
-        },
-        setBlockNumber: (state, action) => {
-            state.blockNumber = action.payload
-        },
-        setInputStatus: (state, action) => {
-            var { status, type } = action.payload
-            state.currentInputState.status = status
-            state.currentInputState.type = type
-        },
-        setLatestInput: (state, action) => {
-            state.cache.latestInputIndex = action.payload
-        },
-        setGames: (state, action) => {
-            state.games = action.payload
-        },
-        setElo: (state, action) => {
-            state.elo = action.payload
-        },
-        setAccounts: (state, action) => {
-            state.accounts = action.payload
-        },
-        setBots: (state, action) => {
-            state.bots = action.payload
-        },
-        setAppState: (state, action) => {
-            var {elo, game, bots, accounts, lastProcessedBlock, actionList, lastStepTimestamp, tournaments, challenges, marketplace, throne} = action.payload
-            if(
-                !deepEqual(state.elo, elo) ||
-                !deepEqual(state.games, game) ||
-                !deepEqual(state.bots, bots) ||
-                !deepEqual(state.accounts, accounts) ||
-                !deepEqual(state.tournaments, tournaments) ||
-                !deepEqual(state.challenges, challenges) ||
-                !deepEqual(state.marketplace, marketplace) ||
-                !deepEqual(state.throne, throne)
-            ){ 
-                state.cache.isUpToDate = !state.cache.isUpToDate
-                //console.log("is not up to date, updating")
-            }
+    currentInputState: {
+      status: undefined,
+      type: undefined,
+    },
+    games: {},
+    bots: {},
+    elo: {},
+    accounts: {},
+    tournaments: [],
+    blockNumber: 0,
+    lastProcessedBlock: 0,
+    lastStepTimestamp: 0,
+    actionList: [],
+    challenges: {},
+    marketplace: {},
+    throne: {
+      king: "",
+      winnings: 0,
+      battles: {},
+      price: 0,
+      token: "",
+      gamesToWin: 0,
+      maxTrys: 0,
+    },
+  },
+  reducers: {
+    setLastProcessedBlock: (state, action) => {
+      state.lastProcessedBlock = action.payload;
+    },
+    setBlockNumber: (state, action) => {
+      state.blockNumber = action.payload;
+    },
+    setInputStatus: (state, action) => {
+      var { status, type } = action.payload;
+      state.currentInputState.status = status;
+      state.currentInputState.type = type;
+    },
+    setLatestInput: (state, action) => {
+      state.cache.latestInputIndex = action.payload;
+    },
+    setGames: (state, action) => {
+      state.games = action.payload;
+    },
+    setElo: (state, action) => {
+      state.elo = action.payload;
+    },
+    setAccounts: (state, action) => {
+      state.accounts = action.payload;
+    },
+    setBots: (state, action) => {
+      state.bots = action.payload;
+    },
+    setAppState: (state, action) => {
+      var {
+        elo,
+        game,
+        bots,
+        accounts,
+        lastProcessedBlock,
+        actionList,
+        lastStepTimestamp,
+        tournaments,
+        challenges,
+        marketplace,
+        throne,
+      } = action.payload;
+      if (
+        !deepEqual(state.elo, elo) ||
+        !deepEqual(state.games, game) ||
+        !deepEqual(state.bots, bots) ||
+        !deepEqual(state.accounts, accounts) ||
+        !deepEqual(state.tournaments, tournaments) ||
+        !deepEqual(state.challenges, challenges) ||
+        !deepEqual(state.marketplace, marketplace) ||
+        !deepEqual(state.throne, throne)
+      ) {
+        state.cache.isUpToDate = !state.cache.isUpToDate;
+        //console.log("is not up to date, updating")
+      }
 
-            state.elo = elo
-            state.games = game
-            state.bots = bots
-            state.accounts = accounts
-            state.tournaments = tournaments
-            state.lastProcessedBlock = lastProcessedBlock
-            state.lastStepTimestamp = lastStepTimestamp
-            state.actionList = actionList
-            state.challenges = challenges
-            state.marketplace = marketplace
-            state.throne = throne
-        },
-        updateGame: (state, action) => {
-            var {id, game} = action.payload
-            state.games.forEach((value, index) => {
-                if(id == value.id)
-                    state.games[index] == game  
-            })
-        },
-        processInput: (state, action) => {
-            var {
-                sender,
-                operation,
-                value,
-                success,
-                index,
-                timestamp
-            } = action.payload
-            var latestInputIndex = state.cache.latestInputIndex
+      state.elo = elo;
+      state.games = game;
+      state.bots = bots;
+      state.accounts = accounts;
+      state.tournaments = tournaments;
+      state.lastProcessedBlock = lastProcessedBlock;
+      state.lastStepTimestamp = lastStepTimestamp;
+      state.actionList = actionList;
+      state.challenges = challenges;
+      state.marketplace = marketplace;
+      state.throne = throne;
+    },
+    updateGame: (state, action) => {
+      var { id, game } = action.payload;
+      state.games.forEach((value, index) => {
+        if (id == value.id) state.games[index] == game;
+      });
+    },
+    processInput: (state, action) => {
+      var { sender, operation, value, success, index, timestamp } =
+        action.payload;
+      var latestInputIndex = state.cache.latestInputIndex;
 
       if (latestInputIndex < index) {
         ////console.log(action.payload)
@@ -326,11 +331,11 @@ function isObject(object) {
   return object != null && typeof object === "object";
 }
 
-function updateGameState(dispatch, payload){
-    ////console.log(ethers.utils.toUtf8String(payload))
-    var state = JSON.parse(ethers.utils.toUtf8String(payload))
-    console.log(state)
-    dispatch(setAppState(state))
+function updateGameState(dispatch, payload) {
+  ////console.log(ethers.utils.toUtf8String(payload))
+  var state = JSON.parse(ethers.utils.toUtf8String(payload));
+  console.log(state);
+  dispatch(setAppState(state));
 }
 
 async function poll(dispatch) {

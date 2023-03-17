@@ -32,10 +32,10 @@ export default ({ offerId, accept }: { offerId: string; accept: boolean }) => {
     <Text
       onClick={onClick}
       color={waiting ? "faded" : accept ? "green" : "red"}
-            green = {accept}
-            violet = {!accept}
-            bold
-            size={"4"}
+      green={accept}
+      violet={!accept}
+      bold
+      size={"4"}
       underline
     >
       {accept ? "accept" : "decline"}

@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { styled, keyframes } from '@stitches/react';
-import { violet, blackA, mauve, green } from '@radix-ui/colors';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import * as Slider from '@radix-ui/react-slider';
-import { Text } from '../ui/Text';
-import { useTokenFromList, useTokenPortalBalance, useTokenBalance } from '../../hooks/token';
-import { USDC_ADDRESS_ON_NETWORKS } from '../../ether/chains';
-import AssetDisplay from '../AssetDisplay';
-import { useWeb3React } from '@web3-react/core';
-import { useActionCreator } from '../../state/game/hooks';
-import { TransactionType } from '../../common/types';
-import Address from '../Address';
-import { ethers } from 'ethers';
+import { blackA, green,mauve, violet } from "@radix-ui/colors";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import * as Slider from "@radix-ui/react-slider";
+import { keyframes,styled } from "@stitches/react";
+import { useWeb3React } from "@web3-react/core";
+import { ethers } from "ethers";
+import React, { useEffect, useState } from "react";
+
+import { TransactionType } from "../../common/types";
+import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import {
+  useTokenBalance,
+  useTokenFromList,
+  useTokenPortalBalance,
+} from "../../hooks/token";
+import { useActionCreator } from "../../state/game/hooks";
+import Address from "../Address";
+import AssetDisplay from "../AssetDisplay";
+import { Text } from "../ui/Text";
 
 export default ({ triggerElement, botId }) => {
   const { chainId, account } = useWeb3React();
@@ -26,8 +31,7 @@ export default ({ triggerElement, botId }) => {
   //const bot: BotProfile = useProfile(botId)
 
   const handleOffer = async () => {
-
-      console.log("amountMain", amount)
+    console.log("amountMain", amount);
     const [approvalActionId, wait] = await addAction({
       type: TransactionType.CREATE_OFFER,
       botId: botId,

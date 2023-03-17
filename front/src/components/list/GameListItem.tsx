@@ -32,17 +32,19 @@ export default ({ game }: { game: Game }) => {
   const bettingOpenTime = game?.wagering?.openTime ?? -1;
   const bettingClosesAt = bettingOpenTime + game?.bettingDuration;
   const isWaitingForAPlayer = p2 === undefined || p1 === undefined;
-    const isInGame = (p1?.toLowerCase() ?? "") === account.toLowerCase() || (p2?.toLowerCase() ?? "") === account.toLowerCase()
-    
-  const bettingHasStarted =
-    bettingOpenTime > 0
-    const bettingHasStartedBeforeCurrent =
-    bettingOpenTime < current
-    const bettingIsOpen = bettingHasStarted &&
-    bettingHasStartedBeforeCurrent && bettingClosesAt > (current/1000);
-  const bettingIsClosed = !bettingIsOpen
-    const canBet = bettingIsOpen && !isWaitingForAPlayer
-    console.log("abc is betting closed: ", bettingIsClosed)
+  const isInGame =
+    (p1?.toLowerCase() ?? "") === account.toLowerCase() ||
+    (p2?.toLowerCase() ?? "") === account.toLowerCase();
+
+  const bettingHasStarted = bettingOpenTime > 0;
+  const bettingHasStartedBeforeCurrent = bettingOpenTime < current;
+  const bettingIsOpen =
+    bettingHasStarted &&
+    bettingHasStartedBeforeCurrent &&
+    bettingClosesAt > current / 1000;
+  const bettingIsClosed = !bettingIsOpen;
+  const canBet = bettingIsOpen && !isWaitingForAPlayer;
+  console.log("abc is betting closed: ", bettingIsClosed);
 
   const completed = game.isEnd;
   const joinable =

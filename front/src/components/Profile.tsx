@@ -7,13 +7,13 @@ import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { useProfile } from "../state/game/hooks";
 import { UserProfile } from "../state/game/types";
 import { useAppSelector } from "../state/hooks";
-import GameList from "./list/GameList";
-import ModalManageBot from "./modals/ModalManageBot";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
 import BotListView from "./list/BotList";
 import ChallengesList from "./list/ChallengesList";
+import GameList from "./list/GameList";
 import ModalCreateChallenge from "./modals/ModalCreateChallenge";
+import ModalManageBot from "./modals/ModalManageBot";
 import OffersList from "./OffersList";
 import Date from "./ui/Date";
 import Flex from "./ui/Flex";
@@ -56,33 +56,51 @@ export default () => {
           justifyContent: "space-between",
         }}
       >
-        <Flex css={{ gap: 20, width: "20%", flexDirection: "column', alignItems:'start" }}>
+        <Flex
+          css={{
+            gap: 20,
+            width: "20%",
+            flexDirection: "column', alignItems:'start",
+          }}
+        >
           <Address value={id} isImageBig={true} />
           <Flex css={{ gap: 2, flexDirection: "column" }}>
             {isYou && <Text bold>Your profile</Text>}
           </Flex>
           <Flex css={{ gap: 2, flexDirection: "column', alignItems:'start" }}>
-            <Text size={"2"} bold>Elo</Text>
+            <Text size={"2"} bold>
+              Elo
+            </Text>
             <Text>{elo}</Text>
           </Flex>
           <Flex css={{ gap: 2, flexDirection: "column', alignItems:'start" }}>
-            <Text size={"2"} bold>From</Text>
+            <Text size={"2"} bold>
+              From
+            </Text>
             <Text>🇦🇺🇱🇸 USA</Text>
           </Flex>
-          <Flex css={{ gap: 2, flexDirection: "column", alignItems:'start'}}>
-            <Text size={"2"} bold >Balance</Text>
+          <Flex css={{ gap: 2, flexDirection: "column", alignItems: "start" }}>
+            <Text size={"2"} bold>
+              Balance
+            </Text>
             <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
           </Flex>
-          <Flex css={{ gap: 2, flexDirection: "column" , alignItems:'start'}}>
-            <Text size={"2"} bold>Bots owned </Text>
+          <Flex css={{ gap: 2, flexDirection: "column", alignItems: "start" }}>
+            <Text size={"2"} bold>
+              Bots owned{" "}
+            </Text>
             <Text>{bots.length}</Text>
           </Flex>
-          <Flex css={{ gap: 2, flexDirection: "column" , alignItems:'start'}}>
-            <Text size={"2"} bold >Games played</Text>
+          <Flex css={{ gap: 2, flexDirection: "column", alignItems: "start" }}>
+            <Text size={"2"} bold>
+              Games played
+            </Text>
             <Text>{games.length}</Text>
           </Flex>
-          <Flex css={{ gap: 2, flexDirection: "column", alignItems:'start'}}>
-            <Text size={"2"} bold >Open challenges</Text>
+          <Flex css={{ gap: 2, flexDirection: "column", alignItems: "start" }}>
+            <Text size={"2"} bold>
+              Open challenges
+            </Text>
             <Text>{challenges.length}</Text>
           </Flex>
           <Flex css={{ gap: 1, flexDirection: "row" }}>
