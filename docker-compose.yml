@@ -25,9 +25,9 @@ services:
     healthcheck:
       test:
         ["CMD", "test", "-f", "/opt/cartesi/share/blockchain/localhost.json"]
-      interval: 30s
+      interval: 5s
       timeout: 30s
-      retries: 5
+      retries: 30
     volumes:
       - ./deployments:/app/rollups/deployments
       - ./export:/opt/cartesi/share/blockchain
