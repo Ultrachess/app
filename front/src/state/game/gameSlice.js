@@ -391,7 +391,7 @@ export const initContracts = (signer, chainId) => async (dispatch) => {
   );
 
   //start polling
-  poll(dispatch);
+  //poll(dispatch);
 };
 
 export const fetchGames = () => async (dispatch) => {
