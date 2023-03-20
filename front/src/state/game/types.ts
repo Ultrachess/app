@@ -161,6 +161,13 @@ export interface UserProfile extends BaseProfile {
   bots: BotProfile[];
 }
 
+export interface LpNftProfile {
+  tokenId: string,
+  name: string,
+  description: string,
+  imageUri: string,
+}
+
 export interface BotProfile extends BaseProfile {
   owner: string;
   offers: BotOffer[];

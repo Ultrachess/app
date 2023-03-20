@@ -77,7 +77,6 @@ export default ({ triggerElement }) => {
             <Dialog.Close asChild>
               <Button
                 disabled={!selectedFile}
-                variant={"mauve"}
                 onClick={handleSubmission}
               >
                 Submit
