@@ -23,7 +23,7 @@ import {
   side,
 } from "../state/game/gameHelper";
 import { useSelector } from "react-redux";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { TransactionType } from "../common/types";
 import GameMovesView from "./GameMovesView";
 import {
@@ -41,6 +41,7 @@ import { truncateAddress } from "../ether/utils";
 import { Text } from "./ui/Text";
 import ModalPlaceBet from "./modals/ModalPlaceBet";
 import { useWeb3React } from "@web3-react/core";
+
 
 const placerHolderBotMoveStat = {
   depth: 0,
@@ -255,25 +256,25 @@ export default () => {
     //console.log("end has just come")
     if (completed && playerIsInGame(games, address, gameId)) {
       //console.log("end has just come and you are in the game")
-      if (topAddressWon)
-        alert(
-          "You lost " +
-            topAddressWinAmount +
-            " " +
-            tokenAddress +
-            " to " +
-            topAddress
-        );
-      if (bottomAddressWon)
-        alert(
-          "You lost " +
-            bottomAddressWinAmount +
-            " " +
-            tokenAddress +
-            " to " +
-            bottomAddress
-        );
-      if (draw) alert("You tied with " + topAddress + " and " + bottomAddress);
+      // if (topAddressWon)
+      //   alert(
+      //     "You lost " +
+      //       topAddressWinAmount +
+      //       " " +
+      //       tokenAddress +
+      //       " to " +
+      //       topAddress
+      //   );
+      // if (bottomAddressWon)
+      //   alert(
+      //     "You lost " +
+      //       bottomAddressWinAmount +
+      //       " " +
+      //       tokenAddress +
+      //       " to " +
+      //       bottomAddress
+      //   );
+      // if (draw) alert("You tied with " + topAddress + " and " + bottomAddress);
     }
   }, [completed, isUpToDate]);
 

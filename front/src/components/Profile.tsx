@@ -61,7 +61,8 @@ export default () => {
           css={{
             gap: 20,
             width: "20%",
-            flexDirection: "column', alignItems:'start",
+            flexDirection: "column", 
+            alignItems:"start",
           }}
         >
           <Address value={id} isImageBig={true} />
@@ -78,7 +79,7 @@ export default () => {
             <Text size={"2"} bold>
               From
             </Text>
-            <Text>🇦🇺🇱🇸 USA</Text>
+            <Text>🇺🇸 USA</Text>
           </Flex>
           <Flex css={{ gap: 2, flexDirection: "column", alignItems: "start" }}>
             <Text size={"2"} bold>

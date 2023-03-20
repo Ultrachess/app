@@ -99,7 +99,7 @@ export default ({ bot, rank = 0 }: { bot: BotProfile; rank: number }) => {
       </Flex>
       <Flex css={{ flexDirection: "column", gap: 2 }}>
         <Text faded>created at</Text>
-        <DateDisplay current={timestamp} />
+        <DateDisplay current={timestamp * 1000} />
       </Flex>
     </Flex>
   );

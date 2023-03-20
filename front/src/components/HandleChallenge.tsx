@@ -13,6 +13,7 @@ import {
 } from "../common/types";
 import { useActionCreator } from "../state/game/hooks";
 import { Text } from "./ui/Text";
+import { useState } from "react";
 
 export default ({
   challengeId,

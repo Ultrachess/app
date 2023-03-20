@@ -128,7 +128,7 @@ export default () => {
           </Flex>
           <Flex css={{ gap: 2, flexDirection: "column", alignItems: "start" }}>
             <Text bold>Created at</Text>
-            <Date current={timestamp} />
+            <Date current={timestamp * 1000} />
           </Flex>
           <Flex css={{ gap: 2, flexDirection: "column", alignItems: "start" }}>
             <Text bold>Games played</Text>

@@ -40,8 +40,8 @@ export default ({ game }: { game: Game }) => {
   const bettingClosesAt = bettingOpenTime + game?.bettingDuration;
   const isWaitingForAPlayer = p2 === undefined || p1 === undefined;
   const isInGame =
-    (p1?.toLowerCase() ?? "") === account.toLowerCase() ||
-    (p2?.toLowerCase() ?? "") === account.toLowerCase();
+    (p1?.toLowerCase() ?? "") === account?.toLowerCase() ||
+    (p2?.toLowerCase() ?? "") === account?.toLowerCase();
 
   const bettingHasStarted = bettingOpenTime > 0;
   const bettingHasStartedBeforeCurrent = bettingOpenTime < current;

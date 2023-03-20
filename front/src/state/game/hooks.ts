@@ -323,10 +323,12 @@ export function useAllUsers(): UserProfile[] {
 export function useAllProfiles(rankByElo = false): BaseProfile[] {
   const bots = useAllBots();
   const users = useAllUsers();
-  const profiles = [...bots, ...users];
+  let profiles = [...bots, ...users];
   if (rankByElo) {
-    profiles.sort((a, b) => {
+    profiles = profiles.sort((a, b) => {
       return b.elo - a.elo;
+    }).filter((profile) => {
+      return profile.elo > 0;
     });
   }
   return profiles;
@@ -436,7 +438,7 @@ export function useAllCompletedGames(): Game[] {
 }
 
 //return list of games that you are in and are not completed
-export function useUserGameIds(id: string): string[] {
+export function useUserGameIds(id: string = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   return Object.keys(games).filter((gameId) => {
@@ -445,7 +447,7 @@ export function useUserGameIds(id: string): string[] {
   });
 }
 
-export function useUserOwnedGameIds(id: string): string[] {
+export function useUserOwnedGameIds(id: string = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   return Object.keys(games).filter((gameId) => {
@@ -455,7 +457,7 @@ export function useUserOwnedGameIds(id: string): string[] {
   });
 }
 
-export function useUserCompletedGameIds(id: string): string[] {
+export function useUserCompletedGameIds(id: string = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   return Object.keys(games).filter((gameId) => {
@@ -464,7 +466,7 @@ export function useUserCompletedGameIds(id: string): string[] {
   });
 }
 
-export function useUserActiveGameIds(id: string): string[] {
+export function useUserActiveGameIds(id: string = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   //return all as lowercase
