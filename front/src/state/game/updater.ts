@@ -10,10 +10,9 @@ import { useWeb3React } from "@web3-react/core";
 import { default as axios } from "axios";
 import fetch from "cross-fetch";
 import { ethers } from "ethers";
-import { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { createClient, defaultExchanges } from "urql/core";
-import { delay } from "wonka";
 
 import {
   Input,
@@ -30,7 +29,7 @@ import { addNotification } from "../notifications/reducer";
 import { Action, ActionList, ActionStates, ActionType } from "./types";
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
-import { SERVER_URL } from "./gameSlice";
+import { SERVER_URL, setAppState } from "./gameSlice";
 import {
   useUserActiveGameIds,
   useUserBotGameIds,
@@ -73,6 +72,9 @@ export type PartialNotice = Pick<
 // define a type predicate to filter out notices
 const isPartialNotice = (n: PartialNotice | null): n is PartialNotice =>
   n !== null;
+
+//delay utils
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getNotices = async (
   url: string,
@@ -278,6 +280,50 @@ function useNotices(): PartialNotice[] | undefined {
   return notices;
 }
 
+function updateGameState(dispatch, payload) {
+  ////console.log(ethers.utils.toUtf8String(payload))
+  var state = JSON.parse(ethers.utils.toUtf8String(payload));
+  console.log(state);
+  dispatch(setAppState(state));
+}
+
+
+function useInspect(dispatch) {
+  const isMountedRef = useRef(true);
+  console.log("useInspect");
+  const poll = async (dispatch) => {
+    console.log("waiting")
+    await delay(2000);
+    console.log("done waiting")
+    if (!isMountedRef.current) {
+      return;
+    }
+
+    var instance = axios.create({ baseURL: SERVER_URL });
+    var input = `{
+      "type": "state", 
+      "value": ""
+    }`;
+    var response = await instance.get('/inspect/' + input);
+
+    if (response.data.reports.length <= 0) {
+      return poll(dispatch);
+    }
+
+    var payload = response.data.reports[0].payload;
+    updateGameState(dispatch, payload);
+    await poll(dispatch);
+  };
+
+  useEffect(() => {
+    poll(dispatch);
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+}
+
 export function useNotifications(): Notification[] | undefined {
   const [notices, setNotices] = useState<PartialNotice[]>([]);
   const [lastNoticeIndex, setLastNoticeIndex] = useState(0);
@@ -334,7 +380,7 @@ function shouldCheckAction(a: Action): boolean {
   return a.status != ActionStates.PROCESSED && a.status != ActionStates.ERROR;
 }
 
-export function GameStateUpdater() {
+export const GameStateUpdater = React.memo(() => {
   const { account, chainId } = useWeb3React();
   const actions: ActionList = useAppSelector((state) => state.actions);
   const transactions = useAppSelector((state) => state.transactions);
@@ -356,9 +402,13 @@ export function GameStateUpdater() {
   const [lastNotificationLength, setLastNotificationLength] = useState(0);
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    const run = async () => {
-      if (!actions) return;
+  
+  //Inspect Cartesi Machine and update game state
+  useInspect(dispatch);
+
+  //Update game state when a new notification is received
+  const updateGameState = useCallback(async () => {
+    if (!actions) return;
 
       // const payloads: NoticeInfo[] = notices
       //     .sort((a, b) => parseInt(a.input_index) - parseInt(b.input_index))
@@ -401,9 +451,14 @@ export function GameStateUpdater() {
           }
         }
       }
+  } , [actions, pendingTransactions, dispatch, actionList]);
+
+  useEffect(() => {
+    const run = async () => {
+      updateGameState();
     };
     run();
-  }, [actionList, dispatch]);
+  }, [updateGameState, actionList]);
 
   useEffect(() => {
     //console.log("newNotifications: attempting ", newNotifications)
@@ -439,4 +494,4 @@ export function GameStateUpdater() {
   ]);
 
   return null;
-}
+});
