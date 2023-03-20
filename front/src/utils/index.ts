@@ -17,7 +17,7 @@ export const DEFAULT_GRAPHQL_URL = import.meta.env.PROD
   ? "https://ultrachess.org/api/graphql"
   : `http://localhost:4000/graphql`;
 
-export const DEFAULT_GRAPHQL_POLL_TIME = 100000000000;
+export const DEFAULT_GRAPHQL_POLL_TIME = 1000;
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
