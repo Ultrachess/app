@@ -75,6 +75,13 @@ export GAS_PRICE=<gas price in GWei>
 export GAS_LIMIT=<gas limit in GWei>
 ```
 
+Create your .env file with the parameters above and then run the following command:
+
+```shell
+chmod +x ./load_env.sh
+source ./load_env.sh
+```
+
 For example, to deploy to the Goerli testnet using an Alchemy RPC node, you could execute:
 
 ```shell
