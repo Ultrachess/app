@@ -74,7 +74,7 @@ const isPartialNotice = (n: PartialNotice | null): n is PartialNotice =>
   n !== null;
 
 //delay utils
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getNotices = async (
   url: string,
