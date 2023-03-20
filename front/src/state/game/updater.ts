@@ -289,7 +289,7 @@ function useInspect(dispatch) {
   const isMountedRef = useRef(true);
 
   const poll = async (dispatch) => {
-    await delay(500);
+    await delay(100000);
 
     if (!isMountedRef.current) {
       return;
@@ -317,7 +317,7 @@ function useInspect(dispatch) {
     return () => {
       isMountedRef.current = false;
     };
-  }, [dispatch]);
+  }, []);
 }
 
 export function useNotifications(): Notification[] | undefined {
@@ -336,7 +336,7 @@ export function useNotifications(): Notification[] | undefined {
       //}
 
       await delay(DEFAULT_GRAPHQL_POLL_TIME);
-      await fetchNotices();
+      //await fetchNotices();
     };
     fetchNotices().catch(console.error);
   }, []);

@@ -6,7 +6,9 @@
  * See the file LICENSE for more information.
  */
 
-import { useState } from "react";
+import { useMemo } from "react";
+import React from "react";
+import { useState, useCallback } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
@@ -24,7 +26,7 @@ import { TransactionType } from "../../common/types";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
 
-export default ({ triggerElement }) => {
+const ModalCreateGame = ({ triggerElement }) => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState(0);
   const navigate = useNavigate();
@@ -38,7 +40,7 @@ export default ({ triggerElement }) => {
 
   const addAction = useActionCreator();
 
-  const handleCreate = async () => {
+  const handleCreate = useCallback(async () => {
     //console.log("amount", amount)
     const tx = {
       type: TransactionType.CREATE_GAME_INPUT,
@@ -54,7 +56,8 @@ export default ({ triggerElement }) => {
     //console.log(roomId)
     //console.log("jumping to" + roomId)
     if (roomId) navigate(`game/${roomId}`, { replace: true });
-  };
+  }, [addAction, amount, bettingDuration, navigate, token]);
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
@@ -363,4 +366,8 @@ const SliderThumb = styled(Slider.Thumb, {
   borderRadius: 10,
   "&:hover": { backgroundColor: violet.violet3 },
   "&:focus": { outline: "none", boxShadow: `0 0 0 5px ${blackA.blackA8}` },
+});
+
+export default React.memo(ModalCreateGame, (prevProps, nextProps) => {
+  return prevProps.triggerElement === nextProps.triggerElement;
 });
