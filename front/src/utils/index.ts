@@ -13,9 +13,17 @@ import { JsonRpcProvider, JsonRpcSigner } from "@ethersproject/providers";
 
 import ERC20_ABI from "../abis/erc20.json";
 
-export const DEFAULT_GRAPHQL_URL = import.meta.env.PROD
-  ? "https://ultrachess.org/api/graphql"
-  : `http://localhost:4000/graphql`;
+//get current url and add port 3002 for inspect
+export const DEFAULT_INSPECT_URL = window.location.origin.replace(
+  /:\d+$/,
+  ":3002"
+);
+
+//get current url and add port 4000 for graphql
+export const DEFAULT_GRAPHQL_URL = window.location.origin.replace(
+  /:\d+$/,
+  ":4000"
+);
 
 export const DEFAULT_GRAPHQL_POLL_TIME = 1000;
 

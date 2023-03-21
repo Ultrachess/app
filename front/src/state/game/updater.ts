@@ -21,7 +21,7 @@ import {
   NoticesByEpochDocument,
   NoticesDocument,
 } from "../../generated-src/graphql";
-import { DEFAULT_GRAPHQL_POLL_TIME, DEFAULT_GRAPHQL_URL } from "../../utils";
+import { DEFAULT_GRAPHQL_POLL_TIME, DEFAULT_GRAPHQL_URL, DEFAULT_INSPECT_URL } from "../../utils";
 import { setAction } from "../actions/reducer";
 import { useAppSelector } from "../hooks";
 import { Notification, NotificationType } from "../notifications/notifications";
@@ -299,7 +299,7 @@ function useInspect(dispatch) {
       return;
     }
 
-    var instance = axios.create({ baseURL: SERVER_URL });
+    var instance = axios.create({ baseURL: DEFAULT_INSPECT_URL });
     var input = `{
       "type": "state", 
       "value": ""
@@ -359,7 +359,7 @@ export function useNotifications(): Notification[] | undefined {
 }
 
 const fetchActionResult = async (id: string): Promise<ActionResult> => {
-  const instance = axios.create({ baseURL: SERVER_URL });
+  const instance = axios.create({ baseURL: DEFAULT_INSPECT_URL });
   const input = `{
         "type": "action", 
         "value": "${id}"
