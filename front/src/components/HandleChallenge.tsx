@@ -6,6 +6,8 @@
  * See the file LICENSE for more information.
  */
 
+import { useState } from "react";
+
 import {
   AcceptChallengeTransactionsInfo,
   DeclineChallengeTransactionsInfo,
@@ -13,7 +15,6 @@ import {
 } from "../common/types";
 import { useActionCreator } from "../state/game/hooks";
 import { Text } from "./ui/Text";
-import { useState } from "react";
 
 export default ({
   challengeId,

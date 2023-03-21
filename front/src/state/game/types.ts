@@ -162,10 +162,10 @@ export interface UserProfile extends BaseProfile {
 }
 
 export interface LpNftProfile {
-  tokenId: string,
-  name: string,
-  description: string,
-  imageUri: string,
+  tokenId: string;
+  name: string;
+  description: string;
+  imageUri: string;
 }
 
 export interface BotProfile extends BaseProfile {

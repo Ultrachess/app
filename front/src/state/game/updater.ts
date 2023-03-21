@@ -10,7 +10,13 @@ import { useWeb3React } from "@web3-react/core";
 import { default as axios } from "axios";
 import fetch from "cross-fetch";
 import { ethers } from "ethers";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch } from "react-redux";
 import { createClient, defaultExchanges } from "urql/core";
 
@@ -21,7 +27,11 @@ import {
   NoticesByEpochDocument,
   NoticesDocument,
 } from "../../generated-src/graphql";
-import { DEFAULT_GRAPHQL_POLL_TIME, DEFAULT_GRAPHQL_URL, DEFAULT_INSPECT_URL } from "../../utils";
+import {
+  DEFAULT_GRAPHQL_POLL_TIME,
+  DEFAULT_GRAPHQL_URL,
+  DEFAULT_INSPECT_URL,
+} from "../../utils";
 import { setAction } from "../actions/reducer";
 import { useAppSelector } from "../hooks";
 import { Notification, NotificationType } from "../notifications/notifications";
@@ -282,35 +292,34 @@ function useNotices(): PartialNotice[] | undefined {
 
 function updateGameState(dispatch, payload) {
   ////console.log(ethers.utils.toUtf8String(payload))
-  var state = JSON.parse(ethers.utils.toUtf8String(payload));
+  const state = JSON.parse(ethers.utils.toUtf8String(payload));
   console.log(state);
   dispatch(setAppState(state));
 }
-
 
 function useInspect(dispatch) {
   const isMountedRef = useRef(true);
   console.log("useInspect");
   const poll = async (dispatch) => {
-    console.log("waiting")
+    console.log("waiting");
     await delay(2000);
-    console.log("done waiting")
+    console.log("done waiting");
     if (!isMountedRef.current) {
       return;
     }
 
-    var instance = axios.create({ baseURL: DEFAULT_INSPECT_URL });
-    var input = `{
+    const instance = axios.create({ baseURL: DEFAULT_INSPECT_URL });
+    const input = `{
       "type": "state", 
       "value": ""
     }`;
-    var response = await instance.get('/inspect/' + input);
+    const response = await instance.get("/inspect/" + input);
 
     if (response.data.reports.length <= 0) {
       return poll(dispatch);
     }
 
-    var payload = response.data.reports[0].payload;
+    const payload = response.data.reports[0].payload;
     updateGameState(dispatch, payload);
     await poll(dispatch);
   };
@@ -402,7 +411,7 @@ export const GameStateUpdater = React.memo(() => {
   const [lastNotificationLength, setLastNotificationLength] = useState(0);
 
   const dispatch = useDispatch();
-  
+
   //Inspect Cartesi Machine and update game state
   useInspect(dispatch);
 
@@ -410,48 +419,48 @@ export const GameStateUpdater = React.memo(() => {
   const updateGameState = useCallback(async () => {
     if (!actions) return;
 
-      // const payloads: NoticeInfo[] = notices
-      //     .sort((a, b) => parseInt(a.input_index) - parseInt(b.input_index))
-      //     .map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)))
+    // const payloads: NoticeInfo[] = notices
+    //     .sort((a, b) => parseInt(a.input_index) - parseInt(b.input_index))
+    //     .map(n => JSON.parse(ethers.utils.toUtf8String("0x" + n.payload)))
 
-      for (const actionId in actions) {
-        if (Object.prototype.hasOwnProperty.call(actions, actionId)) {
-          const action = { ...actions[actionId] };
-          if (shouldCheckAction(action)) {
-            const transaction = pendingTransactions[action.transactionHash];
-            //const expectedNotice = payloads.find(p => p.actionId == actionId)
-            let actionResult: ActionResult = null;
-            if (!transaction) {
-              action.status = ActionStates.INITIALIZED;
-            } else {
-              if (transaction.confirmedTime)
-                action.status =
-                  action.type == ActionType.TRANSACTION
-                    ? ActionStates.PROCESSED
-                    : ActionStates.CONFIRMED_WAITING_FOR_L2;
-              else action.status = ActionStates.PENDING;
-            }
-            if (actionList.find((val) => val == actionId)) {
-              actionResult = await fetchActionResult(actionId);
-              action.status = actionResult.success
-                ? ActionStates.PROCESSED
-                : ActionStates.ERROR;
-              action.result = actionResult;
-              action.processedTime = new Date().getTime();
-              //console.log(actionResult)
-            }
-
-            if (!shouldCheckAction(action))
-              ActionResolverObject[actionId]?.resolve(
-                actionResult ? actionResult.value ?? "blank" : "blank"
-              );
-
-            if (action.status != actions[actionId].status)
-              dispatch(setAction(action));
+    for (const actionId in actions) {
+      if (Object.prototype.hasOwnProperty.call(actions, actionId)) {
+        const action = { ...actions[actionId] };
+        if (shouldCheckAction(action)) {
+          const transaction = pendingTransactions[action.transactionHash];
+          //const expectedNotice = payloads.find(p => p.actionId == actionId)
+          let actionResult: ActionResult = null;
+          if (!transaction) {
+            action.status = ActionStates.INITIALIZED;
+          } else {
+            if (transaction.confirmedTime)
+              action.status =
+                action.type == ActionType.TRANSACTION
+                  ? ActionStates.PROCESSED
+                  : ActionStates.CONFIRMED_WAITING_FOR_L2;
+            else action.status = ActionStates.PENDING;
           }
+          if (actionList.find((val) => val == actionId)) {
+            actionResult = await fetchActionResult(actionId);
+            action.status = actionResult.success
+              ? ActionStates.PROCESSED
+              : ActionStates.ERROR;
+            action.result = actionResult;
+            action.processedTime = new Date().getTime();
+            //console.log(actionResult)
+          }
+
+          if (!shouldCheckAction(action))
+            ActionResolverObject[actionId]?.resolve(
+              actionResult ? actionResult.value ?? "blank" : "blank"
+            );
+
+          if (action.status != actions[actionId].status)
+            dispatch(setAction(action));
         }
       }
-  } , [actions, pendingTransactions, dispatch, actionList]);
+    }
+  }, [actions, pendingTransactions, dispatch, actionList]);
 
   useEffect(() => {
     const run = async () => {

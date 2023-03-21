@@ -75,10 +75,7 @@ export default ({ triggerElement }) => {
 
           <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
             <Dialog.Close asChild>
-              <Button
-                disabled={!selectedFile}
-                onClick={handleSubmission}
-              >
+              <Button disabled={!selectedFile} onClick={handleSubmission}>
                 Submit
               </Button>
             </Dialog.Close>

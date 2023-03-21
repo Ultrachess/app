@@ -42,7 +42,6 @@ import { Text } from "./ui/Text";
 import ModalPlaceBet from "./modals/ModalPlaceBet";
 import { useWeb3React } from "@web3-react/core";
 
-
 const placerHolderBotMoveStat = {
   depth: 0,
   seldepth: 0,

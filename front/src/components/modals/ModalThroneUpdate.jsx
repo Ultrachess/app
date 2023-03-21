@@ -45,7 +45,7 @@ export default ({ triggerElement }) => {
     await addAction(tx);
   };
 
-  const isKing = king && (king?.toLowerCase() === account?.toLowerCase())
+  const isKing = king && king?.toLowerCase() === account?.toLowerCase();
 
   //console.log("amount", amount)
   return (

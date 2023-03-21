@@ -61,8 +61,8 @@ export default () => {
           css={{
             gap: 20,
             width: "20%",
-            flexDirection: "column", 
-            alignItems:"start",
+            flexDirection: "column",
+            alignItems: "start",
           }}
         >
           <Address value={id} isImageBig={true} />

@@ -11,7 +11,6 @@ import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { delay } from "./updater";
 
 import { TransactionInfo, TransactionType } from "../../common/types";
 import { CHAINS } from "../../ether/chains";
@@ -51,6 +50,7 @@ import {
   TournamentType,
   UserProfile,
 } from "./types";
+import { delay } from "./updater";
 import { ActionResolverObject } from "./updater";
 
 export function useNationality(id): string {
@@ -326,11 +326,13 @@ export function useAllProfiles(rankByElo = false): BaseProfile[] {
   const users = useAllUsers();
   let profiles = [...bots, ...users];
   if (rankByElo) {
-    profiles = profiles.sort((a, b) => {
-      return b.elo - a.elo;
-    }).filter((profile) => {
-      return profile.elo > 0;
-    });
+    profiles = profiles
+      .sort((a, b) => {
+        return b.elo - a.elo;
+      })
+      .filter((profile) => {
+        return profile.elo > 0;
+      });
   }
   return profiles;
 }
@@ -439,7 +441,7 @@ export function useAllCompletedGames(): Game[] {
 }
 
 //return list of games that you are in and are not completed
-export function useUserGameIds(id: string = ""): string[] {
+export function useUserGameIds(id = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   return Object.keys(games).filter((gameId) => {
@@ -448,7 +450,7 @@ export function useUserGameIds(id: string = ""): string[] {
   });
 }
 
-export function useUserOwnedGameIds(id: string = ""): string[] {
+export function useUserOwnedGameIds(id = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   return Object.keys(games).filter((gameId) => {
@@ -458,7 +460,7 @@ export function useUserOwnedGameIds(id: string = ""): string[] {
   });
 }
 
-export function useUserCompletedGameIds(id: string = ""): string[] {
+export function useUserCompletedGameIds(id = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   return Object.keys(games).filter((gameId) => {
@@ -467,7 +469,7 @@ export function useUserCompletedGameIds(id: string = ""): string[] {
   });
 }
 
-export function useUserActiveGameIds(id: string = ""): string[] {
+export function useUserActiveGameIds(id = ""): string[] {
   const games = useAppSelector((state) => state.game.games);
   if (!games) return [];
   //return all as lowercase
@@ -595,8 +597,6 @@ export function useAction(actionId: number): Action {
   const actions = useActions();
   return actions[actionId];
 }
-
-
 
 export function useWaitForAction(): (actionId: number) => Promise<Action> {
   const actions = useActions();
