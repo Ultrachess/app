@@ -63,6 +63,9 @@ jobs:
             deployments
             export
           key: restore-artifacts-${{ hashFiles('docker-compose-deploy.yml', 'docker-compose.override.yml') }}
+      
+      - name: Install Yarn
+        run: npm install -g yarn
 
       - name: yarn install
         if: steps.restore-node.outputs.cache-hit != 'true'
