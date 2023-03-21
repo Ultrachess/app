@@ -26,10 +26,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-20.04
+          - os: self-hosted
             node-version: 14
-          - os: ubuntu-22.04
-            node-version: 18
+          # - os: ubuntu-22.04
+          #   node-version: 18
 
     # Steps represent a sequence of tasks that will be executed as part of the
     # job
