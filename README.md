@@ -1,4 +1,6 @@
-# Ultrachess application code
+[![Build Status](https://github.com/Ultrachess/app/actions/workflows/node.js.yml/badge.svg)](https://github.com/Ultrachess/app/actions/workflows/node.js.yml)
+
+# Ultrachess application code 
 
 Ultrachess is a customized DApp written in Python, which originally resembles the one provided by the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python).
 Contrary to that example, this DApp does not use shared resources from the `rollups-examples` main directory, and as such the commands for building, running and deploying it are slightly different.
