@@ -94,7 +94,9 @@ jobs:
         if: steps.restore-artifacts.outputs.cache-hit != 'true'
         run: docker compose -f docker-compose-deploy.yml -f docker-compose.override.yml run finished
 
-      # TODO
-      #- name: yarn run build
-      #  working-directory: front
-      #  run: yarn run build
+      # Build front end
+      - name: yarn run build
+       working-directory: front
+       run: yarn run build
+
+      
