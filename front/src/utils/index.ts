@@ -25,7 +25,7 @@ export const DEFAULT_GRAPHQL_URL = window.location.origin.replace(
   ":4000/graphql"
 );
 
-export const DEFAULT_GRAPHQL_POLL_TIME = 1000;
+export const DEFAULT_GRAPHQL_POLL_TIME = 5000;
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {

@@ -9,10 +9,10 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { useCallback, useEffect, useState } from "react";
-import { delay } from "wonka";
 
 import { TransactionInfo } from "../../common/types";
 import { setBlockNumber } from "../game/gameSlice";
+import { delay } from "../game/updater";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { addTransaction } from "./reducer";
 import { Transaction } from "./types";
