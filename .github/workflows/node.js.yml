@@ -116,8 +116,8 @@ jobs:
 
       # Build front end
       - name: yarn run build
-       working-directory: front
-       run: yarn run build
+        working-directory: front
+        run: yarn run build
 
       # Serve front end
       - name: Copy nginx configuration
