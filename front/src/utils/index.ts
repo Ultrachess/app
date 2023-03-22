@@ -22,7 +22,7 @@ export const DEFAULT_INSPECT_URL = window.location.origin.replace(
 //get current url and add port 4000 for graphql
 export const DEFAULT_GRAPHQL_URL = window.location.origin.replace(
   /:\d+$/,
-  ":4000"
+  ":4000/graphql"
 );
 
 export const DEFAULT_GRAPHQL_POLL_TIME = 1000;
