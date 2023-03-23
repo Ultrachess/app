@@ -59,8 +59,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       
-      - name: Set up Docker
-        uses: docker-practice/actions-setup-docker@master
+      # Add the Docker installation step
+      - name: Install Docker
+        run: |
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          sudo usermod -aG docker $USER
+          newgrp docker
 
       - name: Restore node modules
         id: restore-node
