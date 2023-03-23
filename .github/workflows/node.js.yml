@@ -88,9 +88,13 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
 
-      # Install nginx auto yes 
-      - name: Install nginx
-        run: sudo apt-get update && sudo apt-get install -y nginx
+      - name: Reset Nginx configurations and install Nginx
+        run: |
+          sudo rm -rf /etc/nginx/sites-available/default
+          sudo rm -rf /etc/nginx/sites-enabled/default
+          sudo rm -f /etc/nginx/nginx.conf
+          sudo apt-get update
+          sudo apt-get install --reinstall -y nginx
 
       - name: yarn install
         if: steps.restore-node.outputs.cache-hit != 'true'
@@ -129,13 +133,6 @@ jobs:
       - name: yarn run build
         working-directory: front
         run: yarn run build
-
-      # Reset Nginx configurations to default
-      - name: Reset Nginx configurations
-        run: |
-          sudo rm -rf /etc/nginx/sites-available/default
-          sudo rm -rf /etc/nginx/sites-enabled/default
-          sudo apt-get install --reinstall -y nginx
 
       # Serve front end
       - name: Copy nginx configuration
