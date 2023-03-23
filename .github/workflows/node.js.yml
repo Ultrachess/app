@@ -158,8 +158,12 @@ jobs:
           cat /etc/nginx/sites-available/default
           sudo sudo systemctl restart nginx || echo "Nginx restart failed."
 
-      - name: Print nginx error log
-        run: sudo cat /var/log/nginx/error.log
+      - name: Display Nginx logs
+        run: |
+          echo "=== Nginx Error Log ==="
+          sudo cat /var/log/nginx/error.log
+          echo "=== Nginx Access Log ==="
+          sudo cat /var/log/nginx/access.log
 
 
       
