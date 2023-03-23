@@ -119,9 +119,11 @@ jobs:
         #if: steps.restore-artifacts.outputs.cache-hit != 'true'
         run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl machine --load
 
-      # Deploy self hosted node
       - name: Deploy dapp
-        run: DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up
+        run: |
+          DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
+          echo "PID=$!" >> $GITHUB_ENV
+          sleep 60
 
       # Build front end
       - name: yarn run build
