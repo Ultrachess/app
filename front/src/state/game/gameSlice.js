@@ -378,6 +378,8 @@ export const initContracts = (signer, chainId) => async (dispatch) => {
   const cartesiDappAddress =
     DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost;
 
+  console.log("cartesiDappAddress", cartesiDappAddress);
+
   cartesiDappContract = new ethers.Contract(
     cartesiDappAddress,
     inputFacetAbi,
