@@ -144,7 +144,8 @@ jobs:
           sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
           sudo mkdir -p /front
           sudo ln -sf $GITHUB_WORKSPACE/front/dist /front/dist
-          sudo systemctl restart nginx || echo "Nginx restart failed."
+          cat /etc/nginx/sites-available/default
+          sudo sudo systemctl restart nginx || echo "Nginx restart failed."
 
       - name: Print nginx error log
         run: sudo cat /var/log/nginx/error.log
