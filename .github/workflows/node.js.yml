@@ -104,7 +104,7 @@ jobs:
             default_type application/octet-stream;
             sendfile on;
             access_log /var/log/nginx/access.log;
-            error_log /var/log/nginx/error.log;
+            error_log /var/log/nginx/error.log debug;
             keepalive_timeout 65;
 
             include /etc/nginx/sites-enabled/*;
