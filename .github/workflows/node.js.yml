@@ -133,8 +133,7 @@ jobs:
       # Serve front end
       - name: Copy nginx configuration
         run: |
-          sudo cp nginx.conf /etc/nginx/sites-available/default
-          sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+          sudo cp nginx.conf /etc/nginx/nginx.conf
           sudo mkdir -p /front
           sudo ln -sf $GITHUB_WORKSPACE/front/dist /front/dist
           sudo systemctl restart nginx || echo "Nginx restart failed."
