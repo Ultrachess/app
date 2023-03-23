@@ -127,15 +127,15 @@ jobs:
       #  working-directory: front
       #  run: yarn eslint
 
-      # Build dapp
-      - name: Build dapp
-        #if: steps.restore-artifacts.outputs.cache-hit != 'true'
-        run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
+#       # Build dapp
+#       - name: Build dapp
+#         #if: steps.restore-artifacts.outputs.cache-hit != 'true'
+#         run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
 
-      # Build machine
-      - name: Build machine
-        #if: steps.restore-artifacts.outputs.cache-hit != 'true'
-        run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl machine --load
+#       # Build machine
+#       - name: Build machine
+#         #if: steps.restore-artifacts.outputs.cache-hit != 'true'
+#         run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl machine --load
 
       - name: Deploy dapp
         run: |
