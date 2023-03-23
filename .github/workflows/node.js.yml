@@ -156,8 +156,16 @@ jobs:
           sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
           sudo mkdir -p /front
           sudo ln -sf $GITHUB_WORKSPACE/front/dist /front/dist
-          cat /etc/nginx/sites-available/default
-          sudo sudo systemctl restart nginx || echo "Nginx restart failed."
+      
+      # Set Nginx file permissions
+      - name: Set Nginx file permissions
+        run: |
+          sudo chown -R www-data:www-data /front
+          sudo chmod -R 755 /front
+
+      # Restart Nginx
+      - name: Restart Nginx
+        run: sudo systemctl restart nginx || echo "Nginx restart failed"
 
       - name: Display Nginx logs
         run: |
