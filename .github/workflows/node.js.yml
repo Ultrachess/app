@@ -54,13 +54,17 @@ jobs:
       - name: Checkout main repo
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      
+      - name: Set up Docker
+      - uses: docker-practice/actions-setup-docker@master
+      - run: |
+          set -x
+          docker version
+          docker run --rm hello-world
 
       - name: Restore node modules
         id: restore-node
