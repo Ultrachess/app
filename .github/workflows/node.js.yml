@@ -130,6 +130,13 @@ jobs:
         working-directory: front
         run: yarn run build
 
+      # Reset Nginx configurations to default
+      - name: Reset Nginx configurations
+        run: |
+          sudo rm -rf /etc/nginx/sites-available/default
+          sudo rm -rf /etc/nginx/sites-enabled/default
+          sudo apt-get install --reinstall -y nginx
+
       # Serve front end
       - name: Copy nginx configuration
         run: |
