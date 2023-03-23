@@ -92,11 +92,23 @@ jobs:
         run: |
           sudo rm -rf /etc/nginx/sites-available/default
           sudo rm -rf /etc/nginx/sites-enabled/default
-          sudo rm -f /etc/nginx/nginx.conf
           sudo apt-get update
           sudo apt-get install --reinstall -y nginx
-          default_nginx_conf=$(sudo find / -type f -name "nginx.conf" | grep "default" | head -1)
-          sudo cp "$default_nginx_conf" /etc/nginx/nginx.conf
+          # Create a minimal nginx.conf
+          echo 'events {
+            worker_connections 1024;
+          }
+          
+          http {
+            include /etc/nginx/mime.types;
+            default_type application/octet-stream;
+            sendfile on;
+            access_log /var/log/nginx/access.log;
+            error_log /var/log/nginx/error.log;
+            keepalive_timeout 65;
+
+            include /etc/nginx/sites-enabled/*;
+          }' | sudo tee /etc/nginx/nginx.conf > /dev/null
 
       - name: yarn install
         if: steps.restore-node.outputs.cache-hit != 'true'
