@@ -150,12 +150,12 @@ jobs:
         run: yarn run build
 
       # Serve front end
-      - name: Copy nginx configuration
+      - name: Copy nginx configuration and frontend files
         run: |
           sudo cp nginx.conf /etc/nginx/sites-available/default
           sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
           sudo mkdir -p /front
-          sudo ln -sf $GITHUB_WORKSPACE/front/dist /front/dist
+          sudo cp -R $GITHUB_WORKSPACE/front/dist /front/
       
       # Set Nginx file permissions
       - name: Set Nginx file permissions
