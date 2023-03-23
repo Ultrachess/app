@@ -95,7 +95,8 @@ jobs:
           sudo rm -f /etc/nginx/nginx.conf
           sudo apt-get update
           sudo apt-get install --reinstall -y nginx
-          sudo cp /usr/share/nginx/nginx.conf /etc/nginx/nginx.conf
+          default_nginx_conf=$(sudo find / -type f -name "nginx.conf" | grep "default" | head -1)
+          sudo cp "$default_nginx_conf" /etc/nginx/nginx.conf
 
       - name: yarn install
         if: steps.restore-node.outputs.cache-hit != 'true'
