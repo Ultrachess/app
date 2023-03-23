@@ -160,8 +160,9 @@ jobs:
       # Set Nginx file permissions
       - name: Set Nginx file permissions
         run: |
-          sudo chown -R www-data:www-data /front
-          sudo chmod -R 755 /front
+          sudo chown -R www-data:www-data /front/dist
+          sudo find /front/dist -type d -exec chmod 755 {} \;
+          sudo find /front/dist -type f -exec chmod 644 {} \;
 
       # Restart Nginx
       - name: Restart Nginx
