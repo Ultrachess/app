@@ -80,6 +80,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
+            deployments/localhost
             export
           key: restore-artifacts-${{ hashFiles('docker-compose-deploy.yml', 'docker-compose.override.yml') }}
       
