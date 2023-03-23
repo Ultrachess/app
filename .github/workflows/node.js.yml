@@ -149,6 +149,13 @@ jobs:
         working-directory: front
         run: yarn run build
 
+      # Check if the /front/dist folder exists and remove it if it does
+      - name: Check and remove /front/dist folder if it exists
+        run: |
+          if [ -d "/front/dist" ]; then
+            sudo rm -rf /front/dist
+          fi
+
       # Serve front end
       - name: Copy nginx configuration and frontend files
         run: |
