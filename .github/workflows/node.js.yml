@@ -61,10 +61,6 @@ jobs:
       
       - name: Set up Docker
       - uses: docker-practice/actions-setup-docker@master
-      - run: |
-          set -x
-          docker version
-          docker run --rm hello-world
 
       - name: Restore node modules
         id: restore-node
