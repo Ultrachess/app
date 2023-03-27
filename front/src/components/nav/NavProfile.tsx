@@ -2,8 +2,17 @@ import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React, { Fragment } from "react";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
+import { metaMask } from "../../ether/connectors/metaMask";
 import { truncateAddress } from "../../ether/utils";
+import {
+  setCreateGameModal,
+  setDeployBotModal,
+  setDepositModal,
+} from "../../state/ui/reducer";
 
 interface NavProfileProps {
   connected: boolean;
@@ -20,18 +29,20 @@ const NavProfile = ({
   balance = 2988,
   tokenSymbol = "USD",
 }: NavProfileProps) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const ProfileDropdownItems = [
     {
       name: "Your Profile",
       href: "#",
       icon: "user",
-      onclick: () => console.log("Your Profile"),
+      onclick: () => navigate(`/users/${address}`),
     },
     {
       name: "Deposit",
       href: "#",
       icon: "cog",
-      onclick: () => console.log("Settings"),
+      onclick: () => dispatch(setDepositModal(true)),
     },
     {
       name: "Withdraw",
@@ -43,13 +54,13 @@ const NavProfile = ({
       name: "Create Game",
       href: "#",
       icon: "logout",
-      onclick: () => console.log("Sign out"),
+      onclick: () => dispatch(setCreateGameModal(true)),
     },
     {
       name: "Deploy Bot",
       href: "#",
       icon: "logout",
-      onclick: () => console.log("Sign out"),
+      onclick: () => dispatch(setDeployBotModal(true)),
     },
   ];
   return connected ? (
@@ -61,18 +72,14 @@ const NavProfile = ({
             className="group flex shrink-0 items-center rounded-lg transition"
           >
             <span className="sr-only">Menu</span>
-            <img
-              alt="Man"
-              src={avatar}
-              className="h-10 w-10 rounded-full object-cover"
-            />
+            <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
 
             <p className="ml-2 hidden text-left text-sm text-left md:block">
               <strong className="block font-medium">
                 {truncateAddress(address)}
               </strong>
 
-              <span className="text-blue-500 underline">
+              <span className="text-blue-500 font-medium">
                 {balance} {tokenSymbol}
               </span>
             </p>
@@ -116,7 +123,7 @@ const NavProfile = ({
             <Menu.Item key={item.name}>
               {({ active }) => (
                 <a
-                  href={item.href}
+                  onClick={item.onclick}
                   className={classNames(
                     active ? "bg-gray-100" : "",
                     "block px-4 py-2 text-sm text-gray-700"
@@ -133,7 +140,9 @@ const NavProfile = ({
   ) : (
     <a
       className="inline-block rounded border border-indigo-600 bg-indigo-600 ml-4 px-6 py-2 text-sm font-medium hover:text-black focus:outline-none text-white"
-      href="#"
+      onClick={() => {
+        metaMask.activate();
+      }}
     >
       Connect
     </a>

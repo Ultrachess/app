@@ -1,27 +1,55 @@
-import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
-import NotificationBell from "./NavBell";
+import { useWeb3React } from "@web3-react/core";
+import { Fragment, useEffect, useMemo } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
 
 //get link to ../assets/horse.png
 import logo from "../../assets/horse.png";
+import { hooks, metaMask } from "../../ether/connectors/metaMask";
 import { truncateAddress } from "../../ether/utils";
+import NotificationBell from "./NavBell";
+import NavNetwork from "./NavNetwork";
 import NavProfile from "./NavProfile";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "Rankings", href: "/rankings", current: false },
   { name: "Bots", href: "/bots", current: false },
-  // { name: 'Tournaments', href: '/tournaments', current: false },
-  // { name: 'KOH', href: '#', current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function Navbar() {
+  const { 
+    chainId,
+    account, 
+    provider, 
+    isActivating, 
+    isActive 
+  } = useWeb3React();
+
+  const dispatch = useDispatch();
+  const location = useLocation()
+
+  //get index in navigation array of current page
+  //by comparing href to window.location.pathname
+  const currentIndex = useMemo(() => {
+    console.log("location.pathname", location.pathname)
+   return navigation.findIndex(
+    (item) => item.href == location.pathname
+  )}, [location.pathname]);
+
+  console.log("currentIndex", currentIndex)
+
+
+  useEffect(() => {
+    metaMask.connectEagerly();
+  }, []);
+
   return (
     <Disclosure as="nav" className="bg-white">
       {({ open }) => (
@@ -55,24 +83,24 @@ export default function Example() {
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
-                    {navigation.map((item) => (
+                    {navigation.map((item, index) => (
                       //create underline effect when item.current is true
                       <Link
                         key={item.name}
                         to={item.href}
                         className={classNames(
-                          item.current
+                          index == currentIndex
                             ? "text-sm font-semibold leading-6 text-gray-900"
                             : "text-sm font-semibold leading-6 text-gray-900",
                           "rounded-md mx-4 py-2 text-sm font-medium",
                           "relative before:absolute before:-bottom-1 before:h-0.5 before:w-full before:scale-x-0 before:bg-indigo-600 before:transition hover:before:scale-x-100",
-                          item.current
+                          index == currentIndex
                             ? "before:scale-x-100"
                             : "hover:before:scale-x-100"
                         )}
                         //class="relative font-medium text-indigo-600 before:absolute before:-bottom-1 before:h-0.5 before:w-full before:scale-x-0 before:bg-indigo-600 before:transition hover:before:scale-x-100"
 
-                        aria-current={item.current ? "page" : undefined}
+                        aria-current={index == currentIndex ? "page" : undefined}
                       >
                         {item.name}
                       </Link>
@@ -81,15 +109,25 @@ export default function Example() {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <NotificationBell />
-                <NavProfile />
+                <NotificationBell
+                  connected={isActive}
+                  newNotification={false}
+                />
+                <NavNetwork connected={isActive} chainId={chainId} />
+                <NavProfile
+                  connected={isActive}
+                  address={account}
+                  avatar={""}
+                  balance={1}
+                  tokenSymbol={"USDC"}
+                />
               </div>
             </div>
           </div>
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
-              {navigation.map((item) => (
+              {navigation.map((item, index) => (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -97,11 +135,11 @@ export default function Example() {
                     "text-sm font-semibold leading-6 text-gray-900",
                     "block rounded-md mx-4 py-2 text-sm font-medium",
                     "relative before:absolute before:-bottom-1 before:h-0.5 before:w-full before:scale-x-0 before:bg-indigo-600 before:transition hover:before:scale-x-100 before:left-1/2 before:transform before:-translate-x-1/2",
-                    item.current
+                    index == currentIndex
                       ? "before:scale-x-100"
                       : "hover:before:scale-x-100"
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={index == currentIndex ? "page" : undefined}
                 >
                   {item.name}
                 </Link>

@@ -69,7 +69,7 @@ export const CHAINS = {
     urls: [
       infuraKey ? `https://goerli.infura.io/v3/${infuraKey}` : undefined,
     ].filter((url) => url !== undefined),
-    name: "Görli",
+    name: "Goerli",
     networkName: "goerli",
   },
   // Optimism

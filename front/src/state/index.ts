@@ -14,6 +14,7 @@ import authSlice from "./auth/authSlice";
 import gameSlice from "./game/gameSlice";
 import notifications from "./notifications/reducer";
 import transactions from "./transactions/reducer";
+import ui from "./ui/reducer";
 
 const PERSISTED_STATE: string[] = ["auth", "game", "transactions"];
 
@@ -35,6 +36,7 @@ export const store = configureStore({
     transactions: transactions,
     actions: actions,
     notifications: notifications,
+    ui: ui,
   },
   // middleware: (getDefaultMiddleware) =>
   //     getDefaultMiddleware({ serializableCheck: false })
