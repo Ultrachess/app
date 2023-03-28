@@ -18,7 +18,7 @@ import {
   useTokenPortalBalance,
   useTokenBalance,
 } from "../../hooks/token";
-import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import AssetDisplay from "../AssetDisplay";
 import { useWeb3React } from "@web3-react/core";
 import { useActionCreator } from "../../state/game/hooks";
@@ -28,7 +28,7 @@ export default ({ triggerElement }) => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState(0);
   const max = 100;
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const balance = useTokenBalance(token, account);
 

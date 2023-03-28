@@ -28,7 +28,7 @@ export default ({
     <Link to={(isBot ? "/bot/" : "/users/") + value}>
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
         <ProfileImage address={value} />
-        <Text bold>{truncateAddress(value)}</Text>
+        <span>{truncateAddress(value)}</span>
         {isBot && <FaRobot />}
       </Flex>
     </Link>

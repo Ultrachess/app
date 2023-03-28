@@ -36,7 +36,7 @@ import {
 } from "@radix-ui/react-icons";
 import { useWeb3React } from "@web3-react/core";
 import ProfileImage from "./ProfileImage";
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { SelectIcon } from "@radix-ui/react-select";
 import { Text } from "./ui/Text";
 import ModalNewDepositFunds from "./modals/ModalNewDepositFunds";
@@ -164,7 +164,7 @@ const DropdownMenuMain = ({ address, chainId }) => {
   const [bookmarksChecked, setBookmarksChecked] = React.useState(true);
   const [urlsChecked, setUrlsChecked] = React.useState(false);
   const [person, setPerson] = React.useState("pedro");
-  const balance = useBalance(address, USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const balance = useBalance(address, STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
 
   return (
     <DropdownMenu.Root>
@@ -172,7 +172,7 @@ const DropdownMenuMain = ({ address, chainId }) => {
         <Button>
           <AssetDisplay
             balance={balance}
-            tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}
+            tokenAddress={STABLECOIN_ADDRESS_ON_NETWORKS[chainId]}
           />
           <SeparatorRoot
             decorative
@@ -207,7 +207,7 @@ const DropdownMenuMain = ({ address, chainId }) => {
                 Deposit <Text>&nbsp;(to portal)</Text>{" "}
                 <RightSlot>
                   <AssetDisplay
-                    tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}
+                    tokenAddress={STABLECOIN_ADDRESS_ON_NETWORKS[chainId]}
                   />
                 </RightSlot>
               </ClickableDropdownMenuItem>
@@ -218,7 +218,7 @@ const DropdownMenuMain = ({ address, chainId }) => {
             <RightSlot>
               <AssetDisplay
                 isL2={true}
-                tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}
+                tokenAddress={STABLECOIN_ADDRESS_ON_NETWORKS[chainId]}
               />
             </RightSlot>
           </DropdownMenuItem>

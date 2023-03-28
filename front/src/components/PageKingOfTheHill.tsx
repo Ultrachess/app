@@ -10,7 +10,7 @@ import { violet } from "@radix-ui/colors";
 import { styled } from "@stitches/react";
 import { useWeb3React } from "@web3-react/core";
 
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { truncateAddress } from "../ether/utils";
 import { useTokenFromList } from "../hooks/token";
 import { useThrone } from "../state/game/hooks";
@@ -72,7 +72,7 @@ export default () => {
 
   const isKing = account?.toLowerCase() === king?.toLowerCase();
 
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
 
   const battleItems =
     Object.values(battles).length > 0
@@ -169,7 +169,7 @@ export default () => {
                   <Text bold>Winnings</Text>
                   <AssetDisplay
                     balance={winnings}
-                    tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}
+                    tokenAddress={STABLECOIN_ADDRESS_ON_NETWORKS[chainId]}
                   />
                 </Flex>
                 <Flex css={{ flexDirection: "row", gap: 5 }}>
@@ -184,7 +184,7 @@ export default () => {
                   <Text bold>Price to challenge</Text>
                   <AssetDisplay
                     balance={price / 10 ** 18}
-                    tokenAddress={USDC_ADDRESS_ON_NETWORKS[chainId]}
+                    tokenAddress={STABLECOIN_ADDRESS_ON_NETWORKS[chainId]}
                   />
                 </Flex>
               </Flex>

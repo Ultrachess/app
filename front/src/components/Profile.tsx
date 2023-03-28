@@ -10,7 +10,7 @@ import { Button } from "@nextui-org/react";
 import { useWeb3React } from "@web3-react/core";
 import { useParams } from "react-router-dom";
 
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { useProfile } from "../state/game/hooks";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
@@ -46,7 +46,7 @@ export default () => {
 
   const balance = balances.length > 0 ? balances[0].amount : 0;
   const tokenAddress =
-    balances.length > 0 ? balances[0].token : USDC_ADDRESS_ON_NETWORKS[chainId];
+    balances.length > 0 ? balances[0].token : STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
   return (
     <div className="body">
       <Flex

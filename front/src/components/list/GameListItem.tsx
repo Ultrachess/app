@@ -51,7 +51,6 @@ export default ({ game }: { game: Game }) => {
     bettingClosesAt > current / 1000;
   const bettingIsClosed = !bettingIsOpen;
   const canBet = bettingIsOpen && !isWaitingForAPlayer;
-  console.log("abc is betting closed: ", bettingIsClosed);
 
   const completed = game.isEnd;
   const joinable =

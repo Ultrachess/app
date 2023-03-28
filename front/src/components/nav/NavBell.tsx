@@ -2,11 +2,23 @@ import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React, { Fragment } from "react";
+import { Notification, NotificationType } from "../../state/notifications/notifications";
+import NotificationItem from "../NotificationItem";
 
-const NavBell = ({ connected = true, newNotification = true }) => {
+interface NavBellProps {
+  connected: boolean;
+  newNotification: boolean;
+  notifications: Notification[];
+}
+
+const NavBell = ({
+  connected = true, 
+  newNotification = true,
+  notifications = [],
+}: NavBellProps) => {
   return (
     connected && (
-      <Menu as="div" className="relative ml-3">
+      <Menu as="div" className="">
         <div>
           <Menu.Button className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
             {newNotification && (
@@ -25,46 +37,15 @@ const NavBell = ({ connected = true, newNotification = true }) => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? "bg-gray-100" : "",
-                    "block px-4 py-2 text-sm text-gray-700"
-                  )}
-                >
-                  Notification 1
-                </a>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? "bg-gray-100" : "",
-                    "block px-4 py-2 text-sm text-gray-700"
-                  )}
-                >
-                  Notification 2
-                </a>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? "bg-gray-100" : "",
-                    "block px-4 py-2 text-sm text-gray-700"
-                  )}
-                >
-                  Notification 3
-                </a>
-              )}
-            </Menu.Item>
+          <Menu.Items className="absolute right-0 z-10 mt-2 w-68 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            {notifications.map((notification) => (
+              <Menu.Item key={notification.id}>
+                <NotificationItem
+                  notification={notification}
+                  shouldShowExit={false} 
+                />
+              </Menu.Item>
+            ))}
           </Menu.Items>
         </Transition>
       </Menu>

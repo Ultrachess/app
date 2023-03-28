@@ -24,7 +24,7 @@ import ChallengeAction from "./HandleChallenge";
 import DateDisplay from "./ui/Date";
 import { Text } from "./ui/Text";
 
-export default ({ notification }: { notification: Notification }) => {
+export default ({ notification, shouldShowExit = true }: { notification: Notification, shouldShowExit: boolean }) => {
   const { id, timestamp, type } = notification;
   const { account } = useWeb3React();
 
@@ -38,10 +38,10 @@ export default ({ notification }: { notification: Notification }) => {
       //console.log("abc game created", notification["creator_id"])
       title = "Game Created";
       description = (
-        <Text>
+        <>
           Player <Address value={notification["creator_id"]} /> has created a
           game <AddressGame id={notification["game_id"]} />
-        </Text>
+        </>
       );
       break;
     case NotificationType.GAME_JOINED:
@@ -303,21 +303,59 @@ export default ({ notification }: { notification: Notification }) => {
       break;
   }
 
-  return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-      }}
-    >
-      <ToastTitle>
-        <Text>
-          id#{id} {title} at
-        </Text>
-        <DateDisplay current={timestamp} />
-      </ToastTitle>
-      <ToastDescription asChild>{description}</ToastDescription>
+  return type == NotificationType.ACTION ? (
+    <ActionItem actionId={notification["actionId"]} />
+  ) : (
+    <div role="alert" className=" border-bottom border-gray-100 p-4">
+  <div className="flex items-start gap-4">
+    <span className="text-green-600">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        className="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    </span>
+
+    <div className="flex-1">
+      <strong className="block font-medium text-gray-900"> Changes saved </strong>
+
+      <p className="mt-1 text-sm text-gray-700">
+        Your product changes have been saved.
+      </p>
     </div>
-  );
+    {shouldShowExit ? (
+    <button className="text-gray-500 transition hover:text-gray-600">
+      <span className="sr-only">Dismiss popup</span>
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        className="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+    ): (
+      <div className="w-6" />
+    )}
+  </div>
+</div>)
 };
 
 const ToastTitle = styled(Toast.Title, {

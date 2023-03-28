@@ -11,7 +11,7 @@ import { useWeb3React } from "@web3-react/core";
 import * as React from "react";
 import { useParams } from "react-router-dom";
 
-import { USDC_ADDRESS_ON_NETWORKS } from "../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { useAllBots } from "../state/game/hooks";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
@@ -84,7 +84,7 @@ export default () => {
     return highestOfferTemp;
   }, [offers]);
 
-  const token = USDC_ADDRESS_ON_NETWORKS[chainId];
+  const token = STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
   const isOwner = account?.toLowerCase() === owner?.toLowerCase();
   return (
     <div className="body">

@@ -7,11 +7,15 @@ import { Link, useLocation } from "react-router-dom";
 
 //get link to ../assets/horse.png
 import logo from "../../assets/horse.png";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { hooks, metaMask } from "../../ether/connectors/metaMask";
 import { truncateAddress } from "../../ether/utils";
+import { useToken } from "../../hooks/token";
+import { useBalance } from "../../state/game/hooks";
 import NotificationBell from "./NavBell";
 import NavNetwork from "./NavNetwork";
 import NavProfile from "./NavProfile";
+import { Notification, NotificationType } from "../../state/notifications/notifications";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -23,6 +27,33 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const dummyNotifications: Notification[] = [
+  {
+    id: 1,
+    timestamp: 1620000000000,
+    type: NotificationType.GAME_CREATED,
+    creatorId: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    gameId: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    wager: 100,
+    token: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  },
+  {
+    id: 2,
+    timestamp: 1620000000000,
+    type: NotificationType.GAME_CREATED,
+    creatorId: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    gameId: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    wager: 100,
+    token: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  },
+  {
+    id: 3,
+    timestamp: 1620000000000,
+    type: NotificationType.ACTION,
+    actionId: 1,
+  }
+]
+
 export default function Navbar() {
   const { 
     chainId,
@@ -31,6 +62,9 @@ export default function Navbar() {
     isActivating, 
     isActive 
   } = useWeb3React();
+  const balance = useBalance(account, STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  console.log("token", token)
 
   const dispatch = useDispatch();
   const location = useLocation()
@@ -44,10 +78,11 @@ export default function Navbar() {
   )}, [location.pathname]);
 
   console.log("currentIndex", currentIndex)
-
+    console.log("connected", isActive)
+    console.log("account", account)
 
   useEffect(() => {
-    metaMask.connectEagerly();
+    void metaMask.connectEagerly();
   }, []);
 
   return (
@@ -112,14 +147,15 @@ export default function Navbar() {
                 <NotificationBell
                   connected={isActive}
                   newNotification={false}
+                  notifications={dummyNotifications}
                 />
                 <NavNetwork connected={isActive} chainId={chainId} />
                 <NavProfile
                   connected={isActive}
                   address={account}
                   avatar={""}
-                  balance={1}
-                  tokenSymbol={"USDC"}
+                  balance={balance}
+                  tokenSymbol={token?.symbol}
                 />
               </div>
             </div>

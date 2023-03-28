@@ -11,7 +11,7 @@ import { useTokenFromList } from "../hooks/token";
 import { useWeb3React } from "@web3-react/core";
 import { Text } from "./ui/Text";
 import TokenIcon from "./TokenIcon";
-import { USDC_ADDRESS_ON_NETWORKS, DEFAULT_TOKEN_URI } from "../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS, DEFAULT_TOKEN_URI } from "../ether/chains";
 import Flex from "./ui/Flex";
 
 export default ({
@@ -25,7 +25,7 @@ export default ({
   isMedium = false,
 }) => {
   const { account, chainId } = useWeb3React();
-  const _tokenAddress = tokenAddress ?? USDC_ADDRESS_ON_NETWORKS[chainId];
+  const _tokenAddress = tokenAddress ?? STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
   const token = useTokenFromList(_tokenAddress);
   //get account balance of token
   const balances = useSelector((state) => state.game.balances);
