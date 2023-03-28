@@ -12,10 +12,17 @@ import { hooks, metaMask } from "../../ether/connectors/metaMask";
 import { truncateAddress } from "../../ether/utils";
 import { useToken } from "../../hooks/token";
 import { useBalance } from "../../state/game/hooks";
+import { useNotifications } from "../../state/notifications/hooks";
+import {
+  Notification,
+  NotificationType,
+} from "../../state/notifications/notifications";
+import ModalCreateBot from "../modals/ModalCreateBot";
+import ModalNewCreateGame from "../modals/ModalNewCreateGame";
+import ModalNewDepositFunds from "../modals/ModalNewDepositFunds";
 import NotificationBell from "./NavBell";
 import NavNetwork from "./NavNetwork";
 import NavProfile from "./NavProfile";
-import { Notification, NotificationType } from "../../state/notifications/notifications";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -51,35 +58,31 @@ const dummyNotifications: Notification[] = [
     timestamp: 1620000000000,
     type: NotificationType.ACTION,
     actionId: 1,
-  }
-]
+  },
+];
 
 export default function Navbar() {
-  const { 
-    chainId,
-    account, 
-    provider, 
-    isActivating, 
-    isActive 
-  } = useWeb3React();
+  const { chainId, account, provider, isActivating, isActive } = useWeb3React();
   const balance = useBalance(account, STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
-  console.log("token", token)
+  console.log("token abc", token);
 
   const dispatch = useDispatch();
-  const location = useLocation()
+  const location = useLocation();
 
   //get index in navigation array of current page
   //by comparing href to window.location.pathname
   const currentIndex = useMemo(() => {
-    console.log("location.pathname", location.pathname)
-   return navigation.findIndex(
-    (item) => item.href == location.pathname
-  )}, [location.pathname]);
+    console.log("location.pathname", location.pathname);
+    return navigation.findIndex((item) => item.href == location.pathname);
+  }, [location.pathname]);
 
-  console.log("currentIndex", currentIndex)
-    console.log("connected", isActive)
-    console.log("account", account)
+  console.log("currentIndex", currentIndex);
+  console.log("connected", isActive);
+  console.log("account", account);
+
+  const notifications = useNotifications()
+  console.log("notifications", notifications)
 
   useEffect(() => {
     void metaMask.connectEagerly();
@@ -135,7 +138,9 @@ export default function Navbar() {
                         )}
                         //class="relative font-medium text-indigo-600 before:absolute before:-bottom-1 before:h-0.5 before:w-full before:scale-x-0 before:bg-indigo-600 before:transition hover:before:scale-x-100"
 
-                        aria-current={index == currentIndex ? "page" : undefined}
+                        aria-current={
+                          index == currentIndex ? "page" : undefined
+                        }
                       >
                         {item.name}
                       </Link>
@@ -147,7 +152,7 @@ export default function Navbar() {
                 <NotificationBell
                   connected={isActive}
                   newNotification={false}
-                  notifications={dummyNotifications}
+                  notifications={notifications}
                 />
                 <NavNetwork connected={isActive} chainId={chainId} />
                 <NavProfile
@@ -182,6 +187,9 @@ export default function Navbar() {
               ))}
             </div>
           </Disclosure.Panel>
+          <ModalNewCreateGame />
+          <ModalNewDepositFunds />
+          <ModalCreateBot />
         </>
       )}
     </Disclosure>

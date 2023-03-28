@@ -79,21 +79,7 @@ export default () => {
             <div className="contentHeader">
               <Label>Active games</Label>
               <RightSlot>
-                <ModalNewCreateGame
-                  triggerElement={
-                    <Button shadow>
-                      <Text>Create Game</Text>
-                    </Button>
-                  }
-                />
                 <Spacer x={1} />
-                <ModalNewDepositFunds
-                  triggerElement={
-                    <Button>
-                      <Text>Deposit Funds</Text>
-                    </Button>
-                  }
-                />
               </RightSlot>
             </div>
             <GameList games={activeGames} />

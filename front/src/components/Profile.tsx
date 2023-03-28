@@ -46,7 +46,9 @@ export default () => {
 
   const balance = balances.length > 0 ? balances[0].amount : 0;
   const tokenAddress =
-    balances.length > 0 ? balances[0].token : STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
+    balances.length > 0
+      ? balances[0].token
+      : STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
   return (
     <div className="body">
       <Flex

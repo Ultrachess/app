@@ -2,7 +2,11 @@ import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React, { Fragment } from "react";
-import { Notification, NotificationType } from "../../state/notifications/notifications";
+
+import {
+  Notification,
+  NotificationType,
+} from "../../state/notifications/notifications";
 import NotificationItem from "../NotificationItem";
 
 interface NavBellProps {
@@ -12,7 +16,7 @@ interface NavBellProps {
 }
 
 const NavBell = ({
-  connected = true, 
+  connected = true,
   newNotification = true,
   notifications = [],
 }: NavBellProps) => {
@@ -42,7 +46,7 @@ const NavBell = ({
               <Menu.Item key={notification.id}>
                 <NotificationItem
                   notification={notification}
-                  shouldShowExit={false} 
+                  shouldShowExit={false}
                 />
               </Menu.Item>
             ))}

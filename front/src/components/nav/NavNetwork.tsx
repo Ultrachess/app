@@ -3,12 +3,11 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React, { Fragment, useEffect, useState } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
-import { metaMask } from "../../ether/connectors/metaMask";
 
 import { CHAINS, DEFAULT_NETWORK_URI } from "../../ether/chains";
+import { metaMask } from "../../ether/connectors/metaMask";
 import { toHex } from "../../ether/utils";
 import { truncateAddress } from "../../ether/utils";
-
 
 const switchEthereumChain = async (chainId) => {
   const chain = CHAINS[chainId];
@@ -105,18 +104,20 @@ const NavNetwork = ({ connected = true, chainId = 5 }: NavProfileProps) => {
               <Menu.Item key={chain.name}>
                 {({ active }) => (
                   <a
-                  onClick={async () => {
-                    const handleSwitch = async () => {
-                      try {
-                        await switchEthereumChain(chain.id);
-                        await new Promise((resolve) => setTimeout(resolve, 500)); // Add a delay to allow the network switch to complete
-                        await metaMask.activate();
-                      } catch (error) {
-                        console.error("Error switching network:", error);
-                      }
-                    };
-                    handleSwitch();
-                  }}
+                    onClick={async () => {
+                      const handleSwitch = async () => {
+                        try {
+                          await switchEthereumChain(chain.id);
+                          await new Promise((resolve) =>
+                            setTimeout(resolve, 500)
+                          ); // Add a delay to allow the network switch to complete
+                          await metaMask.activate();
+                        } catch (error) {
+                          console.error("Error switching network:", error);
+                        }
+                      };
+                      handleSwitch();
+                    }}
                     className={classNames(
                       active ? "bg-gray-100" : "",
                       "block px-4 py-2 text-sm text-gray-700"

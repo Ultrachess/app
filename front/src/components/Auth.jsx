@@ -201,18 +201,6 @@ const DropdownMenuMain = ({ address, chainId }) => {
               </RightSlot>
             </Link>
           </DropdownMenuItem>
-          <ModalNewDepositFunds
-            triggerElement={
-              <ClickableDropdownMenuItem>
-                Deposit <Text>&nbsp;(to portal)</Text>{" "}
-                <RightSlot>
-                  <AssetDisplay
-                    tokenAddress={STABLECOIN_ADDRESS_ON_NETWORKS[chainId]}
-                  />
-                </RightSlot>
-              </ClickableDropdownMenuItem>
-            }
-          />
           <DropdownMenuItem>
             Withdraw <Text>&nbsp;(from portal) </Text>
             <RightSlot>
