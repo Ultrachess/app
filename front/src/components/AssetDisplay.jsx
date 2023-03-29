@@ -36,14 +36,11 @@ export default ({
   const _balance = balance ?? accountBalances?.[tokenAddress] ?? "0.0";
 
   //console.log("abc tokenAddress", tokenAddress)
-  console.log("abc token", token)
+  console.log("abc token", token);
 
   return (
     <Flex css={{ alignItems: "center", gap: "2" }}>
-        {_balance ?? "0.0"}
-        {" "}
-        {token?.symbol}
-      
+      {_balance ?? "0.0"} {token?.symbol}
     </Flex>
   );
 };

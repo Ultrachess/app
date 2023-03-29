@@ -8,11 +8,15 @@
 
 //create a modal that takes in a trigger element and renders a modal with a form to create a bot
 //then makes a CREATE_BOT action to the backend
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { blackA, green, mauve, violet } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { keyframes, styled } from "@stitches/react";
 import React, { useState } from "react";
+import { Fragment, useRef } from "react";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { TransactionType } from "../../common/types";
 import { useActionCreator } from "../../state/game/hooks";
@@ -20,10 +24,6 @@ import { useAppSelector } from "../../state/hooks";
 import { setDeployBotModal } from "../../state/ui/reducer";
 import Button from "../ui/Button";
 import Flex from "../ui/Flex";
-import { useDispatch } from "react-redux";
-import { Fragment, useRef } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 export default () => {
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -31,9 +31,10 @@ export default () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const cancelButtonRef = useRef(null);
 
-  const showDeployBotModal = useAppSelector(state => state.ui.modal.showDeployBotModal)
+  const showDeployBotModal = useAppSelector(
+    (state) => state.ui.modal.showDeployBotModal
+  );
 
-  
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFile(event.target.files[0]);
@@ -95,41 +96,42 @@ export default () => {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Upload a file containing the bytecode of your bot. The bytecode you
-                          upload must be compiled to RISCV and be a UCI compliant chess engine
+                          Upload a file containing the bytecode of your bot. The
+                          bytecode you upload must be compiled to RISCV and be a
+                          UCI compliant chess engine
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="mt-5">
-                  <label
-                      className="block text-xs font-medium text-gray-700"
-                    >
-                      Drag and drop your RISC-V binary file here or click to upload
+                    <label className="block text-xs font-medium text-gray-700">
+                      Drag and drop your RISC-V binary file here or click to
+                      upload
                     </label>
-                  <FileUploadBlock
-                    onClick={() => inputRef.current.click()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        setSelectedFile(e.dataTransfer.files[0]);
-                      }
-                    }}
-                  >
-                    {selectedFile ? selectedFile.name : "Upload file"}
-                    <input
-                      ref={inputRef}
-                      style={{ display: "none" }}
-                      type="file"
-                      name="file"
-                      onChange={changeHandler}
-                    />
-                  </FileUploadBlock>
+                    <FileUploadBlock
+                      onClick={() => inputRef.current.click()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        if (
+                          e.dataTransfer.files &&
+                          e.dataTransfer.files.length > 0
+                        ) {
+                          setSelectedFile(e.dataTransfer.files[0]);
+                        }
+                      }}
+                    >
+                      {selectedFile ? selectedFile.name : "Upload file"}
+                      <input
+                        ref={inputRef}
+                        style={{ display: "none" }}
+                        type="file"
+                        name="file"
+                        onChange={changeHandler}
+                      />
+                    </FileUploadBlock>
                   </div>
 
-                  <div className="mt-5">
-                    
-                  </div>
+                  <div className="mt-5"></div>
                 </div>
 
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
@@ -256,8 +258,8 @@ const FileUploadBlock = styled("div", {
   textAlign: "center",
 });
 
-
-{/* <DialogTitle>Upload bot bytecode</DialogTitle>
+{
+  /* <DialogTitle>Upload bot bytecode</DialogTitle>
           <DialogDescription>
             Upload a file containing the bytecode of your bot. The bytecode you
             upload must be compiled to RISCV and be a UCI compliant chess engine
@@ -282,4 +284,5 @@ const FileUploadBlock = styled("div", {
                 onChange={changeHandler}
               />
             </FileUploadBlock>
-          </Fieldset> */}
+          </Fieldset> */
+}

@@ -81,8 +81,8 @@ export default function Navbar() {
   console.log("connected", isActive);
   console.log("account", account);
 
-  const notifications = useNotifications()
-  console.log("notifications", notifications)
+  const notifications = useNotifications();
+  console.log("notifications", notifications);
 
   useEffect(() => {
     void metaMask.connectEagerly();

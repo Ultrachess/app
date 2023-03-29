@@ -49,7 +49,6 @@ const ModalCreateGame = () => {
 
   const addAction = useActionCreator();
 
-
   const cancelButtonRef = useRef(null);
 
   const handleCreate = useCallback(async () => {
@@ -138,13 +137,10 @@ const ModalCreateGame = () => {
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center">
-                      <div
-
-                        className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 "
-                      >
-                       {token ? token.symbol : "..."}
-                       </div>
+                      <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
+                        {token ? token.symbol : "..."}
                       </div>
+                    </div>
                   </div>
 
                   <div className="mt-5">

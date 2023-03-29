@@ -22,77 +22,99 @@ export default () => {
     useAllActiveAndCompletedGamesSeparated();
 
   return (
-    <div className="body">
-      <div className="header">
-        <div>
-          <Text
-            superBold
-            black
-            size={"max"}
-            css={{ textAlign: "center", marginBottom: "10px" }}
-          >
-            Ultrachess.org
-          </Text>
-          <Text bold blue>
-            pre-alpha
-          </Text>
-        </div>
-        <LeftSlot>
-          <Label>Introduction</Label>
-        </LeftSlot>
-        <Text
-          black
-          size={2}
-          css={{
-            width: "100%",
-            textAlign: "left",
-            lineHeight: "30px",
-            marginBottom: "-80px",
-          }}
-        >
-          Immutable chess backed by blockchain technology. Play with more than
-          just your elo at stake. Start by fetching some testnet stable coins
-          from the faucet within our discord (https://discord.gg/7WtTFvR3dN)
-          Once recieved, deposit them into the portal and they will be ready for
-          use within Ultrachess. Check out our github for more technical
-          information. Also check out our discord for more information and to
-          chat with the team. Lorem ipsum dolor sit amet, consectetur adipiscing
-          elit lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem
-          ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor
-          sit amet, consectetur adipiscing elit.
-          <br />
-          <br />
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum
-          dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit
-          amet, consectetur adipiscing elit lorem ipsum dolor sit amet,
-          consectetur adipiscing elit.
-          <br />
-          <br />
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum
-          dolor sit amet, consectetur adipiscing elit.
-        </Text>
-      </div>
+    <div class="min-h-full">
+      <header aria-label="Page Header" class="mt-10 bg-white-50">
+        <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+          <div class="sm:flex sm:items-center sm:justify-between">
+            <div class="text-left sm:text-left">
+              <h1 class="text-5xl items-center font-bold text-gray-900 sm:text-6xl">
+                Ultrachess.org
+              </h1>
+              <p class="mt-1 text-xl text-gray-500">
+                Immutable and provably fair. On-chain AI chess arena
+              </p>
+            </div>
 
-      <div className="content">
-        <div className="contentHolder">
-          <div>
+            <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+              <button
+                class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-500 transition hover:text-gray-700 focus:outline-none focus:ring"
+                type="button"
+              >
+                <span class="text-sm font-medium"> Deposit Funds </span>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="ml-1.5 h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </button>
+
+              <button
+                class="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+                type="button"
+              >
+                Create Game
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main>
+        <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+          <div class="my-5">
             <div className="contentHeader">
-              <Label>Active games</Label>
+              <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">
+                Active games
+              </h1>
               <RightSlot>
                 <Spacer x={1} />
               </RightSlot>
             </div>
             <GameList games={activeGames} />
           </div>
-          <div>
+          <div className="my-5">
             <div className="contentHeader">
-              <Label>Finished games</Label>
+              <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">
+                Finished games
+              </h1>
             </div>
             <GameList games={completedGames} />
           </div>
         </div>
-      </div>
+      </main>
     </div>
+
+    // <div className="body">
+
+    //   <div className="content">
+    //     <div className="contentHolder">
+    //       <div>
+    //         <div className="contentHeader">
+    //           <Label>Active games</Label>
+    //           <RightSlot>
+    //             <Spacer x={1} />
+    //           </RightSlot>
+    //         </div>
+    //         <GameList games={activeGames} />
+    //       </div>
+    //       <div>
+    //         <div className="contentHeader">
+    //           <Label>Finished games</Label>
+    //         </div>
+    //         <GameList games={completedGames} />
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
   );
 };
 

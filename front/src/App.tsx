@@ -6,7 +6,6 @@
  * See the file LICENSE for more information.
  */
 
-import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { useEffect, useState } from "react";
@@ -41,6 +40,7 @@ function App() {
       <GameStateUpdater />
       <Notifications />
       <Navbar />
+
       <Routes>
         <Route path="/" element={<Body />} />
         <Route path="about" element={<Body />} />

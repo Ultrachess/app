@@ -92,13 +92,15 @@ export default ({
       );
       break;
     case TransactionType.CREATE_GAME_INPUT:
-      console.log("action.transactionInfo: ",action.transactionInfo)
+      console.log("action.transactionInfo: ", action.transactionInfo);
       header = <>Creating game</>;
       description = (
         <>
-          Creating game with wager amount of <AssetDisplay balance={action.transactionInfo.wagerAmount.toString()} tokenAddress={action.transactionInfo.wagerTokenAddress} />
-          
-
+          Creating game with wager amount of{" "}
+          <AssetDisplay
+            balance={action.transactionInfo.wagerAmount.toString()}
+            tokenAddress={action.transactionInfo.wagerTokenAddress}
+          />
         </>
       );
       resultLambda = (result) => {
@@ -162,15 +164,11 @@ export default ({
         toAdd += <>name: {action.transactionInfo.name}</>;
       if (action.transactionInfo.autoBattleEnabled)
         toAdd += (
-          <>
-            autoBattleEnabled: {action.transactionInfo.autoBattleEnabled}
-          </>
+          <>autoBattleEnabled: {action.transactionInfo.autoBattleEnabled}</>
         );
       if (action.transactionInfo.autoMaxWagerAmount)
         toAdd += (
-          <>
-            autoMaxWagerAmount: {action.transactionInfo.autoMaxWagerAmount}
-          </>
+          <>autoMaxWagerAmount: {action.transactionInfo.autoMaxWagerAmount}</>
         );
       description = <>Updating bot characteristics</>;
       break;
@@ -261,15 +259,12 @@ export default ({
             {header}{" "}
           </strong>
 
-          <p className="mt-1 text-sm text-gray-700">
-            {description}
-          </p>
+          <p className="mt-1 text-sm text-gray-700">{description}</p>
           <p className="block mt-1 text-sm text-green-700">
             {resultLambda ? resultLambda(action.result) : null}
           </p>
-          
         </div>
-        
+
         {shouldShowExit ? (
           <button className="text-gray-500 transition hover:text-gray-600">
             <span className="sr-only">Dismiss popup</span>
@@ -294,12 +289,12 @@ export default ({
         )}
       </div>
       <div className="absolute inset-x-0 bottom-0">
-          <ProgressBar
-            className="w-full"
-            now={statusToProgress[action?.status ?? ActionStates.ERROR]}
-            color={statusToColor[action?.status ?? ActionStates.ERROR]}
-          />
-        </div>
+        <ProgressBar
+          className="w-full"
+          now={statusToProgress[action?.status ?? ActionStates.ERROR]}
+          color={statusToColor[action?.status ?? ActionStates.ERROR]}
+        />
+      </div>
     </div>
     // <>
     //   <div style={{ display: "inline-block" }}>

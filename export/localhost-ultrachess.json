@@ -10844,7 +10844,7 @@
       ]
     },
     "AUSDTVariableDebt": {
-      "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+      "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
       "abi": [
         {
           "anonymous": false,

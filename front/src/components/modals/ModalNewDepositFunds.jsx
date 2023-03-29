@@ -40,9 +40,11 @@ export default () => {
 
   const addAction = useActionCreator();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const showDepositModal = useAppSelector((state) => state.ui.modal.showDepositModal)
+  const showDepositModal = useAppSelector(
+    (state) => state.ui.modal.showDepositModal
+  );
 
   const cancelButtonRef = useRef(null);
 
@@ -108,7 +110,9 @@ export default () => {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Deposit funds to the Cartesi Portal. They will appear in the upper right corner once your deposit is successful
+                          Deposit funds to the Cartesi Portal. They will appear
+                          in the upper right corner once your deposit is
+                          successful
                         </p>
                       </div>
                     </div>
@@ -132,16 +136,11 @@ export default () => {
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center">
-                      <div
-
-                        className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 "
-                      >
-                       {token ? token.symbol : "..."}
-                       </div>
+                      <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
+                        {token ? token.symbol : "..."}
                       </div>
+                    </div>
                   </div>
-
-                  
                 </div>
 
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
