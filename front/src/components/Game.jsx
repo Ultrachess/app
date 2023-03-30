@@ -528,7 +528,6 @@ export default () => {
     return index;
   };
 
-
   const chessBoardWidth = useMemo(() => {
     if (width < 768) {
       console.log("window", width * 0.9);
@@ -619,7 +618,7 @@ export default () => {
             }
           />
         )}
-  
+
         <div className="flex w-full justify-between items-center">
           <Address isMedium value={bottomAddress} />
           <div className="flex gap-2 items-center">
@@ -658,62 +657,60 @@ export default () => {
       </div>
       <div className="flex flex-col gap-4 w-full md:w-auto mt-8 md:mt-0">
         <div className="flex gap-4 w-full md:w-auto flex-row items-center justify-end">
-        {bettingIsClosed ? (
-          <Text blue>Wagering Closed</Text>
-        ) : (
-          <Text faded>Wagering closes on {bettingClosesAt}</Text>
-        )}
-        {canBet && (
-          <ModalPlaceBet
-            gameId={gameId}
-            triggerElement={
-              <Button blue disabled={closed}>
-                Place Bet
-              </Button>
+          {bettingIsClosed ? (
+            <Text blue>Wagering Closed</Text>
+          ) : (
+            <Text faded>Wagering closes on {bettingClosesAt}</Text>
+          )}
+          {canBet && (
+            <ModalPlaceBet
+              gameId={gameId}
+              triggerElement={
+                <Button blue disabled={closed}>
+                  Place Bet
+                </Button>
+              }
+            />
+          )}
+          <Button onClick={tweetGame}>Share</Button>
+        </div>
+        <div className="flex justify-start pb-5">
+          {completed && !draw && (
+            <Text green>
+              Game completed.{" "}
+              <span style={{ textDecoration: "underline" }}>
+                {truncateAddress(winningId)}
+              </span>{" "}
+              won {wagerAmount} CTSI
+            </Text>
+          )}
+          {draw && <Text faded>Game completed. Draw</Text>}
+        </div>
+        {game.bettingDuration > 0 && (
+          <GameWagersView
+            winningId={winningId}
+            wagers={
+              game.wagering == {} || game.wagering == undefined
+                ? placeHolderGameWagers
+                : game.wagering
             }
+            now={now}
+            p1={topAddress}
+            p2={bottomAddress}
           />
         )}
-        <Button onClick={tweetGame}>Share</Button>
-      </div>
-      <div className="flex justify-start pb-5">
-        {completed && !draw && (
-          <Text green>
-            Game completed.{" "}
-            <span style={{ textDecoration: "underline" }}>
-              {truncateAddress(winningId)}
-            </span>{" "}
-            won {wagerAmount} CTSI
-          </Text>
-        )}
-        {draw && <Text faded>Game completed. Draw</Text>}
-      </div>
-      {game.bettingDuration > 0 && (
-        <GameWagersView
-          winningId={winningId}
-          wagers={
-            game.wagering == {} || game.wagering == undefined
-              ? placeHolderGameWagers
-              : game.wagering
-          }
-          now={now}
-          p1={topAddress}
-          p2={bottomAddress}
+        <GameMovesView
+          pgn={gameState?.pgn ? gameState?.pgn() : ""}
+          firstMove={firstMove}
+          lastMove={lastMove}
+          nextMove={nextMove}
+          prevMove={prevMove}
+          autoPlay={autoPlay}
+          jumpTo={jumpTo}
+          highlightIndex={currentMoveIndex}
+          botMoveStats={game.botMoveStats}
         />
-      )}
-      <GameMovesView
-        pgn={gameState?.pgn ? gameState?.pgn() : ""}
-        firstMove={firstMove}
-        lastMove={lastMove}
-        nextMove={nextMove}
-        prevMove={prevMove}
-        autoPlay={autoPlay}
-        jumpTo={jumpTo}
-        highlightIndex={currentMoveIndex}
-        botMoveStats={game.botMoveStats}
-      />
+      </div>
     </div>
-  </div>
-);
-
-  
+  );
 };

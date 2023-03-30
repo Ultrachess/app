@@ -90,7 +90,7 @@ export default () => {
             </div>
             <GameList games={activeGames} />
           </div>
-          <div className="my-5">
+          <div className="my-20">
             <div className="contentHeader">
               <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">
                 Finished games

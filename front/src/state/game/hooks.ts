@@ -232,7 +232,7 @@ export function useThrone(): Throne {
 }
 
 //get all bot profiles
-export function useAllBots(): BotProfile[] {
+export function useAllBots(showRank:boolean = false): BotProfile[] {
   const games: { [gameIds: string]: Game } = useAppSelector(
     (state) => state.game.games
   );
@@ -261,7 +261,7 @@ export function useAllBots(): BotProfile[] {
       id: val.id,
       name: val.name,
       avatar: val.id,
-      elo: elos[val.id],
+      elo: elos[val.id] ?? 0,
       nationality: "US",
       games: Object?.values(games).filter((game) => {
         return game.players.includes(val.id);
@@ -278,12 +278,18 @@ export function useAllBots(): BotProfile[] {
       }),
       timestamp: val.timestamp,
     };
-  });
+  }).sort((a,b) => {
+    if(showRank) {
+      return b.elo - a.elo;
+    }
+    return 0;
+  }
+  );
 }
 
 //get all user profiles
 //similar to useAllBots
-export function useAllUsers(): UserProfile[] {
+export function useAllUsers(showRank:boolean=false): UserProfile[] {
   const games: { [gameIds: string]: Game } = useAppSelector(
     (state) => state.game.games
   );
@@ -304,12 +310,12 @@ export function useAllUsers(): UserProfile[] {
       id: val,
       name: "",
       avatar: "",
-      elo: elos[val],
+      elo: elos[val] ?? 0,
       nationality: "US",
       games: Object?.values(games).filter((game) => {
         return game.players.includes(val.toLowerCase());
       }),
-      balances: balances[val],
+      balances: balances[val] ?? [],
       bots: Object?.values(bots).filter((bot) => {
         //console.log("abc account ", bot.owner, id)
         return bot.owner.toLowerCase() == val.toLowerCase();
@@ -318,8 +324,15 @@ export function useAllUsers(): UserProfile[] {
         return challenge.recipient.toLowerCase() == val.toLowerCase();
       }),
     };
-  });
+  }).sort((a,b) => {
+    if(showRank) {
+      return b.elo - a.elo;
+    }
+    return 0;
+  }
+  );
 }
+
 
 export function useAllProfiles(rankByElo = false): BaseProfile[] {
   const bots = useAllBots();
@@ -511,13 +524,11 @@ export function useAllTournaments(): Tournament[] {
   return Object?.values(tournaments);
 }
 
+//use useAllBots()
 export function useUserBots(id: string): BotProfile[] {
-  const bots: { [botIds: string]: BotProfile } = useAppSelector(
-    (state) => state.game.bots
-  );
-  if (!bots) return [];
-  return Object?.values(bots).filter((bot) => {
-    //console.log("abc account ", bot.owner, id)
+  const allBots = useAllBots();
+  if (!allBots) return [];
+  return allBots.filter((bot) => {
     return bot.owner.toLowerCase() == id.toLowerCase();
   });
 }

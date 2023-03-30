@@ -49,6 +49,9 @@ export default () => {
     balances.length > 0
       ? balances[0].token
       : STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
+
+      console.log("active games: ", games)
+      console.log("past games: ", pastGames)
   return (
     <div className="body">
       <Flex
@@ -139,7 +142,7 @@ export default () => {
             <Text size={"4"} bold black>
               Owned bots
             </Text>
-            <BotListView bots={bots} />
+            <BotListView bots={bots ?? []} />
           </Flex>
         </Flex>
       </Flex>
