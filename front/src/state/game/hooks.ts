@@ -545,6 +545,7 @@ export function useOwner(id: string): string | undefined {
 export function useUserBotIds(id: string): string[] {
   const bots = useAppSelector((state) => state.game.bots);
   if (!bots) return [];
+  if (!id) return [];
   return Object.keys(bots).filter((botId) => {
     const bot = bots[botId];
     //console.log("new abc account ", bot.owner, id)
