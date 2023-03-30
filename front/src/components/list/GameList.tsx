@@ -74,13 +74,13 @@ export default ({ games }: { games: Game[] }) => {
     return [
       <AddressGame id={id} />,
       <>
-          {completed
-            ? "completed"
-            : bettingIsClosed
-            ? isWaitingForAPlayer
-              ? "waiting on player"
-              : "playing"
-            : "betting phase. Closes in" + (current - bettingClosesAt)}
+        {completed
+          ? "completed"
+          : bettingIsClosed
+          ? isWaitingForAPlayer
+            ? "waiting on player"
+            : "playing"
+          : "betting phase. Closes in" + (current - bettingClosesAt)}
       </>,
       <Address hoverable={true} value={game.players[0]} />,
       p2 ? (
@@ -91,11 +91,8 @@ export default ({ games }: { games: Game[] }) => {
         <Link to={`/game/${id}`}>Join</Link>
       ),
       <AssetDisplay balance={wager} tokenAddress={token} />,
-      <span>
-        {canBet ? "Bet" : "Betting Closed"}
-      </span>,
+      <span>{canBet ? "Bet" : "Betting Closed"}</span>,
       <DateDisplay current={time * 1000} />,
-      
     ];
   });
 

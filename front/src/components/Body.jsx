@@ -16,10 +16,13 @@ import { styled } from "@stitches/react";
 import { violet } from "@radix-ui/colors";
 import ModalNewCreateGame from "./modals/ModalNewCreateGame";
 import { useAllActiveAndCompletedGamesSeparated } from "../state/game/hooks";
+import { setDepositModal, setCreateGameModal } from "../state/ui/reducer";
+import { useDispatch } from "react-redux";
 
 export default () => {
   const { activeGames, completedGames } =
     useAllActiveAndCompletedGamesSeparated();
+  const dispatch = useDispatch();
 
   return (
     <div class="min-h-full">
@@ -39,6 +42,9 @@ export default () => {
               <button
                 class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-500 transition hover:text-gray-700 focus:outline-none focus:ring"
                 type="button"
+                onClick={() => {
+                  dispatch(setDepositModal(true));
+                }}
               >
                 <span class="text-sm font-medium"> Deposit Funds </span>
 
@@ -61,6 +67,9 @@ export default () => {
               <button
                 class="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
                 type="button"
+                onClick={() => {
+                  dispatch(setCreateGameModal(true));
+                }}
               >
                 Create Game
               </button>

@@ -223,7 +223,7 @@ export const gameSlice = createSlice({
               var board = new Chess();
               var game = getGameByPlayer(state.games, sender);
               if (game) {
-                board.load_pgn(game.pgn);
+                board.loadPgn(game.pgn);
                 board.move(value, { sloppy: true });
                 board.set_comment(timestamp.toString());
                 game.pgn = board.pgn();
@@ -248,7 +248,7 @@ export const gameSlice = createSlice({
       var { sender, value } = action.payload;
       var board = new Chess();
       var game = getGameByPlayer(state.games, sender);
-      board.load_pgn(game.pgn);
+      board.loadPgn(game.pgn);
       board.move(value);
       game.pgn = board.pgn();
       updateGame({

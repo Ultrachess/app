@@ -36,7 +36,7 @@ export default (props) => {
     jumpTo,
   } = props;
   var chess = new Chess();
-  chess.loadPgn(pgn);
+  //chess.loadPgn(pgn);
   var moves = chess.history();
   const getMoves = () => {
     let content = [];

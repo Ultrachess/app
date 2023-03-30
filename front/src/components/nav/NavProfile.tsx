@@ -91,7 +91,7 @@ const NavProfile = ({
               fill="currentColor"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                 clip-rule="evenodd"
               />
@@ -139,7 +139,7 @@ const NavProfile = ({
     </Menu>
   ) : (
     <a
-      className="inline-block rounded border border-indigo-600 bg-indigo-600 ml-4 px-6 py-2 text-sm font-medium hover:text-black focus:outline-none text-white"
+      className="inline-block rounded border border-blue-600 bg-blue-600 ml-4 px-6 py-2 text-sm font-medium hover:text-black focus:outline-none text-white"
       onClick={() => {
         metaMask.activate();
       }}
