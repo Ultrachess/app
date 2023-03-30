@@ -92,6 +92,14 @@ export default () => {
   const actionsNotProcessed = useActionsNotProcessed();
   const { width } = useWindowSize();
 
+  const isTurn = useMemo(() => {
+    if (gameState.turn() === "w") {
+      return gameSide === side.WHITE;
+    } else {
+      return gameSide === side.BLACK;
+    }
+  }, [gameState, gameSide]);
+
   //checkt if gameState is an instance of Chess
   const isChess = gameState instanceof Chess;
   if (isChess) {
@@ -365,6 +373,8 @@ export default () => {
     //if(move.promotion) moveUci += move.promotion
     //dispatch(sendMove(moveUci))
     if (!minPlayers) return false;
+    if (!isTurn) return false;
+
     addAction({
       type: TransactionType.SEND_MOVE_INPUT,
       roomId: gameId,
@@ -593,7 +603,6 @@ export default () => {
           isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
           customBoardStyle={{
             borderRadius: "4px",
-            boxShadow: "0 2px 7px rgba(0, 0, 0, 0.5)",
           }}
           customSquareStyles={{
             ...moveSquares,
