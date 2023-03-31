@@ -51,6 +51,8 @@ export default () => {
     account?.toLowerCase() === id?.toLowerCase() ||
     account?.toLowerCase() === name?.toLowerCase();
 
+  console.log("is you: ", isYou);
+
   const balance = balances.length > 0 ? balances[0].amount : 0;
   const tokenAddress =
     balances.length > 0

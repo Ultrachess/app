@@ -544,6 +544,7 @@ export function useOwner(id: string): string | undefined {
   const bots: { [botIds: string]: BotProfile } = useAppSelector(
     (state) => state.game.bots
   );
+  console.log("useOwner", bots);
   if (!bots) return undefined;
   return bots[id] ? bots[id].owner : undefined;
 }
