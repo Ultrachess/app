@@ -7,14 +7,13 @@
  */
 
 import React, { useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
 import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import {
   ChevronDownIcon,
   Cross2Icon,
   ChevronUpIcon,
-  CheckIcon,
+  
 } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { Text } from "../ui/Text";
@@ -27,8 +26,23 @@ import { TransactionType } from "../../common/types";
 import Address from "../Address";
 import * as Select from "@radix-ui/react-select";
 import { ethers } from "ethers";
+import { setCreateChallengeModal } from "../../state/ui/reducer";
+import { useAppSelector } from "../../state/hooks";
+import { useSelector, useDispatch } from "react-redux";
+import { Fragment, useRef } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { setCreateGameModal } from "../../state/ui/reducer";
+import { Listbox } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { truncateAddress } from "../../ether/utils";
 
-export default ({ triggerElement, playerId }) => {
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
+
+export default () => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState(0);
   const [challenger, setChallenger] = useState(account);
@@ -39,12 +53,18 @@ export default ({ triggerElement, playerId }) => {
   const bots = useUserBotIds(account);
   const potentialChallengers = [...bots, account];
 
+  const cancelButtonRef = useRef(null);
+
+
   const addAction = useActionCreator();
+
+  const showCreateChallengeModal = useAppSelector((state) => state.ui.modal.showCreateChallengeModal)
+  const createChallengeModalAddress = useAppSelector((state) => state.ui.modal.createChallengeModalAddress)
 
   const handleChallenge = async () => {
     const [approvalActionId, wait] = await addAction({
       type: TransactionType.CREATE_CHALLENGE,
-      recipient: playerId,
+      recipient: createChallengeModalAddress,
       challenger: challenger,
       wager: ethers.utils.parseUnits(amount.toString()),
       token: token.address,
@@ -52,75 +72,178 @@ export default ({ triggerElement, playerId }) => {
     await wait;
   };
 
+  const dispatch = useDispatch()
+
   //console.log("123", playerId)
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
-      <Dialog.Portal>
-        <DialogOverlay />
-        <DialogContent>
-          <DialogTitle>
-            Challenge <Address value={playerId} />
-          </DialogTitle>
-          <DialogDescription>
-            This will send a challenge request <Address value={challenger} /> to
-            challenge <Address value={playerId} /> and if accepted, a game will
-            be created. This game will have a wager of {amount}
-          </DialogDescription>
+    <Transition.Root show={showCreateChallengeModal} as={Fragment}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={setCreateGameModal}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-          <Fieldset>
-            <Label>Wager amount</Label>
-            <RightSlot>
-              <Text>Remaining funds on loss:</Text>
-              <AssetDisplay
-                tokenAddress={token?.address}
-                balance={balance - amount}
-              />
-            </RightSlot>
-          </Fieldset>
-          <Fieldset>
-            <Label>Challenger</Label>
-            <SelectMain
-              options={potentialChallengers}
-              value={challenger}
-              onValueChange={setChallenger}
-            />
-          </Fieldset>
-          <Fieldset>
-            <Input
-              id="amount"
-              value={amount}
-              defaultValue={0}
-              onChange={(event) => {
-                setAmount(event.target.value);
-              }}
-            ></Input>
-            <RightSlot onClick={() => setAmount(max)}>MAX</RightSlot>
-          </Fieldset>
-          <Fieldset>
-            <SliderMain
-              value={amount}
-              max={100}
-              onChangeFunction={([value]) => {
-                setAmount(value);
-              }}
-            />
-          </Fieldset>
-          <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
-            <Dialog.Close asChild>
-              <Button variant="green" onClick={handleChallenge}>
-                Challenge
-              </Button>
-            </Dialog.Close>
-          </Flex>
-          <Dialog.Close asChild>
-            <IconButton aria-label="Close">
-              <Cross2Icon />
-            </IconButton>
-          </Dialog.Close>
-        </DialogContent>
-      </Dialog.Portal>
-    </Dialog.Root>
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-base font-semibold leading-6 text-gray-900"
+                      >
+                        Create challenge for{" "} <Address value={createChallengeModalAddress} />
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          Create match by specifying the amount of tokens you
+                          want to bet and the duration of the betting period.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-5">
+                    <label
+                      for="UserEmail"
+                      class="block text-xs font-medium text-gray-700"
+                    >
+                      Wager amount
+                    </label>
+
+                    <input
+                      id="amount"
+                      value={amount}
+                      defaultValue={0}
+                      onChange={(event) => {
+                        //console.log("event.value", event.target.value)
+                        setAmount(event.target.value);
+                      }}
+                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center">
+                      <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
+                        {token ? token.symbol : "..."}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Listbox value={challenger} onChange={setChallenger}>
+      {({ open }) => (
+        <div className="mt-5">
+        <label
+                      for="UserEmail"
+                      class="block text-xs font-medium text-gray-700"
+                    >
+                      Select challenger. <span className="text-xs text-gray-400">You can challenge yourself or one of your bots.</span>
+                    </label>
+          <div className="relative mt-2">
+            <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+              <span className="block truncate">{truncateAddress(challenger)}</span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </span>
+            </Listbox.Button>
+
+            <Transition
+              show={open}
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {potentialChallengers.map((challenger, index) => (
+                  <Listbox.Option
+                    key={index}
+                    className={({ active }) =>
+                      classNames(
+                        active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                        'relative cursor-default select-none py-2 pl-3 pr-9'
+                      )
+                    }
+                    value={challenger}
+                  >
+                    {({ selected, active }) => (
+                      <>
+                        <div className="flex items-center">
+                          {truncateAddress(challenger)}
+                        </div>
+
+                        {selected ? (
+                          <span
+                            className={classNames(
+                              active ? 'text-white' : 'text-indigo-600',
+                              'absolute inset-y-0 right-0 flex items-center pr-4'
+                            )}
+                          >
+                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </div>
+      )}
+    </Listbox>
+
+                  
+                </div>
+
+                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    onClick={() => {
+                      handleChallenge();
+                      dispatch(setCreateChallengeModal(false));
+                    }}
+                  >
+                    Challenge
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    onClick={() => {
+                      dispatch(setCreateChallengeModal(false));
+                    }}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
   );
 };
 

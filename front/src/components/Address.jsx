@@ -55,15 +55,15 @@ export default ({
   //It renders the ProfileImage component with a bigger size
   //in a flex column
   const bigAddressView = (
-    <Link to={(isBot ? "/bot/" : "/users/") + value}>
-      <Flex css={{ flexDirection: "column", alignItems: "center" }}>
-        <ProfileImage address={value} diameter={200} />
-        <Text size={5} bold>
+    <>
+      <Flex css={{ flexDirection: "row", alignItems: "end", gap: 5 }}>
+        <ProfileImage address={value} diameter={90} />
+        <div>
           {truncateAddress(value)}
           {isBot && <FaRobot />}
-        </Text>
+        </div>
       </Flex>
-    </Link>
+    </>
   );
 
   const component = isImageBig

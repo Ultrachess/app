@@ -8,19 +8,19 @@
 
 import "./Address.css";
 
+import { Spacer } from "@nextui-org/react";
 import { violet } from "@radix-ui/colors";
 import { StitchesLogoIcon } from "@radix-ui/react-icons";
 import { styled } from "@stitches/react";
 
 import { useAllBots, useAllProfiles, useAllUsers } from "../state/game/hooks";
+import { useAppDispatch } from "../state/hooks";
+import BotList from "./list/BotList";
 import ProfileList from "./list/ProfileList";
 import ModalCreateBot from "./modals/ModalCreateBot";
 import Button from "./ui/Button";
 import Separator from "./ui/Separator";
 import { Text } from "./ui/Text";
-import { Spacer } from "@nextui-org/react";
-import { useAppDispatch } from "../state/hooks";
-import BotList from "./list/BotList";
 
 export default () => {
   const bots: any = useAllBots(true);
@@ -91,7 +91,6 @@ export default () => {
             </div>
             <ProfileList profiles={humans} showRank={true} />
           </div>
-
         </div>
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
           <div className="">
@@ -105,7 +104,6 @@ export default () => {
             </div>
             <BotList bots={bots} showRank={true} />
           </div>
-
         </div>
       </main>
     </div>

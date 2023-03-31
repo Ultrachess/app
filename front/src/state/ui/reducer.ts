@@ -11,6 +11,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface UiState {
   modal: {
     showCreateChallengeModal: boolean;
+    createChallengeModalAddress: string;
     showDeployBotModal: boolean;
     showCreateGameModal: boolean;
     showCreateOfferModal: boolean;
@@ -24,6 +25,7 @@ export interface UiState {
 export const initialState: UiState = {
   modal: {
     showCreateChallengeModal: false,
+    createChallengeModalAddress: "0x",
     showDeployBotModal: false,
     showCreateGameModal: false,
     showCreateOfferModal: false,
@@ -40,6 +42,10 @@ const uiSlice = createSlice({
   reducers: {
     setCreateChallengeModal(state, { payload }: { payload: boolean }) {
       state.modal.showCreateChallengeModal = payload;
+    },
+    setCreateChallengeModalAddress(state, { payload }: { payload: string }) {
+      console.log("setCreateChallengeModalAddress", payload);
+      state.modal.createChallengeModalAddress = payload;
     },
     setDeployBotModal(state, { payload }: { payload: boolean }) {
       state.modal.showDeployBotModal = payload;
@@ -74,5 +80,6 @@ export const {
   setDepositModal,
   setManageBotsModal,
   setPlaceBetModal,
+  setCreateChallengeModalAddress,
 } = uiSlice.actions;
 export default uiSlice.reducer;

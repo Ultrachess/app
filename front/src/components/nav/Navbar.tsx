@@ -18,6 +18,7 @@ import {
   NotificationType,
 } from "../../state/notifications/notifications";
 import ModalCreateBot from "../modals/ModalCreateBot";
+import ModalCreateChallenge from "../modals/ModalCreateChallenge";
 import ModalNewCreateGame from "../modals/ModalNewCreateGame";
 import ModalNewDepositFunds from "../modals/ModalNewDepositFunds";
 import NotificationBell from "./NavBell";
@@ -190,6 +191,7 @@ export default function Navbar() {
           <ModalNewCreateGame />
           <ModalNewDepositFunds />
           <ModalCreateBot />
+          <ModalCreateChallenge />
         </>
       )}
     </Disclosure>

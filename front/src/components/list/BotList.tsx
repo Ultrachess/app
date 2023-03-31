@@ -28,7 +28,13 @@ const columns = [
   "created",
 ];
 
-export default ({ bots, showRank = false }: { bots: BotProfile[], showRank:boolean }) => {
+export default ({
+  bots,
+  showRank = false,
+}: {
+  bots: BotProfile[];
+  showRank: boolean;
+}) => {
   const botItems = bots.map((bot, index) => {
     const {
       id,
@@ -65,5 +71,7 @@ export default ({ bots, showRank = false }: { bots: BotProfile[], showRank:boole
     ].slice(showRank ? 0 : 1);
   });
 
-  return <Table columns={showRank ? columns : columns.slice(1)} rows={botItems} />;
+  return (
+    <Table columns={showRank ? columns : columns.slice(1)} rows={botItems} />
+  );
 };

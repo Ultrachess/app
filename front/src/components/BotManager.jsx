@@ -91,7 +91,6 @@ export default () => {
             </div>
             <BotList bots={bots} showRank={false} />
           </div>
-          
         </div>
       </main>
     </div>
