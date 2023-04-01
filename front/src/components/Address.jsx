@@ -58,10 +58,10 @@ export default ({
     <>
       <Flex css={{ flexDirection: "row", alignItems: "end", gap: 5 }}>
         <ProfileImage address={value} diameter={90} />
-        <div>
-          {truncateAddress(value)}
+        <Flex css={{flexDirection:"row", gap:4}}>
+          <div>{truncateAddress(value)}</div>
           {isBot && <FaRobot />}
-        </div>
+        </Flex>
       </Flex>
     </>
   );

@@ -13,6 +13,16 @@ import HandleOffer from "./HandleOffer";
 import Date from "./ui/Date";
 import List from "./ui/List";
 import { Text } from "./ui/Text";
+import Table from "./ui/Table";
+
+const columns = [
+  "id",
+  "botId",
+  "owner",
+  "sender",
+  "price",
+  "timestamp",
+]
 
 const BotOfferListItem = ({
   account,
@@ -52,12 +62,28 @@ export default ({
   account: string;
   offers: BotOffer[];
 }) => {
-  const botItems =
+  const offerItems =
     offers.length > 0
-      ? offers.map((offer) => (
-          <BotOfferListItem account={account} offer={offer} />
-        ))
-      : [<Text key={0}>No offers found</Text>];
+      ? offers.map((offer) => {
+        const { offerId, botId, owner, sender, price, token, timestamp } = offer;
+        const isOwner = account?.toLowerCase() === owner?.toLowerCase();
+        return [
+          offerId,
+          <Address value={botId} hoverable={true} />,
+          <Address value={owner} hoverable={true} />,
+          <Address value={sender} hoverable={true} />,
+          <AssetDisplay balance={price / 10 ** 18} tokenAddress={token} />,
+          <Date current={timestamp} />,
+          isOwner ? (
+            <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
+              <HandleOffer offerId={offerId} accept={true} /> or{" "}
+              <HandleOffer offerId={offerId} accept={false} />
+            </div>
+          ) : ""
+        ]
+      })
+      : [];
 
-  return <List items={botItems} />;
+
+  return <Table columns={columns} rows={offerItems} />;
 };
