@@ -9,9 +9,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface UiState {
-  notification:{
-    hasNew: boolean
-  },
+  notification: {
+    hasNew: boolean;
+  };
   modal: {
     showCreateChallengeModal: boolean;
     createChallengeModalAddress: string;
@@ -28,8 +28,8 @@ export interface UiState {
 }
 
 export const initialState: UiState = {
-  notification:{
-    hasNew: false
+  notification: {
+    hasNew: false,
   },
   modal: {
     showCreateChallengeModal: false,
@@ -51,7 +51,7 @@ const uiSlice = createSlice({
   initialState,
   reducers: {
     setHasNewNotification(state, { payload }: { payload: boolean }) {
-      state.notification.hasNew = payload
+      state.notification.hasNew = payload;
     },
     setCreateChallengeModal(state, { payload }: { payload: boolean }) {
       state.modal.showCreateChallengeModal = payload;

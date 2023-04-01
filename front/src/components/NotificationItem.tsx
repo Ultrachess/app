@@ -312,7 +312,10 @@ export default ({
   return type == NotificationType.ACTION ? (
     <ActionItem actionId={notification["actionId"]} />
   ) : (
-    <div role="alert" className={shouldShowExit ? "p-4": "border-bottom border-gray-100 p-4"}>
+    <div
+      role="alert"
+      className={shouldShowExit ? "p-4" : "border-bottom border-gray-100 p-4"}
+    >
       <div className="flex items-start gap-4">
         <span className="text-green-600">
           <svg
@@ -332,14 +335,9 @@ export default ({
         </span>
 
         <div className="flex-1">
-          <strong className="block font-medium text-gray-900">
-            {" "}
-            {title}
-          </strong>
+          <strong className="block font-medium text-gray-900"> {title}</strong>
 
-          <p className="mt-1 text-sm text-gray-700">
-            {description}
-          </p>
+          <p className="mt-1 text-sm text-gray-700">{description}</p>
         </div>
         {shouldShowExit ? (
           <button className="text-gray-500 transition hover:text-gray-600">

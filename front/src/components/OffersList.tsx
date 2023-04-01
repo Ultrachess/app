@@ -12,17 +12,10 @@ import AssetDisplay from "./AssetDisplay";
 import HandleOffer from "./HandleOffer";
 import Date from "./ui/Date";
 import List from "./ui/List";
-import { Text } from "./ui/Text";
 import Table from "./ui/Table";
+import { Text } from "./ui/Text";
 
-const columns = [
-  "id",
-  "botId",
-  "owner",
-  "sender",
-  "price",
-  "timestamp",
-]
+const columns = ["id", "botId", "owner", "sender", "price", "timestamp"];
 
 const BotOfferListItem = ({
   account,
@@ -65,25 +58,27 @@ export default ({
   const offerItems =
     offers.length > 0
       ? offers.map((offer) => {
-        const { offerId, botId, owner, sender, price, token, timestamp } = offer;
-        const isOwner = account?.toLowerCase() === owner?.toLowerCase();
-        return [
-          offerId,
-          <Address value={botId} hoverable={true} />,
-          <Address value={owner} hoverable={true} />,
-          <Address value={sender} hoverable={true} />,
-          <AssetDisplay balance={price / 10 ** 18} tokenAddress={token} />,
-          <Date current={timestamp} />,
-          isOwner ? (
-            <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
-              <HandleOffer offerId={offerId} accept={true} /> or{" "}
-              <HandleOffer offerId={offerId} accept={false} />
-            </div>
-          ) : ""
-        ]
-      })
+          const { offerId, botId, owner, sender, price, token, timestamp } =
+            offer;
+          const isOwner = account?.toLowerCase() === owner?.toLowerCase();
+          return [
+            offerId,
+            <Address value={botId} hoverable={true} />,
+            <Address value={owner} hoverable={true} />,
+            <Address value={sender} hoverable={true} />,
+            <AssetDisplay balance={price / 10 ** 18} tokenAddress={token} />,
+            <Date current={timestamp} />,
+            isOwner ? (
+              <div style={{ display: "flex", gap: "10px", alignItems: "end" }}>
+                <HandleOffer offerId={offerId} accept={true} /> or{" "}
+                <HandleOffer offerId={offerId} accept={false} />
+              </div>
+            ) : (
+              ""
+            ),
+          ];
+        })
       : [];
-
 
   return <Table columns={columns} rows={offerItems} />;
 };

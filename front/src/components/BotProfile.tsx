@@ -15,7 +15,13 @@ import { useParams } from "react-router-dom";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { truncateAddress } from "../ether/utils";
 import { useAllBots } from "../state/game/hooks";
-import { setCreateChallengeModal, setCreateChallengeModalAddress, setCreateOfferAddress, setCreateOfferAmount, setCreateOfferModal } from "../state/ui/reducer";
+import {
+  setCreateChallengeModal,
+  setCreateChallengeModalAddress,
+  setCreateOfferAddress,
+  setCreateOfferAmount,
+  setCreateOfferModal,
+} from "../state/ui/reducer";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
 import ChallengesList from "./list/ChallengesList";
@@ -101,7 +107,7 @@ export default () => {
                 <Address value={id} isImageBig={true} />
               </h1>
               <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
-              <div className="mt-2 flex items-center text-sm text-gray-500">
+                <div className="mt-2 flex items-center text-sm text-gray-500">
                   <svg
                     className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                     viewBox="0 0 20 20"
@@ -115,10 +121,9 @@ export default () => {
                     />
                     <path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" />
                   </svg>
-                   {isOwner ? "You" : truncateAddress(owner)
-                   } &nbsp; Owner
+                  {isOwner ? "You" : truncateAddress(owner)} &nbsp; Owner
                 </div>
-              <div className="mt-2 flex items-center text-sm text-gray-500">
+                <div className="mt-2 flex items-center text-sm text-gray-500">
                   <svg
                     className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                     viewBox="0 0 20 20"
@@ -163,7 +168,7 @@ export default () => {
                       clip-rule="evenodd"
                     />
                   </svg>
-                  {autoBattleEnabled ? 'Enabled' : 'Disabled'}
+                  {autoBattleEnabled ? "Enabled" : "Disabled"}
                   &nbsp; Auto Battle
                 </div>
                 <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -180,7 +185,10 @@ export default () => {
                       clip-rule="evenodd"
                     />
                   </svg>
-                    <AssetDisplay balance={autoMaxWagerAmount} tokenAddress={token} />
+                  <AssetDisplay
+                    balance={autoMaxWagerAmount}
+                    tokenAddress={token}
+                  />
                   &nbsp; Auto Wager Amount
                 </div>
                 <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -206,8 +214,7 @@ export default () => {
                 <button
                   className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-500 transition hover:text-gray-700 focus:outline-none focus:ring"
                   type="button"
-                  onClick={() => {
-                  }}
+                  onClick={() => {}}
                 >
                   <span className="text-sm font-medium"> Manage Bot </span>
 
@@ -228,14 +235,11 @@ export default () => {
                 </button>
               )}
 
-              
-
               {isOwner && (
                 <button
                   className="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
                   type="button"
-                  onClick={() => {
-                  }}
+                  onClick={() => {}}
                 >
                   Sell
                 </button>
@@ -246,9 +250,9 @@ export default () => {
                   className="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
                   type="button"
                   onClick={() => {
-                    dispatch(setCreateOfferAddress(botId))
-                    dispatch(setCreateOfferAmount(0))
-                    dispatch(setCreateOfferModal(true))
+                    dispatch(setCreateOfferAddress(botId));
+                    dispatch(setCreateOfferAmount(0));
+                    dispatch(setCreateOfferModal(true));
                   }}
                 >
                   Offer
@@ -260,7 +264,7 @@ export default () => {
       </header>
       <main>
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <div className="my-5">
+          <div className="my-5">
             <div className="contentHeader">
               <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">
                 Offers

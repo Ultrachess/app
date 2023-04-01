@@ -22,16 +22,17 @@ const NavBell = ({
   newNotification = true,
   notifications = [],
 }: NavBellProps) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   return (
     connected && (
       <Menu as="div" className="">
         <div>
           <Menu.Button
-            onClick={()=>{
-              dispatch(setHasNewNotification(false))
+            onClick={() => {
+              dispatch(setHasNewNotification(false));
             }}
-           className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+            className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+          >
             {newNotification && (
               <span className="absolute h-2.5 w-2.5 bg-blue-500 rounded-full transform translate-x-1/2 -translate-y-1/2" />
             )}

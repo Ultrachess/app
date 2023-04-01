@@ -55,7 +55,7 @@ import { delay } from "./updater";
 import { ActionResolverObject } from "./updater";
 
 export function useNationality(id): string {
-  return "USA";
+  return "USA 🇺🇸";
 }
 
 export function useAvatarImgUrl(id): string {

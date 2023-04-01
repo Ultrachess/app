@@ -23,7 +23,7 @@ export default ({
   isImageBig = false,
   showBotName = false,
 }) => {
-  const isBot = useMemo(() => (value ? !value.includes("0x") : false));
+  const isBot = useMemo(() => (value ? !value.includes("0x") : false), []);
   const addressView = (
     <Link to={(isBot ? "/bot/" : "/users/") + value}>
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
@@ -58,7 +58,7 @@ export default ({
     <>
       <Flex css={{ flexDirection: "row", alignItems: "end", gap: 5 }}>
         <ProfileImage address={value} diameter={90} />
-        <Flex css={{flexDirection:"row", gap:4}}>
+        <Flex css={{ flexDirection: "row", gap: 4 }}>
           <div>{truncateAddress(value)}</div>
           {isBot && <FaRobot />}
         </Flex>

@@ -69,7 +69,9 @@ export default function Navbar() {
   const balance = useBalance(account, STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   console.log("token abc", token);
-  const hasNewNotification = useAppSelector(state => state.ui.notification.hasNew)
+  const hasNewNotification = useAppSelector(
+    (state) => state.ui.notification.hasNew
+  );
 
   const dispatch = useDispatch();
   const location = useLocation();

@@ -6,27 +6,31 @@
  * See the file LICENSE for more information.
  */
 
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { blackA, green, mauve, violet } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { keyframes, styled } from "@stitches/react";
 import { useWeb3React } from "@web3-react/core";
 import { useState } from "react";
+import { Fragment, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 import { TransactionType } from "../../common/types";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useTokenFromList, useTokenPortalBalance } from "../../hooks/token";
 import { useActionCreator } from "../../state/game/hooks";
+import { useAppSelector } from "../../state/hooks";
+import {
+  setCreateChallengeModalAddress,
+  setCreateGameModal,
+  setCreateOfferModal,
+  setDepositModal,
+} from "../../state/ui/reducer";
 import Address from "../Address";
 import AssetDisplay from "../AssetDisplay";
 import { Text } from "../ui/Text";
-import { Dialog, Transition } from "@headlessui/react";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { setCreateChallengeModalAddress, setCreateGameModal, setCreateOfferModal, setDepositModal } from "../../state/ui/reducer";
-import { useAppSelector } from "../../state/hooks";
-import { Fragment, useRef } from "react";
-
 
 export default () => {
   const { chainId, account } = useWeb3React();
@@ -39,9 +43,15 @@ export default () => {
   const dispatch = useDispatch();
   const cancelButtonRef = useRef(null);
 
-  const showCreateOfferModal = useAppSelector(state => state.ui.modal.showCreateOfferModal)
-  const createOfferModalAddress = useAppSelector(state => state.ui.modal.createOfferAddress)
-  const createOfferModalAmount = useAppSelector(state => state.ui.modal.createOfferAmount)
+  const showCreateOfferModal = useAppSelector(
+    (state) => state.ui.modal.showCreateOfferModal
+  );
+  const createOfferModalAddress = useAppSelector(
+    (state) => state.ui.modal.createOfferAddress
+  );
+  const createOfferModalAmount = useAppSelector(
+    (state) => state.ui.modal.createOfferAmount
+  );
 
   //const bot: BotProfile = useProfile(botId)
 
@@ -100,15 +110,17 @@ export default () => {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Set your offer price for this bot. If you offer higher than or equal to its listing price, ownership will automatically be transferred to you. Otherwise, you will have to wait for your offer to be accepted by the owner.
+                          Set your offer price for this bot. If you offer higher
+                          than or equal to its listing price, ownership will
+                          automatically be transferred to you. Otherwise, you
+                          will have to wait for your offer to be accepted by the
+                          owner.
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="mt-5">
-                    <label
-                      className="block text-xs font-medium text-gray-700"
-                    >
+                    <label className="block text-xs font-medium text-gray-700">
                       Amount
                     </label>
 
@@ -118,7 +130,9 @@ export default () => {
                       defaultValue={0}
                       onChange={(event) => {
                         //console.log("event.value", event.target.value)
-                        dispatch(setCreateChallengeModalAddress(event.target.value));
+                        dispatch(
+                          setCreateChallengeModalAddress(event.target.value)
+                        );
                       }}
                       className="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />
@@ -242,7 +256,6 @@ const DialogOverlay = styled(Dialog.Overlay, {
   inset: 0,
   animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
 });
-
 
 const DialogTitle = styled(Dialog.Title, {
   margin: 0,

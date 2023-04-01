@@ -42,6 +42,8 @@ import { Text } from "./ui/Text";
 import ModalPlaceBet from "./modals/ModalPlaceBet";
 import { useWeb3React } from "@web3-react/core";
 import { useWindowSize } from "../hooks/ui";
+import GameProfile from "./GameProfile";
+
 
 const placerHolderBotMoveStat = {
   depth: 0,
@@ -542,174 +544,182 @@ export default () => {
   }, [width]);
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen lg:gap-10">
-      <div className="flex flex-col gap-2 w-full md:w-4/5 lg:w-2/5 px-6 lg:px-0">
-        <div className="flex w-full justify-between items-center">
-          <Address isMedium value={topAddress} />
-          <div className="flex gap-2">
-            {completed && (
-              <Text size={"4"} faded>
-                +{topAddressScore}
-              </Text>
-            )}
-            {topAddressWon ? (
-              <AssetDisplay
-                green={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : topAddressLost ? (
-              <AssetDisplay
-                red={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : draw ? (
-              <AssetDisplay
-                grey={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : (
-              <AssetDisplay
-                blue={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            )}
-          </div>
-        </div>
-        {topAddressIsBot && (
-          <BotMoveStatisticsView
-            botMoveStat={
-              game?.botMoveStats[
-                getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)
-              ] ?? placerHolderBotMoveStat
-            }
-          />
-        )}
-        <Chessboard
-          className="w-full"
-          position={currentFen}
-          onPieceDrop={onDrop}
-          arePremovesAllowed={false}
-          boardOrientation={gameSide}
-          onMouseOverSquare={onMouseOverSquare}
-          onMouseOutSquare={onMouseOutSquare}
-          onSquareClick={onSquareClick}
-          onSquareRightClick={onSquareRightClick}
-          onPieceClick={onPieceClick}
-          isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
-          customBoardStyle={{
-            borderRadius: "4px",
-          }}
-          customSquareStyles={{
-            ...moveSquares,
-            ...optionSquares,
-            ...rightClickedSquares,
-          }}
-        />
-        {bottomAddressIsBot && (
-          <BotMoveStatisticsView
-            botMoveStat={
-              game.botMoveStats[
-                getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)
-              ]
-            }
-          />
-        )}
-
-        <div className="flex w-full justify-between items-center">
-          <Address isMedium value={bottomAddress} />
-          <div className="flex gap-2 items-center">
-            {completed && (
-              <Text size={"4"} faded>
-                +{bottomAddressScore}
-              </Text>
-            )}
-            {bottomAddressWon ? (
-              <AssetDisplay
-                green={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : bottomAddressLost ? (
-              <AssetDisplay
-                red={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : draw ? (
-              <AssetDisplay
-                grey={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : (
-              <AssetDisplay
-                blue={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
+    <div class="min-h-full">
+      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row items-center justify-space-evenly min-h-screen">
+          <div className="flex flex-col gap-2 w-full md:w-4/5 lg:w-1/2 px-6 lg:px-0">
+            <div className="flex w-full justify-between items-center">
+              <GameProfile address={topAddress} />
+              <div className="flex gap-2">
+                {completed && (
+                  <Text size={"4"} faded>
+                    +{topAddressScore}
+                  </Text>
+                )}
+                {topAddressWon ? (
+                  <AssetDisplay
+                    green={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : topAddressLost ? (
+                  <AssetDisplay
+                    red={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : draw ? (
+                  <AssetDisplay
+                    grey={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : (
+                  <AssetDisplay
+                    blue={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                )}
+              </div>
+            </div>
+            {topAddressIsBot && (
+              <BotMoveStatisticsView
+                botMoveStat={
+                  game?.botMoveStats[
+                    getLastProcessedBotMoveIndexFromCurrentIndex(
+                      currentMoveIndex
+                    )
+                  ] ?? placerHolderBotMoveStat
+                }
               />
             )}
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col gap-4 w-full md:w-auto mt-8 md:mt-0">
-        <div className="flex gap-4 w-full md:w-auto flex-row items-center justify-end">
-          {bettingIsClosed ? (
-            <Text blue>Wagering Closed</Text>
-          ) : (
-            <Text faded>Wagering closes on {bettingClosesAt}</Text>
-          )}
-          {canBet && (
-            <ModalPlaceBet
-              gameId={gameId}
-              triggerElement={
-                <Button blue disabled={closed}>
-                  Place Bet
-                </Button>
-              }
+            <Chessboard
+              className="w-full"
+              position={currentFen}
+              onPieceDrop={onDrop}
+              arePremovesAllowed={false}
+              boardOrientation={gameSide}
+              onMouseOverSquare={onMouseOverSquare}
+              onMouseOutSquare={onMouseOutSquare}
+              onSquareClick={onSquareClick}
+              onSquareRightClick={onSquareRightClick}
+              onPieceClick={onPieceClick}
+              isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
+              customBoardStyle={{
+                borderRadius: "4px",
+              }}
+              customSquareStyles={{
+                ...moveSquares,
+                ...optionSquares,
+                ...rightClickedSquares,
+              }}
             />
-          )}
-          <Button onClick={tweetGame}>Share</Button>
+            {bottomAddressIsBot && (
+              <BotMoveStatisticsView
+                botMoveStat={
+                  game.botMoveStats[
+                    getLastProcessedBotMoveIndexFromCurrentIndex(
+                      currentMoveIndex
+                    )
+                  ]
+                }
+              />
+            )}
+
+            <div className="flex w-full justify-between items-center">
+              <GameProfile address={bottomAddress} />
+              <div className="flex gap-2 items-center">
+                {completed && (
+                  <Text size={"4"} faded>
+                    +{bottomAddressScore}
+                  </Text>
+                )}
+                {bottomAddressWon ? (
+                  <AssetDisplay
+                    green={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : bottomAddressLost ? (
+                  <AssetDisplay
+                    red={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : draw ? (
+                  <AssetDisplay
+                    grey={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : (
+                  <AssetDisplay
+                    blue={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 w-full md:w-auto mt-8 md:mt-0">
+            <div className="flex gap-4 w-full md:w-auto flex-row items-center justify-end">
+              {bettingIsClosed ? (
+                <Text blue>Wagering Closed</Text>
+              ) : (
+                <Text faded>Wagering closes on {bettingClosesAt}</Text>
+              )}
+              {canBet && (
+                <ModalPlaceBet
+                  gameId={gameId}
+                  triggerElement={
+                    <Button blue disabled={closed}>
+                      Place Bet
+                    </Button>
+                  }
+                />
+              )}
+              <Button onClick={tweetGame}>Share</Button>
+            </div>
+            <div className="flex justify-start pb-5">
+              {completed && !draw && (
+                <Text green>
+                  Game completed.{" "}
+                  <span style={{ textDecoration: "underline" }}>
+                    {truncateAddress(winningId)}
+                  </span>{" "}
+                  won {wagerAmount} CTSI
+                </Text>
+              )}
+              {draw && <Text faded>Game completed. Draw</Text>}
+            </div>
+            {game.bettingDuration > 0 && (
+              <GameWagersView
+                winningId={winningId}
+                wagers={
+                  game.wagering == {} || game.wagering == undefined
+                    ? placeHolderGameWagers
+                    : game.wagering
+                }
+                now={now}
+                p1={topAddress}
+                p2={bottomAddress}
+              />
+            )}
+            <GameMovesView
+              pgn={gameState?.pgn ? gameState?.pgn() : ""}
+              firstMove={firstMove}
+              lastMove={lastMove}
+              nextMove={nextMove}
+              prevMove={prevMove}
+              autoPlay={autoPlay}
+              jumpTo={jumpTo}
+              highlightIndex={currentMoveIndex}
+              botMoveStats={game.botMoveStats}
+            />
+          </div>
         </div>
-        <div className="flex justify-start pb-5">
-          {completed && !draw && (
-            <Text green>
-              Game completed.{" "}
-              <span style={{ textDecoration: "underline" }}>
-                {truncateAddress(winningId)}
-              </span>{" "}
-              won {wagerAmount} CTSI
-            </Text>
-          )}
-          {draw && <Text faded>Game completed. Draw</Text>}
-        </div>
-        {game.bettingDuration > 0 && (
-          <GameWagersView
-            winningId={winningId}
-            wagers={
-              game.wagering == {} || game.wagering == undefined
-                ? placeHolderGameWagers
-                : game.wagering
-            }
-            now={now}
-            p1={topAddress}
-            p2={bottomAddress}
-          />
-        )}
-        <GameMovesView
-          pgn={gameState?.pgn ? gameState?.pgn() : ""}
-          firstMove={firstMove}
-          lastMove={lastMove}
-          nextMove={nextMove}
-          prevMove={prevMove}
-          autoPlay={autoPlay}
-          jumpTo={jumpTo}
-          highlightIndex={currentMoveIndex}
-          botMoveStats={game.botMoveStats}
-        />
       </div>
     </div>
   );
