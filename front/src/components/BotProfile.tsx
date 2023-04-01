@@ -245,6 +245,36 @@ export default () => {
                 </button>
               )}
 
+{!isOwner && (
+                <button
+                  className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-500 transition hover:text-gray-700 focus:outline-none focus:ring"
+                  type="button"
+                  onClick={() => {
+                    dispatch(setCreateChallengeModalAddress(id));
+                    dispatch(setCreateChallengeModal(true));
+                  }}
+                >
+                  <span className="text-sm font-medium"> Challenge </span>
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="ml-1.5 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </button>
+              )}
+
+              
+
               {!isOwner && (
                 <button
                   className="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
