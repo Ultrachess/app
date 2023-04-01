@@ -312,7 +312,7 @@ export default ({
   return type == NotificationType.ACTION ? (
     <ActionItem actionId={notification["actionId"]} />
   ) : (
-    <div role="alert" className=" border-bottom border-gray-100 p-4">
+    <div role="alert" className={shouldShowExit ? "p-4": "border-bottom border-gray-100 p-4"}>
       <div className="flex items-start gap-4">
         <span className="text-green-600">
           <svg
@@ -334,11 +334,11 @@ export default ({
         <div className="flex-1">
           <strong className="block font-medium text-gray-900">
             {" "}
-            Changes saved{" "}
+            {title}
           </strong>
 
           <p className="mt-1 text-sm text-gray-700">
-            Your product changes have been saved.
+            {description}
           </p>
         </div>
         {shouldShowExit ? (
