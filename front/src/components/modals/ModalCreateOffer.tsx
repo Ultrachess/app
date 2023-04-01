@@ -7,12 +7,12 @@
  */
 
 import { blackA, green, mauve, violet } from "@radix-ui/colors";
-import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { keyframes, styled } from "@stitches/react";
 import { useWeb3React } from "@web3-react/core";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { TransactionType } from "../../common/types";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
@@ -21,8 +21,14 @@ import { useActionCreator } from "../../state/game/hooks";
 import Address from "../Address";
 import AssetDisplay from "../AssetDisplay";
 import { Text } from "../ui/Text";
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { setCreateChallengeModalAddress, setCreateGameModal, setCreateOfferModal, setDepositModal } from "../../state/ui/reducer";
+import { useAppSelector } from "../../state/hooks";
+import { Fragment, useRef } from "react";
 
-export default ({ triggerElement, botId }) => {
+
+export default () => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState<any>(0);
   const max = 100;
@@ -30,6 +36,12 @@ export default ({ triggerElement, botId }) => {
   const portalBalance = useTokenPortalBalance(token, account);
 
   const addAction = useActionCreator();
+  const dispatch = useDispatch();
+  const cancelButtonRef = useRef(null);
+
+  const showCreateOfferModal = useAppSelector(state => state.ui.modal.showCreateOfferModal)
+  const createOfferModalAddress = useAppSelector(state => state.ui.modal.createOfferAddress)
+  const createOfferModalAmount = useAppSelector(state => state.ui.modal.createOfferAmount)
 
   //const bot: BotProfile = useProfile(botId)
 
@@ -37,80 +49,180 @@ export default ({ triggerElement, botId }) => {
     console.log("amountMain", amount);
     const [approvalActionId, wait] = await addAction({
       type: TransactionType.CREATE_OFFER,
-      botId: botId,
+      botId: createOfferModalAddress,
       tokenAddress: token.address,
-      price: amount * 10 ** token.decimals,
+      price: createOfferModalAmount * 10 ** token.decimals,
     });
     await wait;
   };
 
   //console.log("amount", amount)
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
-      <Dialog.Portal>
-        <DialogOverlay />
-        <DialogContent>
-          <DialogTitle>
-            Create offer for <Address value={botId} />
-          </DialogTitle>
-          <DialogDescription>
-            You are offering to buy this bot for{" "}
-            <AssetDisplay
-              tokenAddress={token?.address}
-              balance={amount}
-              isL2={true}
-            />
-            . Make sure to deposit funds to the portal first if you have not
-            done so.
-          </DialogDescription>
+    <Transition.Root show={showCreateOfferModal} as={Fragment}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={setDepositModal}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-          <Fieldset>
-            <Label>Price</Label>
-            <RightSlot>
-              <Text>Balance if offer accepted:</Text>
-              <AssetDisplay
-                tokenAddress={token?.address}
-                balance={portalBalance + amount}
-                isL2={true}
-              />
-            </RightSlot>
-          </Fieldset>
-          <Fieldset>
-            <Input
-              id="amount"
-              value={amount}
-              defaultValue={0}
-              onChange={(event) => {
-                setAmount(event.target.value);
-              }}
-            ></Input>
-            <RightSlot onClick={() => setAmount(max)}>MAX</RightSlot>
-          </Fieldset>
-          <Fieldset>
-            <SliderMain
-              value={amount}
-              max={100}
-              onChangeFunction={([value]) => {
-                setAmount(value);
-              }}
-            />
-          </Fieldset>
-          <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
-            <Dialog.Close asChild>
-              <Button variant="green" onClick={handleOffer}>
-                Make offer
-              </Button>
-            </Dialog.Close>
-          </Flex>
-          <Dialog.Close asChild>
-            <IconButton aria-label="Close">
-              <Cross2Icon />
-            </IconButton>
-          </Dialog.Close>
-        </DialogContent>
-      </Dialog.Portal>
-    </Dialog.Root>
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-base font-semibold leading-6 text-gray-900"
+                      >
+                        Offer to buy <Address value={createOfferModalAddress} />
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          Set your offer price for this bot. If you offer higher than or equal to its listing price, ownership will automatically be transferred to you. Otherwise, you will have to wait for your offer to be accepted by the owner.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-5">
+                    <label
+                      className="block text-xs font-medium text-gray-700"
+                    >
+                      Amount
+                    </label>
+
+                    <input
+                      id="amount"
+                      value={amount}
+                      defaultValue={0}
+                      onChange={(event) => {
+                        //console.log("event.value", event.target.value)
+                        dispatch(setCreateChallengeModalAddress(event.target.value));
+                      }}
+                      className="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center">
+                      <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
+                        {token ? token.symbol : "..."}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    onClick={() => {
+                      handleOffer();
+                      dispatch(setCreateOfferModal(false));
+                    }}
+                  >
+                    Offer
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    onClick={() => {
+                      dispatch(setCreateOfferModal(false));
+                    }}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+    // <Dialog.Root>
+    //   <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
+    //   <Dialog.Portal>
+    //     <DialogOverlay />
+    //     <DialogContent>
+    //       <DialogTitle>
+    //         Create offer for <Address value={botId} />
+    //       </DialogTitle>
+    //       <DialogDescription>
+    //         You are offering to buy this bot for{" "}
+    //         <AssetDisplay
+    //           tokenAddress={token?.address}
+    //           balance={amount}
+    //           isL2={true}
+    //         />
+    //         . Make sure to deposit funds to the portal first if you have not
+    //         done so.
+    //       </DialogDescription>
+
+    //       <Fieldset>
+    //         <Label>Price</Label>
+    //         <RightSlot>
+    //           <Text>Balance if offer accepted:</Text>
+    //           <AssetDisplay
+    //             tokenAddress={token?.address}
+    //             balance={portalBalance + amount}
+    //             isL2={true}
+    //           />
+    //         </RightSlot>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <Input
+    //           id="amount"
+    //           value={amount}
+    //           defaultValue={0}
+    //           onChange={(event) => {
+    //             setAmount(event.target.value);
+    //           }}
+    //         ></Input>
+    //         <RightSlot onClick={() => setAmount(max)}>MAX</RightSlot>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <SliderMain
+    //           value={amount}
+    //           max={100}
+    //           onChangeFunction={([value]) => {
+    //             setAmount(value);
+    //           }}
+    //         />
+    //       </Fieldset>
+    //       <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
+    //         <Dialog.Close asChild>
+    //           <Button variant="green" onClick={handleOffer}>
+    //             Make offer
+    //           </Button>
+    //         </Dialog.Close>
+    //       </Flex>
+    //       <Dialog.Close asChild>
+    //         <IconButton aria-label="Close">
+    //           <Cross2Icon />
+    //         </IconButton>
+    //       </Dialog.Close>
+    //     </DialogContent>
+    //   </Dialog.Portal>
+    // </Dialog.Root>
   );
 };
 
@@ -131,22 +243,6 @@ const DialogOverlay = styled(Dialog.Overlay, {
   animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
 });
 
-const DialogContent = styled(Dialog.Content, {
-  backgroundColor: "white",
-  borderRadius: 6,
-  boxShadow:
-    "hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px",
-  position: "fixed",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "90vw",
-  maxWidth: "450px",
-  maxHeight: "85vh",
-  padding: 25,
-  animation: `${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
-  "&:focus": { outline: "none" },
-});
 
 const DialogTitle = styled(Dialog.Title, {
   margin: 0,

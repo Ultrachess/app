@@ -261,7 +261,7 @@ export default ({
 
           <p className="mt-1 text-sm text-gray-700">{description}</p>
           <p className="block mt-1 text-sm text-green-700">
-            {resultLambda ? resultLambda(action.result) : null}
+            {/* {resultLambda ? resultLambda(action.result) : null} */}
           </p>
         </div>
 

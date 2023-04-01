@@ -35,7 +35,7 @@ export default () => {
                 Bots
               </h1>
               <p class="mt-1 text-xl text-gray-500">
-                Check out the bots that are currently deployed on the Ultrachess
+                Check out the bots that are currently deployed on Ultrachess
               </p>
             </div>
 

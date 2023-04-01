@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { truncateAddress } from "../ether/utils";
 import { useAllBots } from "../state/game/hooks";
+import { setCreateChallengeModal, setCreateChallengeModalAddress, setCreateOfferAddress, setCreateOfferAmount, setCreateOfferModal } from "../state/ui/reducer";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
 import ChallengesList from "./list/ChallengesList";
@@ -245,6 +246,9 @@ export default () => {
                   className="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
                   type="button"
                   onClick={() => {
+                    dispatch(setCreateOfferAddress(botId))
+                    dispatch(setCreateOfferAmount(0))
+                    dispatch(setCreateOfferModal(true))
                   }}
                 >
                   Offer

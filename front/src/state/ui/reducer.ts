@@ -14,6 +14,8 @@ export interface UiState {
     createChallengeModalAddress: string;
     showDeployBotModal: boolean;
     showCreateGameModal: boolean;
+    createOfferAddress: string;
+    createOfferAmount: number;
     showCreateOfferModal: boolean;
     showCreateTournamentModal: boolean;
     showDepositModal: boolean;
@@ -28,6 +30,8 @@ export const initialState: UiState = {
     createChallengeModalAddress: "0x",
     showDeployBotModal: false,
     showCreateGameModal: false,
+    createOfferAddress: "0x",
+    createOfferAmount: 0,
     showCreateOfferModal: false,
     showCreateTournamentModal: false,
     showDepositModal: false,
@@ -52,6 +56,12 @@ const uiSlice = createSlice({
     },
     setCreateGameModal(state, { payload }: { payload: boolean }) {
       state.modal.showCreateGameModal = payload;
+    },
+    setCreateOfferAddress(state, { payload }: { payload: string }) {
+      state.modal.createOfferAddress = payload;
+    },
+    setCreateOfferAmount(state, { payload }: { payload: number }) {
+      state.modal.createOfferAmount = payload;
     },
     setCreateOfferModal(state, { payload }: { payload: boolean }) {
       state.modal.showCreateOfferModal = payload;
@@ -81,5 +91,7 @@ export const {
   setManageBotsModal,
   setPlaceBetModal,
   setCreateChallengeModalAddress,
+  setCreateOfferAddress,
+  setCreateOfferAmount,
 } = uiSlice.actions;
 export default uiSlice.reducer;
