@@ -2,11 +2,13 @@ import { Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
 import React, { Fragment } from "react";
+import { useDispatch } from "react-redux";
 
 import {
   Notification,
   NotificationType,
 } from "../../state/notifications/notifications";
+import { setHasNewNotification } from "../../state/ui/reducer";
 import NotificationItem from "../NotificationItem";
 
 interface NavBellProps {
@@ -20,13 +22,18 @@ const NavBell = ({
   newNotification = true,
   notifications = [],
 }: NavBellProps) => {
+  const dispatch = useDispatch()
   return (
     connected && (
       <Menu as="div" className="">
         <div>
-          <Menu.Button className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+          <Menu.Button
+            onClick={()=>{
+              dispatch(setHasNewNotification(false))
+            }}
+           className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
             {newNotification && (
-              <span className="absolute top-3.5 right-1.5 h-2.5 w-2.5 bg-blue-500 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+              <span className="absolute h-2.5 w-2.5 bg-blue-500 rounded-full transform translate-x-1/2 -translate-y-1/2" />
             )}
             <span className="sr-only">View notifications</span>
             <BellIcon className="h-6 w-6" aria-hidden="true" />

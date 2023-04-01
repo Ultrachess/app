@@ -12,6 +12,7 @@ import { hooks, metaMask } from "../../ether/connectors/metaMask";
 import { truncateAddress } from "../../ether/utils";
 import { useToken } from "../../hooks/token";
 import { useBalance } from "../../state/game/hooks";
+import { useAppSelector } from "../../state/hooks";
 import { useNotifications } from "../../state/notifications/hooks";
 import {
   Notification,
@@ -68,6 +69,7 @@ export default function Navbar() {
   const balance = useBalance(account, STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   console.log("token abc", token);
+  const hasNewNotification = useAppSelector(state => state.ui.notification.hasNew)
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -153,7 +155,7 @@ export default function Navbar() {
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <NotificationBell
                   connected={isActive}
-                  newNotification={false}
+                  newNotification={hasNewNotification}
                   notifications={notifications}
                 />
                 <NavNetwork connected={isActive} chainId={chainId} />

@@ -29,6 +29,7 @@ import {
 } from "../notifications/notifications";
 import { addNotification } from "../notifications/reducer";
 import { useTransactionAdder } from "../transactions/hooks";
+import { setHasNewNotification } from "../ui/reducer";
 import { createPromise } from "./gameHelper";
 import { DAPP_ADDRESSES } from "./gameSlice";
 import {
@@ -651,6 +652,7 @@ export function useAddAction(): (action: Action) => number {
         actionId: action.id,
       };
       dispatch(addNotification(notification));
+      dispatch(setHasNewNotification(true));
 
       //console.log(action.id.toString())
       return action.id;

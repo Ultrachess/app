@@ -9,6 +9,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface UiState {
+  notification:{
+    hasNew: boolean
+  },
   modal: {
     showCreateChallengeModal: boolean;
     createChallengeModalAddress: string;
@@ -25,6 +28,9 @@ export interface UiState {
 }
 
 export const initialState: UiState = {
+  notification:{
+    hasNew: false
+  },
   modal: {
     showCreateChallengeModal: false,
     createChallengeModalAddress: "0x",
@@ -44,6 +50,9 @@ const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
+    setHasNewNotification(state, { payload }: { payload: boolean }) {
+      state.notification.hasNew = payload
+    },
     setCreateChallengeModal(state, { payload }: { payload: boolean }) {
       state.modal.showCreateChallengeModal = payload;
     },
@@ -93,5 +102,6 @@ export const {
   setCreateChallengeModalAddress,
   setCreateOfferAddress,
   setCreateOfferAmount,
+  setHasNewNotification,
 } = uiSlice.actions;
 export default uiSlice.reducer;
