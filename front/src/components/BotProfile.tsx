@@ -21,6 +21,11 @@ import {
   setCreateOfferAddress,
   setCreateOfferAmount,
   setCreateOfferModal,
+  setManageBotAddress,
+  setManageBotAutoBattleEnabled,
+  setManageBotAutoMaxWagerAmount,
+  setManageBotModal,
+  setManageBotName,
 } from "../state/ui/reducer";
 import Address from "./Address";
 import AssetDisplay from "./AssetDisplay";
@@ -214,7 +219,19 @@ export default () => {
                 <button
                   className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-500 transition hover:text-gray-700 focus:outline-none focus:ring"
                   type="button"
-                  onClick={() => {}}
+                  onClick={() => {
+                    dispatch(setManageBotAddress(id));
+                    dispatch(setManageBotName(name));
+                    dispatch(
+                      setManageBotAutoMaxWagerAmount(autoMaxWagerAmount)
+                    );
+                    dispatch(
+                      setManageBotAutoBattleEnabled(
+                        autoBattleEnabled ? "True" : "False"
+                      )
+                    );
+                    dispatch(setManageBotModal(true));
+                  }}
                 >
                   <span className="text-sm font-medium"> Manage Bot </span>
 
@@ -245,7 +262,7 @@ export default () => {
                 </button>
               )}
 
-{!isOwner && (
+              {!isOwner && (
                 <button
                   className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-gray-500 transition hover:text-gray-700 focus:outline-none focus:ring"
                   type="button"
@@ -272,8 +289,6 @@ export default () => {
                   </svg>
                 </button>
               )}
-
-              
 
               {!isOwner && (
                 <button

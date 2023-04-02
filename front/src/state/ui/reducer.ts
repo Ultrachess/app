@@ -24,7 +24,7 @@ export interface UiState {
     showDepositModal: boolean;
     manageBotAddress: string;
     manageBotName: string;
-    manageBotAutoBattleEnabled: boolean;
+    manageBotAutoBattleEnabled: string;
     manageBotAutoMaxWagerAmount: number;
     showManageBotModal: boolean;
     showPlaceBetModal: boolean;
@@ -48,7 +48,7 @@ export const initialState: UiState = {
     showManageBotModal: false,
     manageBotAddress: "0x",
     manageBotName: "",
-    manageBotAutoBattleEnabled: false,
+    manageBotAutoBattleEnabled: "False",
     manageBotAutoMaxWagerAmount: 0,
     showPlaceBetModal: false,
   },
@@ -98,7 +98,7 @@ const uiSlice = createSlice({
     setManageBotName(state, { payload }: { payload: string }) {
       state.modal.manageBotName = payload;
     },
-    setManageBotAutoBattleEnabled(state, { payload }: { payload: boolean }) {
+    setManageBotAutoBattleEnabled(state, { payload }: { payload: string }) {
       state.modal.manageBotAutoBattleEnabled = payload;
     },
     setManageBotAutoMaxWagerAmount(state, { payload }: { payload: number }) {

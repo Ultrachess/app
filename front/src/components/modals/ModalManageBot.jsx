@@ -7,7 +7,6 @@
  */
 
 import React, { useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
 import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import {
@@ -31,11 +30,19 @@ import { useNavigate } from "react-router-dom";
 import * as Select from "@radix-ui/react-select";
 
 import { useDispatch } from "react-redux";
-import { setManageBotModal, setManageBotName, setManageBotAutoBattleEnabled, setManageBotAutoMaxWagerAmount, setManageBotAddress } from "../../state/ui/reducer";
+import {
+  setManageBotModal,
+  setManageBotName,
+  setManageBotAutoBattleEnabled,
+  setManageBotAutoMaxWagerAmount,
+  setManageBotAddress,
+} from "../../state/ui/reducer";
 import { useAppSelector } from "../../state/hooks";
-setManageBotAddress
+import { Fragment, useRef } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import Address from "../Address";
 
-export default ({ triggerElement, botId }) => {
+export default () => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState(0);
   const navigate = useNavigate();
@@ -49,25 +56,32 @@ export default ({ triggerElement, botId }) => {
   const [autoBattleEnabled, setAutoBattleEnabled] = useState("False");
 
   const addAction = useActionCreator();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const cancelButtonRef = useRef(null);
 
-  const showManageBotModal = useAppSelector(state => state.ui.modal.showManageBotModal)
-  const manageBotAddress = useAppSelector(state => state.ui.modal.manageBotAddress)
-  const manageBotName = useAppSelector(state => state.ui.modal.manageBotName)
-  const manageBotAutoBattleEnabled = useAppSelector(state => state.ui.modal.manageBotAutoBattleEnabled)
-  const manageBotAutoMaxWagerAmount = useAppSelector(state => state.ui.modal.manageBotAutoMaxWagerAmount)
+  const showManageBotModal = useAppSelector(
+    (state) => state.ui.modal.showManageBotModal
+  );
+  const manageBotAddress = useAppSelector(
+    (state) => state.ui.modal.manageBotAddress
+  );
+  const manageBotName = useAppSelector((state) => state.ui.modal.manageBotName);
+  const manageBotAutoBattleEnabled = useAppSelector(
+    (state) => state.ui.modal.manageBotAutoBattleEnabled
+  );
+  const manageBotAutoMaxWagerAmount = useAppSelector(
+    (state) => state.ui.modal.manageBotAutoMaxWagerAmount
+  );
 
-
-  const handleCreate = async () => {
+  const handleManage = async () => {
     //console.log("amount", amount)
     const tx = {
       type: TransactionType.MANAGER_BOT_INPUT,
-      name,
-      autoMaxWagerAmount: autoMaxWagerAmount * 10 ** token.decimals,
+      name: manageBotName,
+      autoMaxWagerAmount: manageBotAutoMaxWagerAmount * 10 ** token.decimals,
       autoWagerTokenAddress: token ? token.address : "",
-      autoBattleEnabled: autoBattleEnabled === "True",
-      botId,
+      autoBattleEnabled: manageBotAutoBattleEnabled === "True",
+      botId: manageBotAddress,
     };
     //console.log("tx", tx)
     const [approvalActionId, wait] = await addAction(tx);
@@ -117,12 +131,12 @@ export default ({ triggerElement, botId }) => {
                         as="h3"
                         className="text-base font-semibold leading-6 text-gray-900"
                       >
-                        Manage your bot{" "}
-                        <Address value={manageBotAddress} />
+                        Manage your bot <Address value={manageBotAddress} />
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          You can change the name of your bot, whether or not it should auto-battle and the maximum wager amount.
+                          You can change the name of your bot, whether or not it
+                          should auto-battle and the maximum wager amount.
                         </p>
                       </div>
                     </div>
@@ -138,98 +152,55 @@ export default ({ triggerElement, botId }) => {
 
                     <input
                       id="name"
-                      value={}
+                      value={manageBotName}
                       defaultValue={0}
                       onChange={(event) => {
                         //console.log("event.value", event.target.value)
-                        setManageBotName(event.target.value);
+                        dispatch(setManageBotName(event.target.value));
                       }}
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />
-                    <div className="absolute inset-y-0 right-0 flex items-center">
-                      <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
-                        {token ? token.symbol : "..."}
-                      </div>
-                    </div>
                   </div>
 
-                  <Listbox value={challenger} onChange={setChallenger}>
-                    {({ open }) => (
-                      <div className="mt-5">
-                        <label
-                          for="UserEmail"
-                          class="block text-xs font-medium text-gray-700"
-                        >
-                          Select challenger.{" "}
-                          <span className="text-xs text-gray-400">
-                            You can challenge with yourself or one of your bots.
-                          </span>
-                        </label>
-                        <div className="relative mt-2">
-                          <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
-                            <span className="block truncate">
-                              {truncateAddress(challenger)}
-                            </span>
-                            <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
-                              <ChevronUpDownIcon
-                                className="h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                              />
-                            </span>
-                          </Listbox.Button>
+                  <div className="mt-5">
+                    <label
+                      for="UserEmail"
+                      class="block text-xs font-medium text-gray-700"
+                    >
+                      Auto battle Enabled?
+                    </label>
 
-                          <Transition
-                            show={open}
-                            as={Fragment}
-                            leave="transition ease-in duration-100"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                          >
-                            <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                              {potentialChallengers.map((challenger, index) => (
-                                <Listbox.Option
-                                  key={index}
-                                  className={({ active }) =>
-                                    classNames(
-                                      active
-                                        ? "bg-indigo-600 text-white"
-                                        : "text-gray-900",
-                                      "relative cursor-default select-none py-2 pl-3 pr-9"
-                                    )
-                                  }
-                                  value={challenger}
-                                >
-                                  {({ selected, active }) => (
-                                    <>
-                                      <div className="flex items-center">
-                                        {truncateAddress(challenger)}
-                                      </div>
+                    <input
+                      id="name"
+                      value={manageBotAutoBattleEnabled}
+                      onChange={(event) => {
+                        //console.log("event.value", event.target.value)
+                        dispatch(
+                          setManageBotAutoBattleEnabled(event.target.value)
+                        );
+                      }}
+                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                    />
+                  </div>
 
-                                      {selected ? (
-                                        <span
-                                          className={classNames(
-                                            active
-                                              ? "text-white"
-                                              : "text-indigo-600",
-                                            "absolute inset-y-0 right-0 flex items-center pr-4"
-                                          )}
-                                        >
-                                          <CheckIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                          />
-                                        </span>
-                                      ) : null}
-                                    </>
-                                  )}
-                                </Listbox.Option>
-                              ))}
-                            </Listbox.Options>
-                          </Transition>
-                        </div>
-                      </div>
-                    )}
-                  </Listbox>
+                  <div className="mt-5">
+                    <label
+                      for="UserEmail"
+                      class="block text-xs font-medium text-gray-700"
+                    >
+                      Auto battle max wager amount
+                    </label>
+
+                    <input
+                      id="name"
+                      value={autoMaxWagerAmount}
+                      onChange={(event) => {
+                        //console.log("event.value", event.target.value)
+                        dispatch(setAutoMaxWagerAmount(event.target.value));
+                      }}
+                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                    />
+                  </div>
                 </div>
 
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
@@ -237,17 +208,17 @@ export default ({ triggerElement, botId }) => {
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                     onClick={() => {
-                      handleChallenge();
-                      dispatch(setCreateChallengeModal(false));
+                      handleManage();
+                      dispatch(setManageBotModal(false));
                     }}
                   >
-                    Challenge
+                    Update
                   </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     onClick={() => {
-                      dispatch(setCreateChallengeModal(false));
+                      dispatch(setManageBotModal(false));
                     }}
                     ref={cancelButtonRef}
                   >
