@@ -210,7 +210,7 @@ export default () => {
         </div>
       </header>
       <main>
-        <div className="mx-auto max-w-7xl py-6 px-3 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
           <div className="my-20">
             <div className="contentHeader">
               <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">
