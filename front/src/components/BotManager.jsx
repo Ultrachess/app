@@ -79,7 +79,7 @@ export default () => {
         </div>
       </header>
       <main>
-        <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl py-6 px-3 sm:px-6 lg:px-8">
           <div class="my-5">
             <div className="contentHeader">
               <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">
