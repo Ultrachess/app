@@ -39,8 +39,8 @@ export default ({
   console.log("abc token", token);
 
   return (
-    <Flex css={{ alignItems: "center", gap: "2" }}>
+    <div className="inline-block">
       {_balance ?? "0.0"} {token?.symbol}
-    </Flex>
+    </div>
   );
 };

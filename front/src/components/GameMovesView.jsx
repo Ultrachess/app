@@ -11,7 +11,6 @@ import Separator from "./ui/Separator";
 import List from "./ui/List";
 import Flex from "./ui/Flex";
 import { Text } from "./ui/Text";
-import "./GameMovesView.css";
 
 //import radix icons
 import {
@@ -48,13 +47,11 @@ export default (props) => {
         <Flex
           key={index}
           css={{
-            gap: 5,
             alignItems: "center",
-            justifyContent: "space-between",
             width: "100%",
             height: "20px",
-            padding: "0px 100px",
           }}
+          className="lg:w-1/2 md:w-full w-full"
         >
           <GameBotMoveStatisticsHoverable
             botMoveStat={botMoveStats[index]}
@@ -94,13 +91,12 @@ export default (props) => {
   return (
     <Flex
       css={{
-        gap: 2,
         flexDirection: "column",
-        width: "500px",
         height: "300px",
       }}
+      className="w-full"
     >
-      <Flex css={{ justifyContent: "space-evenly" }}>
+      <Flex css={{ justifyContent: "space-between" }}>
         <LoopIcon onClick={autoPlay} />
         <DoubleArrowLeftIcon onClick={firstMove} />
         <ArrowLeftIcon onClick={prevMove} />

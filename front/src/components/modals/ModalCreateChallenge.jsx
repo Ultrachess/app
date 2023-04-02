@@ -161,7 +161,7 @@ export default () => {
                         >
                           Select challenger.{" "}
                           <span className="text-xs text-gray-400">
-                            You can challenge yourself or one of your bots.
+                            You can challenge with yourself or one of your bots.
                           </span>
                         </label>
                         <div className="relative mt-2">

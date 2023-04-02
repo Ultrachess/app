@@ -30,6 +30,11 @@ import { TransactionType } from "../../common/types";
 import { useNavigate } from "react-router-dom";
 import * as Select from "@radix-ui/react-select";
 
+import { useDispatch } from "react-redux";
+import { setManageBotModal, setManageBotName, setManageBotAutoBattleEnabled, setManageBotAutoMaxWagerAmount, setManageBotAddress } from "../../state/ui/reducer";
+import { useAppSelector } from "../../state/hooks";
+setManageBotAddress
+
 export default ({ triggerElement, botId }) => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState(0);
@@ -44,6 +49,15 @@ export default ({ triggerElement, botId }) => {
   const [autoBattleEnabled, setAutoBattleEnabled] = useState("False");
 
   const addAction = useActionCreator();
+  const dispatch = useDispatch()
+  const cancelButtonRef = useRef(null);
+
+  const showManageBotModal = useAppSelector(state => state.ui.modal.showManageBotModal)
+  const manageBotAddress = useAppSelector(state => state.ui.modal.manageBotAddress)
+  const manageBotName = useAppSelector(state => state.ui.modal.manageBotName)
+  const manageBotAutoBattleEnabled = useAppSelector(state => state.ui.modal.manageBotAutoBattleEnabled)
+  const manageBotAutoMaxWagerAmount = useAppSelector(state => state.ui.modal.manageBotAutoMaxWagerAmount)
+
 
   const handleCreate = async () => {
     //console.log("amount", amount)
@@ -65,68 +79,249 @@ export default ({ triggerElement, botId }) => {
 
   //console.log("amount", amount)
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
-      <Dialog.Portal>
-        <DialogOverlay />
-        <DialogContent>
-          <DialogTitle>Update Bot</DialogTitle>
-          <DialogDescription>
-            Create a new game. Invite friends to join and start playing. Or wait
-            for random players to join.
-          </DialogDescription>
+    <Transition.Root show={showManageBotModal} as={Fragment}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={setManageBotModal}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-          <Fieldset>
-            <Label>Auto battle Enable?</Label>
-            <SelectMain
-              options={["True", "False"]}
-              value={autoBattleEnabled}
-              onValueChange={setAutoBattleEnabled}
-            />
-          </Fieldset>
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-base font-semibold leading-6 text-gray-900"
+                      >
+                        Manage your bot{" "}
+                        <Address value={manageBotAddress} />
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          You can change the name of your bot, whether or not it should auto-battle and the maximum wager amount.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-          <Fieldset>
-            <Label>Auto Wager amount</Label>
-          </Fieldset>
-          <Fieldset>
-            <Input
-              id="amount"
-              value={autoMaxWagerAmount}
-              defaultValue={0}
-              onChange={(event) => {
-                //console.log("event.value", event.target.value)
-                setAutoMaxWagerAmount(event.target.value);
-              }}
-            ></Input>
-          </Fieldset>
-          <Fieldset>
-            <Label>Bot name</Label>
-          </Fieldset>
-          <Fieldset>
-            <Input
-              id="bettingDuration"
-              value={name}
-              onChange={(event) => {
-                setName(event.target.value);
-              }}
-            ></Input>
-          </Fieldset>
+                  <div className="mt-5">
+                    <label
+                      for="UserEmail"
+                      class="block text-xs font-medium text-gray-700"
+                    >
+                      name
+                    </label>
 
-          <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
-            <Dialog.Close asChild>
-              <Button variant="green" onClick={handleCreate}>
-                Create
-              </Button>
-            </Dialog.Close>
-          </Flex>
-          <Dialog.Close asChild>
-            <IconButton aria-label="Close">
-              <Cross2Icon />
-            </IconButton>
-          </Dialog.Close>
-        </DialogContent>
-      </Dialog.Portal>
-    </Dialog.Root>
+                    <input
+                      id="name"
+                      value={}
+                      defaultValue={0}
+                      onChange={(event) => {
+                        //console.log("event.value", event.target.value)
+                        setManageBotName(event.target.value);
+                      }}
+                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center">
+                      <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
+                        {token ? token.symbol : "..."}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Listbox value={challenger} onChange={setChallenger}>
+                    {({ open }) => (
+                      <div className="mt-5">
+                        <label
+                          for="UserEmail"
+                          class="block text-xs font-medium text-gray-700"
+                        >
+                          Select challenger.{" "}
+                          <span className="text-xs text-gray-400">
+                            You can challenge with yourself or one of your bots.
+                          </span>
+                        </label>
+                        <div className="relative mt-2">
+                          <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                            <span className="block truncate">
+                              {truncateAddress(challenger)}
+                            </span>
+                            <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+                              <ChevronUpDownIcon
+                                className="h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </span>
+                          </Listbox.Button>
+
+                          <Transition
+                            show={open}
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                              {potentialChallengers.map((challenger, index) => (
+                                <Listbox.Option
+                                  key={index}
+                                  className={({ active }) =>
+                                    classNames(
+                                      active
+                                        ? "bg-indigo-600 text-white"
+                                        : "text-gray-900",
+                                      "relative cursor-default select-none py-2 pl-3 pr-9"
+                                    )
+                                  }
+                                  value={challenger}
+                                >
+                                  {({ selected, active }) => (
+                                    <>
+                                      <div className="flex items-center">
+                                        {truncateAddress(challenger)}
+                                      </div>
+
+                                      {selected ? (
+                                        <span
+                                          className={classNames(
+                                            active
+                                              ? "text-white"
+                                              : "text-indigo-600",
+                                            "absolute inset-y-0 right-0 flex items-center pr-4"
+                                          )}
+                                        >
+                                          <CheckIcon
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                          />
+                                        </span>
+                                      ) : null}
+                                    </>
+                                  )}
+                                </Listbox.Option>
+                              ))}
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
+                      </div>
+                    )}
+                  </Listbox>
+                </div>
+
+                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    onClick={() => {
+                      handleChallenge();
+                      dispatch(setCreateChallengeModal(false));
+                    }}
+                  >
+                    Challenge
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    onClick={() => {
+                      dispatch(setCreateChallengeModal(false));
+                    }}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+    // <Dialog.Root>
+    //   <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
+    //   <Dialog.Portal>
+    //     <DialogOverlay />
+    //     <DialogContent>
+    //       <DialogTitle>Update Bot</DialogTitle>
+    //       <DialogDescription>
+    //         Create a new game. Invite friends to join and start playing. Or wait
+    //         for random players to join.
+    //       </DialogDescription>
+
+    //       <Fieldset>
+    //         <Label>Auto battle Enable?</Label>
+    //         <SelectMain
+    //           options={["True", "False"]}
+    //           value={autoBattleEnabled}
+    //           onValueChange={setAutoBattleEnabled}
+    //         />
+    //       </Fieldset>
+
+    //       <Fieldset>
+    //         <Label>Auto Wager amount</Label>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <Input
+    //           id="amount"
+    //           value={autoMaxWagerAmount}
+    //           defaultValue={0}
+    //           onChange={(event) => {
+    //             //console.log("event.value", event.target.value)
+    //             setAutoMaxWagerAmount(event.target.value);
+    //           }}
+    //         ></Input>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <Label>Bot name</Label>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <Input
+    //           id="bettingDuration"
+    //           value={name}
+    //           onChange={(event) => {
+    //             setName(event.target.value);
+    //           }}
+    //         ></Input>
+    //       </Fieldset>
+
+    //       <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
+    //         <Dialog.Close asChild>
+    //           <Button variant="green" onClick={handleCreate}>
+    //             Create
+    //           </Button>
+    //         </Dialog.Close>
+    //       </Flex>
+    //       <Dialog.Close asChild>
+    //         <IconButton aria-label="Close">
+    //           <Cross2Icon />
+    //         </IconButton>
+    //       </Dialog.Close>
+    //     </DialogContent>
+    //   </Dialog.Portal>
+    // </Dialog.Root>
   );
 };
 

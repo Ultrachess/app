@@ -30,7 +30,7 @@ export default ({ address }) => {
       triggerElement={
         <Link to={(isBot ? "/bot/" : "/users/") + address}>
           <Flex css={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-            <ProfileImage diameter={50} address={address} />
+            <ProfileImage diameter={45} address={address} />
                 <Flex css={{ flexDirection: "column", gap: 2 }}>
                     <Text size={2} bold blue>
                         {truncateAddress(address)}

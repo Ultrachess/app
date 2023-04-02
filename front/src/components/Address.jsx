@@ -22,12 +22,13 @@ export default ({
   isMedium = false,
   isImageBig = false,
   showBotName = false,
+  showProfile = true
 }) => {
   const isBot = useMemo(() => (value ? !value.includes("0x") : false), []);
   const addressView = (
-    <Link to={(isBot ? "/bot/" : "/users/") + value}>
+    <Link css={{}} to={(isBot ? "/bot/" : "/users/") + value}>
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-        <ProfileImage address={value} />
+        {showProfile &&<ProfileImage address={value} />}
         <span>{truncateAddress(value)}</span>
         {isBot && <FaRobot />}
       </Flex>
@@ -37,7 +38,7 @@ export default ({
   const mediumAddressView = (
     <Link to={(isBot ? "/bot/" : "/users/") + value}>
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-        <ProfileImage diameter={30} address={value} />
+      {showProfile &&<ProfileImage diameter={30} address={value} />}
         <Text size={2} bold blue>
           {truncateAddress(value)}
         </Text>
@@ -56,8 +57,8 @@ export default ({
   //in a flex column
   const bigAddressView = (
     <>
-      <Flex css={{ flexDirection: "row", alignItems: "end", gap: 5 }}>
-        <ProfileImage address={value} diameter={90} />
+      <Flex css={{ flexDirection: "row", alignItems: "end", gap: 5, }}>
+      {showProfile &&<ProfileImage address={value} diameter={90} />}
         <Flex css={{ flexDirection: "row", gap: 4 }}>
           <div>{truncateAddress(value)}</div>
           {isBot && <FaRobot />}
@@ -72,13 +73,21 @@ export default ({
     ? mediumAddressView
     : addressView;
 
-  return (
-    <>
-      {hoverable ? (
-        <ProfileHover triggerElement={component} profileId={value} />
-      ) : (
-        component
-      )}
-    </>
-  );
+    return (
+      <span
+        className={
+          (!isMedium && !isImageBig)
+            ? "inline-flex items-center hover:underline cursor-pointer align-middle"
+            : ""
+        }
+      >
+        {hoverable ? (
+          <ProfileHover triggerElement={component} profileId={value} />
+        ) : (
+          component
+        )}
+      </span>
+    );
+    
+    
 };

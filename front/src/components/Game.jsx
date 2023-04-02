@@ -545,8 +545,8 @@ export default () => {
 
   return (
     <div class="min-h-full">
-      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center justify-space-evenly min-h-screen">
+      <div class="mx-auto max-w-7xl sm:px-6">
+        <div className="flex flex-col lg:flex-row items-center justify-between min-h-screen">
           <div className="flex flex-col gap-2 w-full md:w-4/5 lg:w-1/2 px-6 lg:px-0">
             <div className="flex w-full justify-between items-center">
               <GameProfile address={topAddress} />
@@ -663,7 +663,7 @@ export default () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 w-full md:w-auto mt-8 md:mt-0">
+          <div className="flex flex-col gap-3 w-full md:w-2/3 lg:w-1/2 mt-8 md:mt-0">
             <div className="flex gap-4 w-full md:w-auto flex-row items-center justify-end">
               {bettingIsClosed ? (
                 <Text blue>Wagering Closed</Text>
@@ -682,7 +682,7 @@ export default () => {
               )}
               <Button onClick={tweetGame}>Share</Button>
             </div>
-            <div className="flex justify-start pb-5">
+            <div className="flex justify-start">
               {completed && !draw && (
                 <Text green>
                   Game completed.{" "}

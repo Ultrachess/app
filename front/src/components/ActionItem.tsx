@@ -290,7 +290,7 @@ export default ({
       </div>
       <div className="absolute inset-x-0 bottom-0">
         <ProgressBar
-          className="w-full"
+          className="w-full h-2"
           now={statusToProgress[action?.status ?? ActionStates.ERROR]}
           color={statusToColor[action?.status ?? ActionStates.ERROR]}
         />

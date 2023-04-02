@@ -49,7 +49,7 @@ const NavBell = ({
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-10 mt-2 w-68 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 rounded-md z-10 mt-2 mr-2 origin-top-right bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-1/2 md:w-50 lg:w-68">
             {notifications.map((notification) => (
               <Menu.Item key={notification.id}>
                 <NotificationItem

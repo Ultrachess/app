@@ -22,7 +22,11 @@ export interface UiState {
     showCreateOfferModal: boolean;
     showCreateTournamentModal: boolean;
     showDepositModal: boolean;
-    showManageBotsModal: boolean;
+    manageBotAddress: string;
+    manageBotName: string;
+    manageBotAutoBattleEnabled: boolean;
+    manageBotAutoMaxWagerAmount: number;
+    showManageBotModal: boolean;
     showPlaceBetModal: boolean;
   };
 }
@@ -41,7 +45,11 @@ export const initialState: UiState = {
     showCreateOfferModal: false,
     showCreateTournamentModal: false,
     showDepositModal: false,
-    showManageBotsModal: false,
+    showManageBotModal: false,
+    manageBotAddress: "0x",
+    manageBotName: "",
+    manageBotAutoBattleEnabled: false,
+    manageBotAutoMaxWagerAmount: 0,
     showPlaceBetModal: false,
   },
 };
@@ -81,8 +89,20 @@ const uiSlice = createSlice({
     setDepositModal(state, { payload }: { payload: boolean }) {
       state.modal.showDepositModal = payload;
     },
-    setManageBotsModal(state, { payload }: { payload: boolean }) {
-      state.modal.showManageBotsModal = payload;
+    setManageBotModal(state, { payload }: { payload: boolean }) {
+      state.modal.showManageBotModal = payload;
+    },
+    setManageBotAddress(state, { payload }: { payload: string }) {
+      state.modal.manageBotAddress = payload;
+    },
+    setManageBotName(state, { payload }: { payload: string }) {
+      state.modal.manageBotName = payload;
+    },
+    setManageBotAutoBattleEnabled(state, { payload }: { payload: boolean }) {
+      state.modal.manageBotAutoBattleEnabled = payload;
+    },
+    setManageBotAutoMaxWagerAmount(state, { payload }: { payload: number }) {
+      state.modal.manageBotAutoMaxWagerAmount = payload;
     },
     setPlaceBetModal(state, { payload }: { payload: boolean }) {
       state.modal.showPlaceBetModal = payload;
@@ -97,7 +117,12 @@ export const {
   setCreateOfferModal,
   setCreateTournamentModal,
   setDepositModal,
-  setManageBotsModal,
+  setManageBotModal,
+  setManageBotAddress,
+  setManageBotName,
+  setManageBotAutoBattleEnabled,
+  setManageBotAutoMaxWagerAmount,
+
   setPlaceBetModal,
   setCreateChallengeModalAddress,
   setCreateOfferAddress,
