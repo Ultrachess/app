@@ -46,6 +46,7 @@ export default ({
       onClick={onClick}
       color={waiting ? "faded" : accept ? "green" : "red"}
       underline
+      className="cursor-pointer inline-block"
     >
       {accept ? "accept" : "decline"}
       {waiting && "ing"}
