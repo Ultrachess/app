@@ -101,6 +101,10 @@ export default () => {
     }
   }, [gameState, gameSide]);
 
+  console.log("fix: isTurn: ", isTurn);
+  console.log("fix: gameSide: ", gameSide);
+  
+
   //checkt if gameState is an instance of Chess
   const isChess = gameState instanceof Chess;
   if (isChess) {
@@ -187,8 +191,7 @@ export default () => {
   //console.log("bottomWin" + bottomAddressWinAmount)
 
   const minPlayers = useMemo(() => game.players.length > 1);
-  var address =
-    Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : "";
+  var address = account ?? "";
 
   //auto play and loop useEffect.
   //checks if autoplay is on and automatically increments the move index every second
@@ -216,6 +219,7 @@ export default () => {
       });
       //console.log("attempting to join game")
     }
+    console.log("fix: setting gameside", getSide(game, address));
     setGameSide(getSide(game, address));
   }, [isUpToDate]);
 
@@ -373,8 +377,15 @@ export default () => {
     var moveUci = sourceSquare + targetSquare;
     //if(move.promotion) moveUci += move.promotion
     //dispatch(sendMove(moveUci))
+    const moves = gameState?.moves({
+      sourceSquare,
+      verbose: true,
+    });
+    const isMoveValid = moves.some((move) => moveUci === move.lan);
+    const isTurnd = gameState?.turn() == gameSide[0];
     if (!minPlayers) return false;
-    if (!isTurn) return false;
+    if (!isTurnd) return false;
+    if (!isMoveValid) return false;
 
     addAction({
       type: TransactionType.SEND_MOVE_INPUT,

@@ -117,7 +117,7 @@ export enum Country {
 }
 
 export interface Challenge {
-  id: string;
+  challengeId: string;
   sender: string;
   recipient: string;
   token: string;

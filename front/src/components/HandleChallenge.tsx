@@ -36,6 +36,7 @@ export default ({
         : TransactionType.DECLINE_CHALLENGE,
       challengeId,
     };
+    console.log("challenge id: ", challengeId);
     const [actionId, wait] = await addAction(transactionInfo);
     await wait;
     setWaiting(false);
