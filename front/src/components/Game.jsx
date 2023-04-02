@@ -556,7 +556,7 @@ export default () => {
   return (
     <div class="min-h-full">
       <div class="mx-auto max-w-7xl sm:px-6">
-        <div className="flex flex-col lg:flex-row items-center justify-between min-h-screen">
+        <div className="flex flex-col lg:flex-row items-center justify-between min-h-[90vh]">
           <div className="flex flex-col gap-2 w-full md:w-4/5 lg:w-1/2 px-6 lg:px-0">
             <div className="flex w-full justify-between items-center">
               <GameProfile address={topAddress} />
