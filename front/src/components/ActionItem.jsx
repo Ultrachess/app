@@ -68,9 +68,6 @@ export const useTime = (refreshCycle = 100) => {
 export default ({
   actionId,
   shouldShowExit = false,
-}: {
-  actionId: number;
-  shouldShowExit: boolean;
 }) => {
   const action = useAction(actionId);
   const transaction = useTransaction(action?.transactionHash);
