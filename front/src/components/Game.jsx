@@ -673,7 +673,7 @@ export default () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3 w-full md:w-2/3 lg:w-1/2 mt-8 md:mt-0">
+          <div className="flex flex-col gap-3 w-full md:w-2/3 lg:w-2/5 mt-8 md:mt-0">
             <div className="flex gap-4 w-full md:w-auto flex-row items-center justify-end">
               {bettingIsClosed ? (
                 <Text blue>Wagering Closed</Text>

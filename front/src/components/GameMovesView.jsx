@@ -35,8 +35,15 @@ export default (props) => {
     jumpTo,
   } = props;
   var chess = new Chess();
-  //chess.loadPgn(pgn);
+
+  try {
+    chess.loadPgn(pgn);
+  } catch (error) {
+    console.log("Error loading PGN:", error);
+  }
+
   var moves = chess.history();
+
   const getMoves = () => {
     let content = [];
     var flip = true;
