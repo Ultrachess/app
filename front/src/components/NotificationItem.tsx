@@ -194,10 +194,7 @@ export default ({
       title = "Tournament Completed";
       description = (
         <>
-          Tournament{" "}
-          <AddressTournament
-            id={notification["tournament_id"]}
-          />{" "}
+          Tournament <AddressTournament id={notification["tournament_id"]} />{" "}
           has completed
         </>
       );
@@ -207,10 +204,7 @@ export default ({
       description = (
         <>
           A match has been created in tournament{" "}
-          <AddressTournament
-            id={notification["tournament_id"]}
-          />{" "}
-          between{" "}
+          <AddressTournament id={notification["tournament_id"]} /> between{" "}
           <Address showProfile={false} value={notification["player_id1"]} /> and{" "}
           <Address showProfile={false} value={notification["player_id2"]} />
         </>
@@ -225,9 +219,7 @@ export default ({
           scored {notification["score1"]} and player{" "}
           <Address showProfile={false} value={notification["player_id2"]} /> has
           scored {notification["score2"]} in tournament{" "}
-          <AddressTournament
-            id={notification["tournament_id"]}
-          />
+          <AddressTournament id={notification["tournament_id"]} />
         </>
       );
       break;
@@ -236,9 +228,7 @@ export default ({
       description = (
         <>
           Round {notification["tournament_id"]} has completed in tournament{" "}
-          <AddressTournament
-            id={notification["tournament_id"]}
-          />
+          <AddressTournament id={notification["tournament_id"]} />
         </>
       );
       break;
