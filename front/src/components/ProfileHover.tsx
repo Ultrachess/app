@@ -19,7 +19,7 @@ const BotProfileCard = ({ profile }: { profile: BotProfile }) => {
   //console.log("123 bot profile", profile)
   return (
     <div>
-      <Flex css={{ flexDirection: "column", gap: 7 }}>
+      <Flex css={{ flexDirection: "column", gap: 7, zIndex: 100000000000 }}>
         <Flex css={{ flexDirection: "column", gap: 15 }}>
           <Address value={profile.id} />
           <div>

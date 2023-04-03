@@ -303,7 +303,7 @@ function useInspect(dispatch) {
   console.log("useInspect");
   const poll = async (dispatch) => {
     console.log("waiting");
-    await delay(1000);
+    await delay(4000);
     console.log("done waiting");
     if (!isMountedRef.current) {
       return;

@@ -30,10 +30,9 @@ export default ({ address }) => {
   const nationality = useNationality(address);
   const tokenAddress = STABLECOIN_ADDRESS_ON_NETWORKS[31337];
   const balance = useBalance(address, tokenAddress);
+  const isInvalid = address.includes(" ");
   return (
-    <ProfileHover
-      triggerElement={
-        <Link to={(isBot ? "/bot/" : "/users/") + address}>
+        <Link to={(isBot ? "/bot/" : isInvalid ? "#" : "/users/") + address}>
           <Flex css={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
             <ProfileImage diameter={45} address={address} />
             <Flex css={{ flexDirection: "column", gap: 2 }}>
@@ -53,8 +52,5 @@ export default ({ address }) => {
             </Flex>
           </Flex>
         </Link>
-      }
-      profileId={address}
-    />
   );
 };
