@@ -216,7 +216,6 @@ const DialogOverlay = styled(Dialog.Overlay, {
   animation: `${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1)`,
 });
 
-
 const DialogTitle = styled(Dialog.Title, {
   margin: 0,
   fontWeight: 500,
