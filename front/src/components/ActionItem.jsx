@@ -95,7 +95,7 @@ export default ({
         <>
           Creating game with wager amount of{" "}
           <AssetDisplay
-            balance={action.transactionInfo.wagerAmount.toString()}
+            balance={(action.transactionInfo.wagerAmount / 10 **18).toString()}
             tokenAddress={action.transactionInfo.wagerTokenAddress}
           />
         </>

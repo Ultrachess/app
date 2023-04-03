@@ -37,6 +37,8 @@ export default ({
   let title = "";
   let description = <></>;
 
+  console.log("notificationff", notification);
+
   //console.log("abc notification in item: ", notification.type)
   const newType = notification.type;
   switch (newType) {
@@ -299,12 +301,13 @@ export default ({
       );
       break;
     case NotificationType.BOT_OFFER_CREATED:
+      
       title = "Bot Offer Received";
       description = (
         <>
           Player <Address showProfile={false} value={notification["sender"]} />{" "}
           has offered to purchase your bot{" "}
-          <Address showProfile={false} value={notification["botId"]} /> for{" "}
+          <Address showProfile={false} value={notification["bot_id"]} /> for{" "}
           <AssetDisplay
             tokenAddress={notification["token"]}
             balance={notification["price"]}
@@ -319,14 +322,14 @@ export default ({
         <>
           Player <Address showProfile={false} value={notification["owner"]} />{" "}
           has accepted your offer to purchase bot{" "}
-          <Address showProfile={false} value={notification["botId"]} />
+          <Address showProfile={false} value={notification["bot_id"]} />
           for{" "}
           <AssetDisplay
             tokenAddress={notification["token"]}
             balance={notification["price"]}
             isL2={true}
           />
-          Bot <Address showProfile={false} value={notification["botId"]} /> has
+          Bot <Address showProfile={false} value={notification["bot_id"]} /> has
           been transferred to{" "}
           <Address showProfile={false} value={notification["sender"]} />
         </>

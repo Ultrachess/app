@@ -57,6 +57,7 @@ export default (props) => {
             alignItems: "center",
             width: "100%",
             height: "20px",
+            justifyContent: "space-evenly",
           }}
           className="lg:w-1/2 md:w-full w-full"
         >
