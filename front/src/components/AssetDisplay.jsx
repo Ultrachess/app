@@ -7,11 +7,14 @@
  */
 
 import { useSelector } from "react-redux";
-import { useTokenFromList } from "../hooks/token";
+import { useToken, useTokenFromList } from "../hooks/token";
 import { useWeb3React } from "@web3-react/core";
 import { Text } from "./ui/Text";
 import TokenIcon from "./TokenIcon";
-import { USDC_ADDRESS_ON_NETWORKS, DEFAULT_TOKEN_URI } from "../ether/chains";
+import {
+  STABLECOIN_ADDRESS_ON_NETWORKS,
+  DEFAULT_TOKEN_URI,
+} from "../ether/chains";
 import Flex from "./ui/Flex";
 
 export default ({
@@ -25,52 +28,19 @@ export default ({
   isMedium = false,
 }) => {
   const { account, chainId } = useWeb3React();
-  const _tokenAddress = tokenAddress ?? USDC_ADDRESS_ON_NETWORKS[chainId];
-  const token = useTokenFromList(_tokenAddress);
+  const _tokenAddress = tokenAddress ?? STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
+  const token = useToken(_tokenAddress);
   //get account balance of token
   const balances = useSelector((state) => state.game.balances);
   const accountBalances = balances?.[account] ?? undefined;
   const _balance = balance ?? accountBalances?.[tokenAddress] ?? "0.0";
 
   //console.log("abc tokenAddress", tokenAddress)
-  //console.log("abc token", token)
+  console.log("abc token", token);
 
   return (
-    <Flex css={{ alignItems: "center", gap: "2" }}>
-      <Text
-        size={"2"}
-        blue={blue}
-        green={green}
-        grey={grey}
-        red={red}
-        css={{ padding: "0 5px" }}
-      >
-        {_balance ?? "0.0"}
-      </Text>
-      <TokenIcon uri={token?.logoUri ?? DEFAULT_TOKEN_URI} />
-      <Text
-        blue={blue}
-        green={green}
-        grey={grey}
-        red={red}
-        css={{ paddingLeft: "5px" }}
-        bold
-      >
-        {token?.symbol}
-      </Text>
-      {isL2 && (
-        <Text
-          css={{ paddingLeft: "2px" }}
-          size={1}
-          blue={blue}
-          green={green}
-          grey={grey}
-          red={red}
-          bold
-        >
-          L2
-        </Text>
-      )}
-    </Flex>
+    <div className="inline-block">
+      {_balance ?? "0.0"} {token?.symbol}
+    </div>
   );
 };

@@ -13,7 +13,7 @@ import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { useTokenFromList } from "../../hooks/token";
-import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useWeb3React } from "@web3-react/core";
 import { useActionCreator } from "../../state/game/hooks";
 import { TransactionType } from "../../common/types";
@@ -27,7 +27,7 @@ export default ({ triggerElement }) => {
   const [updatedNumberOfWins, setUpdatedNumberOfWins] = useState(numberOfWins);
   const [updatedPrice, setUpdatedPrice] = useState(price / 10 ** 18);
 
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
 
   const addAction = useActionCreator();
 

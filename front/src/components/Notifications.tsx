@@ -38,7 +38,10 @@ const Notifications = () => {
                 : NOTIFICATION_TOAST_DURATION_MILLIS
             }
           >
-            <NotificationItem notification={notification} />
+            <NotificationItem
+              notification={notification}
+              shouldShowExit={true}
+            />
           </ToastRoot>
         );
       })}

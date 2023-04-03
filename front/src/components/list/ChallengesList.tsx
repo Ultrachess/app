@@ -12,8 +12,12 @@ import Address from "../Address";
 import AssetDisplay from "../AssetDisplay";
 import ChallengeAction from "../HandleChallenge";
 import Date from "../ui/Date";
+import Flex from "../ui/Flex";
 import List from "../ui/List";
+import Table from "../ui/Table";
 import { Text } from "../ui/Text";
+
+const columns = ["id", "sender", "recipient", "wager", "timestamp", ""];
 
 const ChallengeListItem = ({
   account,
@@ -22,11 +26,13 @@ const ChallengeListItem = ({
   account: string;
   challenge: Challenge;
 }) => {
-  const { id, sender, recipient, token, wager, timestamp } = challenge;
+  const { challengeId, sender, recipient, token, wager, timestamp } = challenge;
 
   const isSentToYou = account === recipient;
   const owner = useOwner(recipient);
   const isOwnedByYou = account === owner;
+
+  console.log("challenge Id: ", challengeId);
 
   return (
     <Text>
@@ -36,8 +42,8 @@ const ChallengeListItem = ({
       <Date current={timestamp} />
       {isSentToYou || isOwnedByYou ? (
         <div>
-          <ChallengeAction challengeId={id} accept={true} /> or{" "}
-          <ChallengeAction challengeId={id} accept={false} />
+          <ChallengeAction challengeId={challengeId} accept={true} /> or{" "}
+          <ChallengeAction challengeId={challengeId} accept={false} />
         </div>
       ) : null}
     </Text>
@@ -51,12 +57,32 @@ export default ({
   account: string;
   challenges: Challenge[];
 }) => {
-  const botItems =
+  const challengeItems =
     challenges.length > 0
-      ? challenges.map((challenge) => (
-          <ChallengeListItem account={account} challenge={challenge} />
-        ))
-      : [<Text key={0}>No challenges found</Text>];
+      ? challenges.map((challenge) => {
+          const { challengeId, sender, recipient, token, wager, timestamp } = challenge;
+          const isSentToYou = account.toLowerCase() === recipient.toLowerCase();
+          const owner = useOwner(recipient);
+          const isOwnedByYou =
+            account.toLowerCase() === (owner?.toLowerCase() ?? "");
+            console.log("challenge Id: ", challengeId);
+          return [
+            challengeId ?? "#",
+            <Address value={sender} hoverable={true} />,
+            <Address value={recipient} hoverable={true} />,
+            <AssetDisplay balance={wager / 10 ** 18} tokenAddress={token} />,
+            <Date current={timestamp * 1000} />,
+            isSentToYou || isOwnedByYou ? (
+              <Flex css={{ justifyContent: "space-between" }}>
+                <ChallengeAction challengeId={challengeId} accept={true} /> or{" "}
+                <ChallengeAction challengeId={challengeId} accept={false} />
+              </Flex>
+            ) : (
+              <></>
+            ),
+          ];
+        })
+      : [];
 
-  return <List items={botItems} />;
+  return <Table columns={columns} rows={challengeItems} />;
 };

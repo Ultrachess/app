@@ -115,9 +115,9 @@ export const getGameByPlayer = (games, address) => {
     if (games.hasOwnProperty(key)) {
       var game = games[key];
       const tempGameState = new Chess();
-      tempGameState.load_pgn(game.pgn ?? "");
+      tempgameState?.loadPgn(game.pgn ?? "");
 
-      const isGameOver = tempGameState.game_over();
+      const isGameOver = tempgameState?.game_over();
       const isInGame = game.players.includes(address);
 
       if (!isGameOver && isInGame) return game;

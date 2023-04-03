@@ -7,7 +7,6 @@
  */
 
 import { useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
 import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
@@ -17,22 +16,37 @@ import {
   useTokenFromList,
   useTokenPortalBalance,
   useTokenBalance,
+  useToken,
 } from "../../hooks/token";
-import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import AssetDisplay from "../AssetDisplay";
 import { useWeb3React } from "@web3-react/core";
 import { useActionCreator } from "../../state/game/hooks";
 import { TransactionType } from "../../common/types";
+import { useDispatch, useSelector } from "react-redux";
+import { Fragment, useRef } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { setCreateGameModal, setDepositModal } from "../../state/ui/reducer";
+import { useAppSelector } from "../../state/hooks";
 
-export default ({ triggerElement }) => {
+export default () => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState(0);
   const max = 100;
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const balance = useTokenBalance(token, account);
 
   const addAction = useActionCreator();
+
+  const dispatch = useDispatch();
+
+  const showDepositModal = useAppSelector(
+    (state) => state.ui.modal.showDepositModal
+  );
+
+  const cancelButtonRef = useRef(null);
 
   const handleDeposit = async () => {
     console.log(`approving amount ${amount} tokenAddress ${token.address}`);
@@ -54,68 +68,109 @@ export default ({ triggerElement }) => {
 
   //console.log("amount", amount)
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
-      <Dialog.Portal>
-        <DialogOverlay />
-        <DialogContent>
-          <DialogTitle>Deposit funds</DialogTitle>
-          <DialogDescription>
-            Deposit funds to Cartesi's ERC-20 portal. This will give the
-            Ultrachess dApp access to your funds, allowing you to interact with
-            the dApp as intended. You can withdraw your funds at any time.
-          </DialogDescription>
+    <Transition.Root show={showDepositModal} as={Fragment}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={setDepositModal}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-          <Fieldset>
-            <Label>Amount</Label>
-            <RightSlot>
-              <AssetDisplay
-                tokenAddress={token?.address}
-                balance={balance - amount}
-              />
-              <Text>→</Text>
-              <AssetDisplay
-                tokenAddress={token?.address}
-                balance={portalBalance + amount}
-                isL2={true}
-              />
-            </RightSlot>
-          </Fieldset>
-          <Fieldset>
-            <Input
-              id="amount"
-              value={amount}
-              defaultValue={0}
-              onChange={(event) => {
-                setAmount(event.target.value);
-              }}
-            ></Input>
-            <RightSlot onClick={() => setAmount(max)}>MAX</RightSlot>
-          </Fieldset>
-          <Fieldset>
-            <SliderMain
-              value={amount}
-              max={100}
-              onChangeFunction={([value]) => {
-                setAmount(value.toString());
-              }}
-            />
-          </Fieldset>
-          <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
-            <Dialog.Close asChild>
-              <Button variant="green" onClick={handleDeposit}>
-                Deposit
-              </Button>
-            </Dialog.Close>
-          </Flex>
-          <Dialog.Close asChild>
-            <IconButton aria-label="Close">
-              <Cross2Icon />
-            </IconButton>
-          </Dialog.Close>
-        </DialogContent>
-      </Dialog.Portal>
-    </Dialog.Root>
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-base font-semibold leading-6 text-gray-900"
+                      >
+                        Deposit funds
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          Deposit funds to the Cartesi Portal. They will appear
+                          in the upper right corner once your deposit is
+                          successful
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-5">
+                    <label
+                      for="UserEmail"
+                      class="block text-xs font-medium text-gray-700"
+                    >
+                      Amount
+                    </label>
+
+                    <input
+                      id="amount"
+                      value={amount}
+                      defaultValue={0}
+                      onChange={(event) => {
+                        //console.log("event.value", event.target.value)
+                        setAmount(event.target.value);
+                      }}
+                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center">
+                      <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
+                        {token ? token.symbol : "..."}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    onClick={() => {
+                      handleDeposit();
+                      dispatch(setDepositModal(false));
+                    }}
+                  >
+                    Deposit
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    onClick={() => {
+                      dispatch(setDepositModal(false));
+                    }}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
   );
 };
 

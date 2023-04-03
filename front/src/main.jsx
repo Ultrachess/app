@@ -15,6 +15,7 @@ import { Provider } from "react-redux";
 import { Web3ReactProvider } from "@web3-react/core";
 import { BrowserRouter as Router } from "react-router-dom";
 import { metaMask, hooks as metaMaskHooks } from "./ether/connectors/metaMask";
+import "./index.css";
 
 const connectors = [[metaMask, metaMaskHooks]];
 

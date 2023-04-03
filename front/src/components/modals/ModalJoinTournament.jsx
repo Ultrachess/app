@@ -19,7 +19,7 @@ import {
 import * as Slider from "@radix-ui/react-slider";
 import { Text } from "../ui/Text";
 import { useTokenFromList, useTokenPortalBalance } from "../../hooks/token";
-import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useWeb3React } from "@web3-react/core";
 import { useActionCreator, useUserBotIds } from "../../state/game/hooks";
 import { TransactionType } from "../../common/types";
@@ -31,7 +31,7 @@ export default ({ triggerElement, tournamentId }) => {
   const [amount, setAmount] = useState(0);
   const [challenger, setChallenger] = useState(account);
   const max = 100;
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const balance = useTokenPortalBalance(token, account);
 
   const bots = useUserBotIds(account);

@@ -13,9 +13,5 @@ import { Link } from "react-router-dom";
 import { Text } from "./ui/Text";
 
 export default ({ id }: { id: string }) => {
-  return (
-    <Link to={"/game/" + id}>
-      <Text bold>{id}</Text>
-    </Link>
-  );
+  return <Link to={"/game/" + id}>{id}</Link>;
 };

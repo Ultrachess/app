@@ -19,7 +19,7 @@ import {
 import * as Slider from "@radix-ui/react-slider";
 import { Text } from "../ui/Text";
 import { useTokenFromList } from "../../hooks/token";
-import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useWeb3React } from "@web3-react/core";
 import {
   useActionCreator,
@@ -32,7 +32,7 @@ import * as Select from "@radix-ui/react-select";
 
 export default ({ triggerElement }) => {
   const { chainId, account } = useWeb3React();
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const bots = useUserBotIds(account);
   const potentialChallengers = [...bots, account];
   const [challenger, setChallenger] = useState(potentialChallengers[0]);

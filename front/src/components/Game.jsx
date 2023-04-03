@@ -41,6 +41,8 @@ import { truncateAddress } from "../ether/utils";
 import { Text } from "./ui/Text";
 import ModalPlaceBet from "./modals/ModalPlaceBet";
 import { useWeb3React } from "@web3-react/core";
+import { useWindowSize } from "../hooks/ui";
+import GameProfile from "./GameProfile";
 
 const placerHolderBotMoveStat = {
   depth: 0,
@@ -89,6 +91,25 @@ export default () => {
   const [currentFen, setCurrentFen] = useState();
   const [selectedPiece, setSelectedPiece] = useState(null);
   const actionsNotProcessed = useActionsNotProcessed();
+  const { width } = useWindowSize();
+
+  const isTurn = useMemo(() => {
+    if (gameState.turn() === "w") {
+      return gameSide === side.WHITE;
+    } else {
+      return gameSide === side.BLACK;
+    }
+  }, [gameState, gameSide]);
+
+  console.log("fix: isTurn: ", isTurn);
+  console.log("fix: gameSide: ", gameSide);
+  
+
+  //checkt if gameState is an instance of Chess
+  const isChess = gameState instanceof Chess;
+  if (isChess) {
+    console.log("gameState is not an instance of Chess");
+  }
   const pendingMoves = useMemo(() => {
     return actionsNotProcessed
       .filter(
@@ -169,10 +190,8 @@ export default () => {
   );
   //console.log("bottomWin" + bottomAddressWinAmount)
 
-  const isTurn = gameState.turn() == gameSide[0];
   const minPlayers = useMemo(() => game.players.length > 1);
-  var address =
-    Array.isArray(accounts) && accounts.length > 0 ? accounts[0] : "";
+  var address = account ?? "";
 
   //auto play and loop useEffect.
   //checks if autoplay is on and automatically increments the move index every second
@@ -180,7 +199,7 @@ export default () => {
   useEffect(() => {
     if (isAutoPlay) {
       var interval = setInterval(() => {
-        if (currentMoveIndex < gameState.history().length - 1)
+        if (currentMoveIndex < gameState?.history().length - 1)
           setCurrentMoveIndex(currentMoveIndex + 1);
       }, 1000);
       return () => clearInterval(interval);
@@ -200,6 +219,7 @@ export default () => {
       });
       //console.log("attempting to join game")
     }
+    console.log("fix: setting gameside", getSide(game, address));
     setGameSide(getSide(game, address));
   }, [isUpToDate]);
 
@@ -214,22 +234,28 @@ export default () => {
     var game = getGameById(games, gameId);
     if (game)
       safeGameMutate((gameValue) => {
-        gameValue.load_pgn(game.pgn);
+        if (gameValue.loadPgn) gameValue.loadPgn(game.pgn);
+
+        if (gameValue instanceof Chess) {
+          console.log("game is instance of chess");
+        } else {
+          console.log("game is not instance of chess");
+        }
       });
   }, [isUpToDate]);
 
   useEffect(() => {
     var isAtLatestMove =
-      currentMoveIndex >= gameState.history().length - 2 ||
+      currentMoveIndex >= gameState?.history().length - 2 ||
       currentMoveIndex < 0;
-    //console.log(`isLatestMove: ${isAtLatestMove}  currentMoveIndex: ${currentMoveIndex} length: ${gameState.history().length}`)
-    if (isAtLatestMove) setCurrentMoveIndex(gameState.history().length - 1);
+    //console.log(`isLatestMove: ${isAtLatestMove}  currentMoveIndex: ${currentMoveIndex} length: ${gameState?.history().length}`)
+    if (isAtLatestMove) setCurrentMoveIndex(gameState?.history().length - 1);
     setGameHighlights();
   }, [gameState]);
 
   useEffect(() => {
     const tempGame = new Chess();
-    gameState.history().forEach((move, index) => {
+    gameState?.history().forEach((move, index) => {
       if (index <= currentMoveIndex) tempGame.move(move);
     });
     setCurrentFen(tempGame.fen());
@@ -240,11 +266,17 @@ export default () => {
     //console.log(pendingMoves)
     safeGameMutate((gameValue) => {
       let game = getGameById(games, gameId);
-      gameValue.load_pgn(game.pgn);
+      gameValue.loadPgn(game.pgn);
       pendingMoves.forEach((mv) => {
         let mov = gameValue.move(mv, { sloppy: true });
         //console.log(mov)
       });
+
+      if (game instanceof Chess) {
+        console.log("game is instance of chess");
+      } else {
+        console.log("game is not instance of chess");
+      }
     });
   }, [pendingMoves]);
 
@@ -286,37 +318,44 @@ export default () => {
   function safeGameMutate(modify) {
     if (minPlayers)
       setGameState((g) => {
-        const update = { ...g };
+        const update = new Chess(g.fen());
+
         modify(update);
         return update;
       });
   }
 
   function makeRandomMove() {
-    const possibleMoves = gameState.moves();
+    const possibleMoves = gameState?.moves();
     if (
-      gameState.game_over() ||
-      gameState.in_draw() ||
+      gameState?.game_over() ||
+      gameState?.in_draw() ||
       possibleMoves.length === 0
     )
       return; // exit if the game is over
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
     safeGameMutate((game) => {
       game.move(possibleMoves[randomIndex]);
+      //check if game is instance of chess
+      if (game instanceof Chess) {
+        console.log("game is instance of chess");
+      } else {
+        console.log("game is not instance of chess");
+      }
     });
   }
 
   function isMovePending(move) {
     const game = getGameById(games, gameId);
     const tempGameState = new Chess();
-    tempGameState.load_pgn(game.pgn);
-    const history = tempGameState.history();
+    tempGameState?.loadPgn(game.pgn);
+    const history = tempGameState?.history();
     const { san } = move;
     return !history.includes(san);
   }
 
   function setGameHighlights() {
-    const history = gameState.history({ verbose: true });
+    const history = gameState?.history({ verbose: true });
     const lastMove = history[currentMoveIndex];
     if (lastMove) {
       const { from, to } = lastMove;
@@ -338,7 +377,16 @@ export default () => {
     var moveUci = sourceSquare + targetSquare;
     //if(move.promotion) moveUci += move.promotion
     //dispatch(sendMove(moveUci))
+    const moves = gameState?.moves({
+      sourceSquare,
+      verbose: true,
+    });
+    const isMoveValid = moves.some((move) => moveUci === move.lan);
+    const isTurnd = gameState?.turn() == gameSide[0];
     if (!minPlayers) return false;
+    if (!isTurnd) return false;
+    if (!isMoveValid) return false;
+
     addAction({
       type: TransactionType.SEND_MOVE_INPUT,
       roomId: gameId,
@@ -361,8 +409,8 @@ export default () => {
     const game1 = getGameById(games, gameId);
     const tempGameState = new Chess();
     if (!game1) return false;
-    tempGameState.load_pgn(game1.pgn);
-    var isActive = tempGameState.turn() == getSide(game1, address)[0];
+    tempgameState?.loadPgn(game1.pgn);
+    var isActive = tempgameState?.turn() == getSide(game1, address)[0];
     return isActive;
   }
 
@@ -372,11 +420,11 @@ export default () => {
   }
 
   function getMoveOptions(square) {
-    const moves = gameState.moves({
+    const moves = gameState?.moves({
       square,
       verbose: true,
     });
-    const isTurn = gameState.turn() == gameSide[0];
+    const isTurn = gameState?.turn() == gameSide[0];
     if (moves.length === 0 || !isTurn) {
       return;
     }
@@ -384,10 +432,15 @@ export default () => {
 
     const newSquares = {};
     moves.map((move) => {
+      const getTo = gameState?.get
+        ? gameState?.get(move.to)
+        : { color: "white" };
+      const getSquare = gameState?.get
+        ? gameState?.get(square)
+        : { color: "white" };
       newSquares[move.to] = {
         background:
-          gameState.get(move.to) &&
-          gameState.get(move.to).color !== gameState.get(square).color
+          getTo && getTo.color !== getSquare.color
             ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
             : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
         borderRadius: "50%",
@@ -408,7 +461,7 @@ export default () => {
       setSelectedPiece(null);
     } else {
       //check if your piece is on this square
-      const piece = gameState.get(square);
+      const piece = gameState?.get ? gameState?.get(square) : null;
       if (piece && piece.color == gameSide[0]) setSelectedPiece(square);
     }
   }
@@ -422,7 +475,7 @@ export default () => {
     //   setSelectedPiece(null)
     // }else{
     //   //check if your piece is on this square
-    //   const piece = gameState.get(square)
+    //   const piece = gameState?.get(square)
     //   if(piece && piece.color == gameSide[0])
     //     setSelectedPiece(square)
     // }
@@ -442,7 +495,9 @@ export default () => {
   }
 
   const lastMove = useCallback(() => {
-    setCurrentMoveIndex(gameState.history().length - 1);
+    setCurrentMoveIndex(
+      gameState?.history ? gameState?.history().length - 1 : 0
+    );
   }, [gameState]);
 
   const firstMove = useCallback(() => {
@@ -485,207 +540,197 @@ export default () => {
     return index;
   };
 
-  return (
-    <Flex
-      css={{
-        flexDirection: "row",
-        gap: 120,
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <Flex
-        css={{ gap: 10, flexDirection: "column", alignItems: "flex-start" }}
-      >
-        <Flex
-          css={{
-            width: "100%",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Address isMedium value={topAddress} />
-          <Flex css={{ gap: 1 }}>
-            {completed && (
-              <Text size={"4"} faded>
-                +{topAddressScore}
-              </Text>
-            )}
-            {topAddressWon ? (
-              <AssetDisplay
-                green={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : topAddressLost ? (
-              <AssetDisplay
-                red={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : draw ? (
-              <AssetDisplay
-                grey={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : (
-              <AssetDisplay
-                blue={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            )}
-          </Flex>
-        </Flex>
-        {topAddressIsBot && (
-          <BotMoveStatisticsView
-            botMoveStat={
-              game?.botMoveStats[
-                getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)
-              ] ?? placerHolderBotMoveStat
-            }
-          />
-        )}
-        <Chessboard
-          boardWidth={700}
-          position={currentFen}
-          onPieceDrop={onDrop}
-          arePremovesAllowed={false}
-          boardOrientation={gameSide}
-          onMouseOverSquare={onMouseOverSquare}
-          onMouseOutSquare={onMouseOutSquare}
-          onSquareClick={onSquareClick}
-          onSquareRightClick={onSquareRightClick}
-          onPieceClick={onPieceClick}
-          isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
-          customBoardStyle={{
-            borderRadius: "4px",
-            boxShadow: "0 2px 7px rgba(0, 0, 0, 0.5)",
-          }}
-          customSquareStyles={{
-            ...moveSquares,
-            ...optionSquares,
-            ...rightClickedSquares,
-          }}
-        />
-        {bottomAddressIsBot && (
-          <BotMoveStatisticsView
-            botMoveStat={
-              game.botMoveStats[
-                getLastProcessedBotMoveIndexFromCurrentIndex(currentMoveIndex)
-              ]
-            }
-          />
-        )}
+  const chessBoardWidth = useMemo(() => {
+    if (width < 768) {
+      console.log("window", width * 0.9);
+      return width * 0.9;
+    } else if (width >= 768 && width < 1024) {
+      console.log("window", width * 0.7);
+      return width * 0.7;
+    } else {
+      console.log("window", width * 0.5);
+      return width * 0.5;
+    }
+  }, [width]);
 
-        <Flex
-          css={{
-            width: "100%",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Address isMedium value={bottomAddress} />
-          <Flex css={{ gap: 1, alignItems: "center" }}>
-            {completed && (
-              <Text size={"4"} faded>
-                +{bottomAddressScore}
-              </Text>
+  return (
+    <div class="min-h-full">
+      <div class="mx-auto max-w-7xl sm:px-6">
+        <div className="flex flex-col lg:flex-row items-center justify-between min-h-[90vh]">
+          <div className="flex flex-col gap-2 w-full md:w-4/5 lg:w-1/2 px-6 lg:px-0">
+            <div className="flex w-full justify-between items-center">
+              <GameProfile address={topAddress} />
+              <div className="flex gap-2">
+                {completed && (
+                  <Text size={"4"} faded>
+                    +{topAddressScore}
+                  </Text>
+                )}
+                {topAddressWon ? (
+                  <AssetDisplay
+                    green={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : topAddressLost ? (
+                  <AssetDisplay
+                    red={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : draw ? (
+                  <AssetDisplay
+                    grey={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : (
+                  <AssetDisplay
+                    blue={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                )}
+              </div>
+            </div>
+            {topAddressIsBot && (
+              <BotMoveStatisticsView
+                botMoveStat={
+                  game?.botMoveStats[
+                    getLastProcessedBotMoveIndexFromCurrentIndex(
+                      currentMoveIndex
+                    )
+                  ] ?? placerHolderBotMoveStat
+                }
+              />
             )}
-            {bottomAddressWon ? (
-              <AssetDisplay
-                green={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : bottomAddressLost ? (
-              <AssetDisplay
-                red={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : draw ? (
-              <AssetDisplay
-                grey={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            ) : (
-              <AssetDisplay
-                blue={true}
-                tokenAddress={tokenAddress}
-                balance={wagerAmount}
-              />
-            )}
-          </Flex>
-        </Flex>
-      </Flex>
-      <Flex css={{ flexDirection: "column", gap: 10 }}>
-        <Flex
-          css={{
-            gap: "10px",
-            width: "100%",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "right",
-          }}
-        >
-          {bettingIsClosed ? (
-            <Text blue>Wagering Closed</Text>
-          ) : (
-            <Text faded>Wagering closes on {bettingClosesAt}</Text>
-          )}
-          {canBet && (
-            <ModalPlaceBet
-              gameId={gameId}
-              triggerElement={
-                <Button blue disabled={closed}>
-                  Place Bet
-                </Button>
-              }
+            <Chessboard
+              className="w-full"
+              position={currentFen}
+              onPieceDrop={onDrop}
+              arePremovesAllowed={false}
+              boardOrientation={gameSide}
+              onMouseOverSquare={onMouseOverSquare}
+              onMouseOutSquare={onMouseOutSquare}
+              onSquareClick={onSquareClick}
+              onSquareRightClick={onSquareRightClick}
+              onPieceClick={onPieceClick}
+              isDraggablePiece={({ piece }) => piece[0] === gameSide[0]}
+              customBoardStyle={{
+                borderRadius: "4px",
+              }}
+              customSquareStyles={{
+                ...moveSquares,
+                ...optionSquares,
+                ...rightClickedSquares,
+              }}
             />
-          )}
-          <Button onClick={tweetGame}>Share</Button>
-        </Flex>
-        <Flex css={{ justifyContent: "left", paddingBottom: "20px" }}>
-          {completed && !draw && (
-            <Text green>
-              Game completed.{" "}
-              <span style={{ textDecoration: "underline" }}>
-                {truncateAddress(winningId)}
-              </span>{" "}
-              won {wagerAmount} CTSI
-            </Text>
-          )}
-          {draw && <Text faded>Game completed. Draw</Text>}
-        </Flex>
-        {game.bettingDuration > 0 && (
-          <GameWagersView
-            winningId={winningId}
-            wagers={
-              game.wagering == {} || game.wagering == undefined
-                ? placeHolderGameWagers
-                : game.wagering
-            }
-            now={now}
-            p1={topAddress}
-            p2={bottomAddress}
-          />
-        )}
-        <GameMovesView
-          pgn={gameState.pgn()}
-          firstMove={firstMove}
-          lastMove={lastMove}
-          nextMove={nextMove}
-          prevMove={prevMove}
-          autoPlay={autoPlay}
-          jumpTo={jumpTo}
-          highlightIndex={currentMoveIndex}
-          botMoveStats={game.botMoveStats}
-        />
-      </Flex>
-    </Flex>
+            {bottomAddressIsBot && (
+              <BotMoveStatisticsView
+                botMoveStat={
+                  game.botMoveStats[
+                    getLastProcessedBotMoveIndexFromCurrentIndex(
+                      currentMoveIndex
+                    )
+                  ]
+                }
+              />
+            )}
+
+            <div className="flex w-full justify-between items-center">
+              <GameProfile address={bottomAddress} />
+              <div className="flex gap-2 items-center">
+                {completed && (
+                  <Text size={"4"} faded>
+                    +{bottomAddressScore}
+                  </Text>
+                )}
+                {bottomAddressWon ? (
+                  <AssetDisplay
+                    green={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : bottomAddressLost ? (
+                  <AssetDisplay
+                    red={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : draw ? (
+                  <AssetDisplay
+                    grey={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                ) : (
+                  <AssetDisplay
+                    blue={true}
+                    tokenAddress={tokenAddress}
+                    balance={wagerAmount}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 w-full md:w-2/3 lg:w-2/5 mt-8 md:mt-0">
+            <div className="flex gap-4 w-full md:w-auto flex-row items-center justify-end">
+              {bettingIsClosed ? (
+                <Text blue>Wagering Closed</Text>
+              ) : (
+                <Text faded>Wagering closes on {bettingClosesAt}</Text>
+              )}
+              {canBet && (
+                <ModalPlaceBet
+                  gameId={gameId}
+                  triggerElement={
+                    <Button blue disabled={closed}>
+                      Place Bet
+                    </Button>
+                  }
+                />
+              )}
+              <Button onClick={tweetGame}>Share</Button>
+            </div>
+            <div className="flex justify-start">
+              {completed && !draw && (
+                <Text green>
+                  Game completed.{" "}
+                  <span style={{ textDecoration: "underline" }}>
+                    {truncateAddress(winningId)}
+                  </span>{" "}
+                  won {wagerAmount} CTSI
+                </Text>
+              )}
+              {draw && <Text faded>Game completed. Draw</Text>}
+            </div>
+            {game.bettingDuration > 0 && (
+              <GameWagersView
+                winningId={winningId}
+                wagers={
+                  game.wagering == {} || game.wagering == undefined
+                    ? placeHolderGameWagers
+                    : game.wagering
+                }
+                now={now}
+                p1={topAddress}
+                p2={bottomAddress}
+              />
+            )}
+            <GameMovesView
+              pgn={gameState?.pgn ? gameState?.pgn() : ""}
+              firstMove={firstMove}
+              lastMove={lastMove}
+              nextMove={nextMove}
+              prevMove={prevMove}
+              autoPlay={autoPlay}
+              jumpTo={jumpTo}
+              highlightIndex={currentMoveIndex}
+              botMoveStats={game.botMoveStats}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

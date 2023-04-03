@@ -69,7 +69,7 @@ export const CHAINS = {
     urls: [
       infuraKey ? `https://goerli.infura.io/v3/${infuraKey}` : undefined,
     ].filter((url) => url !== undefined),
-    name: "Görli",
+    name: "Goerli",
     networkName: "goerli",
   },
   // Optimism
@@ -198,7 +198,7 @@ export const CHAINS = {
 
 export const URLS = {};
 
-export const USDC_ADDRESS_ON_NETWORKS = {
+export const STABLECOIN_ADDRESS_ON_NETWORKS = {
   1: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
   8001: "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b",
   137: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
@@ -207,6 +207,7 @@ export const USDC_ADDRESS_ON_NETWORKS = {
   69: "0x5f98805a4e8be255a32880fdec7f6728c6568ba0",
   420: "0x5f98805a4e8be255a32880fdec7f6728c6568ba0",
   421611: "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+  5: "0x2f3a40a3db8a7e3d09b0adfefbce4f6f81927557",
   31337: CartesiToken.address,
 };
 

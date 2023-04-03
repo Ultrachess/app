@@ -17,7 +17,7 @@ import * as RadioGroup from "@radix-ui/react-radio-group";
 import AddressGame from "../AddressGame";
 import List from "../ui/List";
 import AssetDisplay from "../AssetDisplay";
-import { USDC_ADDRESS_ON_NETWORKS } from "../../ether/chains";
+import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { keyframes, styled } from "@stitches/react";
 import { blackA, mauve, violet, green } from "@radix-ui/colors";
 import { Cross2Icon } from "@radix-ui/react-icons";
@@ -33,7 +33,7 @@ export default ({ triggerElement, gameId }) => {
   const [amount, setAmount] = useState(0);
   const [winningId, setWinningId] = useState("DRAW");
   const max = 100;
-  const token = useTokenFromList(USDC_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const game = useGame(gameId);
 

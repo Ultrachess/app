@@ -49,6 +49,7 @@ class ChallengeManager:
             or "token" not in options
             or "challenger" not in options
         ):
+            logger.info("missing options")
             return False
 
         # make sure sender has enough funds
@@ -71,11 +72,13 @@ class ChallengeManager:
             challenger_is_sender if challenger_is_bot else is_person_with_funds_sender
         )
         if not hasFunds and not canChallenge:
+            logger.info("not enough funds")
             return False
         # make sure not challenging yourself
         logger.info("sender " + sender)
         logger.info("recipient " + options["recipient"])
         if sender == options["recipient"]:
+            logger.info("cannot challenge yourself")
             return False
 
         # create challenge
@@ -106,6 +109,7 @@ class ChallengeManager:
     def accept(self, sender, timestamp, challengeId):
         # make sure challenge exists
         if not challengeId in self.challenges:
+            logger.info("challenge does not exist")
             return False
 
         # make sure sender has enough funds
@@ -127,6 +131,7 @@ class ChallengeManager:
             else deps.botFactory.getOwner(challenge["recipient"])
         )
         if not hasFunds or valid_acceptor != acceptor.lower():
+            logger.info("not enough funds")
             return False
 
         # accept challenge if sender is recipient
@@ -218,8 +223,10 @@ class ChallengeManager:
                     type=notification.NotificationType.CHALLENGE_DECLINED,
                 )
             )
+            del self.challenges[challengeId]
             return True
-        del self.challenges[challengeId]
+
+        logger.info("sender is not recipient")
         return False
 
     def getStringState(self):

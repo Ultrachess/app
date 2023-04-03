@@ -36,6 +36,7 @@ export default ({
         : TransactionType.DECLINE_CHALLENGE,
       challengeId,
     };
+    console.log("challenge id: ", challengeId);
     const [actionId, wait] = await addAction(transactionInfo);
     await wait;
     setWaiting(false);
@@ -45,6 +46,7 @@ export default ({
       onClick={onClick}
       color={waiting ? "faded" : accept ? "green" : "red"}
       underline
+      className="cursor-pointer inline-block"
     >
       {accept ? "accept" : "decline"}
       {waiting && "ing"}

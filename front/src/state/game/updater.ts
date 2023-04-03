@@ -39,6 +39,7 @@ import { addNotification } from "../notifications/reducer";
 import { Action, ActionList, ActionStates, ActionType } from "./types";
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
+import { setHasNewNotification } from "../ui/reducer";
 import { SERVER_URL, setAppState } from "./gameSlice";
 import {
   useUserActiveGameIds,
@@ -302,7 +303,7 @@ function useInspect(dispatch) {
   console.log("useInspect");
   const poll = async (dispatch) => {
     console.log("waiting");
-    await delay(500);
+    await delay(1000);
     console.log("done waiting");
     if (!isMountedRef.current) {
       return;
@@ -485,8 +486,9 @@ export const GameStateUpdater = React.memo(() => {
         botTournaments,
         userOwnedGames
       ).forEach((notification) => {
-        //console.log("newNotification: addingn notification", notification)
+        console.log("newNotification: addingn notification", notification);
         dispatch(addNotification(notification));
+        dispatch(setHasNewNotification(true));
       });
     }
     //console.log("user games1", userGames)

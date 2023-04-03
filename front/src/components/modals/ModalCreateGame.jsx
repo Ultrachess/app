@@ -25,6 +25,10 @@ export default ({ visible, closeHandler }) => {
   const [tokenAddress, setTokenAddress] = React.useState(0);
   const [betDuration, setBetDuration] = React.useState(0);
   const tokenList = useTokenList();
+  //get showCreateGameModal from state
+  const showCreateGameModal = useSelector(
+    (state) => state.ui.showCreateGameModal
+  );
 
   const tokens = tokenList.map((token) => {
     return {

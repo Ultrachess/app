@@ -22,13 +22,14 @@ export default ({
   isMedium = false,
   isImageBig = false,
   showBotName = false,
+  showProfile = true,
 }) => {
-  const isBot = useMemo(() => (value ? !value.includes("0x") : false));
+  const isBot = useMemo(() => (value ? !value.includes("0x") : false), []);
   const addressView = (
-    <Link to={(isBot ? "/bot/" : "/users/") + value}>
+    <Link css={{}} to={(isBot ? "/bot/" : "/users/") + value}>
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-        <ProfileImage address={value} />
-        <Text bold>{truncateAddress(value)}</Text>
+        {showProfile && <ProfileImage address={value} />}
+        <span>{truncateAddress(value)}</span>
         {isBot && <FaRobot />}
       </Flex>
     </Link>
@@ -37,7 +38,7 @@ export default ({
   const mediumAddressView = (
     <Link to={(isBot ? "/bot/" : "/users/") + value}>
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-        <ProfileImage diameter={30} address={value} />
+        {showProfile && <ProfileImage diameter={30} address={value} />}
         <Text size={2} bold blue>
           {truncateAddress(value)}
         </Text>
@@ -55,15 +56,15 @@ export default ({
   //It renders the ProfileImage component with a bigger size
   //in a flex column
   const bigAddressView = (
-    <Link to={(isBot ? "/bot/" : "/users/") + value}>
-      <Flex css={{ flexDirection: "column", alignItems: "center" }}>
-        <ProfileImage address={value} diameter={200} />
-        <Text size={5} bold>
-          {truncateAddress(value)}
+    <>
+      <Flex css={{ flexDirection: "row", alignItems: "end", gap: 5 }}>
+        {showProfile && <ProfileImage address={value} diameter={90} />}
+        <Flex css={{ flexDirection: "row", gap: 4 }}>
+          <div>{truncateAddress(value)}</div>
           {isBot && <FaRobot />}
-        </Text>
+        </Flex>
       </Flex>
-    </Link>
+    </>
   );
 
   const component = isImageBig
@@ -73,12 +74,18 @@ export default ({
     : addressView;
 
   return (
-    <>
+    <span
+      className={
+        !isMedium && !isImageBig
+          ? "inline-flex items-center hover:underline cursor-pointer align-middle"
+          : ""
+      }
+    >
       {hoverable ? (
         <ProfileHover triggerElement={component} profileId={value} />
       ) : (
         component
       )}
-    </>
+    </span>
   );
 };

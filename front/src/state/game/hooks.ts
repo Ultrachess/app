@@ -29,6 +29,7 @@ import {
 } from "../notifications/notifications";
 import { addNotification } from "../notifications/reducer";
 import { useTransactionAdder } from "../transactions/hooks";
+import { setHasNewNotification } from "../ui/reducer";
 import { createPromise } from "./gameHelper";
 import { DAPP_ADDRESSES } from "./gameSlice";
 import {
@@ -54,7 +55,7 @@ import { delay } from "./updater";
 import { ActionResolverObject } from "./updater";
 
 export function useNationality(id): string {
-  return "US";
+  return "USA 🇺🇸";
 }
 
 export function useAvatarImgUrl(id): string {
@@ -232,7 +233,7 @@ export function useThrone(): Throne {
 }
 
 //get all bot profiles
-export function useAllBots(): BotProfile[] {
+export function useAllBots(showRank = false): BotProfile[] {
   const games: { [gameIds: string]: Game } = useAppSelector(
     (state) => state.game.games
   );
@@ -255,35 +256,42 @@ export function useAllBots(): BotProfile[] {
     (state) => state.game.challenges
   );
   if (!challenges) return [];
-  return Object.values(botBaseVals).map((val) => {
-    return {
-      type: ProfileType.BOT,
-      id: val.id,
-      name: val.name,
-      avatar: val.id,
-      elo: elos[val.id],
-      nationality: "US",
-      games: Object?.values(games).filter((game) => {
-        return game.players.includes(val.id);
-      }),
-      owner: val.owner,
-      autoBattleEnabled: val.autoBattleEnabled,
-      autoMaxWagerAmount: val.autoMaxWagerAmount,
-      autoWagerTokenAddress: val.autoWagerTokenAddress,
-      offers: Object?.values(offers).filter((offer) => {
-        return offer.botId.toLowerCase() == val.id.toLowerCase();
-      }),
-      challenges: Object?.values(challenges)?.filter((challenge) => {
-        return challenge.recipient.toLowerCase() == val.id.toLowerCase();
-      }),
-      timestamp: val.timestamp,
-    };
-  });
+  return Object.values(botBaseVals)
+    .map((val) => {
+      return {
+        type: ProfileType.BOT,
+        id: val.id,
+        name: val.name,
+        avatar: val.id,
+        elo: elos[val.id] ?? 0,
+        nationality: "US",
+        games: Object?.values(games).filter((game) => {
+          return game.players.includes(val.id);
+        }),
+        owner: val.owner,
+        autoBattleEnabled: val.autoBattleEnabled,
+        autoMaxWagerAmount: val.autoMaxWagerAmount,
+        autoWagerTokenAddress: val.autoWagerTokenAddress,
+        offers: Object?.values(offers).filter((offer) => {
+          return offer.botId.toLowerCase() == val.id.toLowerCase();
+        }),
+        challenges: Object?.values(challenges)?.filter((challenge) => {
+          return challenge.recipient.toLowerCase() == val.id.toLowerCase();
+        }),
+        timestamp: val.timestamp,
+      };
+    })
+    .sort((a, b) => {
+      if (showRank) {
+        return b.elo - a.elo;
+      }
+      return 0;
+    });
 }
 
 //get all user profiles
 //similar to useAllBots
-export function useAllUsers(): UserProfile[] {
+export function useAllUsers(showRank = false): UserProfile[] {
   const games: { [gameIds: string]: Game } = useAppSelector(
     (state) => state.game.games
   );
@@ -298,27 +306,34 @@ export function useAllUsers(): UserProfile[] {
     (state) => state.game.bots
   );
   if (!challenges) return [];
-  return Object.keys(users).map((val) => {
-    return {
-      type: ProfileType.HUMAN,
-      id: val,
-      name: "",
-      avatar: "",
-      elo: elos[val],
-      nationality: "US",
-      games: Object?.values(games).filter((game) => {
-        return game.players.includes(val.toLowerCase());
-      }),
-      balances: balances[val],
-      bots: Object?.values(bots).filter((bot) => {
-        //console.log("abc account ", bot.owner, id)
-        return bot.owner.toLowerCase() == val.toLowerCase();
-      }),
-      challenges: Object?.values(challenges)?.filter((challenge) => {
-        return challenge.recipient.toLowerCase() == val.toLowerCase();
-      }),
-    };
-  });
+  return Object.keys(users)
+    .map((val) => {
+      return {
+        type: ProfileType.HUMAN,
+        id: val,
+        name: "",
+        avatar: "",
+        elo: elos[val] ?? 0,
+        nationality: "US",
+        games: Object?.values(games).filter((game) => {
+          return game.players.includes(val.toLowerCase());
+        }),
+        balances: balances[val] ?? [],
+        bots: Object?.values(bots).filter((bot) => {
+          //console.log("abc account ", bot.owner, id)
+          return bot.owner.toLowerCase() == val.toLowerCase();
+        }),
+        challenges: Object?.values(challenges)?.filter((challenge) => {
+          return challenge.recipient.toLowerCase() == val.toLowerCase();
+        }),
+      };
+    })
+    .sort((a, b) => {
+      if (showRank) {
+        return b.elo - a.elo;
+      }
+      return 0;
+    });
 }
 
 export function useAllProfiles(rankByElo = false): BaseProfile[] {
@@ -354,9 +369,15 @@ export function useUserGames(id: string): Game[] {
   const games: { [gameIds: string]: Game } = useAppSelector(
     (state) => state.game.games
   );
+  console.log("getting games for ", id, games, "  ");
   if (!games) return [];
   return Object?.values(games).filter((game) => {
-    return game.players.includes(id);
+    //lowercase to avoid case sensitivity
+    //lowercase game.players to avoid case sensitivity
+    const lowerCasePlayers = game.players.map((player) => {
+      return player.toLowerCase();
+    });
+    return lowerCasePlayers.includes(id.toLowerCase());
   });
 }
 
@@ -511,13 +532,11 @@ export function useAllTournaments(): Tournament[] {
   return Object?.values(tournaments);
 }
 
+//use useAllBots()
 export function useUserBots(id: string): BotProfile[] {
-  const bots: { [botIds: string]: BotProfile } = useAppSelector(
-    (state) => state.game.bots
-  );
-  if (!bots) return [];
-  return Object?.values(bots).filter((bot) => {
-    //console.log("abc account ", bot.owner, id)
+  const allBots = useAllBots();
+  if (!allBots) return [];
+  return allBots.filter((bot) => {
     return bot.owner.toLowerCase() == id.toLowerCase();
   });
 }
@@ -526,6 +545,7 @@ export function useOwner(id: string): string | undefined {
   const bots: { [botIds: string]: BotProfile } = useAppSelector(
     (state) => state.game.bots
   );
+  console.log("useOwner", bots);
   if (!bots) return undefined;
   return bots[id] ? bots[id].owner : undefined;
 }
@@ -534,6 +554,7 @@ export function useOwner(id: string): string | undefined {
 export function useUserBotIds(id: string): string[] {
   const bots = useAppSelector((state) => state.game.bots);
   if (!bots) return [];
+  if (!id) return [];
   return Object.keys(bots).filter((botId) => {
     const bot = bots[botId];
     //console.log("new abc account ", bot.owner, id)
@@ -631,6 +652,7 @@ export function useAddAction(): (action: Action) => number {
         actionId: action.id,
       };
       dispatch(addNotification(notification));
+      dispatch(setHasNewNotification(true));
 
       //console.log(action.id.toString())
       return action.id;

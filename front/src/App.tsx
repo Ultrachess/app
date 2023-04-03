@@ -6,7 +6,6 @@
  * See the file LICENSE for more information.
  */
 
-import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import { useEffect, useState } from "react";
@@ -17,7 +16,7 @@ import Body from "./components/Body";
 import BotManager from "./components/BotManager";
 import BotProfile from "./components/BotProfile";
 import Game from "./components/Game";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/nav/Navbar";
 import Notifications from "./components/Notifications";
 import PageKingOfTheHill from "./components/PageKingOfTheHill";
 import Profile from "./components/Profile";
@@ -41,6 +40,7 @@ function App() {
       <GameStateUpdater />
       <Notifications />
       <Navbar />
+
       <Routes>
         <Route path="/" element={<Body />} />
         <Route path="about" element={<Body />} />
