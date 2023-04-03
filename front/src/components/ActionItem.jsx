@@ -65,10 +65,7 @@ export const useTime = (refreshCycle = 100) => {
   return now;
 };
 
-export default ({
-  actionId,
-  shouldShowExit = false,
-}) => {
+export default ({ actionId, shouldShowExit = false }) => {
   const action = useAction(actionId);
   const transaction = useTransaction(action?.transactionHash);
   let header = <>Creating input</>;
@@ -95,7 +92,7 @@ export default ({
         <>
           Creating game with wager amount of{" "}
           <AssetDisplay
-            balance={(action.transactionInfo.wagerAmount / 10 **18).toString()}
+            balance={(action.transactionInfo.wagerAmount / 10 ** 18).toString()}
             tokenAddress={action.transactionInfo.wagerTokenAddress}
           />
         </>

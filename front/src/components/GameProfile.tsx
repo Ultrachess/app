@@ -32,25 +32,23 @@ export default ({ address }) => {
   const balance = useBalance(address, tokenAddress);
   const isInvalid = address.includes(" ");
   return (
-        <Link to={(isBot ? "/bot/" : isInvalid ? "#" : "/users/") + address}>
-          <Flex css={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-            <ProfileImage diameter={45} address={address} />
-            <Flex css={{ flexDirection: "column", gap: 2 }}>
-              <Text size={2} bold blue>
-                {truncateAddress(address)}
-                {isBot && <FaRobot />}
-              </Text>
-              <Flex
-                css={{ flexDirection: "row", gap: 20, alignItems: "start" }}
-              >
-                <Flex css={{ flexDirection: "column", gap: 1 }}>
-                  <Text size={1}>{elo} ELO</Text>
-                  <Text size={1}>{nationality}</Text>
-                </Flex>
-                <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
-              </Flex>
+    <Link to={(isBot ? "/bot/" : isInvalid ? "#" : "/users/") + address}>
+      <Flex css={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+        <ProfileImage diameter={45} address={address} />
+        <Flex css={{ flexDirection: "column", gap: 2 }}>
+          <Text size={2} bold blue>
+            {truncateAddress(address)}
+            {isBot && <FaRobot />}
+          </Text>
+          <Flex css={{ flexDirection: "row", gap: 20, alignItems: "start" }}>
+            <Flex css={{ flexDirection: "column", gap: 1 }}>
+              <Text size={1}>{elo} ELO</Text>
+              <Text size={1}>{nationality}</Text>
             </Flex>
+            <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
           </Flex>
-        </Link>
+        </Flex>
+      </Flex>
+    </Link>
   );
 };

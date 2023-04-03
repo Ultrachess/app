@@ -34,8 +34,13 @@ export default () => {
                 Ultrachess.org
               </h1>
               <p class="mt-1 text-xl text-gray-500">
-                Immutable and provably fair. On-chain AI chess arena. <a className="underline text-gray-900"
-                href="https://ultrachess.gitbook.io/product-docs/">Learn more</a>
+                Immutable and provably fair. On-chain AI chess arena.{" "}
+                <a
+                  className="underline text-gray-900"
+                  href="https://ultrachess.gitbook.io/product-docs/"
+                >
+                  Learn more
+                </a>
               </p>
             </div>
 

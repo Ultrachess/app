@@ -76,16 +76,32 @@ export default ({ games }: { games: Game[] }) => {
       <AddressGame id={id} />,
       <>
         {completed
-          ? draw ? "draw" : score1 > score2 ? "p1 wins" : "p2 wins"
+          ? draw
+            ? "draw"
+            : score1 > score2
+            ? "p1 wins"
+            : "p2 wins"
           : bettingIsClosed
           ? isWaitingForAPlayer
             ? "waiting on player"
             : "playing"
           : "betting phase. Closes in" + (current - bettingClosesAt)}
       </>,
-      <><Address hoverable={true} value={game.players[0]} /> {" "} <Badge color={score1 > score2 ? "green" : score1 < score2 ? "red" : "gray"} value={<AssetDisplay balance={wager} tokenAddress={token} />}/></>,
+      <>
+        <Address hoverable={true} value={game.players[0]} />{" "}
+        <Badge
+          color={score1 > score2 ? "green" : score1 < score2 ? "red" : "gray"}
+          value={<AssetDisplay balance={wager} tokenAddress={token} />}
+        />
+      </>,
       p2 ? (
-        <><Address hoverable={true} value={p2} /> {" "} <Badge color={score2 > score1 ? "green" : score2 < score1 ? "red" : "gray"} value={<AssetDisplay balance={wager} tokenAddress={token} />}/></>
+        <>
+          <Address hoverable={true} value={p2} />{" "}
+          <Badge
+            color={score2 > score1 ? "green" : score2 < score1 ? "red" : "gray"}
+            value={<AssetDisplay balance={wager} tokenAddress={token} />}
+          />
+        </>
       ) : isInGame ? (
         "Waiting for opponent"
       ) : (

@@ -103,7 +103,6 @@ export default () => {
 
   console.log("fix: isTurn: ", isTurn);
   console.log("fix: gameSide: ", gameSide);
-  
 
   //checkt if gameState is an instance of Chess
   const isChess = gameState instanceof Chess;

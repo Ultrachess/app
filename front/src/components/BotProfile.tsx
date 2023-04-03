@@ -112,7 +112,7 @@ export default () => {
                 <Address value={id} isImageBig={true} />
               </h1>
               <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
-              <div className="mt-2 flex items-center text-sm text-gray-500">
+                <div className="mt-2 flex items-center text-sm text-gray-500">
                   <svg
                     className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                     viewBox="0 0 20 20"
@@ -126,7 +126,7 @@ export default () => {
                     />
                     <path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" />
                   </svg>
-                  <span className="underline">{name}</span> {" "}
+                  <span className="underline">{name}</span>{" "}
                 </div>
                 <div className="mt-2 flex items-center text-sm text-gray-500">
                   <svg

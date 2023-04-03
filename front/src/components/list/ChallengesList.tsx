@@ -60,12 +60,13 @@ export default ({
   const challengeItems =
     challenges.length > 0
       ? challenges.map((challenge) => {
-          const { challengeId, sender, recipient, token, wager, timestamp } = challenge;
+          const { challengeId, sender, recipient, token, wager, timestamp } =
+            challenge;
           const isSentToYou = account.toLowerCase() === recipient.toLowerCase();
           const owner = useOwner(recipient);
           const isOwnedByYou =
             account.toLowerCase() === (owner?.toLowerCase() ?? "");
-            console.log("challenge Id: ", challengeId);
+          console.log("challenge Id: ", challengeId);
           return [
             challengeId ?? "#",
             <Address value={sender} hoverable={true} />,

@@ -49,8 +49,7 @@ export default ({
         <>
           Player{" "}
           <Address showProfile={false} value={notification["creator_id"]} /> has
-          created a game{" "}
-          <AddressGame id={notification["game_id"]} />
+          created a game <AddressGame id={notification["game_id"]} />
         </>
       );
       break;
@@ -60,8 +59,7 @@ export default ({
         <>
           Player{" "}
           <Address showProfile={false} value={notification["player_id"]} /> has
-          joined your game{" "}
-          <AddressGame id={notification["game_id"]} />
+          joined your game <AddressGame id={notification["game_id"]} />
         </>
       );
       break;
@@ -70,8 +68,7 @@ export default ({
       description = (
         <>
           <Address showProfile={false} value={notification["player_id"]} /> has
-          made a move in your game{" "}
-          <AddressGame id={notification["game_id"]} />
+          made a move in your game <AddressGame id={notification["game_id"]} />
         </>
       );
       break;
@@ -79,8 +76,7 @@ export default ({
       title = "Game Completed";
       description = (
         <>
-          Game <AddressGame id={notification["game_id"]} />{" "}
-          has completed with{" "}
+          Game <AddressGame id={notification["game_id"]} /> has completed with{" "}
           <Address showProfile={false} value={notification["player_id1"]} />{" "}
           scoring {notification["score1"]} and{" "}
           <Address showProfile={false} value={notification["player_id2"]} />{" "}
@@ -261,8 +257,7 @@ export default ({
           Bot <Address showProfile={false} value={notification["player_id1"]} />{" "}
           is playing against bot{" "}
           <Address showProfile={false} value={notification["player_id2"]} /> in
-          game <AddressGame id={notification["game_id"]} />{" "}
-          for{" "}
+          game <AddressGame id={notification["game_id"]} /> for{" "}
           <AssetDisplay
             tokenAddress={notification["token"]}
             balance={notification["wager"]}
@@ -275,9 +270,8 @@ export default ({
       title = "Bot Game Completed";
       description = (
         <>
-          Bot game{" "}
-          <AddressGame id={notification["game_id"]} /> has
-          completed with{" "}
+          Bot game <AddressGame id={notification["game_id"]} /> has completed
+          with{" "}
           <Address showProfile={false} value={notification["player_id1"]} />{" "}
           scoring {notification["score1"]} and{" "}
           <Address showProfile={false} value={notification["player_id2"]} />{" "}
@@ -301,7 +295,6 @@ export default ({
       );
       break;
     case NotificationType.BOT_OFFER_CREATED:
-      
       title = "Bot Offer Received";
       description = (
         <>
