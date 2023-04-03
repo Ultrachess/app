@@ -207,7 +207,7 @@ export const STABLECOIN_ADDRESS_ON_NETWORKS = {
   69: "0x5f98805a4e8be255a32880fdec7f6728c6568ba0",
   420: "0x5f98805a4e8be255a32880fdec7f6728c6568ba0",
   421611: "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-  5: "0x2f3a40a3db8a7e3d09b0adfefbce4f6f81927557",
+  5: "0x50b5a3f1cce4a5936e373e6828afdb073c79c1c7",
   31337: CartesiToken.address,
 };
 
