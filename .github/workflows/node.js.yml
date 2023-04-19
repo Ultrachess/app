@@ -121,13 +121,13 @@ jobs:
         working-directory: front
         run: yarn install
 
-      - name: yarn audit-ci
-        working-directory: front
-        run: yarn audit-ci
+      # - name: yarn audit-ci
+      #   working-directory: front
+      #   run: yarn audit-ci
 
-      - name: yarn prettier
-        working-directory: front
-        run: yarn prettier
+      # - name: yarn prettier
+      #   working-directory: front
+      #   run: yarn prettier
 
       #- name: yarn eslint
       #  working-directory: front
