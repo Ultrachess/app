@@ -172,7 +172,12 @@ def reject_input(msg, payload):
 
 def handle_advance(data):
     metadata = data["metadata"]
-    actionId = int(str(data["payload"][:10]), 16)
+    actionId = 0
+    try:
+        actionId = int(str(data["payload"][:10]), 16)
+    except ValueError:
+        logger.info("Invalid payload for conversion to actionId. Setting actionId to 0.")
+        pass
     payload = data["payload"][10:]
     depositPayload = data["payload"][2:]
     sender = metadata["msg_sender"]
