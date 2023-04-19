@@ -188,7 +188,7 @@ def handle_advance(data):
 
     logger.info("data:" + str(data))
     logger.info(f"metadata: {metadata}")
-    # logger.info(f"payload:        {payload}")
+    logger.info(f"payload:        {payload}")
     logger.info(f"sender: {sender}")
     logger.info(f"epochIndex: {epochIndex}")
     logger.info(f"inputIndex: {inputIndex}")
@@ -212,6 +212,8 @@ def handle_advance(data):
             logger.info("is from rollup address")
             # Is from rollup contract
             binary = bytes.fromhex(depositPayload)
+            logger.info("deposit payload")
+            logger.info(depositPayload)
             try:
                 decoded = decode_abi(
                     ["bytes32", "address", "address", "uint256", "bytes"], binary
@@ -219,14 +221,14 @@ def handle_advance(data):
             except Exception as e:
                 msg = "Payload does not conform to ERC20 deposit ABI"
                 logger.error(f"{msg}\n{traceback.format_exc()}")
-                return reject_input(msg, data["payload"])
+                # return reject_input(msg, data["payload"])
 
             # Check if the header matches the Keccak256-encoded string "ERC20_Transfer"
             input_header = decoded[0]
             if input_header != ERC20_TRANSFER_HEADER:
-                return reject_input(
-                    f"Input header is not from an ERC20 transfer", data["payload"]
-                )
+                # return reject_input(
+                #     f"Input header is not from an ERC20 transfer", data["payload"]
+                # )
 
             depositAddress = decoded[1]
             depositTokenAddress = decoded[2]
