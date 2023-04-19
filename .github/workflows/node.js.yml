@@ -146,6 +146,7 @@ jobs:
       - name: Deploy dapp
         run: |
           docker compose down -v
+          DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV
           sleep 60
