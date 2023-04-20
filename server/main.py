@@ -175,8 +175,8 @@ def handle_advance(data):
     actionId = 0
     try:
         actionId = int(str(data["payload"][:10]), 16)
-    except ValueError:
-        logger.info("Invalid payload for conversion to actionId. Setting actionId to 0.")
+    except Exception:
+        traceback.print_exc()
         pass
     payload = data["payload"][10:]
     depositPayload = data["payload"][2:]
