@@ -225,14 +225,13 @@ def handle_advance(data):
 
             # Check if the header matches the Keccak256-encoded string "ERC20_Transfer"
             input_header = decoded[0]
-            if input_header != ERC20_TRANSFER_HEADER:
+            if input_header == ERC20_TRANSFER_HEADER:
                 # return reject_input(
                 #     f"Input header is not from an ERC20 transfer", data["payload"]
                 # )
-
-            depositAddress = decoded[1]
-            depositTokenAddress = decoded[2]
-            depositAmount = decoded[3]
+                depositAddress = decoded[1]
+                depositTokenAddress = decoded[2]
+                depositAmount = decoded[3]
 
         else:
             # Is user input
