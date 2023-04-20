@@ -134,8 +134,8 @@ jobs:
       #  run: yarn eslint
 
       #Clean docker
-      - name: Clean Docker
-        run: docker ps -aq | xargs -r docker stop && docker ps -aq | xargs -r docker rm && docker system prune -af --volumes
+      # - name: Clean Docker
+      #   run: docker ps -aq | xargs -r docker stop && docker ps -aq | xargs -r docker rm && docker system prune -af --volumes
 
       # Build dapp
       - name: Build dapp
