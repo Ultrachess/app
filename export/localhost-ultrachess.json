@@ -551,7 +551,7 @@
       ]
     },
     "NonfungiblePositionManager": {
-      "address": "0x0c4338496BC5C477bEc5c9874E9EA1038AcFb7a6",
+      "address": "0x307bbec1FF7d977B1372db0B410DE7344893de09",
       "abi": [
         {
           "inputs": [
@@ -1775,7 +1775,7 @@
       ]
     },
     "UniswapV3Staker": {
-      "address": "0xA1997c5182bB3D555caD5cbb94871B98e575186B",
+      "address": "0x36eE22d9946d19041a7b677Fe312ffcC35e4941c",
       "abi": [
         {
           "inputs": [
@@ -4624,7 +4624,7 @@
       ]
     },
     "ADAI": {
-      "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
+      "address": "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
       "abi": [
         {
           "anonymous": false,
@@ -5464,7 +5464,7 @@
       ]
     },
     "AUSDC": {
-      "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
+      "address": "0x9d4454B023096f34B160D6B654540c56A1F81688",
       "abi": [
         {
           "anonymous": false,
@@ -6304,7 +6304,7 @@
       ]
     },
     "AUSDT": {
-      "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
+      "address": "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
       "abi": [
         {
           "anonymous": false,
@@ -7144,7 +7144,7 @@
       ]
     },
     "ADAIStableDebt": {
-      "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
+      "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
       "abi": [
         {
           "anonymous": false,
@@ -7928,7 +7928,7 @@
       ]
     },
     "AUSDCStableDebt": {
-      "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
+      "address": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
       "abi": [
         {
           "anonymous": false,
@@ -8712,7 +8712,7 @@
       ]
     },
     "AUSDTStableDebt": {
-      "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
+      "address": "0x4c5859f0F772848b2D91F1D83E2Fe57935348029",
       "abi": [
         {
           "anonymous": false,
@@ -9496,7 +9496,7 @@
       ]
     },
     "ADAIVariableDebt": {
-      "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
+      "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
       "abi": [
         {
           "anonymous": false,
@@ -10170,7 +10170,7 @@
       ]
     },
     "AUSDCVariableDebt": {
-      "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
+      "address": "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
       "abi": [
         {
           "anonymous": false,
@@ -10844,7 +10844,7 @@
       ]
     },
     "AUSDTVariableDebt": {
-      "address": "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
+      "address": "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
       "abi": [
         {
           "anonymous": false,
@@ -12710,7 +12710,7 @@
       ]
     },
     "CurveAavePool": {
-      "address": "0x32992f4780Fbe0C46bfC938Fd9a198484c75d5ff",
+      "address": "0x97EAC5eC305aBc484C2cE29da118B3Ac00535C06",
       "abi": [
         {
           "anonymous": false,
@@ -17716,7 +17716,7 @@
       ]
     },
     "LpSft": {
-      "address": "0xB1b634725243902792E6f45a358613A88410159f",
+      "address": "0x031Af2fc19F0332fB49932CA15DD731EbAFEfcc7",
       "abi": [
         {
           "inputs": [
@@ -18370,7 +18370,7 @@
       ]
     },
     "CurveAavePooler": {
-      "address": "0x1f968B24D88fEe2B6Ba54592351D2611b1eEf486",
+      "address": "0xd21C04020C34d8e70312FEedc8E519AFDbd46860",
       "abi": [
         {
           "inputs": [
@@ -18686,7 +18686,7 @@
       ]
     },
     "CurveAaveStaker": {
-      "address": "0xFA0ded5DeB74aBb8425fFa0C30f2C6e4A3d89e70",
+      "address": "0x8A450Be069152fC6b67AB7Bc5702B62F9F46EF80",
       "abi": [
         {
           "inputs": [
@@ -19072,7 +19072,7 @@
       ]
     },
     "UniV3Swapper": {
-      "address": "0x58d7E3fE38E9AC3041dDb047543cFA631795b8B9",
+      "address": "0xC7Ea77EEC9869Dc2f637f12CBe8cF4717855582C",
       "abi": [
         {
           "inputs": [
@@ -19461,7 +19461,7 @@
       ]
     },
     "UniV3Pooler": {
-      "address": "0x98F9889f963e12F61EB1cB40E7Cf0903cb3d34de",
+      "address": "0xa4a6809AFf69F7ee8deCE57dA4A26B96c58Ba092",
       "abi": [
         {
           "inputs": [
@@ -20029,7 +20029,7 @@
       ]
     },
     "UniV3Staker": {
-      "address": "0xa671DAF7A86ba6Ab87B1d92179BFD2C0f1f80693",
+      "address": "0x70C3263af176D983439366048408cE0FACFe9558",
       "abi": [
         {
           "inputs": [
