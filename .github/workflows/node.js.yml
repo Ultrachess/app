@@ -132,10 +132,10 @@ jobs:
       #- name: yarn eslint
       #  working-directory: front
       #  run: yarn eslint
-      
+
       #Clean docker
       - name: Clean Docker
-        run: docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker system prune -af --volumes
+        run: docker ps -aq | xargs -r docker stop && docker ps -aq | xargs -r docker rm && docker system prune -af --volumes
 
       # Build dapp
       - name: Build dapp
