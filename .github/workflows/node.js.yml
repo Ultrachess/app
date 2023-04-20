@@ -132,6 +132,10 @@ jobs:
       #- name: yarn eslint
       #  working-directory: front
       #  run: yarn eslint
+      
+      #Clean docker
+      - name: Clean Docker
+        run: docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker system prune -af --volumes
 
       # Build dapp
       - name: Build dapp
@@ -145,7 +149,6 @@ jobs:
 
       - name: Deploy dapp
         run: |
-          docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker system prune -af --volumes
           docker compose down -v
           DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
