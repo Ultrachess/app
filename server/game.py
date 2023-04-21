@@ -12,6 +12,7 @@
 
 import logging
 import traceback
+import time
 
 import chess.engine
 import chess.pgn
@@ -321,6 +322,31 @@ class Game:
             (uci, botMoveStat) = bot.run(board, timestamp)
             self.move(botId, timestamp, uci, botMoveStat)
         return True
+    
+    def runFixed(self, timestamp, maxTimePerSession):
+        timeSpent = 0
+
+        while not self.isGameEnd() and timeSpent <= maxTimePerSession:
+            start_time = time.time()
+
+            # Set current bot
+            if len(self.players) < 2:
+                return False
+            botId1 = self.players[0]
+            botId2 = self.players[1]
+            botId = botId1 if self.__isTurn(botId1) else botId2
+            bot = deps.botFactory.bots[botId]
+
+            # Fetch game move and run
+            board = self.state.board()
+            (uci, botMoveStat) = bot.run(board, timestamp)
+            self.move(botId, timestamp, uci, botMoveStat)
+
+            end_time = time.time()
+            timeSpent += end_time - start_time
+
+        return (timeSpent, self.isGameEnd())
+
 
     ##def runMatches(self, matchCount):
     ##    for i in range(matchCount):

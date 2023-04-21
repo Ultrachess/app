@@ -23,7 +23,6 @@ import notification
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
-
 class Bot:
     def __init__(self, id, owner, binary, timestamp):
         self.id = id
@@ -120,7 +119,12 @@ class BotManager:
     def __init__(self):
         self.last_challenged = {}
         self.pending_game_moves = []
+        self.pending_games = []
         self.last_step_timestamp = 0
+        self.time_allowed = 10.0 #seconds
+
+    def start(self):
+        self.time_allowed = 10.0
 
     def __fetchOpponent(self, botIdList, botId, factory):
         mainBot = factory.bots[botId]
@@ -157,7 +161,20 @@ class BotManager:
         self.last_challenged[botId]['index'] = last_index
 
         return eligible_opponents[last_index]
+
+    def runPendingGames(self, timestamp):
+        num_games = len(self.pending_games)
+        finished_games = []
+        totalTimeSpent = 0
+        for gameId in list(self.pending_games):
+            game = deps.matchMaker.games[gameId]
+            (timeSpent, finished) = game.runFixed(timestamp, self.time_allowed / num_games)
+            totalTimeSpent += timeSpent
+            if finished:
+                finished_games.push(gameId)
         
+        self.time_allowed -= totalTimeSpent
+
 
     def runPendingMoves(self, timestamp):
         logger.info("bot: attempting running pending moves")

@@ -246,6 +246,8 @@ def handle_advance(data):
         # Is uploading bot binary
         operator = "createBot"
 
+    botManager.start()
+    
     # set timestamp
     matchMaker.setTimestamp(timeStamp)
     set_timestamp(timeStamp)
