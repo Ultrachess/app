@@ -233,6 +233,8 @@ class BotManager:
         self.runPendingMoves(timestamp)
 
     def step(self, sender, timestamp, rand, factory, matchmaker):
+        #log random number
+        logger.info("bot stepping with: random number: " + str(rand))
         # handle all autonomous matchmaking between bots
         self.__matchMake(sender, timestamp, rand, factory, matchmaker)
         self.last_step_timestamp = timestamp

@@ -188,7 +188,7 @@ export default () => {
                       for="UserEmail"
                       class="block text-xs font-medium text-gray-700"
                     >
-                      Auto battle max wager amount
+                      Auto battle max wager amount in {token.symbol}
                     </label>
 
                     <input
