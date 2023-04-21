@@ -166,14 +166,19 @@ class BotManager:
         num_games = len(self.pending_games)
         finished_games = []
         totalTimeSpent = 0
+
+        if num_games == 0:
+            return
+
         for gameId in list(self.pending_games):
             game = deps.matchMaker.games[gameId]
             (timeSpent, finished) = game.runFixed(timestamp, self.time_allowed / num_games)
             totalTimeSpent += timeSpent
             if finished:
-                finished_games.push(gameId)
+                finished_games.append(gameId)
         
         self.time_allowed -= totalTimeSpent
+        self.pending_games = [gameId for gameId in self.pending_games if gameId not in finished_games]
 
 
     def runPendingMoves(self, timestamp):
@@ -245,7 +250,7 @@ class BotManager:
         autoBattleEnabled = (
             options["autoBattleEnabled"] if ("autoBattleEnabled" in options) else False
         )
-        name = options["name"] if ("name" in options) else "bot" + botId
+        name = options["name"] if ("name" in options) else ("bot" + str(botId) if botId else "")
 
         bot = factory.bots[botId]
         if sender.lower() == bot.owner.lower():
