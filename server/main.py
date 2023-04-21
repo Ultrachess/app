@@ -303,12 +303,6 @@ def handle_advance(data):
         except Exception:
             traceback.print_exc()
             success = False
-    elif operator == "botStep":
-        try:
-            botManager.step(sender, timeStamp, value, botFactory, matchMaker)
-        except Exception:
-            traceback.print_exc()
-            success = False
     elif operator == "manageBot":
         try:
             botManager.manage(sender, value, botFactory)
@@ -381,9 +375,14 @@ def handle_advance(data):
         except Exception:
             traceback.print_exc()
             success = False
+    elif operator == "botStep":
+        try:
+            botManager.step(sender, timeStamp, value, botFactory, matchMaker)
+            botManager.runPendingMoves(timeStamp)
+        except Exception:
+            traceback.print_exc()
+            success = False
     logger.info("pending moves: " + str(botManager.pending_game_moves))
-
-    botManager.runPendingMoves(timeStamp)
 
     logger.info("Running tournament manager from main")
     tournamentManager.run()

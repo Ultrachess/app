@@ -123,39 +123,41 @@ class BotManager:
         self.last_step_timestamp = 0
 
     def __fetchOpponent(self, botIdList, botId, factory):
-        botIdIndex = botIdList.index(botId)
-        newIdList = botIdList.copy()
-        newIdList.remove(botId)
-        logger.info("botIdIndex: " + str(botIdIndex))
-        logger.info("newIdList: " + str(newIdList))
-        logger.info("botIdList: " + str(botIdList))
-
-        # remove bots that do not meet criteria
         mainBot = factory.bots[botId]
-        for tempBotId in newIdList:
-            tempBot = factory.bots[tempBotId]
-            logger.info(str(tempBot))
-            if tempBot.owner.lower() == mainBot.owner.lower():
-                newIdList.remove(tempBotId)
-            elif (
-                tempBot.autoWagerTokenAddress.lower()
-                != mainBot.autoWagerTokenAddress.lower()
-            ):
-                newIdList.remove(tempBotId)
-            elif tempBot.autoMaxWagerAmount > mainBot.autoMaxWagerAmount:
-                newIdList.remove(tempBotId)
-            elif not tempBot.autoBattleEnabled:
-                newIdList.remove(tempBotId)
 
-        if newIdList != None and len(newIdList) == 0:
+        eligible_opponents = []
+
+        for opponentId in botIdList:
+            if opponentId == botId:
+                continue
+
+            opponent = factory.bots[opponentId]
+
+            if (opponent.owner.lower() != mainBot.owner.lower() and
+                opponent.autoWagerTokenAddress.lower() == mainBot.autoWagerTokenAddress.lower() and
+                opponent.autoMaxWagerAmount <= mainBot.autoMaxWagerAmount):
+                
+                eligible_opponents.append(opponentId)
+
+        if not eligible_opponents:
             return False
+
         if botId not in self.last_challenged:
-            self.last_challenged[botId] = botIdIndex % len(newIdList)
+            self.last_challenged[botId] = {'opponents': [], 'index': 0}
 
-        self.last_challenged[botId] += 1
-        self.last_challenged[botId] = self.last_challenged[botId] % len(newIdList)
+        last_opponents = self.last_challenged[botId]['opponents']
+        last_index = self.last_challenged[botId]['index']
 
-        return newIdList[self.last_challenged[botId]]
+        if last_opponents != eligible_opponents:
+            self.last_challenged[botId]['opponents'] = eligible_opponents
+            last_index = 0
+        else:
+            last_index = (last_index + 1) % len(eligible_opponents)
+
+        self.last_challenged[botId]['index'] = last_index
+
+        return eligible_opponents[last_index]
+        
 
     def runPendingMoves(self, timestamp):
         logger.info("bot: attempting running pending moves")

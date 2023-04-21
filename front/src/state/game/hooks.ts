@@ -147,6 +147,11 @@ const PLACE_HOLDER_THRONE: Throne = {
   maxTrys: 0,
 };
 
+export function useLastStepTimestamp(): number {
+  const timestamp = useAppSelector(state => state.game.lastStepTimestamp)
+  return timestamp * 1000
+}
+
 export function useBalance(id: string, tokenAddress: string): number {
   const accounts: { [address: string]: { [token: string]: number } } =
     useAppSelector((state) => state.game.accounts);
