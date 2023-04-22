@@ -208,7 +208,7 @@ export default () => {
                       value={autoMaxWagerAmount}
                       onChange={(event) => {
                         //console.log("event.value", event.target.value)
-                        dispatch(setAutoMaxWagerAmount(event.target.value));
+                        dispatch(setManageBotAutoMaxWagerAmount(event.target.value));
                       }}
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />
