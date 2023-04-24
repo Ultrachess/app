@@ -24,6 +24,7 @@ import ModalCreateOffer from "../modals/ModalCreateOffer";
 import ModalManageBot from "../modals/ModalManageBot";
 import ModalNewCreateGame from "../modals/ModalNewCreateGame";
 import ModalNewDepositFunds from "../modals/ModalNewDepositFunds";
+import ModalSellBot from "../modals/ModalSellBot";
 import NotificationBell from "./NavBell";
 import NavInfo from "./NavInfo";
 import NavNetwork from "./NavNetwork";
@@ -202,6 +203,7 @@ export default function Navbar() {
           <ModalCreateChallenge />
           <ModalCreateOffer />
           <ModalManageBot />
+          <ModalSellBot />
         </>
       )}
     </Disclosure>

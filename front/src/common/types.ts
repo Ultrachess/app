@@ -21,6 +21,7 @@ export enum TransactionType {
   CREATE_TOURNAMENT,
   JOIN_TOURNAMENT,
   CREATE_CHALLENGE,
+  CREATE_BOT_LISTING,
   ACCEPT_CHALLENGE,
   DECLINE_CHALLENGE,
   CREATE_OFFER,
@@ -63,6 +64,13 @@ export interface CreateBotOfferTransactionsInfo extends BaseTransactionInfo {
   type: TransactionType.CREATE_OFFER;
   botId: string;
   price: any;
+  tokenAddress: string;
+}
+
+export interface CreateBotListingTransactionsInfo extends BaseTransactionInfo {
+  type: TransactionType.CREATE_BOT_LISTING;
+  botId: string;
+  price: number;
   tokenAddress: string;
 }
 

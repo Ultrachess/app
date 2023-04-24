@@ -170,6 +170,7 @@ export interface LpNftProfile {
 
 export interface BotProfile extends BaseProfile {
   owner: string;
+  price: number;
   offers: BotOffer[];
   autoBattleEnabled: boolean;
   autoMaxWagerAmount: number;

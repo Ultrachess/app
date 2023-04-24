@@ -51,38 +51,28 @@ export default () => {
   const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const balance = useTokenBalance(token, account);
-  const [name, setName] = useState("default");
+  const [price, setPrice] = useState(0);
   const [autoMaxWagerAmount, setAutoMaxWagerAmount] = useState(0);
-  const [autoBattleEnabled, setAutoBattleEnabled] = useState("False");
 
   const addAction = useActionCreator();
   const dispatch = useDispatch();
   const cancelButtonRef = useRef(null);
 
-  const showManageBotModal = useAppSelector(
-    (state) => state.ui.modal.showManageBotModal
+  const showSellBotModal = useAppSelector(
+    (state) => state.ui.modal.showSellBotModal
   );
-  const manageBotAddress = useAppSelector(
-    (state) => state.ui.modal.manageBotAddress
-  );
-  const manageBotName = useAppSelector((state) => state.ui.modal.manageBotName);
-  const manageBotAutoBattleEnabled = useAppSelector(
-    (state) => state.ui.modal.manageBotAutoBattleEnabled
-  );
-  const isAutoBattleEnabled = useMemo( () => manageBotAutoBattleEnabled === "True", [manageBotAutoBattleEnabled])
-  const manageBotAutoMaxWagerAmount = useAppSelector(
-    (state) => state.ui.modal.manageBotAutoMaxWagerAmount
+  const sellBotAddress = useAppSelector(
+    (state) => state.ui.modal.sellBotAddress
   );
 
-  const handleManage = async () => {
+
+  const handleSell = async () => {
     //console.log("amount", amount)
     const tx = {
-      type: TransactionType.MANAGER_BOT_INPUT,
-      name: manageBotName,
-      autoMaxWagerAmount: manageBotAutoMaxWagerAmount * 10 ** token.decimals,
-      autoWagerTokenAddress: token ? token.address : "",
-      autoBattleEnabled: manageBotAutoBattleEnabled === "True",
-      botId: manageBotAddress,
+        type: TransactionType.CREATE_BOT_LISTING,
+        botId: sellBotAddress,
+        price: price,
+        tokenAddress: token.address,
     };
     //console.log("tx", tx)
     const [approvalActionId, wait] = await addAction(tx);
@@ -94,7 +84,7 @@ export default () => {
 
   //console.log("amount", amount)
   return (
-    <Transition.Root show={showManageBotModal} as={Fragment}>
+    <Transition.Root show={showSellBotModal} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-10"
@@ -132,83 +122,33 @@ export default () => {
                         as="h3"
                         className="text-base font-semibold leading-6 text-gray-900"
                       >
-                        Manage your bot <Address value={manageBotAddress} />
+                        List your bot <Address value={sellBotAddress} /> for sale
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          You can change the name of your bot, whether or not it
-                          should auto-battle and the maximum wager amount.
+                          Once listed, interested parties will be able to purchase your bot.
                         </p>
                       </div>
                     </div>
                   </div>
 
+
+
+
                   <div className="mt-5">
                     <label
                       for="UserEmail"
                       class="block text-xs font-medium text-gray-700"
                     >
-                      name
+                      Set listing 
                     </label>
 
                     <input
                       id="name"
-                      value={manageBotName}
-                      defaultValue={0}
+                      value={price}
                       onChange={(event) => {
                         //console.log("event.value", event.target.value)
-                        dispatch(setManageBotName(event.target.value));
-                      }}
-                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
-                    />
-                  </div>
-
-                  <div className="mt-5">
-                    <label
-                      for="UserEmail"
-                      class="block text-xs font-medium text-gray-700"
-                    >
-                      Auto battle Enabled?
-                    </label>
-
-                    <label htmlFor="AcceptConditions" className="relative h-8 w-14 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        id="AcceptConditions"
-                        className="peer sr-only"
-                        checked={isAutoBattleEnabled}
-                        onChange={() => {
-                          //console.log("event.value", event.target.value)
-                          dispatch(
-                            setManageBotAutoBattleEnabled(isAutoBattleEnabled ? "False" : "True")
-                          );
-                        }}
-                      />
-
-                      <span
-                        className="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-green-500"
-                      ></span>
-
-                      <span
-                        className="absolute inset-y-0 start-0 m-1 h-6 w-6 rounded-full bg-white transition-all peer-checked:start-6"
-                      ></span>
-                    </label>
-                  </div>
-
-                  <div className="mt-5">
-                    <label
-                      for="UserEmail"
-                      class="block text-xs font-medium text-gray-700"
-                    >
-                      Auto battle max wager amount in {token.symbol}
-                    </label>
-
-                    <input
-                      id="name"
-                      value={manageBotAutoMaxWagerAmount}
-                      onChange={(event) => {
-                        //console.log("event.value", event.target.value)
-                        dispatch(setManageBotAutoMaxWagerAmount(event.target.value));
+                        setPrice(event.target.value)
                       }}
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />
@@ -220,11 +160,11 @@ export default () => {
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                     onClick={() => {
-                      handleManage();
+                      handleSell();
                       dispatch(setManageBotModal(false));
                     }}
                   >
-                    Update
+                    List
                   </button>
                   <button
                     type="button"

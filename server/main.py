@@ -134,6 +134,7 @@ def get_state_hex():
         "challenges": challengeManager.getState(),
         "marketplace": botMarketPlace.getState(),
         "throne": kohManager.getStringState(),
+        "botPrices": botMarketPlace.getBotPrices(),
     }
     # logger.info("Inspect element return: " + str(data_set))
     json_object = json.dumps(data_set)
@@ -363,6 +364,12 @@ def handle_advance(data):
     elif operator == "acceptChallenge":
         try:
             success = challengeManager.accept(sender, timeStamp, value)
+        except Exception:
+            traceback.print_exc()
+            success = False
+    elif operator == "createBotPrice":
+        try:
+            success = botMarketPlace.create_price(sender, timeStamp, value)
         except Exception:
             traceback.print_exc()
             success = False

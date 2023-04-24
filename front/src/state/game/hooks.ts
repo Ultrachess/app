@@ -252,6 +252,7 @@ export function useAllBots(showRank = false): BotProfile[] {
       autoMaxWagerAmount: number;
       autoWagerTokenAddress: string;
       timestamp: number;
+      price: number;
     };
   } = useAppSelector((state) => state.game.bots);
   const offers: { [offerIds: string]: BotOffer } = useAppSelector(
@@ -259,6 +260,9 @@ export function useAllBots(showRank = false): BotProfile[] {
   );
   const challenges: { [challengeIds: string]: Challenge } = useAppSelector(
     (state) => state.game.challenges
+  );
+  const prices: { [botIds: string]: number } = useAppSelector(
+    (state) => state.game.botPrices
   );
   if (!challenges) return [];
   return Object.values(botBaseVals)
@@ -284,6 +288,7 @@ export function useAllBots(showRank = false): BotProfile[] {
           return challenge.recipient.toLowerCase() == val.id.toLowerCase();
         }),
         timestamp: val.timestamp,
+        price: prices[val.id.toLowerCase()] ?? 0,
       };
     })
     .sort((a, b) => {
