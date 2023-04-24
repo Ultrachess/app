@@ -375,4 +375,5 @@ class Game:
             if self.id in deps.betManager.games
             else {},
             "botMoveStats": self.botMoveStats,
+            "eloChange": self.eloChange,
         }
