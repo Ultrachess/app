@@ -20,7 +20,7 @@ import BotListItem from "./BotListItem";
 import Button from "../ui/Button";
 import { TransactionType } from "../../common/types";
 import { useActionCreator } from "../../state/game/hooks";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setCreateOfferAddress, setCreateOfferAmount, setCreateOfferModal } from "../../state/ui/reducer";
 
@@ -83,6 +83,13 @@ export default ({
       setIsBuying(false);
     }
     const buyNowText = isBuying ? "Buying..." : "Buy Now";
+    //find offer with highest price
+    const highestOffer =useMemo(() => {
+      if (offers.length === 0) return 0;
+      let highestOffer = offers.map((offer) => offer.price).reduce((a, b) => Math.max(a, b));
+      return highestOffer;
+    }, [offers])
+
     return [
       index + 1,
       <Address value={id} hoverable={true} />,
@@ -104,7 +111,7 @@ export default ({
                     dispatch(setCreateOfferModal(true));
                   }}
                 >
-                  Offer {" "} {offers.length}
+                  Offer
                 </button>: <>{offers.length}</>
                 }
         
