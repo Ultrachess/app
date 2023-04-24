@@ -34,6 +34,11 @@ class Elo:
         exp = (p2 - p1) / 400.0
         return 1 / ((10.0 ** (exp)) + 1)
 
+    def getElo(self, player):
+        if not player in self.ratingDict:
+            self.addPlayer(player)
+        return self.ratingDict[player]
+
 
 class EloManager:
     def __init__(self):

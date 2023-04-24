@@ -54,6 +54,7 @@ class Game:
         self.scores = {}
         self.bettingDuration = duration
         self.botMoveStats = []
+        self.eloChange = {}
 
     def __isInGame(self, address):
         return address in self.players
@@ -128,6 +129,7 @@ class Game:
         score1, score2 = self.fetchPlayerPoint(p1), self.fetchPlayerPoint(p2)
         self.scores[p1] = score1
         self.scores[p2] = score2
+        prevElo1, prevElo2 = deps.eloManager.getElo(p1), deps.eloManager.getElo(p2)
         deps.eloManager.applyGame(p1, p2, score1, score2)
         logger.info("score1:" + str(score1) + " score2:" + str(score2))
         # calculate funds for player 1
@@ -143,6 +145,10 @@ class Game:
         # distribute pot
         winningId = p1 if score1 > score2 else p2 if score2 > score1 else "DRAW"
         deps.betManager.end(self.id, winningId)
+
+        #set elo change
+        self.eloChange[p1] = deps.eloManager.getElo(p1) - prevElo1
+        self.eloChange[p2] = deps.eloManager.getElo(p2) - prevElo2
 
         # send notification
         if self.isBot:

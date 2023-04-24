@@ -88,6 +88,7 @@ export interface Game {
   timestamp: number;
   resigner: string;
   scores: { [playerId: string]: number };
+  eloChange: { [playerId: string]: number };
   bettingDuration: number;
   wagering: GameWagers;
   botMoveStats: BotMoveStats[];
