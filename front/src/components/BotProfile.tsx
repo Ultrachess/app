@@ -11,10 +11,12 @@ import { useWeb3React } from "@web3-react/core";
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import { TransactionType } from "../common/types";
 
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { truncateAddress } from "../ether/utils";
-import { useAllBots } from "../state/game/hooks";
+import { useTokenFromList } from "../hooks/token";
+import { useActionCreator, useAllBots } from "../state/game/hooks";
 import {
   setCreateChallengeModal,
   setCreateChallengeModalAddress,
@@ -87,6 +89,9 @@ export default () => {
   } = profile;
 
   const dispatch = useDispatch();
+  const addAction = useActionCreator()
+
+  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
 
   const activeGames = games ? games.filter((game) => game.isEnd === false) : [];
   const pastGames = games ? games.filter((game) => game.isEnd === true) : [];
@@ -104,7 +109,16 @@ export default () => {
     return highestOfferTemp;
   }, [offers]);
 
-  const token = STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
+  const handleBuyNow = async () => {
+    const [approvalActionId, wait] = await addAction({
+      type: TransactionType.CREATE_OFFER,
+      botId: id,
+      tokenAddress: token.address,
+      price: price * 10 ** token.decimals,
+    })
+    await wait;
+  }
+
   const isOwner = account?.toLowerCase() === owner?.toLowerCase();
   return (
     <div className="min-h-full">
@@ -212,7 +226,7 @@ export default () => {
                   </svg>
                   <AssetDisplay
                     balance={autoMaxWagerAmount}
-                    tokenAddress={token}
+                    tokenAddress={token.address}
                   />
                   &nbsp; Auto Wager Amount
                 </div>}
@@ -232,7 +246,7 @@ export default () => {
                   </svg>
                   <AssetDisplay
                     balance={price}
-                    tokenAddress={token}
+                    tokenAddress={token.address}
                   />
                   &nbsp; For sale price
                 </div>}
@@ -344,6 +358,18 @@ export default () => {
                   }}
                 >
                   Offer
+                </button>
+              )}
+
+              {(!isOwner && price > 0) && (
+                <button
+                  className="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+                  type="button"
+                  onClick={() => {
+                    handleBuyNow( )
+                  }}
+                >
+                  Buy now <AssetDisplay balance={price} tokenAddress={token.address} />
                 </button>
               )}
             </div>
