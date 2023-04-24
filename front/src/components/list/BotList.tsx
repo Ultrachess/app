@@ -21,6 +21,8 @@ import Button from "../ui/Button";
 import { TransactionType } from "../../common/types";
 import { useActionCreator } from "../../state/game/hooks";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setCreateOfferAddress, setCreateOfferAmount, setCreateOfferModal } from "../../state/ui/reducer";
 
 const columns = [
   "#",
@@ -45,6 +47,7 @@ export default ({
   const { chainId, account } = useWeb3React()
   const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const addAction = useActionCreator()
+  const dispatch = useDispatch()
   const botItems = bots.map((bot, index) => {
     const {
       id,
@@ -91,10 +94,26 @@ export default ({
         balance={autoMaxWagerAmount}
         tokenAddress={autoWagerTokenAddress}
       />,
-      offers.length,
-      <>{(price > 0 && !isOwner) ? <Button onClick={()=>{handleBuyNow()}} disabled={isBuying}>
+      <>
+        {!isOwner ? <button
+                  className="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+                  type="button"
+                  onClick={() => {
+                    dispatch(setCreateOfferAddress(id));
+                    dispatch(setCreateOfferAmount(0));
+                    dispatch(setCreateOfferModal(true));
+                  }}
+                >
+                  Offer {" "} {offers.length}
+                </button>: <>{offers.length}</>
+                }
+        
+      </>,
+      <>{(price > 0 && !isOwner) ? <button
+        className="block rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring"
+        type="button" onClick={()=>{handleBuyNow()}} disabled={isBuying}>
         {buyNowText} <AssetDisplay balance={price} tokenAddress={token.address} />
-      </Button> :<AssetDisplay balance={price} tokenAddress={token.address} />}</>,
+      </button> :<AssetDisplay balance={price} tokenAddress={token.address} />}</>,
       <DateDisplay current={timestamp * 1000} />,
     ].slice(showRank ? 0 : 1);
   });
