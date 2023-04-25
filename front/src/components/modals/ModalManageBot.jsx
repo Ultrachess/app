@@ -21,6 +21,7 @@ import {
   useTokenFromList,
   useTokenPortalBalance,
   useTokenBalance,
+  useToken,
 } from "../../hooks/token";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useWeb3React } from "@web3-react/core";
@@ -48,7 +49,7 @@ export default () => {
   const navigate = useNavigate();
   const [bettingDuration, setBettingDuration] = useState(0);
   const max = 100;
-  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const balance = useTokenBalance(token, account);
   const [name, setName] = useState("default");
@@ -69,7 +70,10 @@ export default () => {
   const manageBotAutoBattleEnabled = useAppSelector(
     (state) => state.ui.modal.manageBotAutoBattleEnabled
   );
-  const isAutoBattleEnabled = useMemo( () => manageBotAutoBattleEnabled === "True", [manageBotAutoBattleEnabled])
+  const isAutoBattleEnabled = useMemo(
+    () => manageBotAutoBattleEnabled === "True",
+    [manageBotAutoBattleEnabled]
+  );
   const manageBotAutoMaxWagerAmount = useAppSelector(
     (state) => state.ui.modal.manageBotAutoMaxWagerAmount
   );
@@ -171,7 +175,10 @@ export default () => {
                       Auto battle Enabled?
                     </label>
 
-                    <label htmlFor="AcceptConditions" className="relative h-8 w-14 cursor-pointer">
+                    <label
+                      htmlFor="AcceptConditions"
+                      className="relative h-8 w-14 cursor-pointer"
+                    >
                       <input
                         type="checkbox"
                         id="AcceptConditions"
@@ -180,18 +187,16 @@ export default () => {
                         onChange={() => {
                           //console.log("event.value", event.target.value)
                           dispatch(
-                            setManageBotAutoBattleEnabled(isAutoBattleEnabled ? "False" : "True")
+                            setManageBotAutoBattleEnabled(
+                              isAutoBattleEnabled ? "False" : "True"
+                            )
                           );
                         }}
                       />
 
-                      <span
-                        className="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-green-500"
-                      ></span>
+                      <span className="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-green-500"></span>
 
-                      <span
-                        className="absolute inset-y-0 start-0 m-1 h-6 w-6 rounded-full bg-white transition-all peer-checked:start-6"
-                      ></span>
+                      <span className="absolute inset-y-0 start-0 m-1 h-6 w-6 rounded-full bg-white transition-all peer-checked:start-6"></span>
                     </label>
                   </div>
 
@@ -208,7 +213,9 @@ export default () => {
                       value={manageBotAutoMaxWagerAmount}
                       onChange={(event) => {
                         //console.log("event.value", event.target.value)
-                        dispatch(setManageBotAutoMaxWagerAmount(event.target.value));
+                        dispatch(
+                          setManageBotAutoMaxWagerAmount(event.target.value)
+                        );
                       }}
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />

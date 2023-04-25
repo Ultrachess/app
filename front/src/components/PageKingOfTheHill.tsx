@@ -12,7 +12,7 @@ import { useWeb3React } from "@web3-react/core";
 
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { truncateAddress } from "../ether/utils";
-import { useTokenFromList } from "../hooks/token";
+import { useToken, useTokenFromList } from "../hooks/token";
 import { useThrone } from "../state/game/hooks";
 import { ThroneBattle } from "../state/game/types";
 import Address from "./Address";
@@ -72,7 +72,7 @@ export default () => {
 
   const isKing = account?.toLowerCase() === king?.toLowerCase();
 
-  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
 
   const battleItems =
     Object.values(battles).length > 0

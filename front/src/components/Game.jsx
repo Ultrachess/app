@@ -75,7 +75,7 @@ export default () => {
   const now = useTime(1000);
   const games = useSelector((state) => state.game.games);
   const accounts = useSelector((state) => state.auth.accounts);
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const inputState = useSelector((state) => state.game.currentInputState);
   const [statustText, setStatusText] = useState("");
   const isUpToDate = useSelector((state) => state.game.cache.isUpToDate);
@@ -558,7 +558,7 @@ export default () => {
         <div className="flex flex-col lg:flex-row items-center justify-between min-h-[90vh]">
           <div className="flex flex-col gap-2 w-full md:w-4/5 lg:w-1/2 px-6 lg:px-0">
             <div className="flex w-full justify-between items-center">
-              <GameProfile address={topAddress} />
+              <GameProfile address={topAddress} chainId={chainId} />
               <div className="flex gap-2">
                 {completed && (
                   <Text size={"4"} faded>
@@ -637,7 +637,7 @@ export default () => {
             )}
 
             <div className="flex w-full justify-between items-center">
-              <GameProfile address={bottomAddress} />
+              <GameProfile address={bottomAddress} chainId={chainId} />
               <div className="flex gap-2 items-center">
                 {completed && (
                   <Text size={"4"} faded>

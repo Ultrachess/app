@@ -117,7 +117,7 @@ const uiSlice = createSlice({
     },
     setSellBotModal(state, { payload }: { payload: boolean }) {
       state.modal.showSellBotModal = payload;
-    }
+    },
   },
 });
 

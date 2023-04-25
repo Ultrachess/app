@@ -19,7 +19,11 @@ import { useDispatch } from "react-redux";
 
 import { TransactionType } from "../../common/types";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
-import { useTokenFromList, useTokenPortalBalance } from "../../hooks/token";
+import {
+  useToken,
+  useTokenFromList,
+  useTokenPortalBalance,
+} from "../../hooks/token";
 import { useActionCreator } from "../../state/game/hooks";
 import { useAppSelector } from "../../state/hooks";
 import {
@@ -36,7 +40,7 @@ export default () => {
   const { chainId, account } = useWeb3React();
   const [amount, setAmount] = useState<any>(0);
   const max = 100;
-  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
 
   const addAction = useActionCreator();

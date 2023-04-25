@@ -148,8 +148,8 @@ const PLACE_HOLDER_THRONE: Throne = {
 };
 
 export function useLastStepTimestamp(): number {
-  const timestamp = useAppSelector(state => state.game.lastStepTimestamp)
-  return timestamp * 1000
+  const timestamp = useAppSelector((state) => state.game.lastStepTimestamp);
+  return timestamp * 1000;
 }
 
 export function useBalance(id: string, tokenAddress: string): number {

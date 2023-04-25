@@ -11,7 +11,11 @@ import { TransactionType } from "../../common/types";
 import { ethers } from "ethers";
 import Address from "../Address";
 import { useWeb3React } from "@web3-react/core";
-import { useTokenPortalBalance, useTokenFromList } from "../../hooks/token";
+import {
+  useTokenPortalBalance,
+  useTokenFromList,
+  useToken,
+} from "../../hooks/token";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 
 import AddressGame from "../AddressGame";
@@ -33,7 +37,7 @@ export default ({ triggerElement, gameId }) => {
   const [amount, setAmount] = useState(0);
   const [winningId, setWinningId] = useState("DRAW");
   const max = 100;
-  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const game = useGame(gameId);
 

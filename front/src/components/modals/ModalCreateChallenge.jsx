@@ -16,7 +16,11 @@ import {
 } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { Text } from "../ui/Text";
-import { useTokenFromList, useTokenPortalBalance } from "../../hooks/token";
+import {
+  useToken,
+  useTokenFromList,
+  useTokenPortalBalance,
+} from "../../hooks/token";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import AssetDisplay from "../AssetDisplay";
 import { useWeb3React } from "@web3-react/core";
@@ -45,7 +49,7 @@ export default () => {
   const [amount, setAmount] = useState(0);
   const [challenger, setChallenger] = useState(account);
   const max = 100;
-  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const balance = useTokenPortalBalance(token, account);
 
   const bots = useUserBotIds(account);

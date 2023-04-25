@@ -91,12 +91,18 @@ export default ({ games }: { games: Game[] }) => {
       </>,
       <>
         <Address hoverable={true} value={game.players[0]} />{" "}
-        {eloDiffP1 && 
+        {eloDiffP1 && (
           <Badge
             color={eloDiffP1 > 0 ? "green" : eloDiffP1 < 0 ? "red" : "gray"}
-            value={eloDiffP1 > 0 ? `+${eloDiffP1}` : eloDiffP1 < 0 ? `- ${eloDiffP1}` : "0"}
+            value={
+              eloDiffP1 > 0
+                ? `+${eloDiffP1}`
+                : eloDiffP1 < 0
+                ? `- ${eloDiffP1}`
+                : "0"
+            }
           />
-        }
+        )}
         <Badge
           color={score1 > score2 ? "green" : score1 < score2 ? "red" : "gray"}
           value={<AssetDisplay balance={wager} tokenAddress={token} />}
@@ -105,12 +111,18 @@ export default ({ games }: { games: Game[] }) => {
       p2 ? (
         <>
           <Address hoverable={true} value={p2} />{" "}
-          {eloDiffP2 && 
+          {eloDiffP2 && (
             <Badge
               color={eloDiffP2 > 0 ? "green" : eloDiffP2 < 0 ? "red" : "gray"}
-              value={eloDiffP2 > 0 ? `+${eloDiffP2}` : eloDiffP2 < 0 ? `- ${eloDiffP2}` : "0"}
+              value={
+                eloDiffP2 > 0
+                  ? `+${eloDiffP2}`
+                  : eloDiffP2 < 0
+                  ? `- ${eloDiffP2}`
+                  : "0"
+              }
             />
-          }
+          )}
           <Badge
             color={score2 > score1 ? "green" : score2 < score1 ? "red" : "gray"}
             value={<AssetDisplay balance={wager} tokenAddress={token} />}

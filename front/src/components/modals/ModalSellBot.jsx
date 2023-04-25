@@ -21,6 +21,7 @@ import {
   useTokenFromList,
   useTokenPortalBalance,
   useTokenBalance,
+  useToken,
 } from "../../hooks/token";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useWeb3React } from "@web3-react/core";
@@ -48,7 +49,7 @@ export default () => {
   const navigate = useNavigate();
   const [bettingDuration, setBettingDuration] = useState(0);
   const max = 100;
-  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const balance = useTokenBalance(token, account);
   const [price, setPrice] = useState(0);
@@ -65,14 +66,13 @@ export default () => {
     (state) => state.ui.modal.sellBotAddress
   );
 
-
   const handleSell = async () => {
     //console.log("amount", amount)
     const tx = {
-        type: TransactionType.CREATE_BOT_LISTING,
-        botId: sellBotAddress,
-        price: price,
-        tokenAddress: token.address,
+      type: TransactionType.CREATE_BOT_LISTING,
+      botId: sellBotAddress,
+      price: price,
+      tokenAddress: token.address,
     };
     //console.log("tx", tx)
     const [approvalActionId, wait] = await addAction(tx);
@@ -122,25 +122,24 @@ export default () => {
                         as="h3"
                         className="text-base font-semibold leading-6 text-gray-900"
                       >
-                        List your bot <Address value={sellBotAddress} /> for sale
+                        List your bot <Address value={sellBotAddress} /> for
+                        sale
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Once listed, interested parties will be able to purchase your bot.
+                          Once listed, interested parties will be able to
+                          purchase your bot.
                         </p>
                       </div>
                     </div>
                   </div>
-
-
-
 
                   <div className="mt-5">
                     <label
                       for="UserEmail"
                       class="block text-xs font-medium text-gray-700"
                     >
-                      Set listing 
+                      Set listing
                     </label>
 
                     <input
@@ -148,7 +147,7 @@ export default () => {
                       value={price}
                       onChange={(event) => {
                         //console.log("event.value", event.target.value)
-                        setPrice(event.target.value)
+                        setPrice(event.target.value);
                       }}
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />
