@@ -26,7 +26,7 @@ console.log("DEFAULT_GRAPHQL_URL", DEFAULT_GRAPHQL_URL);
 export const DEFAULT_GRAPHQL_POLL_TIME = 5000;
 
 //every two minutes
-export const BOT_STEP_INTERVAL = 60000 * 2;
+export const BOT_STEP_INTERVAL = 60;
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {

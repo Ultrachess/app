@@ -67,7 +67,7 @@ export interface CreateBotOfferTransactionsInfo extends BaseTransactionInfo {
   tokenAddress: string;
 }
 
-export interface CreateBotListingTransactionsInfo extends BaseTransactionInfo {
+export interface CreateBotListingTransactionInfo extends BaseTransactionInfo {
   type: TransactionType.CREATE_BOT_LISTING;
   botId: string;
   price: number;
@@ -208,4 +208,6 @@ export type TransactionInfo =
   | AcceptBotOfferTransactionsInfo
   | DeclineBotOfferTransactionsInfo
   | KingThroneChallengeTransactionInfo
-  | KingThroneUpdateTransactionInfo;
+  | KingThroneUpdateTransactionInfo
+  | CreateBotListingTransactionInfo;
+

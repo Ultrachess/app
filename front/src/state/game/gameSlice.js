@@ -114,6 +114,7 @@ export const gameSlice = createSlice({
     actionList: [],
     challenges: {},
     marketplace: {},
+    botPrices: {},
     throne: {
       king: "",
       winnings: 0,
@@ -164,6 +165,7 @@ export const gameSlice = createSlice({
         challenges,
         marketplace,
         throne,
+        botPrices,
       } = action.payload;
       if (
         !deepEqual(state.elo, elo) ||
@@ -190,6 +192,7 @@ export const gameSlice = createSlice({
       state.challenges = challenges;
       state.marketplace = marketplace;
       state.throne = throne;
+      state.botPrices = botPrices;
     },
     updateGame: (state, action) => {
       var { id, game } = action.payload;
@@ -351,7 +354,7 @@ async function poll(dispatch) {
         "value": ""
     }`;
   var response = await instance.get("/inspect/" + input);
-  //console.log("response", response.data)
+  console.log("response", response.data)
   if (response.data.reports.length <= 0) return poll(dispatch);
 
   var payload = response.data.reports[0].payload;

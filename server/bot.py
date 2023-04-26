@@ -102,6 +102,11 @@ class BotFactory:
 
     def getOwner(self, id):
         return self.bots[id].owner
+    
+    def getBot(self, id):
+        if id not in self.bots:
+            return None
+        return self.bots[id]
 
     def getStringState(self):
         return str(self.bots)

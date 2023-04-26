@@ -42,6 +42,7 @@ const statusToColor = {
   [ActionStates.PROCESSED]: "blue",
 };
 
+//gets the current time in seconds
 export const useTime = (refreshCycle = 100) => {
   // Returns the current time
   // and queues re-renders every `refreshCycle` milliseconds (default: 100ms)

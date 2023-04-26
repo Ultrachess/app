@@ -294,7 +294,7 @@ function useNotices(): PartialNotice[] | undefined {
 function updateGameState(dispatch, payload) {
   ////console.log(ethers.utils.toUtf8String(payload))
   const state = JSON.parse(ethers.utils.toUtf8String(payload));
-  console.log(state);
+  console.log("state", state);
   dispatch(setAppState(state));
 }
 

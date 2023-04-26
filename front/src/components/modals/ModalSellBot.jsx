@@ -37,6 +37,7 @@ import {
   setManageBotAutoBattleEnabled,
   setManageBotAutoMaxWagerAmount,
   setManageBotAddress,
+  setSellBotModal,
 } from "../../state/ui/reducer";
 import { useAppSelector } from "../../state/hooks";
 import { Fragment, useRef } from "react";
@@ -71,12 +72,12 @@ export default () => {
     const tx = {
       type: TransactionType.CREATE_BOT_LISTING,
       botId: sellBotAddress,
-      price: price,
+      price: price * 10 ** 18,
       tokenAddress: token.address,
     };
-    //console.log("tx", tx)
+    console.log("tx", tx)
     const [approvalActionId, wait] = await addAction(tx);
-    const roomId = await wait;
+    //const roomId = await wait;
     //console.log(roomId)
     //console.log("jumping to" + roomId)
     //if(roomId) navigate(`game/${roomId}`, { replace: true })
@@ -160,7 +161,7 @@ export default () => {
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                     onClick={() => {
                       handleSell();
-                      dispatch(setManageBotModal(false));
+                      dispatch(setSellBotModal(false));
                     }}
                   >
                     List
@@ -169,7 +170,7 @@ export default () => {
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     onClick={() => {
-                      dispatch(setManageBotModal(false));
+                      dispatch(setSellBotModal(false));
                     }}
                     ref={cancelButtonRef}
                   >

@@ -242,7 +242,7 @@ export default () => {
                       />
                     </svg>
                     <AssetDisplay
-                      balance={autoMaxWagerAmount}
+                      balance={autoMaxWagerAmount/10**token.decimals}
                       tokenAddress={token.address}
                     />
                     &nbsp; Auto Wager Amount

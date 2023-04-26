@@ -16,7 +16,7 @@ import { TransactionInfo, TransactionType } from "../../common/types";
 import { CHAINS } from "../../ether/chains";
 import { CONTRACTS } from "../../ether/contracts";
 import { useContract } from "../../hooks/contract";
-import { appendNumberToUInt8Array, getErc20Contract } from "../../utils";
+import { appendNumberToUInt8Array, decimalToHexString, getErc20Contract } from "../../utils";
 import {
   addAction,
   setAction,
@@ -261,9 +261,17 @@ export function useAllBots(showRank = false): BotProfile[] {
   const challenges: { [challengeIds: string]: Challenge } = useAppSelector(
     (state) => state.game.challenges
   );
-  const prices: { [botIds: string]: number } = useAppSelector(
+  const pricesListings: { [botIds: string]: {sender: string, botId:string, price: number, token: string, timestamp: number} } = useAppSelector(
     (state) => state.game.botPrices
   );
+
+  //only extract the prices values, prices = {[botId]: price}
+  const prices = 
+    Object.values(pricesListings ?? {}).reduce((acc, val) => {
+      acc[val.botId] = val.price;
+      return acc;
+    }, {});
+    
   if (!challenges) return [];
   return Object.values(botBaseVals)
     .map((val) => {
@@ -288,7 +296,7 @@ export function useAllBots(showRank = false): BotProfile[] {
           return challenge.recipient.toLowerCase() == val.id.toLowerCase();
         }),
         timestamp: val.timestamp,
-        price: prices[val.id.toLowerCase()] ?? 0,
+        price: (prices[val.id.toLowerCase()] ?? 0) / 10 ** 18,
       };
     })
     .sort((a, b) => {
@@ -731,11 +739,10 @@ export function useActionCreator(): (
         switch (info.type) {
           case TransactionType.BOT_STEP:
             const { hash } = info;
-            input = ethers.utils.toUtf8Bytes(`{
-                        "op": "botStep", 
-                        "value": "${hash}"
-                    }`);
-            input = appendNumberToUInt8Array(id, input);
+            console.log(`hash: ${hash}`)
+            //get random number within 1-100
+            const num = Math.floor(Math.random() * 100) + 1;
+            input = ethers.utils.toUtf8Bytes("0x");
             result = await contract.addInput(input);
             break;
           case TransactionType.RELEASE_FUNDS:
@@ -955,6 +962,18 @@ export function useActionCreator(): (
             input = binary;
             input = appendNumberToUInt8Array(id, input);
             result = contract.addInput(input);
+            break;
+          case TransactionType.CREATE_BOT_LISTING:
+            input = ethers.utils.toUtf8Bytes(`{
+                        "op": "createBotPrice",
+                        "value": {
+                            "botId" : "${info.botId}",
+                            "price" : ${info.price},
+                            "token": "${info.tokenAddress}"
+                        }
+                    }`);
+            input = appendNumberToUInt8Array(id, input);
+            result = await contract.addInput(input);
             break;
           case TransactionType.DEPOSIT_ERC20:
             const { amount } = info;

@@ -122,7 +122,7 @@ class BotMarketPlaceManager:
         #if offer greater than or equal to price, auto accept offer
         if botId in self.prices:
             listing = self.prices[botId]
-            if listing["price"] >= price:
+            if price >= listing["price"]:
                 self.accept(owner, timestamp, offerId)
         return True
 
