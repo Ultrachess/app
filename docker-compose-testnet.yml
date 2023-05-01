@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   rollups_dispatcher:
-    image: juztamau5/rollups-dispatcher:0.8.2
+    image: cartesi/rollups-dispatcher:0.8.2
     command:
       [
         "--rd-dapp-contract-address-file",
@@ -43,8 +43,8 @@ services:
     environment:
       RUST_LOG: info
     volumes:
+      - blockchain-data:/opt/cartesi/share/blockchain:ro
       - ./deployments:/deployments
-      - ./export:/opt/cartesi/share/blockchain:ro
 
   state_server:
     image: cartesi/rollups-state-server:0.8.2
@@ -68,7 +68,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./export:/opt/cartesi/share/blockchain:ro
+      - blockchain-data:/opt/cartesi/share/blockchain:ro
     environment:
       RUST_LOG: info
 
@@ -167,8 +167,8 @@ services:
       <<: *postgres-config
       RUST_LOG: info
     volumes:
+      - blockchain-data:/opt/cartesi/share/blockchain
       - ./deployments:/deployments
-      - ./export:/opt/cartesi/share/blockchain
 
   query_server:
     image: cartesi/query-server:0.8.2
@@ -211,6 +211,7 @@ services:
       - redis-data:/data
 
 volumes:
+  blockchain-data: {}
   machine: {}
   database-data: {}
   redis-data: {}

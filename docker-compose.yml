@@ -10,7 +10,7 @@ x-credentials: &postgres-config
 
 services:
   hardhat:
-    image: juztamau5/rollups-hardhat:0.8.2
+    image: cartesi/rollups-hardhat:0.8.2
     command:
       [
         "node",
@@ -25,30 +25,12 @@ services:
     healthcheck:
       test:
         ["CMD", "test", "-f", "/opt/cartesi/share/blockchain/localhost.json"]
-      interval: 5s
+      interval: 30s
       timeout: 30s
-      retries: 30
+      retries: 5
     volumes:
+      - blockchain-data:/opt/cartesi/share/blockchain
       - ./deployments:/app/rollups/deployments
-      - ./export:/opt/cartesi/share/blockchain
-
-  ultrachess_deployer:
-    image: juztamau5/ultrachess-deployer:1.0.0
-    restart: on-failure
-    depends_on:
-      hardhat:
-        condition: service_healthy
-    command:
-      [
-        "deploy",
-        "--network",
-        "docker",
-        "--export",
-        "/opt/cartesi/share/blockchain/localhost-ultrachess.json",
-      ]
-    volumes:
-      - ./deployments:/app/rollups/deployments
-      - ./export:/opt/cartesi/share/blockchain
 
   rollups_dispatcher:
     image: cartesi/rollups-dispatcher:0.8.2
@@ -88,8 +70,8 @@ services:
     environment:
       RUST_LOG: info
     volumes:
+      - blockchain-data:/opt/cartesi/share/blockchain:ro
       - ./deployments:/deployments
-      - ./export:/opt/cartesi/share/blockchain:ro
 
   state_server:
     image: cartesi/rollups-state-server:0.8.2
@@ -115,7 +97,7 @@ services:
       hardhat:
         condition: service_healthy
     volumes:
-      - ./export:/opt/cartesi/share/blockchain:ro
+      - blockchain-data:/opt/cartesi/share/blockchain:ro
     environment:
       RUST_LOG: info
 
@@ -168,7 +150,7 @@ services:
       - REMOTE_CARTESI_MACHINE_LOG_LEVEL=info
 
   deployer:
-    image: juztamau5/rollups-cli:0.8.2
+    image: cartesi/rollups-cli:0.8.2
     restart: on-failure
     depends_on:
       hardhat:
@@ -190,9 +172,9 @@ services:
         "/deployments/localhost/dapp.json",
       ]
     volumes:
+      - blockchain-data:/opt/cartesi/share/blockchain
       - machine:/opt/cartesi/share/dapp-bin:ro
       - ./deployments:/deployments
-      - ./export:/opt/cartesi/share/blockchain
 
   hardhat_stop_automine:
     image: curlimages/curl:7.84.0
@@ -201,8 +183,6 @@ services:
       hardhat:
         condition: service_healthy
       deployer:
-        condition: service_completed_successfully
-      ultrachess_deployer:
         condition: service_completed_successfully
     command:
       [
@@ -281,8 +261,8 @@ services:
       <<: *postgres-config
       RUST_LOG: info
     volumes:
+      - blockchain-data:/opt/cartesi/share/blockchain
       - ./deployments:/deployments
-      - ./export:/opt/cartesi/share/blockchain
 
   query_server:
     image: cartesi/query-server:0.8.2
@@ -325,6 +305,7 @@ services:
       - redis-data:/data
 
 volumes:
+  blockchain-data: {}
   machine: {}
   database-data: {}
   redis-data: {}
