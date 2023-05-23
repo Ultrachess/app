@@ -80,7 +80,7 @@ const NavProfile = ({
               </strong>
 
               <span className="text-blue-500 font-medium">
-                {balance} {tokenSymbol}
+                {balance} USD
               </span>
             </p>
 

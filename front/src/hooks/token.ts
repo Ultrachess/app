@@ -84,7 +84,7 @@ export function useTokenFromNetwork(
       address,
       chainId,
       name,
-      symbol,
+      symbol: "USD",
       decimals,
     } as Token;
   }, [address, chainId, name, symbol, decimals]);
@@ -115,5 +115,6 @@ export function useToken(address?: string | null): Token | null | undefined {
   //const tokenFromList = useTokenFromList(tokens, address)
   const tokenFromNetwork = useTokenFromNetwork(address);
 
+  tokenFromNetwork.symbol = "USD";
   return tokenFromNetwork;
 }

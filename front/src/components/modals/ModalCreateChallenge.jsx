@@ -49,7 +49,7 @@ export default () => {
   const balance = useTokenPortalBalance(token, account);
 
   const bots = useUserBotIds(account);
-  const potentialChallengers = [...bots, account];
+  const potentialChallengers = [account, ...bots];
 
   const cancelButtonRef = useRef(null);
 
@@ -147,7 +147,7 @@ export default () => {
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center">
                       <div className="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 ">
-                        {token ? token.symbol : "..."}
+                       USD
                       </div>
                     </div>
                   </div>
@@ -184,7 +184,7 @@ export default () => {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <Listbox.Options className="absolute z-1000 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                               {potentialChallengers.map((challenger, index) => (
                                 <Listbox.Option
                                   key={index}

@@ -10,3 +10,5 @@ deploy-commands.txt
 /deployments
 
 /server/.tox
+
+/*.log

@@ -40,7 +40,7 @@ export default ({
 
   return (
     <div className="inline-block">
-      {_balance ?? "0.0"} {token?.symbol}
+      {_balance ?? "0.0"} USD
     </div>
   );
 };
