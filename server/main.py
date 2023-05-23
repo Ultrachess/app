@@ -418,6 +418,7 @@ def handle_advance(data):
     tournamentManager.run()
     kohManager.run()
     botManager.runPendingMoves(timeStamp)
+    botManager.runPendingGames(timeStamp)
 
     # Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)
