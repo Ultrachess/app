@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       NETWORK: optimism-goerli
-      MNEMONIC: ${{ secrets.OPTIMISM_GOERLI_MNEMONIC }}
+      MNEMONIC: ${{ secrets.GOERLI_MNEMONIC }}
       RPC_URL: ${{ secrets.OPTIMISM_GOERLI_RPC_URL }}
       WSS_URL: ${{ secrets.OPTIMISM_GOERLI_WSS_URL }}
       VALIDATORS: '0x433eC3aE31C080da466a8c20710dEC366ceC1f61'
