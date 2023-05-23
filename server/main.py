@@ -408,7 +408,7 @@ def handle_advance(data):
     elif operator == "botStep":
         try:
             botManager.step(sender, timeStamp, value, botFactory, matchMaker)
-            botManager.runPendingMoves(timeStamp)
+            
         except Exception:
             traceback.print_exc()
             success = False
@@ -417,6 +417,7 @@ def handle_advance(data):
     logger.info("Running tournament manager from main")
     tournamentManager.run()
     kohManager.run()
+    botManager.runPendingMoves(timeStamp)
 
     # Send notice on state change
     send_notice_info(actionId, timeStamp, success, value)

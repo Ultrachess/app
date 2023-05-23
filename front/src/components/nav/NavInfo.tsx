@@ -32,6 +32,8 @@ const NavInfo = () => {
     });
     await wait;
   };
+
+  const steppedSecondsAgo = Math.floor((current - lastTimeInSeconds) / 1000)
   return (
     <div className="flex items-center justify-between gap-4 px-3 py-3 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
       <p className="text-sm font-medium">
@@ -42,7 +44,6 @@ const NavInfo = () => {
         onClick={()=>{nextStep()}}
         className="text-sm font-medium "
       >
-        {late ?
           <div className="flex items-center">
           <div role="status">
                       <svg aria-hidden="true" className="w-4 h-4 mr-2 text-green-200 animate-spin dark:text-gray-600 fill-green-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,9 +52,7 @@ const NavInfo = () => {
                       </svg>
                       <span className="sr-only">Loading...</span>
                   </div>
-          <span className="text-green-600">running</span></div>:
-         <>Next step in: <span className="text-gray-600">{leftUntilNextStep}</span></>
-        }
+          <span className="text-green-600">running</span></div>
       </p>
     </div>
   );
