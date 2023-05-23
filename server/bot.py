@@ -126,10 +126,10 @@ class BotManager:
         self.pending_game_moves = []
         self.pending_games = []
         self.last_step_timestamp = 0
-        self.time_allowed = 10.0 #seconds
+        self.time_allowed = 1.0 #seconds
 
     def start(self):
-        self.time_allowed = 10.0
+        self.time_allowed = 1.0
 
     def __fetchOpponent(self, botIdList, botId, factory):
         mainBot = factory.bots[botId]
