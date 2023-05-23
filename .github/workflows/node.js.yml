@@ -186,12 +186,18 @@ jobs:
       - name: Restart Nginx
         run: sudo systemctl restart nginx || echo "Nginx restart failed"
 
-      - name: Display Nginx logs
+      # - name: Display Nginx logs
+      #   run: |
+      #     echo "=== Nginx Error Log ==="
+      #     sudo cat /var/log/nginx/error.log
+      #     echo "=== Nginx Access Log ==="
+      #     sudo cat /var/log/nginx/access.log
+
+      - name: Display deployment logs
         run: |
-          echo "=== Nginx Error Log ==="
-          sudo cat /var/log/nginx/error.log
-          echo "=== Nginx Access Log ==="
-          sudo cat /var/log/nginx/access.log
+          echo "=== Deployment Log ==="
+          cat deployment.log
+
 
 
       

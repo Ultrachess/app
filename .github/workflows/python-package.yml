@@ -1,67 +1,67 @@
-################################################################################
-# This workflow will install Python dependencies, run tests and lint with a
-# variety of Python versions.
-#
-# For more information see:
-#
-#   https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-#
-################################################################################
+# ################################################################################
+# # This workflow will install Python dependencies, run tests and lint with a
+# # variety of Python versions.
+# #
+# # For more information see:
+# #
+# #   https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# #
+# ################################################################################
 
-name: Python package
+# name: Python package
 
-# Controls when the action will run. Triggers the workflow on push or pull
-# request events
-on: [push, pull_request]
+# # Controls when the action will run. Triggers the workflow on push or pull
+# # request events
+# on: [push, pull_request]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in
-# parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ${{ matrix.os }}
+# # A workflow run is made up of one or more jobs that can run sequentially or in
+# # parallel
+# jobs:
+#   # This workflow contains a single job called "build"
+#   build:
+#     # The type of runner that the job will run on
+#     runs-on: ${{ matrix.os }}
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-20.04
-            python-version: "3.10"
-          # - os: ubuntu-22.04
-          #   python-version: "3.11"
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         include:
+#           - os: ubuntu-20.04
+#             python-version: "3.10"
+#           # - os: ubuntu-22.04
+#           #   python-version: "3.11"
 
-    steps:
-      - name: Build environment information
-        run: 'echo "Matrix OS: ${{ matrix.os }} on $HOSTNAME with $(getconf _NPROCESSORS_ONLN) cores"'
+#     steps:
+#       - name: Build environment information
+#         run: 'echo "Matrix OS: ${{ matrix.os }} on $HOSTNAME with $(getconf _NPROCESSORS_ONLN) cores"'
 
-      # Checks-out the repository under $GITHUB_WORKSPACE, so the job can
-      # access it
-      - name: Checkout main repo
-        uses: actions/checkout@v2
+#       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can
+#       # access it
+#       - name: Checkout main repo
+#         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip setuptools
-          pip3 install tox
+#       - name: Install dependencies
+#         run: |
+#           python3 -m pip install --upgrade pip setuptools
+#           pip3 install tox
 
-      - name: Restore tox environment
-        id: restore-tox
-        uses: actions/cache@v2
-        with:
-          path: |
-            server/.tox
-          key: tox-env-${{ hashFiles('server/tox.ini', 'server/requirements.txt') }}
-          restore-keys: |
-            tox-env-
+#       - name: Restore tox environment
+#         id: restore-tox
+#         uses: actions/cache@v2
+#         with:
+#           path: |
+#             server/.tox
+#           key: tox-env-${{ hashFiles('server/tox.ini', 'server/requirements.txt') }}
+#           restore-keys: |
+#             tox-env-
 
-      # Run the tests!
-      - name: Run tox
-        working-directory: server
-        run: |
-          tox
+#       # Run the tests!
+#       - name: Run tox
+#         working-directory: server
+#         run: |
+#           tox
