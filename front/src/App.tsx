@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 
-import Body from "./components/Body";
+import Body from "./components/Body"; 
 import BotManager from "./components/BotManager";
 import BotProfile from "./components/BotProfile";
 import Game from "./components/Game";

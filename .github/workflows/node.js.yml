@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     env:
-      NETWORK: optimism-goerli
+      NETWORK: optimism_goerli
       MNEMONIC: ${{ secrets.OPTIMISM_GOERLI_MNEMONIC }}
       RPC_URL: ${{ secrets.OPTIMISM_GOERLI_RPC_URL }}
       WSS_URL: ${{ secrets.OPTIMISM_GOERLI_WSS_URL }}
