@@ -12,6 +12,7 @@
 
 import logging
 import traceback
+import time
 
 import chess.engine
 import chess.pgn
@@ -53,6 +54,7 @@ class Game:
         self.scores = {}
         self.bettingDuration = duration
         self.botMoveStats = []
+        self.eloChange = {}
 
     def __isInGame(self, address):
         return address in self.players
@@ -127,6 +129,7 @@ class Game:
         score1, score2 = self.fetchPlayerPoint(p1), self.fetchPlayerPoint(p2)
         self.scores[p1] = score1
         self.scores[p2] = score2
+        prevElo1, prevElo2 = deps.eloManager.getElo(p1), deps.eloManager.getElo(p2)
         deps.eloManager.applyGame(p1, p2, score1, score2)
         logger.info("score1:" + str(score1) + " score2:" + str(score2))
         # calculate funds for player 1
@@ -142,6 +145,10 @@ class Game:
         # distribute pot
         winningId = p1 if score1 > score2 else p2 if score2 > score1 else "DRAW"
         deps.betManager.end(self.id, winningId)
+
+        #set elo change
+        self.eloChange[p1] = deps.eloManager.getElo(p1) - prevElo1
+        self.eloChange[p2] = deps.eloManager.getElo(p2) - prevElo2
 
         # send notification
         if self.isBot:
@@ -321,6 +328,31 @@ class Game:
             (uci, botMoveStat) = bot.run(board, timestamp)
             self.move(botId, timestamp, uci, botMoveStat)
         return True
+    
+    def runFixed(self, timestamp, maxTimePerSession):
+        timeSpent = 0
+
+        while not self.isGameEnd() and timeSpent <= maxTimePerSession:
+            start_time = time.time()
+
+            # Set current bot
+            if len(self.players) < 2:
+                return False
+            botId1 = self.players[0]
+            botId2 = self.players[1]
+            botId = botId1 if self.__isTurn(botId1) else botId2
+            bot = deps.botFactory.bots[botId]
+
+            # Fetch game move and run
+            board = self.state.board()
+            (uci, botMoveStat) = bot.run(board, timestamp)
+            self.move(botId, timestamp, uci, botMoveStat)
+
+            end_time = time.time()
+            timeSpent += end_time - start_time
+
+        return (timeSpent, self.isGameEnd())
+
 
     ##def runMatches(self, matchCount):
     ##    for i in range(matchCount):
@@ -343,4 +375,5 @@ class Game:
             if self.id in deps.betManager.games
             else {},
             "botMoveStats": self.botMoveStats,
+            "eloChange": self.eloChange,
         }

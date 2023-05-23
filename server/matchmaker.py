@@ -175,7 +175,8 @@ class Matchmaker:
         game = self.games[id]
         if game.isBot:
             success = game.addPlayer(timestamp, sender)
-            game.run(timestamp)
+            #game.run(timestamp)
+            deps.botManager.pending_games.append(id)
             return success
 
         return game.addPlayer(timestamp, sender)

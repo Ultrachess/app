@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../ether/chains";
 import { truncateAddress } from "../ether/utils";
+import { useToken } from "../hooks/token";
 import {
   useBalance,
   useElo,
@@ -24,12 +25,12 @@ import ProfileImage from "./ProfileImage";
 import Flex from "./ui/Flex";
 import { Text } from "./ui/Text";
 
-export default ({ address }) => {
+export default ({ address, chainId }) => {
   const isBot = useMemo(() => (address ? !address.includes("0x") : false), []);
   const elo = useElo(address);
   const nationality = useNationality(address);
-  const tokenAddress = STABLECOIN_ADDRESS_ON_NETWORKS[31337];
-  const balance = useBalance(address, tokenAddress);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId])
+  const balance = useBalance(address, token?.address);
   const isInvalid = address.includes(" ");
   return (
     <Link to={(isBot ? "/bot/" : isInvalid ? "#" : "/users/") + address}>
@@ -45,7 +46,7 @@ export default ({ address }) => {
               <Text size={1}>{elo} ELO</Text>
               <Text size={1}>{nationality}</Text>
             </Flex>
-            <AssetDisplay balance={balance} tokenAddress={tokenAddress} />
+            { !isBot && <AssetDisplay balance={balance} tokenAddress={token.address} />}     
           </Flex>
         </Flex>
       </Flex>

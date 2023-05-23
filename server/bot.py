@@ -23,7 +23,6 @@ import notification
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
-
 class Bot:
     def __init__(self, id, owner, binary, timestamp):
         self.id = id
@@ -103,6 +102,11 @@ class BotFactory:
 
     def getOwner(self, id):
         return self.bots[id].owner
+    
+    def getBot(self, id):
+        if id not in self.bots:
+            return None
+        return self.bots[id]
 
     def getStringState(self):
         return str(self.bots)
@@ -120,42 +124,67 @@ class BotManager:
     def __init__(self):
         self.last_challenged = {}
         self.pending_game_moves = []
+        self.pending_games = []
         self.last_step_timestamp = 0
+        self.time_allowed = 10.0 #seconds
+
+    def start(self):
+        self.time_allowed = 10.0
 
     def __fetchOpponent(self, botIdList, botId, factory):
-        botIdIndex = botIdList.index(botId)
-        newIdList = botIdList.copy()
-        newIdList.remove(botId)
-        logger.info("botIdIndex: " + str(botIdIndex))
-        logger.info("newIdList: " + str(newIdList))
-        logger.info("botIdList: " + str(botIdList))
-
-        # remove bots that do not meet criteria
         mainBot = factory.bots[botId]
-        for tempBotId in newIdList:
-            tempBot = factory.bots[tempBotId]
-            logger.info(str(tempBot))
-            if tempBot.owner.lower() == mainBot.owner.lower():
-                newIdList.remove(tempBotId)
-            elif (
-                tempBot.autoWagerTokenAddress.lower()
-                != mainBot.autoWagerTokenAddress.lower()
-            ):
-                newIdList.remove(tempBotId)
-            elif tempBot.autoMaxWagerAmount > mainBot.autoMaxWagerAmount:
-                newIdList.remove(tempBotId)
-            elif not tempBot.autoBattleEnabled:
-                newIdList.remove(tempBotId)
 
-        if newIdList != None and len(newIdList) == 0:
+        eligible_opponents = []
+
+        for opponentId in botIdList:
+            if opponentId == botId:
+                continue
+
+            opponent = factory.bots[opponentId]
+
+            if (opponent.owner.lower() != mainBot.owner.lower() and
+                opponent.autoWagerTokenAddress.lower() == mainBot.autoWagerTokenAddress.lower() and
+                opponent.autoMaxWagerAmount <= mainBot.autoMaxWagerAmount):
+                
+                eligible_opponents.append(opponentId)
+
+        if not eligible_opponents:
             return False
+
         if botId not in self.last_challenged:
-            self.last_challenged[botId] = botIdIndex % len(newIdList)
+            self.last_challenged[botId] = {'opponents': [], 'index': 0}
 
-        self.last_challenged[botId] += 1
-        self.last_challenged[botId] = self.last_challenged[botId] % len(newIdList)
+        last_opponents = self.last_challenged[botId]['opponents']
+        last_index = self.last_challenged[botId]['index']
 
-        return newIdList[self.last_challenged[botId]]
+        if last_opponents != eligible_opponents:
+            self.last_challenged[botId]['opponents'] = eligible_opponents
+            last_index = 0
+        else:
+            last_index = (last_index + 1) % len(eligible_opponents)
+
+        self.last_challenged[botId]['index'] = last_index
+
+        return eligible_opponents[last_index]
+
+    def runPendingGames(self, timestamp):
+        num_games = len(self.pending_games)
+        finished_games = []
+        totalTimeSpent = 0
+
+        if num_games == 0:
+            return
+
+        for gameId in list(self.pending_games):
+            game = deps.matchMaker.games[gameId]
+            (timeSpent, finished) = game.runFixed(timestamp, self.time_allowed / num_games)
+            totalTimeSpent += timeSpent
+            if finished:
+                finished_games.append(gameId)
+        
+        self.time_allowed -= totalTimeSpent
+        self.pending_games = [gameId for gameId in self.pending_games if gameId not in finished_games]
+
 
     def runPendingMoves(self, timestamp):
         logger.info("bot: attempting running pending moves")
@@ -209,6 +238,8 @@ class BotManager:
         self.runPendingMoves(timestamp)
 
     def step(self, sender, timestamp, rand, factory, matchmaker):
+        #log random number
+        logger.info("bot stepping with: random number: " + str(rand))
         # handle all autonomous matchmaking between bots
         self.__matchMake(sender, timestamp, rand, factory, matchmaker)
         self.last_step_timestamp = timestamp
@@ -226,7 +257,7 @@ class BotManager:
         autoBattleEnabled = (
             options["autoBattleEnabled"] if ("autoBattleEnabled" in options) else False
         )
-        name = options["name"] if ("name" in options) else "bot" + botId
+        name = options["name"] if ("name" in options) else ("bot" + str(botId) if botId else "")
 
         bot = factory.bots[botId]
         if sender.lower() == bot.owner.lower():

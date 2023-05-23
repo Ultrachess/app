@@ -24,7 +24,9 @@ import ModalCreateOffer from "../modals/ModalCreateOffer";
 import ModalManageBot from "../modals/ModalManageBot";
 import ModalNewCreateGame from "../modals/ModalNewCreateGame";
 import ModalNewDepositFunds from "../modals/ModalNewDepositFunds";
+import ModalSellBot from "../modals/ModalSellBot";
 import NotificationBell from "./NavBell";
+import NavInfo from "./NavInfo";
 import NavNetwork from "./NavNetwork";
 import NavProfile from "./NavProfile";
 
@@ -172,6 +174,7 @@ export default function Navbar() {
               </div>
             </div>
           </div>
+          <NavInfo />
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
@@ -200,6 +203,7 @@ export default function Navbar() {
           <ModalCreateChallenge />
           <ModalCreateOffer />
           <ModalManageBot />
+          <ModalSellBot />
         </>
       )}
     </Disclosure>

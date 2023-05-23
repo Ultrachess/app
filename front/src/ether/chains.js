@@ -209,6 +209,7 @@ export const STABLECOIN_ADDRESS_ON_NETWORKS = {
   421611: "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
   5: "0x50b5a3f1cce4a5936e373e6828afdb073c79c1c7",
   31337: CartesiToken.address,
+  1337: CartesiToken.address,
 };
 
 export const DEFAULT_NETWORK_URI = CHAINS[1].networkImg;

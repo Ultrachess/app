@@ -6,7 +6,7 @@
  * See the file LICENSE for more information.
  */
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import {
@@ -21,6 +21,7 @@ import {
   useTokenFromList,
   useTokenPortalBalance,
   useTokenBalance,
+  useToken,
 } from "../../hooks/token";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useWeb3React } from "@web3-react/core";
@@ -48,7 +49,7 @@ export default () => {
   const navigate = useNavigate();
   const [bettingDuration, setBettingDuration] = useState(0);
   const max = 100;
-  const token = useTokenFromList(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
+  const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
   const portalBalance = useTokenPortalBalance(token, account);
   const balance = useTokenBalance(token, account);
   const [name, setName] = useState("default");
@@ -68,6 +69,10 @@ export default () => {
   const manageBotName = useAppSelector((state) => state.ui.modal.manageBotName);
   const manageBotAutoBattleEnabled = useAppSelector(
     (state) => state.ui.modal.manageBotAutoBattleEnabled
+  );
+  const isAutoBattleEnabled = useMemo(
+    () => manageBotAutoBattleEnabled === "True",
+    [manageBotAutoBattleEnabled]
   );
   const manageBotAutoMaxWagerAmount = useAppSelector(
     (state) => state.ui.modal.manageBotAutoMaxWagerAmount
@@ -170,17 +175,29 @@ export default () => {
                       Auto battle Enabled?
                     </label>
 
-                    <input
-                      id="name"
-                      value={manageBotAutoBattleEnabled}
-                      onChange={(event) => {
-                        //console.log("event.value", event.target.value)
-                        dispatch(
-                          setManageBotAutoBattleEnabled(event.target.value)
-                        );
-                      }}
-                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
-                    />
+                    <label
+                      htmlFor="AcceptConditions"
+                      className="relative h-8 w-14 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        id="AcceptConditions"
+                        className="peer sr-only"
+                        checked={isAutoBattleEnabled}
+                        onChange={() => {
+                          //console.log("event.value", event.target.value)
+                          dispatch(
+                            setManageBotAutoBattleEnabled(
+                              isAutoBattleEnabled ? "False" : "True"
+                            )
+                          );
+                        }}
+                      />
+
+                      <span className="absolute inset-0 rounded-full bg-gray-300 transition peer-checked:bg-green-500"></span>
+
+                      <span className="absolute inset-y-0 start-0 m-1 h-6 w-6 rounded-full bg-white transition-all peer-checked:start-6"></span>
+                    </label>
                   </div>
 
                   <div className="mt-5">
@@ -188,15 +205,17 @@ export default () => {
                       for="UserEmail"
                       class="block text-xs font-medium text-gray-700"
                     >
-                      Auto battle max wager amount
+                      Auto battle max wager amount in {token.symbol}
                     </label>
 
                     <input
                       id="name"
-                      value={autoMaxWagerAmount}
+                      value={manageBotAutoMaxWagerAmount}
                       onChange={(event) => {
                         //console.log("event.value", event.target.value)
-                        dispatch(setAutoMaxWagerAmount(event.target.value));
+                        dispatch(
+                          setManageBotAutoMaxWagerAmount(event.target.value)
+                        );
                       }}
                       class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                     />

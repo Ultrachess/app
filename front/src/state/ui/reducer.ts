@@ -28,6 +28,8 @@ export interface UiState {
     manageBotAutoMaxWagerAmount: number;
     showManageBotModal: boolean;
     showPlaceBetModal: boolean;
+    sellBotAddress: string;
+    showSellBotModal: boolean;
   };
 }
 
@@ -51,6 +53,9 @@ export const initialState: UiState = {
     manageBotAutoBattleEnabled: "False",
     manageBotAutoMaxWagerAmount: 0,
     showPlaceBetModal: false,
+
+    sellBotAddress: "0x",
+    showSellBotModal: false,
   },
 };
 
@@ -107,6 +112,12 @@ const uiSlice = createSlice({
     setPlaceBetModal(state, { payload }: { payload: boolean }) {
       state.modal.showPlaceBetModal = payload;
     },
+    setSellBotAddress(state, { payload }: { payload: string }) {
+      state.modal.sellBotAddress = payload;
+    },
+    setSellBotModal(state, { payload }: { payload: boolean }) {
+      state.modal.showSellBotModal = payload;
+    },
   },
 });
 
@@ -128,5 +139,8 @@ export const {
   setCreateOfferAddress,
   setCreateOfferAmount,
   setHasNewNotification,
+
+  setSellBotAddress,
+  setSellBotModal,
 } = uiSlice.actions;
 export default uiSlice.reducer;

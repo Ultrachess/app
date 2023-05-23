@@ -32,10 +32,51 @@ def CreateBotOffer(sender, offerId, timestamp, botId, price, token, owner):
         "owner": owner,
     }
 
+def CreateListing(sender, botId, price, token, timestamp):
+    return {
+        "sender": sender,
+        "botId": botId,
+        "price": price,
+        "token": token,
+        "timestamp": timestamp,
+    }
+
 
 class BotMarketPlaceManager:
     def __init__(self):
         self.offers = {}
+        self.prices = {}
+
+    #lists a bot for sale
+    def create_price(self, sender, timestamp, options):
+        if "botId" not in options or "price" not in options or "token" not in options:
+            return False
+
+        botId = options["botId"]
+        price = options["price"]
+        token = options["token"]
+
+        #make sure bot exists in bot factory
+        if "0x" in botId or deps.botFactory.getBot(botId) == None:
+            logger.info("failed to create price, bot does not exist")
+            return False
+
+        owner = deps.botFactory.getOwner(botId)
+
+        #make sure sender is the owner
+        if sender.lower() != owner.lower():
+            logger.info("failed to create price, sender is not owner")
+            return False
+        
+        #if price is 0 or less, remove price
+        if price <= 0:
+            if botId in self.prices:
+                del self.prices[botId]
+            return True
+        
+        self.prices[botId] = CreateListing(sender, botId, price, token, timestamp)
+        return True
+
 
     def create_offer(self, sender, timestamp, options):
         if "botId" not in options or "price" not in options or "token" not in options:
@@ -77,6 +118,12 @@ class BotMarketPlaceManager:
                 type=notification.NotificationType.BOT_OFFER_CREATED,
             )
         )
+
+        #if offer greater than or equal to price, auto accept offer
+        if botId in self.prices:
+            listing = self.prices[botId]
+            if price >= listing["price"]:
+                self.accept(owner, timestamp, offerId)
         return True
 
     def accept(self, acceptor, timestamp, offerId):
@@ -158,3 +205,6 @@ class BotMarketPlaceManager:
 
     def getState(self):
         return self.offers
+
+    def getBotPrices(self):
+        return self.prices

@@ -6,8 +6,7 @@
  * See the file LICENSE for more information.
  */
 
-import React, { useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
+import React, { useMemo, useState } from "react";
 import { styled, keyframes } from "@stitches/react";
 import { violet, blackA, mauve, green } from "@radix-ui/colors";
 import {
@@ -18,78 +17,234 @@ import {
 } from "@radix-ui/react-icons";
 import * as Slider from "@radix-ui/react-slider";
 import { Text } from "../ui/Text";
-import { useToken, useTokenFromList } from "../../hooks/token";
+import {
+  useTokenFromList,
+  useTokenPortalBalance,
+  useTokenBalance,
+  useToken,
+} from "../../hooks/token";
 import { STABLECOIN_ADDRESS_ON_NETWORKS } from "../../ether/chains";
 import { useWeb3React } from "@web3-react/core";
-import {
-  useActionCreator,
-  useUserBotIds,
-  useThrone,
-} from "../../state/game/hooks";
+import { useActionCreator } from "../../state/game/hooks";
 import { TransactionType } from "../../common/types";
-import Address from "../Address";
+import { useNavigate } from "react-router-dom";
 import * as Select from "@radix-ui/react-select";
 
-export default ({ triggerElement }) => {
+import { useDispatch } from "react-redux";
+import {
+  setManageBotModal,
+  setManageBotName,
+  setManageBotAutoBattleEnabled,
+  setManageBotAutoMaxWagerAmount,
+  setManageBotAddress,
+  setSellBotModal,
+} from "../../state/ui/reducer";
+import { useAppSelector } from "../../state/hooks";
+import { Fragment, useRef } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import Address from "../Address";
+
+export default () => {
   const { chainId, account } = useWeb3React();
+  const [amount, setAmount] = useState(0);
+  const navigate = useNavigate();
+  const [bettingDuration, setBettingDuration] = useState(0);
+  const max = 100;
   const token = useToken(STABLECOIN_ADDRESS_ON_NETWORKS[chainId]);
-  const bots = useUserBotIds(account);
-  const potentialChallengers = [...bots, account];
-  const [challenger, setChallenger] = useState(potentialChallengers[0]);
+  const portalBalance = useTokenPortalBalance(token, account);
+  const balance = useTokenBalance(token, account);
+  const [price, setPrice] = useState(0);
+  const [autoMaxWagerAmount, setAutoMaxWagerAmount] = useState(0);
 
   const addAction = useActionCreator();
+  const dispatch = useDispatch();
+  const cancelButtonRef = useRef(null);
 
-  const { king, winnings, battles, price, gamesToWin, maxTrys } = useThrone();
+  const showSellBotModal = useAppSelector(
+    (state) => state.ui.modal.showSellBotModal
+  );
+  const sellBotAddress = useAppSelector(
+    (state) => state.ui.modal.sellBotAddress
+  );
 
-  const handleChallenge = async () => {
-    const [approvalActionId, wait] = await addAction({
-      type: TransactionType.KING_THRONE_CHALLENGE,
-      challenger: challenger,
-    });
-    await wait;
+  const handleSell = async () => {
+    //console.log("amount", amount)
+    const tx = {
+      type: TransactionType.CREATE_BOT_LISTING,
+      botId: sellBotAddress,
+      price: price * 10 ** 18,
+      tokenAddress: token.address,
+    };
+    console.log("tx", tx)
+    const [approvalActionId, wait] = await addAction(tx);
+    //const roomId = await wait;
+    //console.log(roomId)
+    //console.log("jumping to" + roomId)
+    //if(roomId) navigate(`game/${roomId}`, { replace: true })
   };
 
-  //console.log("123", playerId)
+  //console.log("amount", amount)
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
-      <Dialog.Portal>
-        <DialogOverlay />
-        <DialogContent>
-          <DialogTitle>
-            Challenge King <Address value={king} />
-          </DialogTitle>
-          <DialogDescription>
-            <Text>
-              Challenge the king to a duel. If you win, you will take the
-              throne. and all users must pay a fee to challenge you. You must
-              win {gamesToWin} games to take the throne. You have {maxTrys}{" "}
-              tries to win the games.
-            </Text>
-          </DialogDescription>
-          <Fieldset>
-            <Label>Challenger</Label>
-            <SelectMain
-              options={potentialChallengers}
-              value={challenger}
-              onValueChange={setChallenger}
-            />
-          </Fieldset>
-          <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
-            <Dialog.Close asChild>
-              <Button variant="green" onClick={handleChallenge}>
-                Challenge
-              </Button>
-            </Dialog.Close>
-          </Flex>
-          <Dialog.Close asChild>
-            <IconButton aria-label="Close">
-              <Cross2Icon />
-            </IconButton>
-          </Dialog.Close>
-        </DialogContent>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Transition.Root show={showSellBotModal} as={Fragment}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={setManageBotModal}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-base font-semibold leading-6 text-gray-900"
+                      >
+                        List your bot <Address value={sellBotAddress} /> for
+                        sale
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          Once listed, interested parties will be able to
+                          purchase your bot.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <label
+                      for="UserEmail"
+                      class="block text-xs font-medium text-gray-700"
+                    >
+                      Set listing
+                    </label>
+
+                    <input
+                      id="name"
+                      value={price}
+                      onChange={(event) => {
+                        //console.log("event.value", event.target.value)
+                        setPrice(event.target.value);
+                      }}
+                      class="mt-2 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    onClick={() => {
+                      handleSell();
+                      dispatch(setSellBotModal(false));
+                    }}
+                  >
+                    List
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    onClick={() => {
+                      dispatch(setSellBotModal(false));
+                    }}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+    // <Dialog.Root>
+    //   <Dialog.Trigger asChild>{triggerElement}</Dialog.Trigger>
+    //   <Dialog.Portal>
+    //     <DialogOverlay />
+    //     <DialogContent>
+    //       <DialogTitle>Update Bot</DialogTitle>
+    //       <DialogDescription>
+    //         Create a new game. Invite friends to join and start playing. Or wait
+    //         for random players to join.
+    //       </DialogDescription>
+
+    //       <Fieldset>
+    //         <Label>Auto battle Enable?</Label>
+    //         <SelectMain
+    //           options={["True", "False"]}
+    //           value={autoBattleEnabled}
+    //           onValueChange={setAutoBattleEnabled}
+    //         />
+    //       </Fieldset>
+
+    //       <Fieldset>
+    //         <Label>Auto Wager amount</Label>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <Input
+    //           id="amount"
+    //           value={autoMaxWagerAmount}
+    //           defaultValue={0}
+    //           onChange={(event) => {
+    //             //console.log("event.value", event.target.value)
+    //             setAutoMaxWagerAmount(event.target.value);
+    //           }}
+    //         ></Input>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <Label>Bot name</Label>
+    //       </Fieldset>
+    //       <Fieldset>
+    //         <Input
+    //           id="bettingDuration"
+    //           value={name}
+    //           onChange={(event) => {
+    //             setName(event.target.value);
+    //           }}
+    //         ></Input>
+    //       </Fieldset>
+
+    //       <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
+    //         <Dialog.Close asChild>
+    //           <Button variant="green" onClick={handleCreate}>
+    //             Create
+    //           </Button>
+    //         </Dialog.Close>
+    //       </Flex>
+    //       <Dialog.Close asChild>
+    //         <IconButton aria-label="Close">
+    //           <Cross2Icon />
+    //         </IconButton>
+    //       </Dialog.Close>
+    //     </DialogContent>
+    //   </Dialog.Portal>
+    // </Dialog.Root>
   );
 };
 
