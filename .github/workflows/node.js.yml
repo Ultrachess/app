@@ -138,10 +138,12 @@ jobs:
         run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml down -v || true
 
       # Deploy node
-      - name: Deploy node
+      - name: Clear node
         run: |
           docker compose down -v || true
           DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v || true
+      - name: Deploy node
+        run: |
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV
           sleep 60
