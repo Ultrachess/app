@@ -1,17 +1,5 @@
-################################################################################
-# This workflow will do a clean install of node dependencies and build the
-# source code across different versions of node.
-#
-# For more information see:
-#
-#   https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-#
-################################################################################
-
 name: Node.js CI
 
-# Controls when the action will run. Triggers the workflow on push or pull
-# request events
 on:
   push:
     branches:
@@ -20,25 +8,21 @@ on:
     branches:
       - dev
 
-# A workflow run is made up of one or more jobs that can run sequentially or in
-# parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     env:
-      NETWORK: goerli
-      MNEMONIC: ${{ secrets.GOERLI_MNEMONIC }}
-      RPC_URL: ${{ secrets.GOERLI_RPC_URL }}
-      WSS_URL: ${{ secrets.GOERLI_WSS_URL }}
-      VALIDATORS: '0x18930e8a66a1DbE21D00581216789AAB7460Afd0'
+      NETWORK: optimism-goerli
+      MNEMONIC: ${{ secrets.OPTIMISM_GOERLI_MNEMONIC }}
+      RPC_URL: ${{ secrets.OPTIMISM_GOERLI_RPC_URL }}
+      WSS_URL: ${{ secrets.OPTIMISM_GOERLI_WSS_URL }}
+      VALIDATORS: '0x433eC3aE31C080da466a8c20710dEC366ceC1f61'
       GAS_PRICE: 100
       GAS_LIMIT: 2800000
       DAPP_NAME: chessAppNew
       BLOCK_CONFIRMATIONS: 1
       BLOCK_CONFIRMATIONS_TX: 2
-      CHAIN_ID: 5
+      CHAIN_ID: 420
 
     strategy:
       fail-fast: false
@@ -46,26 +30,36 @@ jobs:
         include:
           - os: self-hosted
             node-version: 14
-          # - os: ubuntu-22.04
-          #   node-version: 18
 
-    # Steps represent a sequence of tasks that will be executed as part of the
-    # job
     steps:
       - name: Build environment information
         run: 'echo "Matrix OS: ${{ matrix.os }} on $HOSTNAME with $(getconf _NPROCESSORS_ONLN) cores"'
 
-        # Check-out the repository under $GITHUB_WORKSPACE, so the job can
-        # access it
       - name: Checkout main repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
+      # Check for changes in /front, /deployments, and other files
+      - name: Check for changes in /front, /deployments, and other files
+        id: check-changes
+        run: |
+          echo "::set-output name=front-changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^front/')"
+          echo "::set-output name=deployments-changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^deployments/')"
+          OTHER_CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -v '^front/' | grep -v '^deployments/')
+          if [[ $OTHER_CHANGES ]]; then
+            echo "::set-output name=app-changed::true"
+          else
+            echo "::set-output name=app-changed::false"
+          fi
+
+      # Prepare node
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      
-      # Add the Docker installation step
+
+      # Install Docker
       - name: Install Docker
         run: |
           curl -fsSL https://get.docker.com -o get-docker.sh
@@ -73,6 +67,7 @@ jobs:
           sudo usermod -aG docker $USER
           newgrp docker
 
+      # Restore node modules
       - name: Restore node modules
         id: restore-node
         uses: actions/cache@v3
@@ -81,6 +76,7 @@ jobs:
             front/node_modules
           key: node-install-${{ matrix.node-version }}-${{ hashFiles('front/package.json', 'front/package-lock.json') }}
 
+      # Restore dapp artifacts
       - name: Restore dapp artifacts
         id: restore-artifacts
         uses: actions/cache@v3
@@ -90,10 +86,12 @@ jobs:
             export
           key: restore-artifacts-${{ hashFiles('docker-compose-deploy.yml', 'docker-compose.override.yml') }}
       
+
       # Install dependencies
       - name: Install Yarn
         run: npm install -g yarn
 
+      # Prepare Nginx
       - name: Reset Nginx configurations and install Nginx
         run: |
           sudo rm -rf /etc/nginx/sites-available/default
@@ -117,37 +115,30 @@ jobs:
           }' | sudo tee /etc/nginx/nginx.conf > /dev/null
 
       - name: yarn install
-        if: steps.restore-node.outputs.cache-hit != 'true'
+        if: steps.restore-node.outputs.cache-hit != 'true' && steps.check-changes.outputs.front-changed
         working-directory: front
         run: yarn install
 
-      # - name: yarn audit-ci
-      #   working-directory: front
-      #   run: yarn audit-ci
-
-      # - name: yarn prettier
-      #   working-directory: front
-      #   run: yarn prettier
-
-      #- name: yarn eslint
-      #  working-directory: front
-      #  run: yarn eslint
-
-      #Clean docker
-      # - name: Clean Docker
-      #   run: docker ps -aq | xargs -r docker stop && docker ps -aq | xargs -r docker rm && docker system prune -af --volumes
-
-      # Build dapp
+      # Build machine
       - name: Build dapp
-        #if: steps.restore-artifacts.outputs.cache-hit != 'true'
+        if: steps.check-changes.outputs.app-changed
         run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
 
       # Build machine
       - name: Build machine
-        #if: steps.restore-artifacts.outputs.cache-hit != 'true'
+        if: steps.check-changes.outputs.app-changed
         run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl machine --load
 
-      - name: Deploy dapp
+      #Deploy contract
+      - name: Deploy contract
+        if: steps.check-changes.outputs.app-changed
+        run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml up
+      - name: Close the deployment container 
+        if: steps.check-changes.outputs.app-changed
+        run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml down -v
+
+      # Deploy node
+      - name: Deploy node
         run: |
           docker compose down -v
           DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
@@ -157,11 +148,13 @@ jobs:
 
       # Build front end
       - name: yarn run build
+        if: steps.check-changes.outputs.front-changed
         working-directory: front
         run: yarn run build
 
       # Check if the /front/dist folder exists and remove it if it does
       - name: Check and remove /front/dist folder if it exists
+        if: steps.check-changes.outputs.front-changed
         run: |
           if [ -d "/front/dist" ]; then
             sudo rm -rf /front/dist
@@ -169,6 +162,7 @@ jobs:
 
       # Serve front end
       - name: Copy nginx configuration and frontend files
+        if: steps.check-changes.outputs.front-changed
         run: |
           sudo cp nginx.conf /etc/nginx/sites-available/default
           sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
@@ -177,6 +171,7 @@ jobs:
       
       # Set Nginx file permissions
       - name: Set Nginx file permissions
+        if: steps.check-changes.outputs.front-changed
         run: |
           sudo chown -R www-data:www-data /front/dist
           sudo find /front/dist -type d -exec chmod 755 {} \;
@@ -184,20 +179,10 @@ jobs:
 
       # Restart Nginx
       - name: Restart Nginx
+        if: steps.check-changes.outputs.front-changed
         run: sudo systemctl restart nginx || echo "Nginx restart failed"
-
-      # - name: Display Nginx logs
-      #   run: |
-      #     echo "=== Nginx Error Log ==="
-      #     sudo cat /var/log/nginx/error.log
-      #     echo "=== Nginx Access Log ==="
-      #     sudo cat /var/log/nginx/access.log
 
       - name: Display deployment logs
         run: |
           echo "=== Deployment Log ==="
           cat deployment.log
-
-
-
-      

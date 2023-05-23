@@ -90,7 +90,7 @@ For example, to deploy to the Goerli testnet using an Alchemy RPC node, you coul
 export NETWORK=goerli
 export MNEMONIC=<user sequence of twelve words>
 export RPC_URL=https://eth-goerli.alchemyapi.io/v2/<USER_KEY>
-export VALIDATORS=0x18930e8a66a1DbE21D00581216789AAB7460Afd0
+export VALIDATORS=0x433eC3aE31C080da466a8c20710dEC366ceC1f61
 export GAS_PRICE=100
 export GAS_LIMIT=2800000
 ```
