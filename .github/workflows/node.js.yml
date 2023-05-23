@@ -17,8 +17,8 @@ jobs:
       RPC_URL: ${{ secrets.OPTIMISM_GOERLI_RPC_URL }}
       WSS_URL: ${{ secrets.OPTIMISM_GOERLI_WSS_URL }}
       VALIDATORS: '0x7CE0Df86148326Bb6C417D7Bbf54fcEBcaD90821'
-      GAS_PRICE: 100
-      GAS_LIMIT: 2800000
+      GAS_PRICE: 10
+      GAS_LIMIT: 28000
       DAPP_NAME: chessAppNew
       BLOCK_CONFIRMATIONS: 1
       BLOCK_CONFIRMATIONS_TX: 2
@@ -133,15 +133,15 @@ jobs:
       - name: Deploy contract
         if: steps.check-changes.outputs.app-changed
         run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml up
-      # - name: Close the deployment container 
-      #   if: steps.check-changes.outputs.app-changed
-      #   run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml down -v
+      - name: Close the deployment container 
+        if: steps.check-changes.outputs.app-changed
+        run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml down -v || true
 
       # Deploy node
       - name: Deploy node
         run: |
-          docker compose down -v
-          DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
+          docker compose down -v || true
+          DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v || true
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV
           sleep 60

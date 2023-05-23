@@ -21,7 +21,7 @@ from times import get_timestamp
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
- 
+
 TRANSFER_FUNCTION_SELECTOR = b"\xb4\x83\xaf\xd3\xf4\xca\xed\xc6\xee\xbfD$o\xe5N8\xc9^1y\xa5\xec\x9e\xa8\x17@\xec\xa5\xb4\x82\xd1."
 
 
