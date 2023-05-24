@@ -705,8 +705,9 @@ export function useActionCreator(): (
       : CONTRACTS.localhost;
 
   //Fetch dapp address
+  console.log("networkName: ", networkName)
   const dappAddress = DAPP_ADDRESSES[networkName] ?? DAPP_ADDRESSES.localhost;
-  //console.log("dappAddress: ", dappAddress)
+  console.log("dappAddress: ", dappAddress)
   const dispatch = useDispatch();
   const addAction = useAddAction();
   const addTransaction = useTransactionAdder();

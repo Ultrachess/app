@@ -11,6 +11,7 @@ import { default as axios } from "axios";
 import { Chess } from "chess.js";
 import { ethers } from "ethers";
 
+import dappOptimismGoerli from "../../../../deployments/optimism_goerli/chessAppNew.json";
 import dappGoerli from "../../../../deployments/goerli/chessAppNew.json";
 import dappLocalhost from "../../../../deployments/localhost/dapp.json";
 import dappPolygonMumbai from "../../../../deployments/polygon-mumbai/chessAppNew.json";
@@ -30,6 +31,7 @@ export const DAPP_ADDRESSES = {
   goerli: dappGoerli.address,
   polygon_mumbai: dappPolygonMumbai.address,
   localhost: dappLocalhost.address,
+  optimism_goerli: dappOptimismGoerli.address,
 };
 //console.log(`dapp addresses ${JSON.stringify(DAPP_ADDRESSES, null, "  ")}`)
 
