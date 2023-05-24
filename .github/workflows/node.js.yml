@@ -146,7 +146,7 @@ jobs:
         run: |
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV
-          sleep 60
+          sleep 600
 
       # Build front end
       - name: yarn run build

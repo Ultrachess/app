@@ -135,6 +135,7 @@ const PLACE_HOLDER_GAME: Game = {
     betsArray: [],
   },
   botMoveStats: [],
+  eloChange: {}
 };
 
 const PLACE_HOLDER_THRONE: Throne = {
@@ -198,7 +199,7 @@ export function useProfile(id: string, bots: any = []): Profile | undefined {
   const userBots = useUserBots(id);
 
   // return the correct profile type
-  const profile: Profile = isBot
+  const profile: any = isBot
     ? {
         type,
         id,

@@ -9,7 +9,6 @@
 //React component that takes in BotProfile and renders it with multiple Flex components
 
 import { Profile, ProfileType, UserProfile } from "../../state/game/types";
-import BotListItem from "./BotListItem";
 import UserProfileListItem from "./UserProfileListItem";
 
 //function that converts country string to flag emoji
@@ -31,12 +30,5 @@ export default ({
 }) => {
   const type = profile.type;
 
-  const item =
-    type == ProfileType.BOT ? (
-      <BotListItem bot={profile} rank={rank} />
-    ) : (
-      <UserProfileListItem profile={profile} rank={rank} />
-    );
-
-  return item;
+  return ""
 };
