@@ -357,7 +357,7 @@ class Game:
     ##def runMatches(self, matchCount):
     ##    for i in range(matchCount):
 
-    def getState(self):
+    def getState(self): 
         return {
             "id": self.id,
             "players": self.players,

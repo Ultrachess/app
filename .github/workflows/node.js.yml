@@ -140,15 +140,21 @@ jobs:
       # Deploy node
       - name: Clear node
         run: |
-          docker compose down -v || true
-          DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v || true
+          docker compose down -v
+          DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
       - name: Deploy node
         run: |
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV
-          sleep 600
-
+          sleep 120
+    
+      #ls contents of /deployments
+      - name: 
+        working-directory: deployments
+        run: ls -la
+      
       # Build front end
+      
       - name: yarn run build
         if: steps.check-changes.outputs.front-changed
         working-directory: front

@@ -17,7 +17,7 @@ import BotManager from "./components/BotManager";
 import BotProfile from "./components/BotProfile";
 import Game from "./components/Game";
 import Navbar from "./components/nav/Navbar";
-import Notifications from "./components/Notifications";
+import Notifications from "./components/Notifications"; 
 import PageKingOfTheHill from "./components/PageKingOfTheHill";
 import Profile from "./components/Profile";
 import Rankings from "./components/Rankings";
