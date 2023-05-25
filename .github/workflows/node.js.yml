@@ -46,7 +46,7 @@ jobs:
         run: |
           echo "::set-output name=front-changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^front/')"
           echo "::set-output name=deployments-changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^deployments/')"
-          OTHER_CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -v '^front/' | grep -v '^deployments/')
+          OTHER_CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -v '^front/' | grep -v '^deployments/' | grep -v '^\.workflow/' | grep -v '^nginx.conf')
           if [[ $OTHER_CHANGES ]]; then
             echo "::set-output name=app-changed::true"
           else
@@ -139,10 +139,12 @@ jobs:
 
       # Deploy node
       - name: Clear node
+        if: steps.check-changes.outputs.app-changed
         run: |
           docker compose down -v
           DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
       - name: Deploy node
+        if: steps.check-changes.outputs.app-changed
         run: |
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV

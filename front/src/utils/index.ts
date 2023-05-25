@@ -13,15 +13,18 @@ import { JsonRpcProvider, JsonRpcSigner } from "@ethersproject/providers";
 
 import ERC20_ABI from "../abis/erc20.json";
 
-//get current url and add port 3002 for inspect
-export const DEFAULT_INSPECT_URL =
-  window.location.protocol + "//" + window.location.hostname + ":3002";
+// Get current url and add port 3002 for inspect, or / for ultrachess
+export const DEFAULT_INSPECT_URL = window.location.hostname.includes("ultrachess") 
+    ? window.location.protocol + "//" + window.location.hostname + "/"
+    : window.location.protocol + "//" + window.location.hostname + ":3002";
 console.log("DEFAULT_INSPECT_URL", DEFAULT_INSPECT_URL);
 
-//get current url and add port 4000 for graphql
-export const DEFAULT_GRAPHQL_URL =
-  window.location.protocol + "//" + window.location.hostname + ":4000/graphql";
+// Get current url and add port 4000 for graphql, or /graphql for ultrachess
+export const DEFAULT_GRAPHQL_URL = window.location.hostname.includes("ultrachess") 
+    ? window.location.protocol + "//" + window.location.hostname + "/graphql"
+    : window.location.protocol + "//" + window.location.hostname + ":4000/graphql";
 console.log("DEFAULT_GRAPHQL_URL", DEFAULT_GRAPHQL_URL);
+
 
 export const DEFAULT_GRAPHQL_POLL_TIME = 5000;
 
