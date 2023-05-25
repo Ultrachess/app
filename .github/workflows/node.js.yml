@@ -117,7 +117,7 @@ jobs:
           }' | sudo tee /etc/nginx/nginx.conf > /dev/null
 
       - name: yarn install
-        if: steps.restore-node.outputs.cache-hit != 'true' && steps.check-changes.outputs.front-changed
+        if: steps.restore-node.outputs.cache-hit != 'true'
         working-directory: front
         run: yarn install
 
@@ -160,13 +160,11 @@ jobs:
       # Build front end
       
       - name: yarn run build
-        if: steps.check-changes.outputs.front-changed
         working-directory: front
         run: yarn run build
 
       # Check if the /front/dist folder exists and remove it if it does
       - name: Check and remove /front/dist folder if it exists
-        if: steps.check-changes.outputs.front-changed
         run: |
           if [ -d "/front/dist" ]; then
             sudo rm -rf /front/dist
@@ -174,7 +172,6 @@ jobs:
 
       # Serve front end
       - name: Copy nginx configuration and frontend files
-        if: steps.check-changes.outputs.front-changed
         run: |
           sudo cp nginx.conf /etc/nginx/sites-available/default
           sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
@@ -183,7 +180,6 @@ jobs:
       
       # Set Nginx file permissions
       - name: Set Nginx file permissions
-        if: steps.check-changes.outputs.front-changed
         run: |
           sudo chown -R www-data:www-data /front/dist
           sudo find /front/dist -type d -exec chmod 755 {} \;
@@ -191,7 +187,6 @@ jobs:
 
       # Restart Nginx
       - name: Restart Nginx
-        if: steps.check-changes.outputs.front-changed
         run: sudo systemctl restart nginx || echo "Nginx restart failed"
 
       - name: Display deployment logs
