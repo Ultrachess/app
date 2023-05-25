@@ -29,7 +29,6 @@ import { TransactionUpdater } from "./state/transactions/updater";
 
 function App() {
   const [count, setCount] = useState(0);
-  const dispatch = useDispatch();
 
   useEffect(() => {});
 
