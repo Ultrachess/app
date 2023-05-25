@@ -10,7 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom"; 
 
 import Body from "./components/Body"; 
 import BotManager from "./components/BotManager";
