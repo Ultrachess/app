@@ -7,7 +7,6 @@ ngrok
 __pycache__/
 
 deploy-commands.txt
-/deployments
 
 /server/.tox
 
