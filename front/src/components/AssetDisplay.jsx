@@ -29,6 +29,7 @@ export default ({
 }) => {
   const { account, chainId } = useWeb3React();
   const _tokenAddress = tokenAddress ?? STABLECOIN_ADDRESS_ON_NETWORKS[chainId];
+  console.log( "_tokenAddress", _tokenAddress)
   const token = useToken(_tokenAddress);
   //get account balance of token
   const balances = useSelector((state) => state.game.balances);
