@@ -44,14 +44,13 @@ jobs:
       - name: Check for changes in /front, /deployments, and other files
         id: check-changes
         run: |
-          echo "front-changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^front/')" >> $GITHUB_ENV
-          echo "deployments-changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^deployments/')" >> $GITHUB_ENV
-          OTHER_CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -v '^front/' | grep -v '^deployments/' | grep -v '^\.workflow/' | grep -v '^nginx.conf' | grep -v '^\.gitignore')
-          if [[ $OTHER_CHANGES ]]; then
-            echo "app-changed=true" >> $GITHUB_ENV
-          else
-            echo "app-changed=false" >> $GITHUB_ENV
-          fi
+          FRONT_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^front/') || true
+          DEPLOYMENTS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^deployments/') || true
+          OTHER_CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -v '^front/' | grep -v '^deployments/' | grep -v '^\.workflow/' | grep -v '^nginx.conf' | grep -v '^\.gitignore') || true
+          echo "front-changed=$(if [ -z "$FRONT_CHANGED" ]; then echo false; else echo true; fi)" >> $GITHUB_ENV
+          echo "deployments-changed=$(if [ -z "$DEPLOYMENTS_CHANGED" ]; then echo false; else echo true; fi)" >> $GITHUB_ENV
+          echo "app-changed=$(if [ -z "$OTHER_CHANGES" ]; then echo false; else echo true; fi)" >> $GITHUB_ENV
+
 
 
 
