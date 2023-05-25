@@ -17,13 +17,13 @@ import ERC20_ABI from "../abis/erc20.json";
 export const DEFAULT_INSPECT_URL = window.location.hostname.includes("ultrachess") 
     ? window.location.protocol + "//" + window.location.hostname + "/"
     : window.location.protocol + "//" + window.location.hostname + ":3002";
-console.log("DEFAULT_INSPECT_URL", DEFAULT_INSPECT_URL);
+console.log("DEFAULT_INSPECT_URL new", DEFAULT_INSPECT_URL);
 
 // Get current url and add port 4000 for graphql, or /graphql for ultrachess
 export const DEFAULT_GRAPHQL_URL = window.location.hostname.includes("ultrachess") 
     ? window.location.protocol + "//" + window.location.hostname + "/graphql"
     : window.location.protocol + "//" + window.location.hostname + ":4000/graphql";
-console.log("DEFAULT_GRAPHQL_URL", DEFAULT_GRAPHQL_URL);
+console.log("DEFAULT_GRAPHQL_URL new", DEFAULT_GRAPHQL_URL);
 
 
 export const DEFAULT_GRAPHQL_POLL_TIME = 5000;

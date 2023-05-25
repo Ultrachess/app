@@ -141,12 +141,10 @@ jobs:
 
       # Deploy node
       - name: Clear node
-        if: steps.check-changes.outputs.app-changed
         run: |
           docker compose down -v
           DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
       - name: Deploy node
-        if: steps.check-changes.outputs.app-changed
         run: |
           DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV
@@ -189,7 +187,7 @@ jobs:
       - name: Restart Nginx
         run: sudo systemctl restart nginx || echo "Nginx restart failed"
 
-      - name: Display deployment logs
-        run: |
-          echo "=== Deployment Log ==="
-          cat deployment.log
+      # - name: Display deployment logs
+      #   run: |
+      #     echo "=== Deployment Log ==="
+      #     cat deployment.log
