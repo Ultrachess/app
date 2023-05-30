@@ -391,26 +391,62 @@ export default () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
+    console.log("onDrop", sourceSquare, targetSquare);
+
     var moveUci = sourceSquare + targetSquare;
-    //if(move.promotion) moveUci += move.promotion
-    //dispatch(sendMove(moveUci))
+
+    console.log("moveUci: " + moveUci);
+
+    // If pawn is moving to the 8th (for white) or 1st (for black) rank, append promotion
+    const targetRank = targetSquare[1];
+    const sourcePiece = gameState.get(sourceSquare);
+    if ((sourcePiece?.type === 'p' && ((sourcePiece.color === 'w' && targetRank === '8') || (sourcePiece.color === 'b' && targetRank === '1')))) {
+        moveUci += 'q';  // Default to queen for promotion.
+    }
+
+    console.log("moveUci after: " + moveUci);
+
+    // Get the move options for the selected piece
     const moves = gameState?.moves({
       sourceSquare,
       verbose: true,
     });
-    const isMoveValid = moves.some((move) => moveUci === move.lan);
-    const isTurnd = gameState?.turn() == gameSide[0];
-    if (!minPlayers) return false;
-    if (!isTurnd) return false;
-    if (!isMoveValid) return false;
 
+    console.log("moves: " + moves);
+
+    // Check if the move is valid
+    const isMoveValid = moves.some((move) => moveUci === move.from + move.to + (move.promotion || ''));
+
+    // Check if it is the player's turn
+    const isTurned = gameState?.turn() == gameSide[0];
+
+    // Check if the player is in the game
+    if (!minPlayers) {
+        console.log("Invalid move: Not enough players");
+        return false;
+    }
+    // Check if it is the player's turn
+    if (!isTurned) {
+        console.log("Invalid move: Not the player's turn");
+        return false;
+    }
+    // Check if the move is valid
+    if (!isMoveValid) {
+        console.log("Invalid move: Move not valid");
+        return false;
+    }
+
+    // Apply the move
     addAction({
       type: TransactionType.SEND_MOVE_INPUT,
       roomId: gameId,
       value: moveUci,
     });
+    console.log("Valid move: Move applied");
     return true;
   }
+
+
 
   function onMouseOverSquare(square) {
     if (selectedPiece == null) getMoveOptions(square);
