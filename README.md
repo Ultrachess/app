@@ -56,6 +56,50 @@ The response should be something like this:
 [ { epoch: '0', input: '1', notice: '0', payload: 'Hello there' } ]
 ```
 
+## Developing with the frontend
+
+To start the frontend dev server, run the following commands:
+
+```shell
+cd front
+yarn install
+yarn dev
+```
+
+To proxy the CORS headers, you can use nginx. Create the following file at `/etc/nginx/site-enabled/new-conf.conf`:
+
+```
+server {
+        listen 3001;
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:3002' always;
+        location / {
+                proxy_pass http://localhost:5173;
+        }
+}
+
+server {
+        listen 3002;
+        location / {
+                proxy_pass http://localhost:5005;
+        }
+}
+
+
+server {
+        listen 3003;
+        add_header Access-Control-Allow-Origin *;
+        location / {
+                proxy_pass http://localhost:3000;
+        }
+}
+```
+
+Then restart nginx:
+
+```shell
+sudo systemctl restart nginx
+```
+
 ## Deploying to a testnet
 
 Deploying the application to a blockchain requires creating a smart contract on that network, as well as running a validator node for the DApp.
