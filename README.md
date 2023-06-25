@@ -66,7 +66,7 @@ yarn install
 yarn dev
 ```
 
-To proxy the CORS headers, you can use nginx. Create the following file at `/etc/nginx/site-enabled/new-conf.conf`:
+To proxy the CORS headers, you can use nginx. Create the following file at `/etc/nginx/sites-enabled/new-conf.conf`:
 
 ```
 server {
