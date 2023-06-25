@@ -9,7 +9,7 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { TransactionInfo, TransactionType } from "../../common/types";
@@ -44,6 +44,7 @@ import {
   BotProfile,
   Challenge,
   Game,
+  LpNftProfile,
   Profile,
   ProfileType,
   Throne,
@@ -306,6 +307,64 @@ export function useAllBots(showRank = false): BotProfile[] {
       }
       return 0;
     });
+}
+
+// Get all LP NFTs belonging to the user
+export function useLpNfts(): LpNftProfile[] {
+  const { chainId, account } = useWeb3React();
+
+  const [lpNfts, setLpNfts] = useState<LpNftProfile[]>([]);
+
+  // Get network name
+  const CHAIN = CHAINS[chainId];
+  const networkName =
+    CHAIN && CHAIN.networkName ? CHAIN.networkName : "localhost";
+
+  // Fetch abi list
+  const contracts = CONTRACTS[networkName];
+  const abis =
+    contracts && contracts.InputFacet && contracts.ERC20PortalFacet
+      ? contracts
+      : CONTRACTS.localhost;
+
+  const lpSftContract = useContract(abis.LpSft.address, abis.LpSft.abi);
+
+  useEffect(() => {
+    const callFetch = async () => {
+      if (!lpSftContract) return;
+
+      const userLpNfts = [];
+
+      const tokenIds = await lpSftContract.getTokenIds(account);
+      for (const tokenId of tokenIds) {
+        const tokenUri = await lpSftContract.uri(tokenId);
+
+        // Decode the token URI
+        const tokenUriResponse = await fetch(tokenUri);
+        const tokenMetadata = await tokenUriResponse.json();
+
+        const tokenName = tokenMetadata.name;
+        const tokenDescription = tokenMetadata.description;
+        const tokenImageUri = tokenMetadata.image;
+
+        const lpNft = {
+          address: lpSftContract.address,
+          chainId: chainId,
+          tokenId: tokenId,
+          name: tokenName,
+          description: tokenDescription,
+          imageUri: tokenImageUri,
+        };
+        userLpNfts.push(lpNft);
+      }
+
+      setLpNfts(userLpNfts);
+    };
+
+    callFetch().catch(console.error);
+  }, [chainId, lpSftContract]);
+
+  return lpNfts;
 }
 
 //get all user profiles
@@ -711,12 +770,19 @@ export function useActionCreator(): (
   const dispatch = useDispatch();
   const addAction = useAddAction();
   const addTransaction = useTransactionAdder();
-  // TODO: Handle DAPP_ADDRESSES[networkName] or CONTRACTS[networkName] not defined
+  // TODO: Handle dappAddress or abis not defined
   const contract = useContract(dappAddress, abis.InputFacet.abi);
   const erc20PortalContract = useContract(
     dappAddress,
     abis.ERC20PortalFacet.abi
   );
+  const uniV3StakerContract = useContract(
+    abis.UniV3Staker.address,
+    abis.UniV3Staker.abi
+  );
+  const daiContract = useContract(abis.DAI.address, abis.DAI.abi);
+  const usdcContract = useContract(abis.USDC.address, abis.USDC.abi);
+  const usdtContract = useContract(abis.USDT.address, abis.USDT.abi);
 
   return useCallback(
     async (info: TransactionInfo) => {
@@ -730,7 +796,9 @@ export function useActionCreator(): (
         id: id,
         type:
           info.type == TransactionType.APPROVE_ERC20 ||
-          info.type == TransactionType.DEPOSIT_ERC20
+          info.type == TransactionType.DEPOSIT_ERC20 ||
+          info.type == TransactionType.MINT_ERC20 ||
+          info.type == TransactionType.MINT_LP_NFT
             ? ActionType.TRANSACTION
             : ActionType.INPUT,
         transactionInfo: info,
@@ -1007,6 +1075,73 @@ export function useActionCreator(): (
               erc20Amount
             );
             break;
+          case TransactionType.MINT_ERC20: {
+            const { tokenAddress, tokenAmount } = info;
+
+            // Get the stable contract
+            let stableContract;
+            if (tokenAddress.toLowerCase() == daiContract.address.toLowerCase())
+              stableContract = daiContract;
+            else if (
+              tokenAddress.toLowerCase() == usdcContract.address.toLowerCase()
+            )
+              stableContract = usdcContract;
+            else if (
+              tokenAddress.toLowerCase() == usdtContract.address.toLowerCase()
+            )
+              stableContract = usdtContract;
+
+            // TODO: More efficient decimal handling
+            const decimals = await stableContract.decimals();
+
+            // Calculate ERC20 amount
+            var erc20Amount = ethers.BigNumber.from(
+              ethers.utils.parseUnits(tokenAmount, decimals)
+            );
+
+            // Mint tokens
+            result = await stableContract.mint(
+              await stableContract.signer.getAddress(),
+              erc20Amount
+            );
+
+            break;
+          }
+          case TransactionType.MINT_LP_NFT: {
+            const { stableAddress, stableAmount } = info;
+
+            // Get the stable index
+            let stableIndex;
+            if (
+              stableAddress.toLowerCase() == daiContract.address.toLowerCase()
+            )
+              stableIndex = 0;
+            else if (
+              stableAddress.toLowerCase() == usdcContract.address.toLowerCase()
+            )
+              stableIndex = 1;
+            else if (
+              stableAddress.toLowerCase() == usdtContract.address.toLowerCase()
+            )
+              stableIndex = 2;
+
+            // Mint the LP NFT
+            result = await uniV3StakerContract.stakeNFTOneStable(
+              stableIndex,
+              stableAmount
+            );
+
+            break;
+          }
+          case TransactionType.DEPOSIT_LP_NFT: {
+            const { nftId } = info;
+
+            alert(`Depositing token ${nftId}`);
+
+            //result = await uniV3StakerContract.stakeNFTOneToken(stableIndex, stableAmount);
+
+            break;
+          }
           default:
             break;
         }
@@ -1032,7 +1167,9 @@ export function useActionCreator(): (
             id: id,
             type:
               info.type == TransactionType.APPROVE_ERC20 ||
-              info.type == TransactionType.DEPOSIT_ERC20
+              info.type == TransactionType.DEPOSIT_ERC20 ||
+              info.type == TransactionType.MINT_ERC20 ||
+              info.type == TransactionType.MINT_LP_NFT
                 ? ActionType.TRANSACTION
                 : ActionType.INPUT,
             transactionInfo: info,

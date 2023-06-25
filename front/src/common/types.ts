@@ -14,6 +14,9 @@ export enum TransactionType {
   DEPLOY_BOT_INPUT,
   DEPOSIT_ERC20,
   APPROVE_ERC20,
+  MINT_ERC20,
+  MINT_LP_NFT,
+  DEPOSIT_LP_NFT,
   BOT_STEP,
   MANAGER_BOT_INPUT,
   RELEASE_FUNDS,
@@ -145,6 +148,23 @@ export interface ApproveErc20TransactionInfo extends BaseTransactionInfo {
   amount: string;
 }
 
+export interface MintErc20TransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.MINT_ERC20;
+  tokenAddress: string;
+  tokenAmount: string;
+}
+
+export interface MintLpNftTransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.MINT_LP_NFT;
+  stableAddress: string;
+  stableAmount: string;
+}
+
+export interface DepositLpNftTransactionInfo extends BaseTransactionInfo {
+  type: TransactionType.DEPOSIT_LP_NFT;
+  nftId: string;
+}
+
 export interface BetTransactionInfo extends BaseTransactionInfo {
   type: TransactionType.BET_INPUT;
   gameId: string;
@@ -194,6 +214,9 @@ export type TransactionInfo =
   | DeployBotTransactionInfo
   | DepositErc20TransactionInfo
   | ApproveErc20TransactionInfo
+  | MintErc20TransactionInfo
+  | MintLpNftTransactionInfo
+  | DepositLpNftTransactionInfo
   | ResignGameTransactionInfo
   | BotStepTransactionInfo
   | ManagerBotTransactionInfo
