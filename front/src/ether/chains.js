@@ -6,7 +6,7 @@
  * See the file LICENSE for more information.
  */
 
-import CartesiToken from "../../../deployments/localhost/CartesiToken.json";
+import CartesiToken from "../../../export/localhost.json";
 
 const ETH = {
   name: "Ether",
