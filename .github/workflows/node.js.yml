@@ -85,8 +85,7 @@ jobs:
           path: |
             deployments/localhost
             export
-          key: restore-artifacts-${{ hashFiles('docker-compose-deploy.yml', 'docker-compose.override.yml') }}
-      
+          key: restore-artifacts-${{ hashFiles('docker-compose.yml', docker-compose.override.yml') }}
 
       # Install dependencies
       - name: Install Yarn

@@ -22,7 +22,7 @@ target "server" {
   context = "./std-rootfs"
   target  = "server-stage"
   contexts = {
-    dapp = "target:dapp"
+    fs = "target:fs"
   }
 }
 
@@ -30,7 +30,7 @@ target "console" {
   context = "./std-rootfs"
   target  = "console-stage"
   contexts = {
-    dapp = "target:dapp"
+    fs = "target:fs"
   }
 }
 
@@ -38,8 +38,12 @@ target "machine" {
   context = "./std-rootfs"
   target  = "machine-stage"
   contexts = {
-    dapp = "target:dapp"
+    server = "target:server"
   }
 }
 
-
+target "dapp" {
+  contexts = {
+    toolchain-python = "target:toolchain-python"
+  }
+}

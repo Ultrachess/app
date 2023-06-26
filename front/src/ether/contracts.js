@@ -6,14 +6,14 @@
  * See the file LICENSE for more information.
  */
 
-import * as ERC20PortalFacetArbitrumGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/ERC20PortalFacet.json";
-import * as ERC20PortalFacetOptimismGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/ERC20PortalFacet.json";
-import * as ERC20PortalFacetPolygonMumbai from "@cartesi/rollups/deployments/arbitrum_goerli/ERC20PortalFacet.json";
-import * as InputFacetArbitrumGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/InputFacet.json";
-import * as InputFacetOptimismGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/InputFacet.json";
-import * as InputFacetPolygonMumbai from "@cartesi/rollups/deployments/arbitrum_goerli/InputFacet.json";
-import * as ERC20PortalFacetGoerli from "@cartesi/rollups/deployments/goerli/ERC20PortalFacet.json";
-import * as InputFacetGoerli from "@cartesi/rollups/deployments/goerli/InputFacet.json";
+import * as ERC20PortalArbitrumGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/ERC20Portal.json";
+import * as ERC20PortalOptimismGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/ERC20Portal.json";
+import * as ERC20PortalPolygonMumbai from "@cartesi/rollups/deployments/arbitrum_goerli/ERC20Portal.json";
+import * as InputBoxArbitrumGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/InputBox.json";
+import * as InputBoxOptimismGoerli from "@cartesi/rollups/deployments/arbitrum_goerli/InputBox.json";
+import * as InputBoxPolygonMumbai from "@cartesi/rollups/deployments/arbitrum_goerli/InputBox.json";
+import * as ERC20PortalGoerli from "@cartesi/rollups/deployments/goerli/ERC20Portal.json";
+import * as InputBoxGoerli from "@cartesi/rollups/deployments/goerli/InputBox.json";
 import * as CartesiTokenArbitrumGoerli from "@cartesi/token/deployments/arbitrum_goerli/CartesiToken.json";
 import * as CartesiTokenArbitrumMainnet from "@cartesi/token/deployments/arbitrum_mainnet/CartesiToken.json";
 import * as CartesiTokenGoerli from "@cartesi/token/deployments/goerli/CartesiToken.json";
@@ -30,16 +30,16 @@ import { contracts as contractsLocalhost } from "../abis/localhost.json";
 export const CONTRACTS = {
   arbitrum_goerli: {
     CartesiToken: CartesiTokenArbitrumGoerli,
-    ERC20PortalFacet: ERC20PortalFacetArbitrumGoerli,
-    InputFacet: InputFacetArbitrumGoerli,
+    ERC20Portal: ERC20PortalArbitrumGoerli,
+    InputBox: InputBoxArbitrumGoerli,
   },
   arbitrum_mainnet: {
     CartesiToken: CartesiTokenArbitrumMainnet,
   },
   goerli: {
     CartesiToken: CartesiTokenGoerli,
-    ERC20PortalFacet: ERC20PortalFacetGoerli,
-    InputFacet: InputFacetGoerli,
+    ERC20Portal: ERC20PortalGoerli,
+    InputBox: InputBoxGoerli,
     SimpleFaucet: SimpleFaucetGoerli,
   },
   localhost: Object.assign({}, contractsLocalhost, ultrachessLocalhost),
@@ -48,20 +48,20 @@ export const CONTRACTS = {
   },
   optimism_goerli: {
     CartesiToken: CartesiTokenOptimismGoerli,
-    ERC20PortalFacet: ERC20PortalFacetOptimismGoerli,
-    InputFacet: InputFacetOptimismGoerli,
+    ERC20Portal: ERC20PortalOptimismGoerli,
+    InputBox: InputBoxOptimismGoerli,
   },
   optimism_mainnet: {
     CartesiToken: CartesiTokenOptimismMainnet,
   },
   polygon_mainnet: {
     CartesiToken: CartesiTokenPolygonMainnet,
-    InputFacet: contractsLocalhost.InputFacet,
-    ERC20PortalFacet: contractsLocalhost.ERC20PortalFacet,
+    InputBox: contractsLocalhost.InputBox,
+    ERC20Portal: contractsLocalhost.ERC20Portal,
   },
   polygon_mumbai: {
     CartesiToken: CartesiTokenPolygonMumbai,
-    ERC20PortalFacet: ERC20PortalFacetPolygonMumbai,
-    InputFacet: InputFacetPolygonMumbai,
+    ERC20Portal: ERC20PortalPolygonMumbai,
+    InputBox: InputBoxPolygonMumbai,
   },
 };

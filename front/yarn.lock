@@ -515,14 +515,13 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
-"@cartesi/rollups@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.npmjs.org/@cartesi/rollups/-/rollups-0.8.2.tgz"
-  integrity sha512-EiBJn2ZmkafCJSs7J02W/3xfhpThJrEx0S/+KQaEeC8r5O5JqIPHS9B34D2VcCevkLR+51VNv8O3O/aBl15Q4Q==
+"@cartesi/rollups@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@cartesi/rollups/-/rollups-0.9.1.tgz#f6cd6294553b799016b721463160c65dadc6ff44"
+  integrity sha512-KTkvmRvWGKfecv2Vlnr6PmyNrVAtQBwzoAoqATWnZafOO06Pl/jSqVjyewLHsz+44tEst6lRsV8WDos4FeGlUA==
   dependencies:
-    "@cartesi/token" "^1.8.0"
-    "@cartesi/util" "^5.0.1"
-    "@openzeppelin/contracts" "^4.7.1"
+    "@cartesi/util" "^5.0.2"
+    "@openzeppelin/contracts" "4.8.0"
 
 "@cartesi/token@^1.8.0":
   version "1.8.0"
@@ -531,9 +530,9 @@
   dependencies:
     "@openzeppelin/contracts" "^2.5.0"
 
-"@cartesi/util@^5.0.1":
+"@cartesi/util@^5.0.2":
   version "5.0.2"
-  resolved "https://registry.npmjs.org/@cartesi/util/-/util-5.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/@cartesi/util/-/util-5.0.2.tgz#dfe0ff88b1998b88eafc4089949c3df71e3246e1"
   integrity sha512-mIaOplU+RKkiW10JRpDBG8IG7lGKyXrkF6w4WHVZ2YKWze5I+mzJBaPALZLtJSuwb6GCqLZbB7NZx3A7iZyWkA==
   dependencies:
     "@openzeppelin/contracts" "3.2.1-solc-0.7"
@@ -1738,15 +1737,15 @@
   resolved "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-3.2.1-solc-0.7.tgz"
   integrity sha512-VfKZE9L2HNaZVBR7l5yHbRmap3EiVw9F5iVXRRDdgfnA9vQ1yFanrs0VYmdo2VIXC+EsI9wPPYZY9Ic7/qDBdw==
 
+"@openzeppelin/contracts@4.8.0":
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.8.0.tgz#6854c37df205dd2c056bdfa1b853f5d732109109"
+  integrity sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==
+
 "@openzeppelin/contracts@^2.5.0":
   version "2.5.1"
   resolved "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-2.5.1.tgz"
   integrity sha512-qIy6tLx8rtybEsIOAlrM4J/85s2q2nPkDqj/Rx46VakBZ0LwtFhXIVub96LXHczQX0vaqmAueDqNPXtbSXSaYQ==
-
-"@openzeppelin/contracts@^4.7.1":
-  version "4.8.2"
-  resolved "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.8.2.tgz"
-  integrity sha512-kEUOgPQszC0fSYWpbh2kT94ltOJwj1qfT2DWo+zVttmGmf97JZ99LspePNaeeaLhCImaHVeBbjaQFZQn7+Zc5g==
 
 "@parcel/watcher@^2.1.0":
   version "2.1.0"
