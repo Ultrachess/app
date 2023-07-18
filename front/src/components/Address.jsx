@@ -23,13 +23,15 @@ export default ({
   isImageBig = false,
   showBotName = false,
   showProfile = true,
+  toShow= null,
 }) => {
   const isBot = useMemo(() => (value ? !value.includes("0x") : false), []);
+  const valueToShow = toShow ? toShow : truncateAddress(value);
   const addressView = (
     <Link css={{}} to={(isBot ? "/bot/" : "/users/") + value}>
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
         {showProfile && <ProfileImage address={value} />}
-        <span>{truncateAddress(value)}</span>
+        <span>toShow</span>
         {isBot && <FaRobot />}
       </Flex>
     </Link>
@@ -40,7 +42,7 @@ export default ({
       <Flex css={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
         {showProfile && <ProfileImage diameter={30} address={value} />}
         <Text size={2} bold blue>
-          {truncateAddress(value)}
+          toShow
         </Text>
         {isBot && <FaRobot />}
         {isBot && showBotName && (
@@ -60,7 +62,7 @@ export default ({
       <Flex css={{ flexDirection: "row", alignItems: "end", gap: 5 }}>
         {showProfile && <ProfileImage address={value} diameter={90} />}
         <Flex css={{ flexDirection: "row", gap: 4 }}>
-          <div>{truncateAddress(value)}</div>
+          <div>toShow</div>
           {isBot && <FaRobot />}
         </Flex>
       </Flex>

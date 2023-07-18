@@ -101,7 +101,7 @@ const BotList = ({ bots, showRank }) => {
 
     return [
       index + 1,
-      <Address value={id} hoverable={true} />,
+      <Address value={id} toShow={name} hoverable={true} />,
       <Address value={owner} hoverable={true} />,
       elo,
       nationality,

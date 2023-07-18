@@ -127,7 +127,7 @@ export default () => {
           <div className="sm:flex sm:items-center sm:justify-between">
             <div className="text-left sm:text-left">
               <h1 className="text-5xl items-center font-bold text-gray-900 sm:text-6xl">
-                <Address value={id} isImageBig={true} />
+                <Address toShow={name} value={id} isImageBig={true} />
               </h1>
               <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                 <div className="mt-2 flex items-center text-sm text-gray-500">
