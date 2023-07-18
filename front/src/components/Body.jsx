@@ -27,7 +27,7 @@ export default () => {
   return (
     <div class="min-h-full">
       <header aria-label="Page Header" class="mt-10 bg-white-50">
-        <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+        <div class="mx-auto   px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
           <div class="sm:flex sm:items-center sm:justify-between">
             <div class="text-left sm:text-left">
               <h1 class="text-5xl items-center font-bold text-gray-900 sm:text-6xl">
@@ -82,9 +82,13 @@ export default () => {
             </div>
           </div>
         </div>
+        {/* <div>
+          <h3>Protocol Revenue</h3>
+          <h3>Total Wagers</h3>
+        </div> */}
       </header>
       <main>
-        <div class="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div class="my-5">
             <div className="contentHeader">
               <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">

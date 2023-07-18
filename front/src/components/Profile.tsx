@@ -65,7 +65,7 @@ export default () => {
   return (
     <div className="min-h-full">
       <header aria-label="Page Header" className="mt-10 bg-white-50">
-        <div className="mx-auto max-w-screen-xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto   px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
           <div className="sm:flex sm:items-center sm:justify-between">
             <div className="text-left sm:text-left">
               <h1 className="text-5xl items-center font-bold text-gray-900 sm:text-6xl">
@@ -210,7 +210,7 @@ export default () => {
         </div>
       </header>
       <main>
-        <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="my-20">
             <div className="contentHeader">
               <h1 className="text-xl items-center font-bold text-gray-900 sm:text-2xl">

@@ -33,7 +33,7 @@ function App() {
   useEffect(() => {});
 
   return (
-    <div className="App">
+    <div className="px-3">
       <TransitionManager />
       <TransactionUpdater />
       <GameStateUpdater />

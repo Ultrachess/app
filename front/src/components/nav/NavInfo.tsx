@@ -35,7 +35,7 @@ const NavInfo = () => {
 
   const steppedSecondsAgo = Math.floor((current - lastTimeInSeconds) / 1000)
   return (
-    <div className="flex items-center justify-between gap-4 px-3 py-3 mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-between gap-4 px-3 py-3 mx-auto px-2 sm:px-6 lg:px-8">
       <p className="text-sm font-medium">
       Last step: <span className="text-green-200"><DateDisplay current={lastTime} /></span>
       </p>
