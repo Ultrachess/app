@@ -104,6 +104,16 @@ class ChallengeManager:
                 type=notification.NotificationType.CHALLENGE_CREATED,
             )
         )
+
+        # if bot check if can auto accept challenge
+        if challenger_is_bot:
+            bot = deps.BotFactory.getBot(challenger)
+            token_is_valid = token.lower() == bot.autoWagerTokenAddress.lower()
+            wager_is_valid = wager <= bot.autoMaxWagerAmount
+
+            if token_is_valid and wager_is_valid:
+                self.accept(bot.id, timestamp, challengeId)      
+
         return True
 
     def accept(self, sender, timestamp, challengeId):
