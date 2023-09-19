@@ -92,33 +92,33 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
 
-      # Prepare Nginx
-      - name: Reset Nginx configurations and install Nginx
-        run: |
-          sudo rm -rf /etc/nginx/sites-available/default
-          sudo rm -rf /etc/nginx/sites-enabled/default
-          sudo apt-get update
-          sudo apt-get install --reinstall -y nginx
-          # Create a minimal nginx.conf
-          echo 'events {
-            worker_connections 1024;
-          }
+      # # Prepare Nginx
+      # - name: Reset Nginx configurations and install Nginx
+      #   run: |
+      #     sudo rm -rf /etc/nginx/sites-available/default
+      #     sudo rm -rf /etc/nginx/sites-enabled/default
+      #     sudo apt-get update
+      #     sudo apt-get install --reinstall -y nginx
+      #     # Create a minimal nginx.conf
+      #     echo 'events {
+      #       worker_connections 1024;
+      #     }
           
-          http {
-            include /etc/nginx/mime.types;
-            default_type application/octet-stream;
-            sendfile on;
-            access_log /var/log/nginx/access.log;
-            error_log /var/log/nginx/error.log debug;
-            keepalive_timeout 65;
+      #     http {
+      #       include /etc/nginx/mime.types;
+      #       default_type application/octet-stream;
+      #       sendfile on;
+      #       access_log /var/log/nginx/access.log;
+      #       error_log /var/log/nginx/error.log debug;
+      #       keepalive_timeout 65;
 
-            include /etc/nginx/sites-enabled/*;
-          }' | sudo tee /etc/nginx/nginx.conf > /dev/null
+      #       include /etc/nginx/sites-enabled/*;
+      #     }' | sudo tee /etc/nginx/nginx.conf > /dev/null
 
-      - name: yarn install
-        if: steps.restore-node.outputs.cache-hit != 'true'
-        working-directory: front
-        run: yarn install
+      # - name: yarn install
+      #   if: steps.restore-node.outputs.cache-hit != 'true'
+      #   working-directory: front
+      #   run: yarn install
 
       # # Build machine
       # - name: Build dapp
