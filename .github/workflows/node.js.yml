@@ -60,13 +60,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      # Install Docker
-      - name: Install Docker
-        run: |
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
-          sudo usermod -aG docker $USER
-          newgrp docker
+      # # Install Docker
+      # - name: Install Docker
+      #   run: |
+      #     curl -fsSL https://get.docker.com -o get-docker.sh
+      #     sudo sh get-docker.sh
+      #     sudo usermod -aG docker $USER
+      #     newgrp docker
 
       # Restore node modules
       - name: Restore node modules
@@ -120,32 +120,32 @@ jobs:
         working-directory: front
         run: yarn install
 
-      # Build machine
-      - name: Build dapp
-        if: steps.check-changes.outputs.app-changed
-        run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
+      # # Build machine
+      # - name: Build dapp
+      #   if: steps.check-changes.outputs.app-changed
+      #   run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
 
-      # Build machine
-      - name: Build machine
-        if: steps.check-changes.outputs.app-changed
-        run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl machine --load
+      # # Build machine
+      # - name: Build machine
+      #   if: steps.check-changes.outputs.app-changed
+      #   run: docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl machine --load
 
-      #Deploy contract
-      - name: Deploy contract
-        if: steps.check-changes.outputs.app-changed
-        run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml up
-      - name: Close the deployment container 
-        if: steps.check-changes.outputs.app-changed
-        run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml down -v || true
+      # #Deploy contract
+      # - name: Deploy contract
+      #   if: steps.check-changes.outputs.app-changed
+      #   run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml up
+      # - name: Close the deployment container 
+      #   if: steps.check-changes.outputs.app-changed
+      #   run: DAPP_NAME=chessAppNew docker compose -f ./deploy-testnet.yml down -v || true
 
       # Deploy node
       - name: Clear node
         run: |
           docker compose down -v
-          DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml down -v
+          DAPP_NAME=chessAppNew docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml -f ./docker-compose-host-testnet.yml down -v || true
       - name: Deploy node
         run: |
-          DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml up > deployment.log 2>&1 &
+          DAPP_NAME=chessAppNew nohup docker compose -f ./docker-compose-testnet.yml -f ./docker-compose.override.yml -f ./docker-compose-host-testnet.yml up > deployment.log 2>&1 &
           echo "PID=$!" >> $GITHUB_ENV
           sleep 120
     
