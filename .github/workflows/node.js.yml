@@ -159,8 +159,8 @@ jobs:
       - name: yarn run build
         working-directory: front
         run:  |
-        npm install -g typescript 
-        yarn run build
+          npm install -g typescript 
+          yarn run build
 
       # Check if the /front/dist folder exists and remove it if it does
       - name: Check and remove /front/dist folder if it exists
