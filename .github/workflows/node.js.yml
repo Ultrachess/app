@@ -160,6 +160,8 @@ jobs:
         working-directory: front
         run:  |
           npm install -g typescript 
+          yarn
+          yarn install
           yarn run build
 
       # Check if the /front/dist folder exists and remove it if it does
